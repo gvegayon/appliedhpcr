@@ -1,0 +1,150 @@
+# The parallel R package
+
+## Parallel workflow
+
+(Usually) We do the following:
+
+1.  Create a `PSOCK/FORK` (or other) cluster using `makePSOCKCluster`/`makeForkCluster`
+    (or `makeCluster`)
+    
+2.  Copy/prepare each R session (if you are using a `PSOCK` cluster):
+
+    a.  Copy objects with `clusterExport`
+
+    b.  Pass expressions with `clusterEvalQ`
+
+    c.  Set a seed
+
+3.  Do your call: `parApply`, `parLapply`, etc. 
+
+4.  Stop the cluster with `clusterStop`
+
+
+## Types of clusters: PSOCK
+
+-   Can be created with `makePSOCKCluster`
+
+-   Creates brand new R Sessions (so nothing is inherited from the master), e.g.
+    
+    ```r
+    # This creates a cluster with 4 R sessions
+    cl <- makePSOCKCluster(4)
+    ```
+
+-   Child sessions are connected to the master session via Socket connections
+
+-   Can be created outside of the current computer, i.e. across multiple computers!
+
+## Types of clusters: Fork
+
+-   Fork Cluster `makeForkCluster`:
+
+-   Uses OS [Forking](https://en.wikipedia.org/wiki/Fork_(system_call)),
+
+-   Copies the current R session locally (so everything is inherited from
+    the master up to that point).
+    
+-   Data is only duplicated if it is altered (need to double check when this happens!)
+
+-   Not available on Windows.
+
+Other `makeCluster`: passed to [**snow**](https://cran.r-project.org/package=snow)
+(Simple Network of Workstations)
+
+
+## Ex 1: Parallel RNG with `makePSOCKCluster`
+
+
+```{r parallel-ex-psock, echo=TRUE}
+# 1. CREATING A CLUSTER
+library(parallel)
+nnodes <- 4L
+cl     <- makePSOCKcluster(nnodes)    
+# 2. PREPARING THE CLUSTER
+clusterSetRNGStream(cl, 123) # Equivalent to `set.seed(123)`
+# 3. DO YOUR CALL
+ans <- parSapply(cl, 1:nnodes, function(x) runif(1e3))
+(ans0 <- var(ans))
+```
+
+----
+
+Making sure is reproducible
+
+```{r parallel-ex-psock-cont, echo=TRUE}
+# I want to get the same!
+clusterSetRNGStream(cl, 123)
+ans1 <- var(parSapply(cl, 1:nnodes, function(x) runif(1e3)))
+# 4. STOP THE CLUSTER
+stopCluster(cl)
+all.equal(ans0, ans1) # All equal!
+```
+
+## Ex 2: Parallel RNG with `makeForkCluster`
+
+In the case of `makeForkCluster`
+
+```{r parallel-ex-fork, echo=TRUE, eval = TRUE}
+# 1. CREATING A CLUSTER
+library(parallel)
+# The fork cluster will copy the -nsims- object
+nsims  <- 1e3
+nnodes <- 4L
+cl     <- makeForkCluster(nnodes)    
+# 2. PREPARING THE CLUSTER
+clusterSetRNGStream(cl, 123)
+# 3. DO YOUR CALL
+ans <- do.call(cbind, parLapply(cl, 1:nnodes, function(x) {
+  runif(nsims) # Look! we use the nsims object!
+               # This would have fail in makePSOCKCluster
+               # if we didn't copy -nsims- first.
+  }))
+(ans0 <- var(ans))
+```
+
+---
+
+Again, we want to make sure this is reproducible
+
+```{r parallel-ex-fork-cont, echo=TRUE}
+# Same sequence with same seed
+clusterSetRNGStream(cl, 123)
+ans1 <- var(do.call(cbind, parLapply(cl, 1:nnodes, function(x) runif(nsims))))
+ans0 - ans1 # A matrix of zeros
+# 4. STOP THE CLUSTER
+stopCluster(cl)
+```
+
+<text style="color:white;">Well, if you are a Mac-OS/Linux user, there's a simpler way of doing this...</text>
+
+
+## Ex 3: Parallel RNG with `mclapply` (Forking on the fly)
+
+In the case of `mclapply`, the forking (cluster creation) is done on the fly!
+
+```{r parallel-ex-mclapply, echo=TRUE, eval = TRUE}
+# 1. CREATING A CLUSTER
+library(parallel)
+# The fork cluster will copy the -nsims- object
+nsims  <- 1e3
+nnodes <- 4L
+# cl     <- makeForkCluster(nnodes) # mclapply does it on the fly
+# 2. PREPARING THE CLUSTER
+set.seed(123) 
+# 3. DO YOUR CALL
+ans <- do.call(cbind, mclapply(1:nnodes, function(x) runif(nsims)))
+(ans0 <- var(ans))
+```
+
+---
+
+Once more, we want to make sure this is reproducible
+
+```{r parallel-ex-mclapply-cont, echo=TRUE}
+# Same sequence with same seed
+set.seed(123) 
+ans1 <- var(do.call(cbind, mclapply(1:nnodes, function(x) runif(nsims))))
+ans0 - ans1 # A matrix of zeros
+# 4. STOP THE CLUSTER
+# stopCluster(cl) no need of doing this anymore
+```

@@ -1,0 +1,275 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Applied HPC with R",
+    "section": "",
+    "text": "Preface\nThis is a Quarto book.\nTo learn more about Quarto books visit https://quarto.org/docs/books.\n\n1 + 1\n\n[1] 2"
+  },
+  {
+    "objectID": "intro.html#high-performance-computing-an-overview",
+    "href": "intro.html#high-performance-computing-an-overview",
+    "title": "1  Introduction",
+    "section": "1.1 High-Performance Computing: An overview",
+    "text": "1.1 High-Performance Computing: An overview\nLoosely, from R’s perspective, we can think of HPC in terms of two, maybe three things:\n\nBig data: How to work with data that doesn’t fit your computer\nParallel computing: How to take advantage of multiple core systems\nCompiled code: Write your own low-level code (if R doesn’t has it yet…)\n\n(Checkout CRAN Task View on HPC)"
+  },
+  {
+    "objectID": "intro.html#big-data",
+    "href": "intro.html#big-data",
+    "title": "1  Introduction",
+    "section": "1.2 Big Data",
+    "text": "1.2 Big Data\n\nBuy a bigger computer/RAM memory (not the best solution!)\nUse out-of-memory storage, i.e., don’t load all your data in the RAM. e.g. The bigmemory, data.table, HadoopStreaming R packages\nEfficient algorithms for big data, e.g.: biglm, biglasso\nStore it more efficiently, e.g.: Sparse Matrices (take a look at the dgCMatrix objects from the Matrix R package)"
+  },
+  {
+    "objectID": "intro.html#parallel-computing",
+    "href": "intro.html#parallel-computing",
+    "title": "1  Introduction",
+    "section": "1.3 Parallel computing",
+    "text": "1.3 Parallel computing\n\n\n\n\n\nFlynn’s Classical Taxonomy (Blaise Barney, Introduction to Parallel Computing, Lawrence Livermore National Laboratory)\n\n\n\n\nWe will be focusing on the Single Instruction stream Multiple Data stream"
+  },
+  {
+    "objectID": "intro.html#parallel-computing-1",
+    "href": "intro.html#parallel-computing-1",
+    "title": "1  Introduction",
+    "section": "1.4 Parallel computing",
+    "text": "1.4 Parallel computing\n\n1.4.1 Serial vs Parallel\n\n  source: Blaise Barney, Introduction to Parallel Computing, Lawrence Livermore National Laboratory"
+  },
+  {
+    "objectID": "intro.html#parallel-computing-2",
+    "href": "intro.html#parallel-computing-2",
+    "title": "1  Introduction",
+    "section": "1.5 Parallel computing",
+    "text": "1.5 Parallel computing\n\nknitr::include_graphics(\"fig/nodesNetwork.png\")\n\n\n\n\nsource: Blaise Barney, Introduction to Parallel Computing, Lawrence Livermore National Laboratory"
+  },
+  {
+    "objectID": "intro.html#some-vocabulary-for-hpc",
+    "href": "intro.html#some-vocabulary-for-hpc",
+    "title": "1  Introduction",
+    "section": "1.6 Some vocabulary for HPC",
+    "text": "1.6 Some vocabulary for HPC\nIn raw terms\n\nSupercomputer: A single big machine with thousands of cores/gpus.\nHigh Performance Computing (HPC): Multiple machines within a single network.\nHigh Throughput Computing (HTC): Multiple machines across multiple networks.\n\nYou may not have access to a supercomputer, but certainly HPC/HTC clusters are more accessible these days, e.g. AWS provides a service to create HPC clusters at a low cost (allegedly, since nobody understands how pricing works)"
+  },
+  {
+    "objectID": "intro.html#gpu-vs-cpu",
+    "href": "intro.html#gpu-vs-cpu",
+    "title": "1  Introduction",
+    "section": "1.7 GPU vs CPU",
+    "text": "1.7 GPU vs CPU\n\n\n\n\n\nNVIDIA Blog\n\n\n\n\n\nWhy use OpenMP if GPU is suited to compute-intensive operations? Well, mostly because OpenMP is VERY easy to implement (easier than CUDA, which is the easiest way to use GPU)."
+  },
+  {
+    "objectID": "intro.html#when-is-it-a-good-idea",
+    "href": "intro.html#when-is-it-a-good-idea",
+    "title": "1  Introduction",
+    "section": "1.8 When is it a good idea?",
+    "text": "1.8 When is it a good idea?\n\n\n\n\n\nAsk yourself these questions before jumping into HPC!"
+  },
+  {
+    "objectID": "intro.html#parallel-computing-in-r",
+    "href": "intro.html#parallel-computing-in-r",
+    "title": "1  Introduction",
+    "section": "1.9 Parallel computing in R",
+    "text": "1.9 Parallel computing in R\nWhile there are several alternatives (just take a look at the High-Performance Computing Task View), we’ll focus on the following R-packages for explicit parallelism:\n\nparallel: R package that provides ‘[s]upport for parallel computation, including random-number generation’.\nfuture: ‘[A] lightweight and unified Future API for sequential and parallel processing of R expression via futures.’\nRcpp + OpenMP: Rcpp is an R package for integrating R with C++, and OpenMP is a library for high-level parallelism for C/C++ and FORTRAN.\n\n\nOthers but not used here\n\nforeach for iterating through lists in parallel.\nRmpi for creating MPI clusters.\n\nAnd tools for implicit parallelism (out-of-the-box tools that allow the programmer not to worry about parallelization):\n\ngpuR for Matrix manipulation using GPU\ntensorflow an R interface to TensorFlow.\n\nA ton of other type of resources, notably the tools for working with batch schedulers such as Slurm, and HTCondor."
+  },
+  {
+    "objectID": "parallel-pkg.html#parallel-workflow",
+    "href": "parallel-pkg.html#parallel-workflow",
+    "title": "2  The parallel R package",
+    "section": "2.1 Parallel workflow",
+    "text": "2.1 Parallel workflow\n(Usually) We do the following:\n\nCreate a PSOCK/FORK (or other) cluster using makePSOCKCluster/makeForkCluster (or makeCluster)\nCopy/prepare each R session (if you are using a PSOCK cluster):\n\nCopy objects with clusterExport\nPass expressions with clusterEvalQ\nSet a seed\n\nDo your call: parApply, parLapply, etc.\nStop the cluster with clusterStop"
+  },
+  {
+    "objectID": "parallel-pkg.html#types-of-clusters-psock",
+    "href": "parallel-pkg.html#types-of-clusters-psock",
+    "title": "2  The parallel R package",
+    "section": "2.2 Types of clusters: PSOCK",
+    "text": "2.2 Types of clusters: PSOCK\n\nCan be created with makePSOCKCluster\nCreates brand new R Sessions (so nothing is inherited from the master), e.g.\n# This creates a cluster with 4 R sessions\ncl &lt;- makePSOCKCluster(4)\nChild sessions are connected to the master session via Socket connections\nCan be created outside of the current computer, i.e. across multiple computers!"
+  },
+  {
+    "objectID": "parallel-pkg.html#types-of-clusters-fork",
+    "href": "parallel-pkg.html#types-of-clusters-fork",
+    "title": "2  The parallel R package",
+    "section": "2.3 Types of clusters: Fork",
+    "text": "2.3 Types of clusters: Fork\n\nFork Cluster makeForkCluster:\nUses OS Forking,\nCopies the current R session locally (so everything is inherited from the master up to that point).\nData is only duplicated if it is altered (need to double check when this happens!)\nNot available on Windows.\n\nOther makeCluster: passed to snow (Simple Network of Workstations)"
+  },
+  {
+    "objectID": "parallel-pkg.html#ex-1-parallel-rng-with-makepsockcluster",
+    "href": "parallel-pkg.html#ex-1-parallel-rng-with-makepsockcluster",
+    "title": "2  The parallel R package",
+    "section": "2.4 Ex 1: Parallel RNG with makePSOCKCluster",
+    "text": "2.4 Ex 1: Parallel RNG with makePSOCKCluster\n\n# 1. CREATING A CLUSTER\nlibrary(parallel)\nnnodes &lt;- 4L\ncl     &lt;- makePSOCKcluster(nnodes)    \n# 2. PREPARING THE CLUSTER\nclusterSetRNGStream(cl, 123) # Equivalent to `set.seed(123)`\n# 3. DO YOUR CALL\nans &lt;- parSapply(cl, 1:nnodes, function(x) runif(1e3))\n(ans0 &lt;- var(ans))\n\n              [,1]          [,2]          [,3]          [,4]\n[1,]  0.0861888293 -0.0001633431  5.939143e-04 -3.672845e-04\n[2,] -0.0001633431  0.0853841838  2.390790e-03 -1.462154e-04\n[3,]  0.0005939143  0.0023907904  8.114219e-02 -4.714618e-06\n[4,] -0.0003672845 -0.0001462154 -4.714618e-06  8.467722e-02\n\n\n\nMaking sure is reproducible\n\n# I want to get the same!\nclusterSetRNGStream(cl, 123)\nans1 &lt;- var(parSapply(cl, 1:nnodes, function(x) runif(1e3)))\n# 4. STOP THE CLUSTER\nstopCluster(cl)\nall.equal(ans0, ans1) # All equal!\n\n[1] TRUE"
+  },
+  {
+    "objectID": "parallel-pkg.html#ex-2-parallel-rng-with-makeforkcluster",
+    "href": "parallel-pkg.html#ex-2-parallel-rng-with-makeforkcluster",
+    "title": "2  The parallel R package",
+    "section": "2.5 Ex 2: Parallel RNG with makeForkCluster",
+    "text": "2.5 Ex 2: Parallel RNG with makeForkCluster\nIn the case of makeForkCluster\n\n# 1. CREATING A CLUSTER\nlibrary(parallel)\n# The fork cluster will copy the -nsims- object\nnsims  &lt;- 1e3\nnnodes &lt;- 4L\ncl     &lt;- makeForkCluster(nnodes)    \n# 2. PREPARING THE CLUSTER\nclusterSetRNGStream(cl, 123)\n# 3. DO YOUR CALL\nans &lt;- do.call(cbind, parLapply(cl, 1:nnodes, function(x) {\n  runif(nsims) # Look! we use the nsims object!\n               # This would have fail in makePSOCKCluster\n               # if we didn't copy -nsims- first.\n  }))\n(ans0 &lt;- var(ans))\n\n              [,1]          [,2]          [,3]          [,4]\n[1,]  0.0861888293 -0.0001633431  5.939143e-04 -3.672845e-04\n[2,] -0.0001633431  0.0853841838  2.390790e-03 -1.462154e-04\n[3,]  0.0005939143  0.0023907904  8.114219e-02 -4.714618e-06\n[4,] -0.0003672845 -0.0001462154 -4.714618e-06  8.467722e-02\n\n\n\nAgain, we want to make sure this is reproducible\n\n# Same sequence with same seed\nclusterSetRNGStream(cl, 123)\nans1 &lt;- var(do.call(cbind, parLapply(cl, 1:nnodes, function(x) runif(nsims))))\nans0 - ans1 # A matrix of zeros\n\n     [,1] [,2] [,3] [,4]\n[1,]    0    0    0    0\n[2,]    0    0    0    0\n[3,]    0    0    0    0\n[4,]    0    0    0    0\n\n# 4. STOP THE CLUSTER\nstopCluster(cl)\n\nWell, if you are a Mac-OS/Linux user, there’s a simpler way of doing this…"
+  },
+  {
+    "objectID": "parallel-pkg.html#ex-3-parallel-rng-with-mclapply-forking-on-the-fly",
+    "href": "parallel-pkg.html#ex-3-parallel-rng-with-mclapply-forking-on-the-fly",
+    "title": "2  The parallel R package",
+    "section": "2.6 Ex 3: Parallel RNG with mclapply (Forking on the fly)",
+    "text": "2.6 Ex 3: Parallel RNG with mclapply (Forking on the fly)\nIn the case of mclapply, the forking (cluster creation) is done on the fly!\n\n# 1. CREATING A CLUSTER\nlibrary(parallel)\n# The fork cluster will copy the -nsims- object\nnsims  &lt;- 1e3\nnnodes &lt;- 4L\n# cl     &lt;- makeForkCluster(nnodes) # mclapply does it on the fly\n# 2. PREPARING THE CLUSTER\nset.seed(123) \n# 3. DO YOUR CALL\nans &lt;- do.call(cbind, mclapply(1:nnodes, function(x) runif(nsims)))\n(ans0 &lt;- var(ans))\n\n             [,1]        [,2]         [,3]         [,4]\n[1,]  0.085384184 0.002390790  0.006576204 -0.003998278\n[2,]  0.002390790 0.081142190  0.001846963  0.001476244\n[3,]  0.006576204 0.001846963  0.085175347 -0.002807348\n[4,] -0.003998278 0.001476244 -0.002807348  0.082425477\n\n\n\nOnce more, we want to make sure this is reproducible\n\n# Same sequence with same seed\nset.seed(123) \nans1 &lt;- var(do.call(cbind, mclapply(1:nnodes, function(x) runif(nsims))))\nans0 - ans1 # A matrix of zeros\n\n     [,1] [,2] [,3] [,4]\n[1,]    0    0    0    0\n[2,]    0    0    0    0\n[3,]    0    0    0    0\n[4,]    0    0    0    0\n\n# 4. STOP THE CLUSTER\n# stopCluster(cl) no need of doing this anymore"
+  },
+  {
+    "objectID": "fundamentals.html",
+    "href": "fundamentals.html",
+    "title": "3  Fundamentals",
+    "section": "",
+    "text": "4 Hello world\nFor a quick-n-dirty intro to Slurm, we will start with a simple “Hello world” using Slurm + R. For this, we need to go through the following steps:"
+  },
+  {
+    "objectID": "fundamentals.html#step-1-copy-the-slurm-script-to-hpc",
+    "href": "fundamentals.html#step-1-copy-the-slurm-script-to-hpc",
+    "title": "3  Fundamentals",
+    "section": "4.1 Step 1: Copy the Slurm script to HPC",
+    "text": "4.1 Step 1: Copy the Slurm script to HPC\nWe need to copy the following Slurm script to HPC (00-hello-world.slurm):\n#!/bin/sh\n#SBATCH --output=00-hello-world.out\nmodule load usc r\nRscript -e \"paste('Hello from node', Sys.getenv('SLURMD_NODENAME'))\"\nWhich has four lines:\n\n#!/bin/sh the shebang (shewhat?)\n#SBATCH --output=00-hello-world.out an option to be passed to sbatch, in this case, the name of the output file to which stdout and stderr will go.\nmodule load usc r uses Lmod to load the usc (required) and R modules.\nRscript ... a call to R to evaluate the expression paste(...). This will get the environment variable SLURMD_NODENAME (which sbatch creates) and print it on a message.\n\nTo do so, we will use Secure copy protocol (scp), which allows us to copy data to and fro computers. In this case, we should do something like the following\nscp 00-hello-world.slurm vegayon@hpc-transfer1.usc.edu:/home1/vegayon/\nIn words, “Using the username vegayon, connect to hpc-transfer1.usc.edu, take the file 00-hello-world.slurm and copy it to /home1/vegayon/. With the file now available in the cluster, we can submit this job using Slurm."
+  },
+  {
+    "objectID": "fundamentals.html#step-2-logging-to-hpc",
+    "href": "fundamentals.html#step-2-logging-to-hpc",
+    "title": "3  Fundamentals",
+    "section": "4.2 Step 2: Logging to HPC",
+    "text": "4.2 Step 2: Logging to HPC\n\nLog-in using ssh. In the case of Windows users, download the Putty client. You have two options, the discovery or endeavour clusters.\nTo login, you will need to use your USC Net ID. If your USC email is flasname@usc.edu, your USC Net ID is flastname. Then:\nssh flastname@discovery.usc.edu\nif you want to use the discovery cluster (available to all USC members), or\nssh flastname@endeavour.usc.edu\nif you want to use the endeavour cluster (using private condos)."
+  },
+  {
+    "objectID": "fundamentals.html#step-3-submitting-the-job",
+    "href": "fundamentals.html#step-3-submitting-the-job",
+    "title": "3  Fundamentals",
+    "section": "4.3 Step 3: Submitting the job",
+    "text": "4.3 Step 3: Submitting the job\nOverall, there are two ways to use the compute nodes: interactively (salloc) and in batch mode (sbatch). In this case, since we have a Slurm script, we will use the latter.\nTo submit the job, we can simple type the following:\nsbatch 00-hello-world.slurm\nAnd that’s it!\nIn the case of interactive sessions, You can start one using the salloc command. For example, if you wanted to run R with 8 cores, using 16 Gigs of memory in total, you would need to do the following:\nsalloc -n1 --cpus-per-task=8 --mem-per-cpu=2G --time=01:00:00\nOnce your request is submitted, you will get access to a compute node. Within it, you can load the required modules and start R:\nmodule load usc r\nR\nInteractive sessions are not recommended for long jobs. Instead, use this resource if you need to inspect some large dataset, debug your code, etc."
+  },
+  {
+    "objectID": "simpi.html#submitting-jobs-to-slurm",
+    "href": "simpi.html#submitting-jobs-to-slurm",
+    "title": "4  Simulating pi (once more)",
+    "section": "4.1 Submitting jobs to Slurm",
+    "text": "4.1 Submitting jobs to Slurm\nThe main way that we will be working is submitting jobs using the sbatch function. This function takes as a main argument a bash file with the program to execute. In the case of R, a regular bash file looks something like this:\n#!/bin/sh\n#SBATCH --job-name=sapply\n#SBATCH --time=00:10:00\n\nmodule load usc r\nRscript --vanilla 01-sapply.R\nThis file has three components:\n\nThe Slurm flags #SBATCH.\nLoading R module load usc and module load r.\nExecuting the R script.\n\nTo submit a job the to queue, we need to enter the following:\nsbatch 01-sapply.slurm\nThe following examples have two files, a bash script and a R script to be called by Slurm.\n\n4.1.1 Case 1: Single job, single core job\nThe most basic way is submitting a job using the sbatch command. Im this case you need to have 2 files: (1) An R script, and (2) a bash script. e.g.\nThe contents of the R script (01-sapply.R) are:\n# Model parameters\nnsims &lt;- 1e3\nn     &lt;- 1e4\n\n# Function to simulate pi\nsimpi &lt;- function(i) {\n  \n  p &lt;- matrix(runif(n*2, -1, 1), ncol = 2)\n  mean(sqrt(rowSums(p^2)) &lt;= 1) * 4\n  \n}\n\n# Approximation\nset.seed(12322)\nans &lt;- sapply(1:nsims, simpi)\n\nmessage(\"Pi: \", mean(ans))\n\nsaveRDS(ans, \"01-sapply.rds\")\nThe contents of the bashfile (01-sapply.slurm) are:\n#!/bin/sh\n#SBATCH --job-name=sapply\n#SBATCH --time=00:10:00\n\nmodule load usc r\nRscript --vanilla 01-sapply.R\n\n\n4.1.2 Case 2: Single job, multicore job\nNow, imagine that we would like to use more than one processor for this job, using something like the parallel::mclapply function from the parallel package. Then, besides of adapting the code, we need to tell Slurm that we are using more than one core per-task, as the following example:\nR script (02-mclapply.R):\n# Model parameters\nnsims  &lt;- 1e3\nn      &lt;- 1e4\nncores &lt;- 4L\n\n# Function to simulate pi\nsimpi &lt;- function(i) {\n  \n  p &lt;- matrix(runif(n*2, -1, 1), ncol = 2)\n  mean(sqrt(rowSums(p^2)) &lt;= 1) * 4\n  \n}\n\n# Approximation\nset.seed(12322)\nans &lt;- parallel::mclapply(1:nsims, simpi, mc.cores = ncores)\nans &lt;- unlist(ans)\n\nmessage(\"Pi: \", mean(ans))\n\nsaveRDS(ans, \"02-mclpply.rds\")\nBashfile (02-mclapply.slurm):\n#!/bin/sh\n#SBATCH --job-name=mclapply\n#SBATCH --time=00:10:00\n#SBATCH --cpus-per-task=4\n\nmodule load usc r\nRscript --vanilla 02-mclapply.R"
+  },
+  {
+    "objectID": "simpi.html#jobs-with-the-slurmr-package",
+    "href": "simpi.html#jobs-with-the-slurmr-package",
+    "title": "4  Simulating pi (once more)",
+    "section": "4.2 Jobs with the slurmR package",
+    "text": "4.2 Jobs with the slurmR package\n\n4.2.1 Case 3: Single job, multinode job\nIn this case, there is no simple way to submit a multinodal job to Slurm… unless you use the slurmR package (see installation instructions here)\nOnce you have the slurmR package in your system, you can proceed as follow\nR script (03-parsapply-slurmr.R):\n# Model parameters\nnsims  &lt;- 1e3\nn      &lt;- 1e4\nncores &lt;- 4L\n\n# Function to simulate pi\nsimpi &lt;- function(i) {\n  \n  p &lt;- matrix(runif(n*2, -1, 1), ncol = 2)\n  mean(sqrt(rowSums(p^2)) &lt;= 1) * 4\n  \n}\n\n# Setting up slurmR\nlibrary(slurmR) # This also loads the parallel package\n\n# Making the cluster, and exporting the variables\ncl &lt;- makeSlurmCluster(ncores)\n\n# Approximation\nclusterExport(cl, c(\"n\", \"simpi\"))\nans &lt;- parSapply(cl, 1:nsims, simpi)\n\n# Closing connection\nstopCluster(cl)\n\nmessage(\"Pi: \", mean(ans))\n\nsaveRDS(ans, \"03-parsapply-slurmr.rds\")\nBashfile (03-parsapply-slurmr.slurm):\n#!/bin/sh\n#SBATCH --job-name=parsapply\n#SBATCH --time=00:10:00\n\nmodule load usc r\nRscript --vanilla 03-parsapply-slurmr.R\n\n\n4.2.2 Case 4: Multi job, single/multi-core\nAnother way to submit jobs is using job arrays. A job array is essentially a job that is repreated njobs times with the same configuration. The main difference between replicates is what you do with the SLURM_ARRAY_TASK_ID environment variable. This variable is defined within each replicate and can be used to make the “subjob” depending on that.\nHere is a quick example using R\nID &lt;- Sys.getenv(\"SLURM_ARRAY_TASK_ID\")\nif (ID == 1) {\n  ...[do this]...\n} else if (ID == 2) {\n  ...[do that]...\n}\nThe slurmR R package makes submitting job arrays easy. Again, with the simulation of pi, we can do it in the following way:\nR script (04-slurm_sapply.R):\n# Model parameters\nnsims  &lt;- 1e3\nn      &lt;- 1e4\n# ncores &lt;- 4L\nnjobs  &lt;- 4L\n\n# Function to simulate pi\nsimpi &lt;- function(i, n.) {\n  \n  p &lt;- matrix(runif(n.*2, -1, 1), ncol = 2)\n  mean(sqrt(rowSums(p^2)) &lt;= 1) * 4\n  \n}\n\n# Setting up slurmR\nlibrary(slurmR) # This also loads the parallel package\n\n# Approximation\nans &lt;- Slurm_sapply(\n  1:nsims, simpi,\n  n.       = n,\n  njobs    = njobs,\n  plan     = \"collect\",\n  tmp_path = \"/scratch/vegayon\" # This is where all temp files will be exported\n  )\n\nmessage(\"Pi: \", mean(ans))\n\nsaveRDS(ans, \"04-slurm_sapply.rds\")\nBashfile (04-slurm_sapply.slurm):\n#!/bin/sh\n#SBATCH --job-name=slurm_sapply\n#SBATCH --time=00:10:00\n\nmodule load usc r\nRscript --vanilla 04-slurm_sapply.R\nOne of the main benefits of using this approach instead of the the makeSlurmCluster function (and thus, working with a SOCK cluster) are:\n\nThe number of jobs is not limited here (only by the admin, but not by R).\nIf a job fails, then we can re-run it using sbatch once again (see example here).\nYou can check the individual logs of each process using the function Slurm_lob().\nYou can submit the job and quick the R session without waiting for it to finalize. You can always read back the job using the function read_slurm_job([path-to-the-temp])\n\n\n\n4.2.3 Case 5: Skipping the .slurm file\nThe slurmR package has a function named sourceSlurm that can be used to avoid creating the .slurm file. The user can add the SBATCH options to the top of the R script (including the #!/bin/sh line) and submit the job from within R as follows:\nR script (05-sapply.R):\n#!/bin/sh\n#SBATCH --job-name=sapply-sourceSlurm\n#SBATCH --time=00:10:00\n\n# Model parameters\nnsims &lt;- 1e3\nn     &lt;- 1e4\n\n# Function to simulate pi\nsimpi &lt;- function(i) {\n  \n  p &lt;- matrix(runif(n*2, -1, 1), ncol = 2)\n  mean(sqrt(rowSums(p^2)) &lt;= 1) * 4\n  \n}\n\n# Approximation\nset.seed(12322)\nans &lt;- sapply(1:nsims, simpi)\n\nmessage(\"Pi: \", mean(ans))\n\nsaveRDS(ans, \"05-sapply.rds\")\nFrom the R console (is OK if you are in the Head node)\nslurmR::sourceSlurm(\"05-sapply.R\")\nAnd voilá! A temporary bash file will be generated and used submit the R script to the queue."
+  },
+  {
+    "objectID": "rcpp-part1.html",
+    "href": "rcpp-part1.html",
+    "title": "5  Rcpp",
+    "section": "",
+    "text": "6 RcppArmadillo and OpenMP"
+  },
+  {
+    "objectID": "rcpp-part1.html#rcpparmadillo-and-openmp-workflow",
+    "href": "rcpp-part1.html#rcpparmadillo-and-openmp-workflow",
+    "title": "5  Rcpp",
+    "section": "6.1 RcppArmadillo and OpenMP workflow",
+    "text": "6.1 RcppArmadillo and OpenMP workflow\n\nTell Rcpp that you need to include that in the compiler:\n#include &lt;omp.h&gt;\n// [[Rcpp::plugins(openmp)]]\nWithin your function, set the number of cores, e.g\n// Setting the cores\nomp_set_num_threads(cores);"
+  },
+  {
+    "objectID": "rcpp-part1.html#rcpparmadillo-and-openmp-workflow-1",
+    "href": "rcpp-part1.html#rcpparmadillo-and-openmp-workflow-1",
+    "title": "5  Rcpp",
+    "section": "6.2 RcppArmadillo and OpenMP workflow",
+    "text": "6.2 RcppArmadillo and OpenMP workflow\n\nTell the compiler that you’ll be running a block in parallel with OpenMP\n#pragma omp [directives] [options]\n{\n  ...your neat parallel code...\n}\nYou’ll need to specify how OMP should handle the data:\n\nshared: Default, all threads access the same copy.\nprivate: Each thread has its own copy, uninitialized.\nfirstprivate Each thread has its own copy, initialized.\nlastprivate Each thread has its own copy. The last value used is returned.\n\nSetting default(none) is a good practice.\nCompile!"
+  },
+  {
+    "objectID": "rcpp-part1.html#ex-5-rcpparmadillo-openmp",
+    "href": "rcpp-part1.html#ex-5-rcpparmadillo-openmp",
+    "title": "5  Rcpp",
+    "section": "6.3 Ex 5: RcppArmadillo + OpenMP",
+    "text": "6.3 Ex 5: RcppArmadillo + OpenMP\nOur own version of the dist function… but in parallel!\n\n#include &lt;omp.h&gt;\n#include &lt;RcppArmadillo.h&gt;\n// [[Rcpp::depends(RcppArmadillo)]]\n// [[Rcpp::plugins(openmp)]]\nusing namespace Rcpp;\n// [[Rcpp::export]]\narma::mat dist_par(const arma::mat & X, int cores = 1) {\n  \n  // Some constants\n  int N = (int) X.n_rows;\n  int K = (int) X.n_cols;\n  \n  // Output\n  arma::mat D(N,N);\n  D.zeros(); // Filling with zeros\n  \n  // Setting the cores\n  omp_set_num_threads(cores);\n  \n#pragma omp parallel for shared(D, N, K, X) default(none)\n  for (int i=0; i&lt;N; ++i)\n    for (int j=0; j&lt;i; ++j) {\n      for (int k=0; k&lt;K; k++) \n        D.at(i,j) += pow(X.at(i,k) - X.at(j,k), 2.0);\n      \n      // Computing square root\n      D.at(i,j) = sqrt(D.at(i,j));\n      D.at(j,i) = D.at(i,j);\n    }\n      \n  \n  // My nice distance matrix\n  return D;\n}\n\n\n\n# Simulating data\nset.seed(1231)\nK &lt;- 5000\nn &lt;- 500\nx &lt;- matrix(rnorm(n*K), ncol=K)\n# Are we getting the same?\ntable(as.matrix(dist(x)) - dist_par(x, 4)) # Only zeros\n\n\n     0 \n250000 \n\n\n\n\n# Benchmarking!\nmicrobenchmark::microbenchmark(\n  dist(x),                # stats::dist\n  dist_par(x, cores = 1), # 1 core\n  dist_par(x, cores = 2), # 2 cores\n  dist_par(x, cores = 4), # 4 cores\n  times = 1, \n  unit = \"ms\"\n)\n\nUnit: milliseconds\n                   expr      min       lq     mean   median       uq      max\n                dist(x) 2188.525 2188.525 2188.525 2188.525 2188.525 2188.525\n dist_par(x, cores = 1) 2424.293 2424.293 2424.293 2424.293 2424.293 2424.293\n dist_par(x, cores = 2) 1863.913 1863.913 1863.913 1863.913 1863.913 1863.913\n dist_par(x, cores = 4) 1209.131 1209.131 1209.131 1209.131 1209.131 1209.131\n neval\n     1\n     1\n     1\n     1"
+  },
+  {
+    "objectID": "rcpp-part1.html#ex-6-the-future",
+    "href": "rcpp-part1.html#ex-6-the-future",
+    "title": "5  Rcpp",
+    "section": "6.4 Ex 6: The future",
+    "text": "6.4 Ex 6: The future\n\nfuture is an R package that was designed “to provide a very simple and uniform way of evaluating R expressions asynchronously using various resources available to the user.”\nfuture class objects are either resolved or unresolved.\nIf queried, Resolved values are return immediately, and Unresolved values will block the process (i.e. wait) until it is resolved.\nFutures can be parallel/serial, in a single (local or remote) computer, or a cluster of them.\n\nLet’s see a brief example"
+  },
+  {
+    "objectID": "rcpp-part1.html#ex-6-the-future-contd",
+    "href": "rcpp-part1.html#ex-6-the-future-contd",
+    "title": "5  Rcpp",
+    "section": "6.5 Ex 6: The future (cont’d)",
+    "text": "6.5 Ex 6: The future (cont’d)\n\nlibrary(future)\nplan(multicore)\n# We are creating a global variable\na &lt;- 2\n# Creating the futures has only the overhead (setup) time\nsystem.time({\n  x1 %&lt;-% {Sys.sleep(3);a^2}\n  x2 %&lt;-% {Sys.sleep(3);a^3}\n})\n##    user  system elapsed \n##   0.018   0.012   0.030\n# Let's just wait 5 seconds to make sure all the cores have returned\nSys.sleep(3)\nsystem.time({\n  print(x1)\n  print(x2)\n})\n## [1] 4\n## [1] 8\n##    user  system elapsed \n##   0.003   0.000   0.003"
+  },
+  {
+    "objectID": "rcpp-part1.html#see-also",
+    "href": "rcpp-part1.html#see-also",
+    "title": "5  Rcpp",
+    "section": "6.6 See also",
+    "text": "6.6 See also\n\nPackage parallel\nUsing the iterators package\nUsing the foreach package\n32 OpenMP traps for C++ developers\nThe OpenMP API specification for parallel programming\n‘openmp’ tag in Rcpp gallery\nOpenMP tutorials and articles\n\nFor more, checkout the CRAN Task View on HPC"
+  },
+  {
+    "objectID": "rcpp-part1.html#session-info",
+    "href": "rcpp-part1.html#session-info",
+    "title": "5  Rcpp",
+    "section": "6.7 Session info",
+    "text": "6.7 Session info\n\n\nR version 4.2.3 (2023-03-15)\nPlatform: x86_64-pc-linux-gnu (64-bit)\nRunning under: Ubuntu 22.04.2 LTS\n\nMatrix products: default\nBLAS:   /usr/lib/x86_64-linux-gnu/blas/libblas.so.3.10.0\nLAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.10.0\n\nlocale:\n [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              \n [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    \n [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   \n [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 \n [9] LC_ADDRESS=C               LC_TELEPHONE=C            \n[11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       \n\nattached base packages:\n[1] stats     graphics  grDevices utils     datasets  methods   base     \n\nloaded via a namespace (and not attached):\n [1] Rcpp_1.0.10       digest_0.6.29     jsonlite_1.7.3    magrittr_2.0.2   \n [5] evaluate_0.15     rlang_1.1.0       stringi_1.7.6     cli_3.6.1        \n [9] rmarkdown_2.20    tools_4.2.3       stringr_1.4.0     htmlwidgets_1.5.4\n[13] xfun_0.37         yaml_2.3.5        fastmap_1.1.0     compiler_4.2.3   \n[17] htmltools_0.5.4   knitr_1.37"
+  },
+  {
+    "objectID": "rcpp-part1.html#bonus-track-1-simulating-pi",
+    "href": "rcpp-part1.html#bonus-track-1-simulating-pi",
+    "title": "5  Rcpp",
+    "section": "6.8 Bonus track 1: Simulating \\(\\pi\\)",
+    "text": "6.8 Bonus track 1: Simulating \\(\\pi\\)\n\nWe know that \\(\\pi = \\frac{A}{r^2}\\). We approximate it by randomly adding points \\(x\\) to a square of size 2 centered at the origin.\nSo, we approximate \\(\\pi\\) as \\(\\Pr\\{\\|x\\| \\leq 1\\}\\times 2^2\\)\n\n\n\n\n\n\n\nThe R code to do this\n\npisim &lt;- function(i, nsim) {  # Notice we don't use the -i-\n  # Random points\n  ans  &lt;- matrix(runif(nsim*2), ncol=2)\n  \n  # Distance to the origin\n  ans  &lt;- sqrt(rowSums(ans^2))\n  \n  # Estimated pi\n  (sum(ans &lt;= 1)*4)/nsim\n}"
+  },
+  {
+    "objectID": "rcpp-part1.html#bonus-track-1-simulating-pi-contd",
+    "href": "rcpp-part1.html#bonus-track-1-simulating-pi-contd",
+    "title": "5  Rcpp",
+    "section": "6.9 Bonus track 1: Simulating \\(\\pi\\) (cont’d)",
+    "text": "6.9 Bonus track 1: Simulating \\(\\pi\\) (cont’d)\n\nlibrary(parallel)\n# Setup\ncl &lt;- makePSOCKcluster(4L)\nclusterSetRNGStream(cl, 123)\n# Number of simulations we want each time to run\nnsim &lt;- 1e5\n# We need to make -nsim- and -pisim- available to the\n# cluster\nclusterExport(cl, c(\"nsim\", \"pisim\"))\n# Benchmarking: parSapply and sapply will run this simulation\n# a hundred times each, so at the end we have 1e5*100 points\n# to approximate pi\nmicrobenchmark::microbenchmark(\n  parallel = parSapply(cl, 1:100, pisim, nsim=nsim),\n  serial   = sapply(1:100, pisim, nsim=nsim),\n  times    = 1\n)\n\nUnit: milliseconds\n     expr      min       lq     mean   median       uq      max neval\n parallel 295.0158 295.0158 295.0158 295.0158 295.0158 295.0158     1\n   serial 405.3509 405.3509 405.3509 405.3509 405.3509 405.3509     1\n\n\n\n\nans_par &lt;- parSapply(cl, 1:100, pisim, nsim=nsim)\nans_ser &lt;- sapply(1:100, pisim, nsim=nsim)\nstopCluster(cl)\n\n\n\n     par      ser        R \n3.141762 3.141266 3.141593"
+  },
+  {
+    "objectID": "misc.html#general-resources",
+    "href": "misc.html#general-resources",
+    "title": "6  Misc",
+    "section": "6.1 General resources",
+    "text": "6.1 General resources\nThe Center for Advanced Research Computing (formerly HPCC) has tons of resources online. Here are a couple of useful links:\n\nCenter for Advanced Research Computing Website https://carc.usc.edu\nUser forum (very useful!) https://hpc-discourse.usc.edu/categories\nMonitor your account https://hpcaccount.usc.edu/\nSlurm Jobs Templates https://carc.usc.edu/user-information/user-guides/high-performance-computing/slurm-templates\nUsing R https://carc.usc.edu/user-information/user-guides/software-and-programming/r"
+  },
+  {
+    "objectID": "misc.html#data-pointers",
+    "href": "misc.html#data-pointers",
+    "title": "6  Misc",
+    "section": "6.2 Data Pointers",
+    "text": "6.2 Data Pointers\nIMHO, these are the most important things to know about data management at USC’s HPC:\n\nDo your data transfer using the transfer nodes (it is faster).\nNever use your home directory as a storage space (use your project’s allotted space instead).\nUse the scratch filesystem for temp data only, i.e., never save important files in scratch.\nFinally, besides of Secure copy protocol (scp), if you are like me, try setting up a GUI client for moving your data (see this)."
+  },
+  {
+    "objectID": "misc.html#the-slurm-options-they-forgot-to-tell-you-about",
+    "href": "misc.html#the-slurm-options-they-forgot-to-tell-you-about",
+    "title": "6  Misc",
+    "section": "6.3 The Slurm options they forgot to tell you about…",
+    "text": "6.3 The Slurm options they forgot to tell you about…\nFirst of all, you have to be aware that the only thing Slurm does is allocate resources. If your application uses parallel computing or not, that’s another story.\nHere some options that you need to be aware of:\n\nntasks (default 1) This tells Slurm how many processes you will have running. Notice that processes need not to be in the same node (so Slurm may reserve space in multiple nodes)\ncpus-per-task (defatult 1) This is how many CPUs each task will be using. This is what you need to use if you are using OpenMP (or a package that uses that), or anything you need to keep within the same node.\nnodes the number of nodes you want to use in your job. This is useful mostly if you care about the maximum (I would say) number of nodes you want your job to work. So, for example, if you want to use 8 cores for a single task and force it to be in the same node, you would add the option --nodes=1/1.\nmem-per-cpu (default 1GB) This is the MINIMUM amount of memory you want Slurm to allocate for the task. Not a hard barrier, so your process can go above that.\ntime (default 30min) This is a hard limit as well, so if you job takes more than the specified time, Slurm will kill it.\npartition (default ““) and account (default”“) these two options go along together, this tells Slurm what resources to use. Besides of the private resources we have the following:\n\nquick partition: Any job that is small enough (in terms of time and memory) will go this way. This is usually the default if you don’t specify any memory or time options.\nmain partition: Jobs that require more resources will go in this line.\nscavenge partition: If you need a massive number resources, and have a job that shouldn’t, in principle, take too long to finalize (less than a couple of hours), and you are OK with someone killing it, then this queue is for you. The Scavenge partition uses all the idle resources of the private partitions, so if any of the owners requests the resources, Slurm will cancel your job, i.e. you have no priority (see more).\nlargemem partition: If you need lots of memory, we have 4 1TB nodes for that.\n\nMore information about the partitions here"
+  },
+  {
+    "objectID": "misc.html#good-practices-recomendations",
+    "href": "misc.html#good-practices-recomendations",
+    "title": "6  Misc",
+    "section": "6.4 Good practices (recomendations)",
+    "text": "6.4 Good practices (recomendations)\nThis is what you should use as a minimum:\n#SBATCH --output=simulation.out\n#SBATCH --job-name=simulation\n#SBATCH --time=04:00:00\n#SBATCH --mail-user=[you]@usc.edu\n#SBATCH --mail-type=END,FAIL\n\noutput is the name of the logfile to which Slurm will write.\njob-name is that, the name of the job. You can use this to either kill or at least be able to identify what is what you are running when you use myqueue\ntime Try always to set a time estimate (plus a little more) for your job.\nmail-user, mail-type so Slurm notifies you when things happen\n\nAlso, in your R code\n\nAny I/O should be done to either Scratch (/scratch/[your usc net id]) or Tmp Sys.getenv(\"TMPDIR\")."
+  },
+  {
+    "objectID": "misc.html#running-r-interactively",
+    "href": "misc.html#running-r-interactively",
+    "title": "6  Misc",
+    "section": "6.5 Running R interactively",
+    "text": "6.5 Running R interactively\n\nThe HPC has several pre-installed pieces of software. R is one of those.\nTo access the pre-installed software, we use the Lmod module system (more information here)\nIt has multiple versions of R installed. Use your favorite one by running\nmodule load usc r/[version number]\nWhere [version number] can be 3.5.6 and up to 4.0.3 (the latest update). The usc module automatically loads gcc/8.3.0, openblas/0.3.8, openmpi/4.0.2, and pmix/3.1.3.\nIt is never a good idea to use your home directory to install R packages, that’s why you should try using a symbolic link instead, like this\ncd ~\nmkdir -p /path/to/a/project/with/lots/of/space/R\nln -s /path/to/a/project/with/lots/of/space/R R\nThis way, whenever you install your R packages, R will default to that location\nYou can run interactive sessions on HPC, but this recommended to be done using the salloc function in Slurm, in other words, NEVER EVER USE R (OR ANY SOFTWARE) TO DO DATA ANALYSIS IN THE HEAD NODES! The options passed to salloc are the same options that can be passed to sbatch (see the next section.) For example, if need to do some analyses in the thomas partition (which is private and I have access to), I would type something like\nsalloc --account=lc_pdt --partition=thomas --time=02:00:00 --mem-per-cpu=2G\nThis would put me in a single node allocating 2 gigs of memory for a maximum of 2 hours."
+  },
+  {
+    "objectID": "misc.html#nonos-when-using-r",
+    "href": "misc.html#nonos-when-using-r",
+    "title": "6  Misc",
+    "section": "6.6 NoNos when using R",
+    "text": "6.6 NoNos when using R\n\nDo computation on the head node (compile stuff is OK)\nRequest a number of nodes (unless you know what you are doing)\nUse your home directory for I/O\nSave important information in Staging/Scratch"
+  },
+  {
+    "objectID": "summary.html",
+    "href": "summary.html",
+    "title": "7  Summary",
+    "section": "",
+    "text": "In summary, this book has no content whatsoever.\n\n1 + 1\n\n[1] 2"
+  }
+]

@@ -1,0 +1,262 @@
+# Rcpp
+
+# RcppArmadillo and OpenMP
+
+*   Friendlier than [**RcppParallel**](http://rcppcore.github.io/RcppParallel/)...
+    at least for 'I-use-Rcpp-but-don't-actually-know-much-about-C++' users (like myself!).
+
+*   Must run only 'Thread-safe' calls, so calling R within parallel blocks can cause
+    problems (almost all the time).
+    
+*   Use `arma` objects, e.g. `arma::mat`, `arma::vec`, etc. Or, if you are used to them
+    `std::vector` objects as these are thread safe.
+
+---
+
+*   Pseudo Random Number Generation is not very straight forward... But C++11 has
+    a [nice set of functions](http://en.cppreference.com/w/cpp/numeric/random) that can be used together with OpenMP
+
+*   Need to think about how processors work, cache memory, etc. Otherwise you could
+    get into trouble... if your code is slower when run in parallel, then you probably
+    are facing [false sharing](https://software.intel.com/en-us/articles/avoiding-and-identifying-false-sharing-among-threads)
+    
+*   If R crashes... try running R with a debugger (see
+    [Section 4.3 in Writing R extensions](https://cran.r-project.org/doc/manuals/r-release/R-exts.html#Checking-memory-access)):
+    
+    ```shell
+    ~$ R --debugger=valgrind
+    ```
+
+## RcppArmadillo and OpenMP workflow
+
+1.  Tell Rcpp that you need to include that in the compiler:
+    
+    ```cpp
+    #include <omp.h>
+    // [[Rcpp::plugins(openmp)]]
+    ```
+
+2.  Within your function, set the number of cores, e.g
+
+    ```cpp
+    // Setting the cores
+    omp_set_num_threads(cores);
+    ```
+
+## RcppArmadillo and OpenMP workflow
+
+3.  Tell the compiler that you'll be running a block in parallel with OpenMP
+    
+    ```cpp
+    #pragma omp [directives] [options]
+    {
+      ...your neat parallel code...
+    }
+    ```
+    
+    You'll need to specify how OMP should handle the data:
+    
+    *   `shared`: Default, all threads access the same copy.
+    *   `private`: Each thread has its own copy, uninitialized.
+    *   `firstprivate` Each thread has its own copy, initialized.
+    *   `lastprivate` Each thread has its own copy. The last value used is returned.
+    
+    
+    Setting `default(none)` is a good practice.
+    
+3.  Compile!
+
+
+## Ex 5: RcppArmadillo + OpenMP
+
+Our own version of the `dist` function... but in parallel!
+
+```{Rcpp dist-code, cache=TRUE, echo=TRUE}
+#include <omp.h>
+#include <RcppArmadillo.h>
+// [[Rcpp::depends(RcppArmadillo)]]
+// [[Rcpp::plugins(openmp)]]
+using namespace Rcpp;
+// [[Rcpp::export]]
+arma::mat dist_par(const arma::mat & X, int cores = 1) {
+  
+  // Some constants
+  int N = (int) X.n_rows;
+  int K = (int) X.n_cols;
+  
+  // Output
+  arma::mat D(N,N);
+  D.zeros(); // Filling with zeros
+  
+  // Setting the cores
+  omp_set_num_threads(cores);
+  
+#pragma omp parallel for shared(D, N, K, X) default(none)
+  for (int i=0; i<N; ++i)
+    for (int j=0; j<i; ++j) {
+      for (int k=0; k<K; k++) 
+        D.at(i,j) += pow(X.at(i,k) - X.at(j,k), 2.0);
+      
+      // Computing square root
+      D.at(i,j) = sqrt(D.at(i,j));
+      D.at(j,i) = D.at(i,j);
+    }
+      
+  
+  // My nice distance matrix
+  return D;
+}
+```
+
+---
+
+```{r}
+#| label: dist-dat
+#| echo: true
+#| cache: true
+# Simulating data
+set.seed(1231)
+K <- 5000
+n <- 500
+x <- matrix(rnorm(n*K), ncol=K)
+# Are we getting the same?
+table(as.matrix(dist(x)) - dist_par(x, 4)) # Only zeros
+```
+
+---
+
+```{r dist-benchmark, echo=TRUE, cache=TRUE}
+# Benchmarking!
+microbenchmark::microbenchmark(
+  dist(x),                # stats::dist
+  dist_par(x, cores = 1), # 1 core
+  dist_par(x, cores = 2), # 2 cores
+  dist_par(x, cores = 4), # 4 cores
+  times = 1, 
+  unit = "ms"
+)
+```
+
+## Ex 6: The future
+
+*   [**future**](https://cran.r-project.org/package=future) is an R package that
+    was designed "to provide a very simple and uniform way of evaluating R
+    expressions asynchronously using various resources available to the user."
+    
+*   `future` class objects are either resolved or unresolved.
+
+*   If queried, **Resolved** values are return immediately, and **Unresolved** values
+    will block the process (i.e. wait) until it is resolved.
+    
+*   Futures can be parallel/serial, in a single (local or remote) computer, or
+    a cluster of them.
+    
+Let's see a brief example
+
+## Ex 6: The future (cont'd)
+
+```{r future, echo=TRUE, collapse=TRUE, cache=TRUE}
+library(future)
+plan(multicore)
+# We are creating a global variable
+a <- 2
+# Creating the futures has only the overhead (setup) time
+system.time({
+  x1 %<-% {Sys.sleep(3);a^2}
+  x2 %<-% {Sys.sleep(3);a^3}
+})
+# Let's just wait 5 seconds to make sure all the cores have returned
+Sys.sleep(3)
+system.time({
+  print(x1)
+  print(x2)
+})
+```
+
+
+## See also
+
+*   [Package parallel](https://stat.ethz.ch/R-manual/R-devel/library/parallel/doc/parallel.pdf) 
+*   [Using the iterators package](https://cran.r-project.org/web/packages/iterators/vignettes/iterators.pdf)
+*   [Using the foreach package](https://cran.r-project.org/web/packages/foreach/vignettes/foreach.pdf)
+*   [32 OpenMP traps for C++ developers](https://software.intel.com/en-us/articles/32-openmp-traps-for-c-developers)
+*   [The OpenMP API specification for parallel programming](http://www.openmp.org/)
+*   ['openmp' tag in Rcpp gallery](gallery.rcpp.org/tags/openmp/)
+*   [OpenMP tutorials and articles](http://www.openmp.org/resources/tutorials-articles/)
+
+For more, checkout the [CRAN Task View on HPC](https://cran.r-project.org/web/views/HighPerformanceComputing.html){target="_blank"}
+
+## Session info
+
+```{r session, echo=FALSE}
+sessionInfo()
+```
+
+
+## Bonus track 1: Simulating $\pi$
+
+
+*   We know that $\pi = \frac{A}{r^2}$. We approximate it by randomly adding
+    points $x$ to a square of size 2 centered at the origin.
+
+*   So, we approximate $\pi$ as $\Pr\{\|x\| \leq 1\}\times 2^2$
+
+```{r, echo=FALSE, dev='jpeg', dev.args=list(quality=100), fig.width=6, fig.height=6, out.width='300px', out.height='300px'}
+set.seed(1231)
+p    <- matrix(runif(5e3*2, -1, 1), ncol=2)
+pcol <- ifelse(sqrt(rowSums(p^2)) <= 1, adjustcolor("blue", .7), adjustcolor("gray", .7))
+plot(p, col=pcol, pch=18)
+```
+
+---
+
+The R code to do this
+
+```{r simpi, echo=TRUE}
+pisim <- function(i, nsim) {  # Notice we don't use the -i-
+  # Random points
+  ans  <- matrix(runif(nsim*2), ncol=2)
+  
+  # Distance to the origin
+  ans  <- sqrt(rowSums(ans^2))
+  
+  # Estimated pi
+  (sum(ans <= 1)*4)/nsim
+}
+```
+
+
+
+## Bonus track 1: Simulating $\pi$ (cont'd)
+
+```{r parallel-ex2, echo=TRUE, cache=TRUE}
+library(parallel)
+# Setup
+cl <- makePSOCKcluster(4L)
+clusterSetRNGStream(cl, 123)
+# Number of simulations we want each time to run
+nsim <- 1e5
+# We need to make -nsim- and -pisim- available to the
+# cluster
+clusterExport(cl, c("nsim", "pisim"))
+# Benchmarking: parSapply and sapply will run this simulation
+# a hundred times each, so at the end we have 1e5*100 points
+# to approximate pi
+microbenchmark::microbenchmark(
+  parallel = parSapply(cl, 1:100, pisim, nsim=nsim),
+  serial   = sapply(1:100, pisim, nsim=nsim),
+  times    = 1
+)
+```
+
+---
+
+```{r printing-and-stop, cache=TRUE}
+ans_par <- parSapply(cl, 1:100, pisim, nsim=nsim)
+ans_ser <- sapply(1:100, pisim, nsim=nsim)
+stopCluster(cl)
+```
+
+```{r, echo=FALSE}
+c(par = mean(ans_par), ser = mean(ans_ser), R = pi)
+```

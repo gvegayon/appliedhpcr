@@ -1,0 +1,128 @@
+# Introduction
+
+## High-Performance Computing: An overview
+
+Loosely, from R's perspective, we can think of HPC in terms of two, maybe three things:
+
+1.  Big data: How to work with data that doesn't fit your computer
+
+2.  Parallel computing: How to take advantage of multiple core systems
+
+3.  Compiled code: Write your own low-level code (if R doesn't has it yet...)
+
+(Checkout [CRAN Task View on HPC](https://cran.r-project.org/web/views/HighPerformanceComputing.html))
+
+
+## Big Data
+
+*   Buy a bigger computer/RAM memory (not the best solution!)
+    
+*   Use out-of-memory storage, i.e., don't load all your data in the RAM. e.g.
+    The [bigmemory](https://CRAN.R-project.org/package=bigmemory),
+    [data.table](https://CRAN.R-project.org/package=data.table),
+    [HadoopStreaming](https://CRAN.R-project.org/package=HadoopStreaming) R packages
+    
+*   Efficient algorithms for big data, e.g.: [biglm](https://cran.r-project.org/package=biglm),
+    [biglasso](https://cran.r-project.org/package=biglasso)
+
+*   Store it more efficiently, e.g.: Sparse Matrices (take a look at the `dgCMatrix` objects
+    from the [Matrix](https://CRAN.R-project.org/package=Matrix) R package)
+
+## Parallel computing
+
+```{r, echo=FALSE, fig.cap="Flynn's Classical Taxonomy ([Blaise Barney, **Introduction to Parallel Computing**, Lawrence Livermore National Laboratory](https://computing.llnl.gov/tutorials/parallel_comp/))", fig.align='center'}
+knitr::include_graphics("fig/flynnsTaxonomy.png")
+```
+
+We will be focusing on the **S**ingle **I**nstruction stream **M**ultiple **D**ata stream
+
+## Parallel computing
+
+### Serial vs Parallel
+
+<p style="text-align:center;">
+<img src="fig/serialProblem.png" style="width:45%;">
+<img src="fig/parallelProblem.png" style="width:45%;">
+source: [Blaise Barney, **Introduction to Parallel Computing**, Lawrence Livermore National Laboratory](https://computing.llnl.gov/tutorials/parallel_comp/)
+</p>
+
+## Parallel computing
+
+```{r nodes-network}
+knitr::include_graphics("fig/nodesNetwork.png")
+```
+
+source: [Blaise Barney, **Introduction to Parallel Computing**, Lawrence Livermore National Laboratory](https://computing.llnl.gov/tutorials/parallel_comp/)
+
+
+## Some vocabulary for HPC
+
+In raw terms
+
+*   Supercomputer: A **single** big machine with thousands of cores/gpus.
+
+*   High Performance Computing (HPC): **Multiple** machines within
+    a **single** network.
+    
+*   High Throughput Computing (HTC): **Multiple** machines across **multiple**
+    networks.
+    
+You may not have access to a supercomputer, but certainly HPC/HTC clusters are
+more accessible these days, e.g. AWS provides a service to create HPC clusters
+at a low cost (allegedly, since nobody understands how pricing works)
+
+## GPU vs CPU
+
+```{r gpu-cpu, echo=FALSE, fig.cap="[NVIDIA Blog](http://www.nvidia.com/object/what-is-gpu-computing.html)", fig.align='center'}
+knitr::include_graphics("fig/cpuvsgpu.jpg")
+nnodes <- 4L
+```
+
+*   Why use OpenMP if GPU is _suited to compute-intensive operations_? Well, mostly because
+    OpenMP is **VERY** easy to implement (easier than CUDA, which is the easiest way to use GPU).
+
+
+## When is it a good idea?
+
+```{r good-idea, echo=FALSE, fig.cap="Ask yourself these questions before jumping into HPC!", fig.align='center', out.width="85%"}
+knitr::include_graphics("fig/when_to_parallel.svg")
+```
+
+## Parallel computing in R
+
+While there are several alternatives (just take a look at the
+[High-Performance Computing Task View](https://cran.r-project.org/web/views/HighPerformanceComputing.html)),
+we'll focus on the following R-packages for **explicit parallelism**:
+
+*   [**parallel**](https://cran.r-project.org/package=parallel): R package that provides '[s]upport for parallel computation,
+    including random-number generation'.
+
+*   [**future**](https://cran.r-project.org/package=future): '[A] lightweight and
+    unified Future API for sequential and parallel processing of R
+    expression via futures.'
+    
+*   [**Rcpp**](https://cran.r-project.org/package=Rcpp) + [OpenMP](https://www.openmp.org):
+    [Rcpp](https://cran.r-project.org/package=Rcpp) is an R package for integrating
+    R with C++, and OpenMP is a library for high-level parallelism for C/C++ and
+    FORTRAN.
+    
+---
+
+Others but not used here
+
+*   [**foreach**](https://cran.r-project.org/package=foreach) for iterating through lists in parallel.
+
+*   [**Rmpi**](https://cran.r-project.org/package=Rmpi) for creating MPI clusters.
+
+And tools for implicit parallelism (out-of-the-box tools that allow the
+programmer not to worry about parallelization):
+
+*   [**gpuR**](https://cran.r-project.org/package=gpuR) for Matrix manipulation using
+GPU
+
+*   [**tensorflow**](https://cran.r-project.org/package=tensorflow) an R interface to
+[TensorFlow](https://www.tensorflow.org/).
+
+A ton of other type of resources, notably the tools for working with 
+batch schedulers such as [Slurm](http://slurm.schedmd.com), and
+[HTCondor](https://research.cs.wisc.edu/htcondor/).

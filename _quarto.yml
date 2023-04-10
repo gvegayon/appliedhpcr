@@ -1,0 +1,31 @@
+project:
+  type: book
+
+book:
+  title: "Applied HPC with R"
+  author: "George G. Vega Yon"
+  date: "4/9/2023"
+  chapters:
+    - index.qmd
+    - intro.qmd
+    - parallel-pkg.qmd
+    - fundamentals.qmd
+    - simpi.qmd
+    - rcpp-part1.qmd
+    - misc.qmd
+    - summary.qmd
+    - references.qmd
+  downloads:
+    - epub
+    - pdf
+
+bibliography: references.bib
+
+format:
+  html:
+    theme: cosmo
+  pdf:
+    documentclass: scrreprt
+
+
+
