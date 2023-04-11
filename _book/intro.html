@@ -54,7 +54,26 @@ div.sourceCode
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="site_libs/quarto-nav/quarto-nav.js"></script>
@@ -250,20 +269,21 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 </header>
 
+<p>While most people see R as a slow programming language, it has some powerful features that accelerate your code dramatically<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>. Although R wasn’t necessarily built for speed, there are some tools and ways in which we can accelerate R. This chapter introduces what we will understand as High-performance computing in R.</p>
 <section id="high-performance-computing-an-overview" class="level2" data-number="1.1">
 <h2 data-number="1.1" class="anchored" data-anchor-id="high-performance-computing-an-overview"><span class="header-section-number">1.1</span> High-Performance Computing: An overview</h2>
 <p>Loosely, from R’s perspective, we can think of HPC in terms of two, maybe three things:</p>
 <ol type="1">
 <li><p>Big data: How to work with data that doesn’t fit your computer</p></li>
 <li><p>Parallel computing: How to take advantage of multiple core systems</p></li>
-<li><p>Compiled code: Write your own low-level code (if R doesn’t has it yet…)</p></li>
+<li><p>Compiled code: Write your low-level code (if R doesn’t have it yet…)</p></li>
 </ol>
 <p>(Checkout <a href="https://cran.r-project.org/web/views/HighPerformanceComputing.html">CRAN Task View on HPC</a>)</p>
 </section>
 <section id="big-data" class="level2" data-number="1.2">
 <h2 data-number="1.2" class="anchored" data-anchor-id="big-data"><span class="header-section-number">1.2</span> Big Data</h2>
 <ul>
-<li><p>Buy a bigger computer/RAM memory (not the best solution!)</p></li>
+<li><p>Buy a bigger computer/RAM (not the best solution!)</p></li>
 <li><p>Use out-of-memory storage, i.e., don’t load all your data in the RAM. e.g. The <a href="https://CRAN.R-project.org/package=bigmemory">bigmemory</a>, <a href="https://CRAN.R-project.org/package=data.table">data.table</a>, <a href="https://CRAN.R-project.org/package=HadoopStreaming">HadoopStreaming</a> R packages</p></li>
 <li><p>Efficient algorithms for big data, e.g.: <a href="https://cran.r-project.org/package=biglm">biglm</a>, <a href="https://cran.r-project.org/package=biglasso">biglasso</a></p></li>
 <li><p>Store it more efficiently, e.g.: Sparse Matrices (take a look at the <code>dgCMatrix</code> objects from the <a href="https://CRAN.R-project.org/package=Matrix">Matrix</a> R package)</p></li>
@@ -285,6 +305,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="parallel-computing-1" class="level2" data-number="1.4">
 <h2 data-number="1.4" class="anchored" data-anchor-id="parallel-computing-1"><span class="header-section-number">1.4</span> Parallel computing</h2>
+<p>In general terms, a parallel computing program is one in which we use two or more <em>computational threads</em> simultaneously. Although computational thread usually means core, there are multiple levels at which a computer program can be parallelized. To understand this, we first need to see what composes a modern computer:</p>
+<div class="quarto-figure quarto-figure-center" style="text-align: center">
+<figure class="figure">
+<p><img src="fig/socket-core-threads.svg" class="img-fluid figure-img"></p>
+<p></p><figcaption class="figure-caption">Source: Original figure from LUMI consortium documentation (<span class="citation" data-cites="lumi2023">LUMI consortium (<a href="references.html#ref-lumi2023" role="doc-biblioref">2023</a>)</span>)</figcaption><p></p>
+</figure>
+</div>
+<p>Streaming SIMD Extensions [<a href="https://en.wikipedia.org/w/index.php?title=Streaming_SIMD_Extensions&amp;oldid=1149173008" target="_blank">SSE</a>] and Advanced Vector Extensions [<a href="https://en.wikipedia.org/w/index.php?title=Advanced_Vector_Extensions&amp;oldid=1148504462" target="_blank">AVX</a>]</p>
 <section id="serial-vs-parallel" class="level3" data-number="1.4.1">
 <h3 data-number="1.4.1" class="anchored" data-anchor-id="serial-vs-parallel"><span class="header-section-number">1.4.1</span> Serial vs Parallel</h3>
 <p style="text-align:center;">
@@ -306,11 +334,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 data-number="1.6" class="anchored" data-anchor-id="some-vocabulary-for-hpc"><span class="header-section-number">1.6</span> Some vocabulary for HPC</h2>
 <p>In raw terms</p>
 <ul>
-<li><p>Supercomputer: A <strong>single</strong> big machine with thousands of cores/gpus.</p></li>
-<li><p>High Performance Computing (HPC): <strong>Multiple</strong> machines within a <strong>single</strong> network.</p></li>
+<li><p>Supercomputer: A <strong>single</strong> big machine with thousands of cores/GPGPUs.</p></li>
+<li><p>High-Performance Computing (HPC): <strong>Multiple</strong> machines within a <strong>single</strong> network.</p></li>
 <li><p>High Throughput Computing (HTC): <strong>Multiple</strong> machines across <strong>multiple</strong> networks.</p></li>
 </ul>
-<p>You may not have access to a supercomputer, but certainly HPC/HTC clusters are more accessible these days, e.g.&nbsp;AWS provides a service to create HPC clusters at a low cost (allegedly, since nobody understands how pricing works)</p>
+<p>You may not have access to a supercomputer, but certainly, HPC/HTC clusters are more accessible these days, e.g.&nbsp;AWS provides a service to create HPC clusters at a low cost (allegedly, since nobody understands how pricing works)</p>
 </section>
 <section id="gpu-vs-cpu" class="level2" data-number="1.7">
 <h2 data-number="1.7" class="anchored" data-anchor-id="gpu-vs-cpu"><span class="header-section-number">1.7</span> GPU vs CPU</h2>
@@ -347,7 +375,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <ul>
 <li><p><a href="https://cran.r-project.org/package=parallel"><strong>parallel</strong></a>: R package that provides ‘[s]upport for parallel computation, including random-number generation’.</p></li>
 <li><p><a href="https://cran.r-project.org/package=future"><strong>future</strong></a>: ‘[A] lightweight and unified Future API for sequential and parallel processing of R expression via futures.’</p></li>
-<li><p><a href="https://cran.r-project.org/package=Rcpp"><strong>Rcpp</strong></a> + <a href="https://www.openmp.org">OpenMP</a>: <a href="https://cran.r-project.org/package=Rcpp">Rcpp</a> is an R package for integrating R with C++, and OpenMP is a library for high-level parallelism for C/C++ and FORTRAN.</p></li>
+<li><p><a href="https://cran.r-project.org/package=Rcpp"><strong>Rcpp</strong></a> + <a href="https://www.openmp.org">OpenMP</a>: <a href="https://cran.r-project.org/package=Rcpp">Rcpp</a> is an R package for integrating R with C++ and OpenMP is a library for high-level parallelism for C/C++ and FORTRAN.</p></li>
 </ul>
 <hr>
 <p>Others but not used here</p>
@@ -360,9 +388,23 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li><p><a href="https://cran.r-project.org/package=gpuR"><strong>gpuR</strong></a> for Matrix manipulation using GPU</p></li>
 <li><p><a href="https://cran.r-project.org/package=tensorflow"><strong>tensorflow</strong></a> an R interface to <a href="https://www.tensorflow.org/">TensorFlow</a>.</p></li>
 </ul>
-<p>A ton of other type of resources, notably the tools for working with batch schedulers such as <a href="http://slurm.schedmd.com">Slurm</a>, and <a href="https://research.cs.wisc.edu/htcondor/">HTCondor</a>.</p>
+<p>A ton of other types of resources, notably the tools for working with batch schedulers such as <a href="http://slurm.schedmd.com">Slurm</a>, and <a href="https://research.cs.wisc.edu/htcondor/">HTCondor</a>.</p>
 
 
+<div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
+<div id="ref-datatable" class="csl-entry" role="listitem">
+Dowle, Matt, and Arun Srinivasan. 2021. <em>Data.table: Extension of ‘Data.frame‘</em>. <a href="https://CRAN.R-project.org/package=data.table">https://CRAN.R-project.org/package=data.table</a>.
+</div>
+<div id="ref-lumi2023" class="csl-entry" role="listitem">
+LUMI consortium. 2023. <span>“Documentation - Distribution and Binding.”</span> <a href="https://docs.lumi-supercomputer.eu/runjobs/scheduled-jobs/distribution-binding/">https://docs.lumi-supercomputer.eu/runjobs/scheduled-jobs/distribution-binding/</a>.
+</div>
+</div>
+</section>
+<section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn1"><p>Nonetheless this claim can be said about almost any programming language, there are notable like the R package <a href="https://cran.r-project.org" target="_blank"><code>data.table</code></a> (<span class="citation" data-cites="datatable">Dowle and Srinivasan (<a href="references.html#ref-datatable" role="doc-biblioref">2021</a>)</span>) which has been demonstrated to <a href="https://h2oai.github.io/db-benchmark/">out-perform most data wrangling tools</a>.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
 </section>
 
 </main> <!-- /main -->

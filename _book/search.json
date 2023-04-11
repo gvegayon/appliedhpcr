@@ -4,21 +4,21 @@
     "href": "index.html",
     "title": "Applied HPC with R",
     "section": "",
-    "text": "Preface\nThis is a Quarto book.\nTo learn more about Quarto books visit https://quarto.org/docs/books.\n\n1 + 1\n\n[1] 2"
+    "text": "Preface\nThe R programming language (R Core Team (2023)) can be amazing for most daily tasks. But as soon as you start dealing with more complicated problems, you may face the for-loop bottle-neck. If you ever encounter such a problem, then this book is for you. Applied HPC with R is a collection of talks and lectures I have given in the past about speeding up your R code using parallel computing and other resources such as C++. The contents have been mostly developed during my time at USC and UofU1"
   },
   {
     "objectID": "intro.html#high-performance-computing-an-overview",
     "href": "intro.html#high-performance-computing-an-overview",
     "title": "1  Introduction",
     "section": "1.1 High-Performance Computing: An overview",
-    "text": "1.1 High-Performance Computing: An overview\nLoosely, from R’s perspective, we can think of HPC in terms of two, maybe three things:\n\nBig data: How to work with data that doesn’t fit your computer\nParallel computing: How to take advantage of multiple core systems\nCompiled code: Write your own low-level code (if R doesn’t has it yet…)\n\n(Checkout CRAN Task View on HPC)"
+    "text": "1.1 High-Performance Computing: An overview\nLoosely, from R’s perspective, we can think of HPC in terms of two, maybe three things:\n\nBig data: How to work with data that doesn’t fit your computer\nParallel computing: How to take advantage of multiple core systems\nCompiled code: Write your low-level code (if R doesn’t have it yet…)\n\n(Checkout CRAN Task View on HPC)"
   },
   {
     "objectID": "intro.html#big-data",
     "href": "intro.html#big-data",
     "title": "1  Introduction",
     "section": "1.2 Big Data",
-    "text": "1.2 Big Data\n\nBuy a bigger computer/RAM memory (not the best solution!)\nUse out-of-memory storage, i.e., don’t load all your data in the RAM. e.g. The bigmemory, data.table, HadoopStreaming R packages\nEfficient algorithms for big data, e.g.: biglm, biglasso\nStore it more efficiently, e.g.: Sparse Matrices (take a look at the dgCMatrix objects from the Matrix R package)"
+    "text": "1.2 Big Data\n\nBuy a bigger computer/RAM (not the best solution!)\nUse out-of-memory storage, i.e., don’t load all your data in the RAM. e.g. The bigmemory, data.table, HadoopStreaming R packages\nEfficient algorithms for big data, e.g.: biglm, biglasso\nStore it more efficiently, e.g.: Sparse Matrices (take a look at the dgCMatrix objects from the Matrix R package)"
   },
   {
     "objectID": "intro.html#parallel-computing",
@@ -32,7 +32,7 @@
     "href": "intro.html#parallel-computing-1",
     "title": "1  Introduction",
     "section": "1.4 Parallel computing",
-    "text": "1.4 Parallel computing\n\n1.4.1 Serial vs Parallel\n\n  source: Blaise Barney, Introduction to Parallel Computing, Lawrence Livermore National Laboratory"
+    "text": "1.4 Parallel computing\nIn general terms, a parallel computing program is one in which we use two or more computational threads simultaneously. Although computational thread usually means core, there are multiple levels at which a computer program can be parallelized. To understand this, we first need to see what composes a modern computer:\n\n\n\nSource: Original figure from LUMI consortium documentation (LUMI consortium (2023))\n\n\nStreaming SIMD Extensions [SSE] and Advanced Vector Extensions [AVX]\n\n1.4.1 Serial vs Parallel\n\n  source: Blaise Barney, Introduction to Parallel Computing, Lawrence Livermore National Laboratory"
   },
   {
     "objectID": "intro.html#parallel-computing-2",
@@ -46,7 +46,7 @@
     "href": "intro.html#some-vocabulary-for-hpc",
     "title": "1  Introduction",
     "section": "1.6 Some vocabulary for HPC",
-    "text": "1.6 Some vocabulary for HPC\nIn raw terms\n\nSupercomputer: A single big machine with thousands of cores/gpus.\nHigh Performance Computing (HPC): Multiple machines within a single network.\nHigh Throughput Computing (HTC): Multiple machines across multiple networks.\n\nYou may not have access to a supercomputer, but certainly HPC/HTC clusters are more accessible these days, e.g. AWS provides a service to create HPC clusters at a low cost (allegedly, since nobody understands how pricing works)"
+    "text": "1.6 Some vocabulary for HPC\nIn raw terms\n\nSupercomputer: A single big machine with thousands of cores/GPGPUs.\nHigh-Performance Computing (HPC): Multiple machines within a single network.\nHigh Throughput Computing (HTC): Multiple machines across multiple networks.\n\nYou may not have access to a supercomputer, but certainly, HPC/HTC clusters are more accessible these days, e.g. AWS provides a service to create HPC clusters at a low cost (allegedly, since nobody understands how pricing works)"
   },
   {
     "objectID": "intro.html#gpu-vs-cpu",
@@ -67,7 +67,7 @@
     "href": "intro.html#parallel-computing-in-r",
     "title": "1  Introduction",
     "section": "1.9 Parallel computing in R",
-    "text": "1.9 Parallel computing in R\nWhile there are several alternatives (just take a look at the High-Performance Computing Task View), we’ll focus on the following R-packages for explicit parallelism:\n\nparallel: R package that provides ‘[s]upport for parallel computation, including random-number generation’.\nfuture: ‘[A] lightweight and unified Future API for sequential and parallel processing of R expression via futures.’\nRcpp + OpenMP: Rcpp is an R package for integrating R with C++, and OpenMP is a library for high-level parallelism for C/C++ and FORTRAN.\n\n\nOthers but not used here\n\nforeach for iterating through lists in parallel.\nRmpi for creating MPI clusters.\n\nAnd tools for implicit parallelism (out-of-the-box tools that allow the programmer not to worry about parallelization):\n\ngpuR for Matrix manipulation using GPU\ntensorflow an R interface to TensorFlow.\n\nA ton of other type of resources, notably the tools for working with batch schedulers such as Slurm, and HTCondor."
+    "text": "1.9 Parallel computing in R\nWhile there are several alternatives (just take a look at the High-Performance Computing Task View), we’ll focus on the following R-packages for explicit parallelism:\n\nparallel: R package that provides ‘[s]upport for parallel computation, including random-number generation’.\nfuture: ‘[A] lightweight and unified Future API for sequential and parallel processing of R expression via futures.’\nRcpp + OpenMP: Rcpp is an R package for integrating R with C++ and OpenMP is a library for high-level parallelism for C/C++ and FORTRAN.\n\n\nOthers but not used here\n\nforeach for iterating through lists in parallel.\nRmpi for creating MPI clusters.\n\nAnd tools for implicit parallelism (out-of-the-box tools that allow the programmer not to worry about parallelization):\n\ngpuR for Matrix manipulation using GPU\ntensorflow an R interface to TensorFlow.\n\nA ton of other types of resources, notably the tools for working with batch schedulers such as Slurm, and HTCondor.\n\n\n\n\nDowle, Matt, and Arun Srinivasan. 2021. Data.table: Extension of ‘Data.frame‘. https://CRAN.R-project.org/package=data.table.\n\n\nLUMI consortium. 2023. “Documentation - Distribution and Binding.” https://docs.lumi-supercomputer.eu/runjobs/scheduled-jobs/distribution-binding/."
   },
   {
     "objectID": "parallel-pkg.html#parallel-workflow",
@@ -271,5 +271,26 @@
     "title": "7  Summary",
     "section": "",
     "text": "In summary, this book has no content whatsoever.\n\n1 + 1\n\n[1] 2"
+  },
+  {
+    "objectID": "index.html#footnotes",
+    "href": "index.html#footnotes",
+    "title": "Applied HPC with R",
+    "section": "",
+    "text": "With many to thank, including Paul Marjoram, Zhi Zhang, Emil Hvitfeldt, Malcolm Barrett, Garrett Weaver, USC’s IMAGE P01 research group, and my students both at USC and UoU.↩︎"
+  },
+  {
+    "objectID": "references.html",
+    "href": "references.html",
+    "title": "References",
+    "section": "",
+    "text": "R Core Team. 2023. R: A Language and Environment for Statistical\nComputing. Vienna, Austria: R Foundation for Statistical Computing.\nhttps://www.R-project.org/."
+  },
+  {
+    "objectID": "intro.html#footnotes",
+    "href": "intro.html#footnotes",
+    "title": "1  Introduction",
+    "section": "",
+    "text": "Nonetheless this claim can be said about almost any programming language, there are notable like the R package data.table (Dowle and Srinivasan (2021)) which has been demonstrated to out-perform most data wrangling tools.↩︎"
   }
 ]

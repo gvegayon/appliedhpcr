@@ -1,5 +1,9 @@
 # Introduction
 
+While most people see R as a slow programming language, it has some powerful features that accelerate your code dramatically[^exampledatatable]. Although R wasn't necessarily built for speed, there are some tools and ways in which we can accelerate R. This chapter introduces what we will understand as High-performance computing in R.
+
+[^exampledatatable]: Nonetheless this claim can be said about almost any programming language, there are notable like the R package [`data.table`](https://cran.r-project.org){target="_blank"} (@datatable) which has been demonstrated to [out-perform most data wrangling tools](https://h2oai.github.io/db-benchmark/). 
+
 ## High-Performance Computing: An overview
 
 Loosely, from R's perspective, we can think of HPC in terms of two, maybe three things:
@@ -8,14 +12,14 @@ Loosely, from R's perspective, we can think of HPC in terms of two, maybe three 
 
 2.  Parallel computing: How to take advantage of multiple core systems
 
-3.  Compiled code: Write your own low-level code (if R doesn't has it yet...)
+3.  Compiled code: Write your low-level code (if R doesn't have it yet...)
 
 (Checkout [CRAN Task View on HPC](https://cran.r-project.org/web/views/HighPerformanceComputing.html))
 
 
 ## Big Data
 
-*   Buy a bigger computer/RAM memory (not the best solution!)
+*   Buy a bigger computer/RAM (not the best solution!)
     
 *   Use out-of-memory storage, i.e., don't load all your data in the RAM. e.g.
     The [bigmemory](https://CRAN.R-project.org/package=bigmemory),
@@ -38,6 +42,12 @@ We will be focusing on the **S**ingle **I**nstruction stream **M**ultiple **D**a
 
 ## Parallel computing
 
+In general terms, a parallel computing program is one in which we use two or more *computational threads* simultaneously. Although computational thread usually means core, there are multiple levels at which a computer program can be parallelized. To understand this, we first need to see what composes a modern computer:
+
+![Source: Original figure from LUMI consortium documentation (@lumi2023)](fig/socket-core-threads.svg){style="text-align: center"}
+
+Streaming SIMD Extensions \[[SSE](https://en.wikipedia.org/w/index.php?title=Streaming_SIMD_Extensions&oldid=1149173008){target="_blank"}\] and Advanced Vector Extensions \[[AVX](https://en.wikipedia.org/w/index.php?title=Advanced_Vector_Extensions&oldid=1148504462){target="_blank"}\]
+
 ### Serial vs Parallel
 
 <p style="text-align:center;">
@@ -59,15 +69,15 @@ source: [Blaise Barney, **Introduction to Parallel Computing**, Lawrence Livermo
 
 In raw terms
 
-*   Supercomputer: A **single** big machine with thousands of cores/gpus.
+*   Supercomputer: A **single** big machine with thousands of cores/GPGPUs.
 
-*   High Performance Computing (HPC): **Multiple** machines within
+*   High-Performance Computing (HPC): **Multiple** machines within
     a **single** network.
     
 *   High Throughput Computing (HTC): **Multiple** machines across **multiple**
     networks.
     
-You may not have access to a supercomputer, but certainly HPC/HTC clusters are
+You may not have access to a supercomputer, but certainly, HPC/HTC clusters are
 more accessible these days, e.g. AWS provides a service to create HPC clusters
 at a low cost (allegedly, since nobody understands how pricing works)
 
@@ -103,7 +113,7 @@ we'll focus on the following R-packages for **explicit parallelism**:
     
 *   [**Rcpp**](https://cran.r-project.org/package=Rcpp) + [OpenMP](https://www.openmp.org):
     [Rcpp](https://cran.r-project.org/package=Rcpp) is an R package for integrating
-    R with C++, and OpenMP is a library for high-level parallelism for C/C++ and
+    R with C++ and OpenMP is a library for high-level parallelism for C/C++ and
     FORTRAN.
     
 ---
@@ -123,6 +133,6 @@ GPU
 *   [**tensorflow**](https://cran.r-project.org/package=tensorflow) an R interface to
 [TensorFlow](https://www.tensorflow.org/).
 
-A ton of other type of resources, notably the tools for working with 
+A ton of other types of resources, notably the tools for working with 
 batch schedulers such as [Slurm](http://slurm.schedmd.com), and
 [HTCondor](https://research.cs.wisc.edu/htcondor/).
