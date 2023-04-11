@@ -308,15 +308,15 @@ div.csl-indent {
 <li><p><code>Rscript ...</code>: A call to R to evaluate the expression <code>paste(...)</code>. This will get the environment variable <code>SLURMD_NODENAME</code> (which <code>sbatch</code> creates) and print it on a message.</p></li>
 </ol>
 <p>To do so, we will use <strong>Secure copy protocol (scp)</strong>, which allows us to copy data to and fro computers. In this case, we should do something like the following</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">scp</span> 00-hello-world.slurm <span class="pp">[</span><span class="ss">userid</span><span class="pp">]</span>@notchpeack.chpc.utah.edu:/path/to/a/place/you/can/access</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>In words, “Using the username <code>[userid]</code>, connect to <code>notchpeack.chpc.utah.edu</code>, take the file <code>00-hello-world.slurm</code> and copy it to <code>/path/to/a/place/you/can/access</code>. With the file now available in the cluster, we can submit this job using Slurm.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">scp</span> 00-hello-world.slurm <span class="pp">[</span><span class="ss">userid</span><span class="pp">]</span>@notchpeak.chpc.utah.edu:/path/to/a/place/you/can/access</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>In words, “Using the username <code>[userid]</code>, connect to <code>notchpeak.chpc.utah.edu</code>, take the file <code>00-hello-world.slurm</code> and copy it to <code>/path/to/a/place/you/can/access</code>. With the file now available in the cluster, we can submit this job using Slurm.</p>
 </section>
 <section id="step-2-logging-to-hpc" class="level2" data-number="3.2">
 <h2 data-number="3.2" class="anchored" data-anchor-id="step-2-logging-to-hpc"><span class="header-section-number">3.2</span> Step 2: Logging to HPC</h2>
 <ol type="1">
 <li><p>Log in using ssh. In the case of Windows users, download the <a href="https://www.chiark.greenend.org.uk/~sgtatham/putty/"><strong>Putty</strong></a> client.</p></li>
 <li><p>To log in, you will need to use your organization ID. Usually, if your email is something like <code>myemailuser@school.edu</code>, your ID is <code>myemailuser</code>. Then:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ssh</span> myemailuser@notchpeack.chpc.utah.edu</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ssh</span> myemailuser@notchpeak.chpc.utah.edu</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
 </ol>
 </section>
 <section id="step-3-submitting-the-job" class="level2" data-number="3.3">

@@ -51,10 +51,10 @@ To do so, we will use **Secure copy protocol (scp)**, which allows us to copy
 data to and fro computers. In this case, we should do something like the following
 
 ```bash
-scp 00-hello-world.slurm [userid]@notchpeack.chpc.utah.edu:/path/to/a/place/you/can/access
+scp 00-hello-world.slurm [userid]@notchpeak.chpc.utah.edu:/path/to/a/place/you/can/access
 ```
 
-In words, "Using the username `[userid]`, connect to `notchpeack.chpc.utah.edu`, take
+In words, "Using the username `[userid]`, connect to `notchpeak.chpc.utah.edu`, take
 the file `00-hello-world.slurm` and copy it to `/path/to/a/place/you/can/access`. With the file
 now available in the cluster, we can submit this job using Slurm.
 
@@ -68,7 +68,7 @@ now available in the cluster, we can submit this job using Slurm.
     `myemailuser@school.edu`, your ID is `myemailuser`. Then:
     
     ``` {.bash}
-    ssh myemailuser@notchpeack.chpc.utah.edu
+    ssh myemailuser@notchpeak.chpc.utah.edu
     ```
 
 
