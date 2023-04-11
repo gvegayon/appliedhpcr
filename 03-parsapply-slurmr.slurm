@@ -2,6 +2,6 @@
 #SBATCH --job-name=parsapply
 #SBATCH --time=00:10:00
 
-module load usc r
+module load R/4.2.2
 Rscript --vanilla 03-parsapply-slurmr.R
 

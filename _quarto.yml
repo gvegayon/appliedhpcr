@@ -7,13 +7,18 @@ book:
   date: "4/9/2023"
   chapters:
     - index.qmd
-    - intro.qmd
-    - parallel-pkg.qmd
-    - fundamentals.qmd
-    - simpi.qmd
-    - rcpp-part1.qmd
+    - part: "Parallel computing"
+      chapters:
+      - intro.qmd
+      - parallel-pkg.qmd
+    - part: "Working with a Cluster"
+      chapters:
+        - slurm-fundamentals.qmd
+        - slurm-simpi.qmd
+    - part: "Using C++"
+      chapters:
+        - rcpp-part1.qmd
     - misc.qmd
-    - summary.qmd
     - references.qmd
   downloads:
     - epub

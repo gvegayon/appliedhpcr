@@ -14,21 +14,21 @@ cat2 <- function(..., lang = 'r') {
 
 
 This is the same old example that lots of people (including me) have been using
-to ilustrate parallel computing with R. The example is very simple, we want to
+to illustrate parallel computing with R. The example is very simple, we want to
 approximate pi by doing some Monte Carlo simulations.
 
 We know that the area of a circle is $A = \pi r^2$, which is equivalent to say
 $\pi = A/r^2$, so, if we can approximate the Area of a circle, then we can
 approximate $\pi$. How do we do this?
 
-Using montecarlo experiments, we have that the probability that a random point 
-$x$ falls within the unit circle can be approximated using the following formula
+Using Monte Carlo experiments, we can approximate the probability of a random point 
+$x$ falling within the unit circle using the following formula:
 
 $$
 \hat p = \frac{1}{n}\sum_i \mathbf{1}(x \in \mbox{Circle})
 $$
 
-This approximation, $\hat p$, multiplied by the area of the escribed square, which
+This approximation, $\hat p$, multiplied by the area of the square containing the circle, which
 has an area equal to $(2\times r)^2$, thus, we can finally write
 
 $$
@@ -60,7 +60,7 @@ plot(
 
 ## Submitting jobs to Slurm
 
-The main way that we will be working is submitting jobs using the `sbatch` function.
+The main way that we will be working is by submitting jobs using the `sbatch` function.
 This function takes as a main argument a bash file with the program to execute.
 In the case of R, a regular bash file looks something like this:
 
@@ -72,24 +72,24 @@ This file has three components:
 
 - The Slurm flags `#SBATCH`.
 
-- Loading R `module load usc` and `module load r`.
+- Loading R `module load R/4.2.2`.
 
 - Executing the R script.
 
-To submit a job the to queue, we need to enter the following:
+Submission is then done as follows:
 
 ```bash
 sbatch 01-sapply.slurm
 ```
 
-The following examples have two files, a bash script and a R script to be called
+The following examples have two files, a bash script and an R script to be called
 by Slurm.
 
 
 ### Case 1: Single job, single core job
 
-The most basic way is submitting a job using the [`sbatch`]() command. Im this
-case you need to have 2 files: (1) An R script, and (2) a bash script. e.g.
+The most basic way is submitting a job using the `sbatch` command. In this
+case, you need to have 2 files: (1) An R script, and (2) a bash script. e.g.
 
 The contents of the R script ([01-sapply.R](01-sapply.R){target="_blank"}) are:
 
@@ -108,9 +108,11 @@ cat2(readLines("01-sapply.slurm"), sep="\n")
 ### Case 2: Single job, multicore job
 
 Now, imagine that we would like to use more than one processor for this job,
-using something like the `parallel::mclapply` function from the parallel package.
-Then, besides of adapting the code, we need to tell Slurm that we are using
-more than one core per-task, as the following example:
+using something like the `parallel::mclapply` function from the parallel package.[^mclapply]
+Then, besides adapting the code, we need to tell Slurm that we are using
+more than one core per task, as in the following example:
+
+[^mclapply]: This function is sort of a wrapper of `makeForkcluster`. [Forking](https://en.wikipedia.org/w/index.php?title=Fork_(system_call)&oldid=1145232797){target="_blank"} provides a way to duplicate a process in the OS without replicating the memory, which is both faster and efficient. 
 
 R script ([02-mclapply.R](02-mclapply.R){target="_blank"}):
 
@@ -126,13 +128,17 @@ cat2(readLines("02-mclapply.slurm"), sep="\n", lang = "bash")
 
 ## Jobs with the slurmR package 
 
+The `slurmR` R package [@slurmRpaper; @slurmRpkg] is a lightweight wrapper of Slurm. The package's main functions are the `*apply` family--mostly through Slurm job arrays--and the `makeSlurmCluster()`--which is a wrapper of `makePSOCKcluster`. 
+
+This section will illustrate how to submit jobs using the `makeSlurmCluster()` function and `Slurm_sapply`. Furthermore, the last example demonstrates how we can skip writing Slurm scripts entirely using the `sourceSlurm()` function included in the package.
+
 ### Case 3: Single job, multinode job
 
 In this case, there is no simple way to submit a multinodal job to Slurm... unless
 you use the [**slurmR**](https://github.com/USCbiostats/slurmR) package (see
 installation instructions [**here**](https://github.com/USCbiostats/slurmR#installation))
 
-Once you have the slurmR package in your system, you can proceed as follow
+Once you have the `slurmR` package in your system, you can proceed as follow
 
 R script ([03-parsapply-slurmr.R](03-parsapply-slurmr.R){target="_blank"}):
 
@@ -150,7 +156,7 @@ cat2(readLines("03-parsapply-slurmr.slurm"), sep="\n", lang = "bash")
 ### Case 4: Multi job, single/multi-core
 
 Another way to submit jobs is using [**job arrays**](https://slurm.schedmd.com/job_array.html). A job array is essentially a job
-that is repreated `njobs` times with the same configuration. The main difference
+that is repeated `njobs` times with the same configuration. The main difference
 between replicates is what you do with the `SLURM_ARRAY_TASK_ID` environment
 variable. This variable is defined within each replicate and can be used to make
 the "subjob" depending on that.
@@ -182,7 +188,7 @@ cat2(readLines("04-slurm_sapply.slurm"), sep="\n", lang = "bash")
 ```
 
 
-One of the main benefits of using this approach instead of the the `makeSlurmCluster`
+One of the main benefits of using this approach instead of the `makeSlurmCluster`
 function (and thus, working with a SOCK cluster) are:
 
 -  The number of jobs is not limited here (only by the admin, but not by R). 
@@ -192,7 +198,7 @@ function (and thus, working with a SOCK cluster) are:
    
 -  You can check the individual logs of each process using the function `Slurm_lob()`.
 
--  You can submit the job and quick the R session without waiting for it to finalize.
+-  You can submit the job and quit the R session without waiting for it to finalize.
    You can always read back the job using the function `read_slurm_job([path-to-the-temp])`
    
 
@@ -215,5 +221,5 @@ From the R console (is OK if you are in the Head node)
 slurmR::sourceSlurm("05-sapply.R")
 ```
 
-And voilá! A temporary bash file will be generated and used submit the R script
+And voilá! A temporary bash file will be generated and used to submit the R script
 to the queue.

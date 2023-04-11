@@ -49,7 +49,7 @@ div.csl-indent {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./summary.html" rel="prev">
+<link href="./misc.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -141,46 +141,73 @@ div.csl-indent {
  <span class="menu-text">Preface</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+ <span class="menu-text">Parallel computing</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./intro.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./parallel-pkg.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">The parallel R package</span></span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+ <span class="menu-text">Working with a Cluster</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./fundamentals.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Fundamentals</span></span></a>
+  <a href="./slurm-fundamentals.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">A brief intro to Slurm</span></span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./simpi.html" class="sidebar-item-text sidebar-link">
+  <a href="./slurm-simpi.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Simulating pi (once more)</span></span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
+ <span class="menu-text">Using C++</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./rcpp-part1.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Rcpp</span></span></a>
   </div>
 </li>
+      </ul>
+  </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./misc.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Misc</span></span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./summary.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Summary</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -218,10 +245,35 @@ div.csl-indent {
 </header>
 
 <div id="refs" class="references csl-bib-body hanging-indent" role="list">
+<div id="ref-datatable" class="csl-entry" role="listitem">
+Dowle, Matt, and Arun Srinivasan. 2021. <em>Data.table: Extension of
+‘Data.frame‘</em>. <a href="https://CRAN.R-project.org/package=data.table">https://CRAN.R-project.org/package=data.table</a>.
+</div>
+<div id="ref-lumi2023" class="csl-entry" role="listitem">
+LUMI consortium. 2023. <span>“Documentation - Distribution and
+Binding.”</span> <a href="https://docs.lumi-supercomputer.eu/runjobs/scheduled-jobs/distribution-binding/">https://docs.lumi-supercomputer.eu/runjobs/scheduled-jobs/distribution-binding/</a>.
+</div>
 <div id="ref-R" class="csl-entry" role="listitem">
 R Core Team. 2023. <em>R: A Language and Environment for Statistical
 Computing</em>. Vienna, Austria: R Foundation for Statistical Computing.
 <a href="https://www.R-project.org/">https://www.R-project.org/</a>.
+</div>
+<div id="ref-slurmRpaper" class="csl-entry" role="listitem">
+Vega Yon, George, and Paul Marjoram. 2019. <span>“slurmR: A Lightweight
+Wrapper for HPC with Slurm.”</span> <em>The Journal of Open Source
+Software</em> 4 (39). <a href="https://doi.org/10.21105/joss.01493">https://doi.org/10.21105/joss.01493</a>.
+</div>
+<div id="ref-slurmRpkg" class="csl-entry" role="listitem">
+———. 2022. <em><span class="nocase">slurmR: A Lightweight Wrapper for
+’Slurm’</span></em>. <a href="https://github.com/USCbiostats/slurmR">https://github.com/USCbiostats/slurmR</a>.
+</div>
+<div id="ref-Yoo_Jette_Grondona_2003" class="csl-entry" role="listitem">
+Yoo, Andy B., Morris A. Jette, and Mark Grondona. 2003. <span>“SLURM:
+Simple Linux Utility for Resource Management.”</span> In <em>Job
+Scheduling Strategies for Parallel Processing</em>, edited by Dror
+Feitelson, Larry Rudolph, and Uwe Schwiegelshohn, 2862:44–60. Lecture
+Notes in Computer Science. Berlin, Heidelberg: Springer Berlin
+Heidelberg. <a href="https://doi.org/10.1007/10968987_3">https://doi.org/10.1007/10968987_3</a>.
 </div>
 </div>
 
@@ -463,8 +515,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./summary.html" class="pagination-link">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Summary</span></span>
+      <a href="./misc.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Misc</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">

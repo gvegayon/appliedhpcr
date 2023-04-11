@@ -2,7 +2,7 @@
 
 While most people see R as a slow programming language, it has some powerful features that accelerate your code dramatically[^exampledatatable]. Although R wasn't necessarily built for speed, there are some tools and ways in which we can accelerate R. This chapter introduces what we will understand as High-performance computing in R.
 
-[^exampledatatable]: Nonetheless this claim can be said about almost any programming language, there are notable like the R package [`data.table`](https://cran.r-project.org){target="_blank"} (@datatable) which has been demonstrated to [out-perform most data wrangling tools](https://h2oai.github.io/db-benchmark/). 
+[^exampledatatable]: Nonetheless this claim can be said about almost any programming language, there are notable like the R package [`data.table`](https://cran.r-project.org){target="_blank"} [@datatable] which has been demonstrated to [out-perform most data wrangling tools](https://h2oai.github.io/db-benchmark/). 
 
 ## High-Performance Computing: An overview
 
@@ -44,7 +44,7 @@ We will be focusing on the **S**ingle **I**nstruction stream **M**ultiple **D**a
 
 In general terms, a parallel computing program is one in which we use two or more *computational threads* simultaneously. Although computational thread usually means core, there are multiple levels at which a computer program can be parallelized. To understand this, we first need to see what composes a modern computer:
 
-![Source: Original figure from LUMI consortium documentation (@lumi2023)](fig/socket-core-threads.svg){style="text-align: center"}
+![Source: Original figure from LUMI consortium documentation [@lumi2023]](fig/socket-core-threads.svg){style="text-align: center"}
 
 Streaming SIMD Extensions \[[SSE](https://en.wikipedia.org/w/index.php?title=Streaming_SIMD_Extensions&oldid=1149173008){target="_blank"}\] and Advanced Vector Extensions \[[AVX](https://en.wikipedia.org/w/index.php?title=Advanced_Vector_Extensions&oldid=1148504462){target="_blank"}\]
 
@@ -58,7 +58,9 @@ source: [Blaise Barney, **Introduction to Parallel Computing**, Lawrence Livermo
 
 ## Parallel computing
 
-```{r nodes-network}
+```{r}
+#| label: nodes-network
+#| echo: false
 knitr::include_graphics("fig/nodesNetwork.png")
 ```
 

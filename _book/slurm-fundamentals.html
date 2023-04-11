@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Applied HPC with R - 3&nbsp; Fundamentals</title>
+<title>Applied HPC with R - 3&nbsp; A brief intro to Slurm</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -54,7 +54,26 @@ div.sourceCode
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="site_libs/quarto-nav/quarto-nav.js"></script>
@@ -64,7 +83,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./simpi.html" rel="next">
+<link href="./slurm-simpi.html" rel="next">
 <link href="./parallel-pkg.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -107,7 +126,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./fundamentals.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Fundamentals</span></a></li></ol></nav>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./slurm-fundamentals.html">Working with a Cluster</a></li><li class="breadcrumb-item"><a href="./slurm-fundamentals.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">A brief intro to Slurm</span></a></li></ol></nav>
       <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
       </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -157,46 +176,73 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
  <span class="menu-text">Preface</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+ <span class="menu-text">Parallel computing</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./intro.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./parallel-pkg.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">The parallel R package</span></span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+ <span class="menu-text">Working with a Cluster</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./fundamentals.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Fundamentals</span></span></a>
+  <a href="./slurm-fundamentals.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">A brief intro to Slurm</span></span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./simpi.html" class="sidebar-item-text sidebar-link">
+  <a href="./slurm-simpi.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Simulating pi (once more)</span></span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
+ <span class="menu-text">Using C++</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./rcpp-part1.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Rcpp</span></span></a>
   </div>
 </li>
+      </ul>
+  </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./misc.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Misc</span></span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./summary.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Summary</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -215,12 +261,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#hello-world" id="toc-hello-world" class="nav-link active" data-scroll-target="#hello-world"><span class="header-section-number">4</span> Hello world</a>
-  <ul class="collapse">
-  <li><a href="#step-1-copy-the-slurm-script-to-hpc" id="toc-step-1-copy-the-slurm-script-to-hpc" class="nav-link" data-scroll-target="#step-1-copy-the-slurm-script-to-hpc"><span class="header-section-number">4.1</span> Step 1: Copy the Slurm script to HPC</a></li>
-  <li><a href="#step-2-logging-to-hpc" id="toc-step-2-logging-to-hpc" class="nav-link" data-scroll-target="#step-2-logging-to-hpc"><span class="header-section-number">4.2</span> Step 2: Logging to HPC</a></li>
-  <li><a href="#step-3-submitting-the-job" id="toc-step-3-submitting-the-job" class="nav-link" data-scroll-target="#step-3-submitting-the-job"><span class="header-section-number">4.3</span> Step 3: Submitting the job</a></li>
-  </ul></li>
+  <li><a href="#step-1-copy-the-slurm-script-to-hpc" id="toc-step-1-copy-the-slurm-script-to-hpc" class="nav-link active" data-scroll-target="#step-1-copy-the-slurm-script-to-hpc"><span class="header-section-number">3.1</span> Step 1: Copy the Slurm script to HPC</a></li>
+  <li><a href="#step-2-logging-to-hpc" id="toc-step-2-logging-to-hpc" class="nav-link" data-scroll-target="#step-2-logging-to-hpc"><span class="header-section-number">3.2</span> Step 2: Logging to HPC</a></li>
+  <li><a href="#step-3-submitting-the-job" id="toc-step-3-submitting-the-job" class="nav-link" data-scroll-target="#step-3-submitting-the-job"><span class="header-section-number">3.3</span> Step 3: Submitting the job</a></li>
   </ul>
 </nav>
     </div>
@@ -229,7 +272,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Fundamentals</span></h1>
+<h1 class="title"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">A brief intro to Slurm</span></h1>
 </div>
 
 
@@ -244,58 +287,57 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 </header>
 
-<section id="hello-world" class="level1" data-number="4">
-<h1 data-number="4"><span class="header-section-number">4</span> Hello world</h1>
-<p>For a quick-n-dirty intro to Slurm, we will start with a simple “Hello world” using Slurm + R. For this, we need to go through the following steps:</p>
+<p>For a quick-n-dirty intro to Slurm <span class="citation" data-cites="Yoo_Jette_Grondona_2003">(<a href="references.html#ref-Yoo_Jette_Grondona_2003" role="doc-biblioref">Yoo, Jette, and Grondona 2003</a>)</span>, we will start with a simple “Hello world” using Slurm + R. For this, we need to go through the following steps:</p>
 <ol type="1">
 <li><p>Copy a Slurm script to HPC,</p></li>
 <li><p>Logging to HPC, and</p></li>
 <li><p>Submit the job using <code>sbatch</code>.</p></li>
 </ol>
-<section id="step-1-copy-the-slurm-script-to-hpc" class="level2" data-number="4.1">
-<h2 data-number="4.1" class="anchored" data-anchor-id="step-1-copy-the-slurm-script-to-hpc"><span class="header-section-number">4.1</span> Step 1: Copy the Slurm script to HPC</h2>
+<section id="step-1-copy-the-slurm-script-to-hpc" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="step-1-copy-the-slurm-script-to-hpc"><span class="header-section-number">3.1</span> Step 1: Copy the Slurm script to HPC</h2>
 <p>We need to copy the following Slurm script to HPC (<a href="00-hello-world.slurm" target="_blank">00-hello-world.slurm</a>):</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/sh</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --output=00-hello-world.out</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="ex">module</span> load usc r</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="ex">module</span> load R/4.2.2</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> <span class="at">-e</span> <span class="st">"paste('Hello from node', Sys.getenv('SLURMD_NODENAME'))"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Which has four lines:</p>
 <ol type="1">
-<li><p><code>#!/bin/sh</code> the <strong>shebang</strong> (<a href="https://stackoverflow.com/questions/7366775/what-does-the-line-bin-sh-mean-in-a-unix-shell-script"><strong>shewhat?</strong></a>)</p></li>
-<li><p><code>#SBATCH --output=00-hello-world.out</code> an option to be passed to <code>sbatch</code>, in this case, the name of the output file to which <a href="https://en.wikipedia.org/wiki/Standard_streams"><strong>stdout and stderr</strong></a> will go.</p></li>
-<li><p><code>module load usc r</code> uses <a href="https://lmod.readthedocs.io/en/latest/"><strong>Lmod</strong></a> to load the <code>usc</code> (required) and <code>R</code> modules.</p></li>
-<li><p><code>Rscript ...</code> a call to R to evaluate the expression <code>paste(...)</code>. This will get the environment variable <code>SLURMD_NODENAME</code> (which <code>sbatch</code> creates) and print it on a message.</p></li>
+<li><p><code>#!/bin/sh</code>: The <strong>shebang</strong> (<a href="https://stackoverflow.com/questions/7366775/what-does-the-line-bin-sh-mean-in-a-unix-shell-script"><strong>shewhat?</strong></a>)</p></li>
+<li><p><code>#SBATCH --output=00-hello-world.out</code>: An option to be passed to <code>sbatch</code>, in this case, the name of the output file to which <a href="https://en.wikipedia.org/wiki/Standard_streams"><strong>stdout and stderr</strong></a> will go.</p></li>
+<li><p><code>module load R/4.2.2</code>: Uses <a href="https://lmod.readthedocs.io/en/latest/"><strong>Lmod</strong></a> to load the <code>R</code> module.</p></li>
+<li><p><code>Rscript ...</code>: A call to R to evaluate the expression <code>paste(...)</code>. This will get the environment variable <code>SLURMD_NODENAME</code> (which <code>sbatch</code> creates) and print it on a message.</p></li>
 </ol>
 <p>To do so, we will use <strong>Secure copy protocol (scp)</strong>, which allows us to copy data to and fro computers. In this case, we should do something like the following</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">scp</span> 00-hello-world.slurm vegayon@hpc-transfer1.usc.edu:/home1/vegayon/</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>In words, “Using the username <code>vegayon</code>, connect to <code>hpc-transfer1.usc.edu</code>, take the file <code>00-hello-world.slurm</code> and copy it to <code>/home1/vegayon/</code>. With the file now available in the cluster, we can submit this job using Slurm.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">scp</span> 00-hello-world.slurm <span class="pp">[</span><span class="ss">userid</span><span class="pp">]</span>@notchpeack.chpc.utah.edu:/path/to/a/place/you/can/access</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>In words, “Using the username <code>[userid]</code>, connect to <code>notchpeack.chpc.utah.edu</code>, take the file <code>00-hello-world.slurm</code> and copy it to <code>/path/to/a/place/you/can/access</code>. With the file now available in the cluster, we can submit this job using Slurm.</p>
 </section>
-<section id="step-2-logging-to-hpc" class="level2" data-number="4.2">
-<h2 data-number="4.2" class="anchored" data-anchor-id="step-2-logging-to-hpc"><span class="header-section-number">4.2</span> Step 2: Logging to HPC</h2>
+<section id="step-2-logging-to-hpc" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="step-2-logging-to-hpc"><span class="header-section-number">3.2</span> Step 2: Logging to HPC</h2>
 <ol type="1">
-<li><p>Log-in using ssh. In the case of Windows users, download the <a href="https://www.chiark.greenend.org.uk/~sgtatham/putty/"><strong>Putty</strong></a> client. You have two options, the <a href="https://carc.usc.edu/user-information/user-guides/high-performance-computing/getting-started-discovery"><strong>discovery</strong></a> or <a href="https://carc.usc.edu/user-information/user-guides/high-performance-computing/getting-started-endeavour"><strong>endeavour</strong></a> clusters.</p></li>
-<li><p>To login, you will need to use your USC Net ID. If your USC email is <code>flasname@usc.edu</code>, your USC Net ID is <code>flastname</code>. Then:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ssh</span> flastname@discovery.usc.edu</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>if you want to use the discovery cluster (available to all USC members), or</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ssh</span> flastname@endeavour.usc.edu</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>if you want to use the endeavour cluster (using private condos).</p></li>
+<li><p>Log in using ssh. In the case of Windows users, download the <a href="https://www.chiark.greenend.org.uk/~sgtatham/putty/"><strong>Putty</strong></a> client.</p></li>
+<li><p>To log in, you will need to use your organization ID. Usually, if your email is something like <code>myemailuser@school.edu</code>, your ID is <code>myemailuser</code>. Then:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ssh</span> myemailuser@notchpeack.chpc.utah.edu</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
 </ol>
 </section>
-<section id="step-3-submitting-the-job" class="level2" data-number="4.3">
-<h2 data-number="4.3" class="anchored" data-anchor-id="step-3-submitting-the-job"><span class="header-section-number">4.3</span> Step 3: Submitting the job</h2>
+<section id="step-3-submitting-the-job" class="level2" data-number="3.3">
+<h2 data-number="3.3" class="anchored" data-anchor-id="step-3-submitting-the-job"><span class="header-section-number">3.3</span> Step 3: Submitting the job</h2>
 <p>Overall, there are two ways to use the compute nodes: interactively (<code>salloc</code>) and in batch mode (<code>sbatch</code>). In this case, since we have a Slurm script, we will use the latter.</p>
-<p>To submit the job, we can simple type the following:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">sbatch</span> 00-hello-world.slurm</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>To submit the job, we can type the following:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">sbatch</span> 00-hello-world.slurm</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>And that’s it!</p>
 <p>In the case of interactive sessions, You can start one using the <code>salloc</code> command. For example, if you wanted to run R with 8 cores, using 16 Gigs of memory in total, you would need to do the following:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">salloc</span> <span class="at">-n1</span> <span class="at">--cpus-per-task</span><span class="op">=</span>8 <span class="at">--mem-per-cpu</span><span class="op">=</span>2G <span class="at">--time</span><span class="op">=</span>01:00:00</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">salloc</span> <span class="at">-n1</span> <span class="at">--cpus-per-task</span><span class="op">=</span>8 <span class="at">--mem-per-cpu</span><span class="op">=</span>2G <span class="at">--time</span><span class="op">=</span>01:00:00</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Once your request is submitted, you will get access to a compute node. Within it, you can load the required modules and start R:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">module</span> load usc r</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="ex">R</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">module</span> load R/4.2.2</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="ex">R</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Interactive sessions are not recommended for long jobs. Instead, use this resource if you need to inspect some large dataset, debug your code, etc.</p>
 
 
-</section>
+<div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
+<div id="ref-Yoo_Jette_Grondona_2003" class="csl-entry" role="listitem">
+Yoo, Andy B., Morris A. Jette, and Mark Grondona. 2003. <span>“SLURM: Simple Linux Utility for Resource Management.”</span> In <em>Job Scheduling Strategies for Parallel Processing</em>, edited by Dror Feitelson, Larry Rudolph, and Uwe Schwiegelshohn, 2862:44–60. Lecture Notes in Computer Science. Berlin, Heidelberg: Springer Berlin Heidelberg. <a href="https://doi.org/10.1007/10968987_3">https://doi.org/10.1007/10968987_3</a>.
+</div>
+</div>
 </section>
 
 </main> <!-- /main -->
@@ -539,7 +581,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./simpi.html" class="pagination-link">
+      <a href="./slurm-simpi.html" class="pagination-link">
         <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Simulating pi (once more)</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>

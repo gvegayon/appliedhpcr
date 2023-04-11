@@ -1,5 +1,3 @@
-# Fundamentals
-
 ```{r}
 #| label: setup
 #| include: false
@@ -12,9 +10,9 @@ cat2 <- function(..., lang = 'r') {
 ```
 
 
-# Hello world
+# A brief intro to Slurm
 
-For a quick-n-dirty intro to Slurm, we will start with a simple "Hello world"
+For a quick-n-dirty intro to Slurm [@Yoo_Jette_Grondona_2003], we will start with a simple "Hello world"
 using Slurm + R. For this, we need to go through the following steps:
 
 1.  Copy a Slurm script to HPC,
@@ -35,16 +33,16 @@ cat2(readLines("00-hello-world.slurm"), sep = "\n", lang = "bash")
 
 Which has four lines:
 
-1.  `#!/bin/sh` the **shebang** ([**shewhat?**](https://stackoverflow.com/questions/7366775/what-does-the-line-bin-sh-mean-in-a-unix-shell-script))
+1.  `#!/bin/sh`: The **shebang** ([**shewhat?**](https://stackoverflow.com/questions/7366775/what-does-the-line-bin-sh-mean-in-a-unix-shell-script))
 
-2.  `#SBATCH --output=00-hello-world.out` an option to be passed to `sbatch`, in
+2.  `#SBATCH --output=00-hello-world.out`: An option to be passed to `sbatch`, in
     this case, the name of the output file to which
     [**stdout and stderr**](https://en.wikipedia.org/wiki/Standard_streams) will go.
     
-3.  `module load usc r` uses [**Lmod**](https://lmod.readthedocs.io/en/latest/) to load the `usc` (required) and `R`
-    modules.
+3.  `module load R/4.2.2`: Uses [**Lmod**](https://lmod.readthedocs.io/en/latest/) to load the `R`
+    module.
     
-4.  `Rscript ...` a call to R to evaluate the expression `paste(...)`. This will
+4.  `Rscript ...`: A call to R to evaluate the expression `paste(...)`. This will
     get the environment variable `SLURMD_NODENAME` (which `sbatch` creates) and
     print it on a message.
 
@@ -53,38 +51,25 @@ To do so, we will use **Secure copy protocol (scp)**, which allows us to copy
 data to and fro computers. In this case, we should do something like the following
 
 ```bash
-scp 00-hello-world.slurm vegayon@hpc-transfer1.usc.edu:/home1/vegayon/
+scp 00-hello-world.slurm [userid]@notchpeack.chpc.utah.edu:/path/to/a/place/you/can/access
 ```
 
-In words, "Using the username `vegayon`, connect to `hpc-transfer1.usc.edu`, take
-the file `00-hello-world.slurm` and copy it to `/home1/vegayon/`. With the file
+In words, "Using the username `[userid]`, connect to `notchpeack.chpc.utah.edu`, take
+the file `00-hello-world.slurm` and copy it to `/path/to/a/place/you/can/access`. With the file
 now available in the cluster, we can submit this job using Slurm.
 
 
 ## Step 2: Logging to HPC
 
-1.  Log-in using ssh. In the case of Windows users, download the
-    [**Putty**](https://www.chiark.greenend.org.uk/~sgtatham/putty/) client. You have
-    two options, the
-    [**discovery**](https://carc.usc.edu/user-information/user-guides/high-performance-computing/getting-started-discovery)
-    or
-    [**endeavour**](https://carc.usc.edu/user-information/user-guides/high-performance-computing/getting-started-endeavour)
-    clusters.
+1.  Log in using ssh. In the case of Windows users, download the
+    [**Putty**](https://www.chiark.greenend.org.uk/~sgtatham/putty/) client.
 
-2.  To login, you will need to use your USC Net ID. If your USC email is
-    `flasname@usc.edu`, your USC Net ID is `flastname`. Then:
+2.  To log in, you will need to use your organization ID. Usually, if your email is something like
+    `myemailuser@school.edu`, your ID is `myemailuser`. Then:
     
     ``` {.bash}
-    ssh flastname@discovery.usc.edu
+    ssh myemailuser@notchpeack.chpc.utah.edu
     ```
-    
-    if you want to use the discovery cluster (available to all USC members), or
-    
-    ``` {.bash}
-    ssh flastname@endeavour.usc.edu
-    ```
-    
-    if you want to use the endeavour cluster (using private condos).
 
 
 ## Step 3: Submitting the job
@@ -93,7 +78,7 @@ Overall, there are two ways to use the compute nodes: interactively (`salloc`)
 and in batch mode (`sbatch`).  In this case, since we have a Slurm script, we
 will use the latter.
 
-To submit the job, we can simple type the following:
+To submit the job, we can type the following:
 
 ```bash
 sbatch 00-hello-world.slurm
@@ -113,7 +98,7 @@ Once your request is submitted, you will get access to a compute node.
 Within it, you can load the required modules and start R:
 
 ```bash
-module load usc r
+module load R/4.2.2
 R
 ```
 

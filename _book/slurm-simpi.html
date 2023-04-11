@@ -54,7 +54,26 @@ div.sourceCode
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="site_libs/quarto-nav/quarto-nav.js"></script>
@@ -65,7 +84,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
 <link href="./rcpp-part1.html" rel="next">
-<link href="./fundamentals.html" rel="prev">
+<link href="./slurm-fundamentals.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -109,7 +128,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./simpi.html"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Simulating pi (once more)</span></a></li></ol></nav>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./slurm-fundamentals.html">Working with a Cluster</a></li><li class="breadcrumb-item"><a href="./slurm-simpi.html"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Simulating pi (once more)</span></a></li></ol></nav>
       <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
       </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -159,46 +178,73 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
  <span class="menu-text">Preface</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+ <span class="menu-text">Parallel computing</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./intro.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./parallel-pkg.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">The parallel R package</span></span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+ <span class="menu-text">Working with a Cluster</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./fundamentals.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Fundamentals</span></span></a>
+  <a href="./slurm-fundamentals.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">A brief intro to Slurm</span></span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./simpi.html" class="sidebar-item-text sidebar-link active">
+  <a href="./slurm-simpi.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Simulating pi (once more)</span></span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
+ <span class="menu-text">Using C++</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./rcpp-part1.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Rcpp</span></span></a>
   </div>
 </li>
+      </ul>
+  </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./misc.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Misc</span></span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./summary.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Summary</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -251,45 +297,45 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 </header>
 
-<p>This is the same old example that lots of people (including me) have been using to ilustrate parallel computing with R. The example is very simple, we want to approximate pi by doing some Monte Carlo simulations.</p>
+<p>This is the same old example that lots of people (including me) have been using to illustrate parallel computing with R. The example is very simple, we want to approximate pi by doing some Monte Carlo simulations.</p>
 <p>We know that the area of a circle is <span class="math inline">\(A = \pi r^2\)</span>, which is equivalent to say <span class="math inline">\(\pi = A/r^2\)</span>, so, if we can approximate the Area of a circle, then we can approximate <span class="math inline">\(\pi\)</span>. How do we do this?</p>
-<p>Using montecarlo experiments, we have that the probability that a random point <span class="math inline">\(x\)</span> falls within the unit circle can be approximated using the following formula</p>
+<p>Using Monte Carlo experiments, we can approximate the probability of a random point <span class="math inline">\(x\)</span> falling within the unit circle using the following formula:</p>
 <p><span class="math display">\[
 \hat p = \frac{1}{n}\sum_i \mathbf{1}(x \in \mbox{Circle})
 \]</span></p>
-<p>This approximation, <span class="math inline">\(\hat p\)</span>, multiplied by the area of the escribed square, which has an area equal to <span class="math inline">\((2\times r)^2\)</span>, thus, we can finally write</p>
+<p>This approximation, <span class="math inline">\(\hat p\)</span>, multiplied by the area of the square containing the circle, which has an area equal to <span class="math inline">\((2\times r)^2\)</span>, thus, we can finally write</p>
 <p><span class="math display">\[
 \hat \pi = \hat p \times (2\times r)^2 / r^2 = 4 \hat p
 \]</span></p>
 <div class="cell" data-layout-align="center">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="simpi_files/figure-html/simplot-1.png" class="img-fluid figure-img" style="width:50.0%"></p>
+<p><img src="slurm-simpi_files/figure-html/simplot-1.png" class="img-fluid figure-img" style="width:50.0%"></p>
 <p></p><figcaption class="figure-caption">10,000 random points drawn within the unit circle.</figcaption><p></p>
 </figure>
 </div>
 </div>
 <section id="submitting-jobs-to-slurm" class="level2" data-number="4.1">
 <h2 data-number="4.1" class="anchored" data-anchor-id="submitting-jobs-to-slurm"><span class="header-section-number">4.1</span> Submitting jobs to Slurm</h2>
-<p>The main way that we will be working is submitting jobs using the <code>sbatch</code> function. This function takes as a main argument a bash file with the program to execute. In the case of R, a regular bash file looks something like this:</p>
+<p>The main way that we will be working is by submitting jobs using the <code>sbatch</code> function. This function takes as a main argument a bash file with the program to execute. In the case of R, a regular bash file looks something like this:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/sh</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --job-name=sapply</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --time=00:10:00</span></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="ex">module</span> load usc r</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="ex">module</span> load R/4.2.2</span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> <span class="at">--vanilla</span> 01-sapply.R</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>This file has three components:</p>
 <ul>
 <li><p>The Slurm flags <code>#SBATCH</code>.</p></li>
-<li><p>Loading R <code>module load usc</code> and <code>module load r</code>.</p></li>
+<li><p>Loading R <code>module load R/4.2.2</code>.</p></li>
 <li><p>Executing the R script.</p></li>
 </ul>
-<p>To submit a job the to queue, we need to enter the following:</p>
+<p>Submission is then done as follows:</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">sbatch</span> 01-sapply.slurm</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>The following examples have two files, a bash script and a R script to be called by Slurm.</p>
+<p>The following examples have two files, a bash script and an R script to be called by Slurm.</p>
 <section id="case-1-single-job-single-core-job" class="level3" data-number="4.1.1">
 <h3 data-number="4.1.1" class="anchored" data-anchor-id="case-1-single-job-single-core-job"><span class="header-section-number">4.1.1</span> Case 1: Single job, single core job</h3>
-<p>The most basic way is submitting a job using the <a href=""><code>sbatch</code></a> command. Im this case you need to have 2 files: (1) An R script, and (2) a bash script. e.g.</p>
+<p>The most basic way is submitting a job using the <code>sbatch</code> command. In this case, you need to have 2 files: (1) An R script, and (2) a bash script. e.g.</p>
 <p>The contents of the R script (<a href="01-sapply.R" target="_blank">01-sapply.R</a>) are:</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Model parameters</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>nsims <span class="ot">&lt;-</span> <span class="fl">1e3</span></span>
@@ -315,12 +361,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --job-name=sapply</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --time=00:10:00</span></span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>module load usc r</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>module load R<span class="sc">/</span><span class="dv">4</span>.<span class="fl">2.2</span></span>
 <span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>Rscript <span class="sc">--</span>vanilla <span class="dv">01</span><span class="sc">-</span>sapply.R</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="case-2-single-job-multicore-job" class="level3" data-number="4.1.2">
 <h3 data-number="4.1.2" class="anchored" data-anchor-id="case-2-single-job-multicore-job"><span class="header-section-number">4.1.2</span> Case 2: Single job, multicore job</h3>
-<p>Now, imagine that we would like to use more than one processor for this job, using something like the <code>parallel::mclapply</code> function from the parallel package. Then, besides of adapting the code, we need to tell Slurm that we are using more than one core per-task, as the following example:</p>
+<p>Now, imagine that we would like to use more than one processor for this job, using something like the <code>parallel::mclapply</code> function from the parallel package.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> Then, besides adapting the code, we need to tell Slurm that we are using more than one core per task, as in the following example:</p>
 <p>R script (<a href="02-mclapply.R" target="_blank">02-mclapply.R</a>):</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Model parameters</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>nsims  <span class="ot">&lt;-</span> <span class="fl">1e3</span></span>
@@ -349,16 +395,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --time=00:10:00</span></span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --cpus-per-task=4</span></span>
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="ex">module</span> load usc r</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="ex">module</span> load R/4.2.2</span>
 <span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> <span class="at">--vanilla</span> 02-mclapply.R</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 </section>
 <section id="jobs-with-the-slurmr-package" class="level2" data-number="4.2">
 <h2 data-number="4.2" class="anchored" data-anchor-id="jobs-with-the-slurmr-package"><span class="header-section-number">4.2</span> Jobs with the slurmR package</h2>
+<p>The <code>slurmR</code> R package <span class="citation" data-cites="slurmRpaper slurmRpkg">(<a href="references.html#ref-slurmRpaper" role="doc-biblioref">Vega Yon and Marjoram 2019</a>, <a href="references.html#ref-slurmRpkg" role="doc-biblioref">2022</a>)</span> is a lightweight wrapper of Slurm. The package’s main functions are the <code>*apply</code> family–mostly through Slurm job arrays–and the <code>makeSlurmCluster()</code>–which is a wrapper of <code>makePSOCKcluster</code>.</p>
+<p>This section will illustrate how to submit jobs using the <code>makeSlurmCluster()</code> function and <code>Slurm_sapply</code>. Furthermore, the last example demonstrates how we can skip writing Slurm scripts entirely using the <code>sourceSlurm()</code> function included in the package.</p>
 <section id="case-3-single-job-multinode-job" class="level3" data-number="4.2.1">
 <h3 data-number="4.2.1" class="anchored" data-anchor-id="case-3-single-job-multinode-job"><span class="header-section-number">4.2.1</span> Case 3: Single job, multinode job</h3>
 <p>In this case, there is no simple way to submit a multinodal job to Slurm… unless you use the <a href="https://github.com/USCbiostats/slurmR"><strong>slurmR</strong></a> package (see installation instructions <a href="https://github.com/USCbiostats/slurmR#installation"><strong>here</strong></a>)</p>
-<p>Once you have the slurmR package in your system, you can proceed as follow</p>
+<p>Once you have the <code>slurmR</code> package in your system, you can proceed as follow</p>
 <p>R script (<a href="03-parsapply-slurmr.R" target="_blank">03-parsapply-slurmr.R</a>):</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Model parameters</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>nsims  <span class="ot">&lt;-</span> <span class="fl">1e3</span></span>
@@ -394,12 +442,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --job-name=parsapply</span></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --time=00:10:00</span></span>
 <span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="ex">module</span> load usc r</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="ex">module</span> load R/4.2.2</span>
 <span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> <span class="at">--vanilla</span> 03-parsapply-slurmr.R</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="case-4-multi-job-singlemulti-core" class="level3" data-number="4.2.2">
 <h3 data-number="4.2.2" class="anchored" data-anchor-id="case-4-multi-job-singlemulti-core"><span class="header-section-number">4.2.2</span> Case 4: Multi job, single/multi-core</h3>
-<p>Another way to submit jobs is using <a href="https://slurm.schedmd.com/job_array.html"><strong>job arrays</strong></a>. A job array is essentially a job that is repreated <code>njobs</code> times with the same configuration. The main difference between replicates is what you do with the <code>SLURM_ARRAY_TASK_ID</code> environment variable. This variable is defined within each replicate and can be used to make the “subjob” depending on that.</p>
+<p>Another way to submit jobs is using <a href="https://slurm.schedmd.com/job_array.html"><strong>job arrays</strong></a>. A job array is essentially a job that is repeated <code>njobs</code> times with the same configuration. The main difference between replicates is what you do with the <code>SLURM_ARRAY_TASK_ID</code> environment variable. This variable is defined within each replicate and can be used to make the “subjob” depending on that.</p>
 <p>Here is a quick example using R</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>ID <span class="ot">&lt;-</span> <span class="fu">Sys.getenv</span>(<span class="st">"SLURM_ARRAY_TASK_ID"</span>)</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (ID <span class="sc">==</span> <span class="dv">1</span>) {</span>
@@ -443,14 +491,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --job-name=slurm_sapply</span></span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --time=00:10:00</span></span>
 <span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="ex">module</span> load usc r</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="ex">module</span> load R/4.2.2</span>
 <span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> <span class="at">--vanilla</span> 04-slurm_sapply.R</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>One of the main benefits of using this approach instead of the the <code>makeSlurmCluster</code> function (and thus, working with a SOCK cluster) are:</p>
+<p>One of the main benefits of using this approach instead of the <code>makeSlurmCluster</code> function (and thus, working with a SOCK cluster) are:</p>
 <ul>
 <li><p>The number of jobs is not limited here (only by the admin, but not by R).</p></li>
 <li><p>If a job fails, then we can re-run it using <code>sbatch</code> once again (see example <a href="https://github.com/USCbiostats/slurmR#example-2-job-resubmission" target="_blank">here</a>).</p></li>
 <li><p>You can check the individual logs of each process using the function <code>Slurm_lob()</code>.</p></li>
-<li><p>You can submit the job and quick the R session without waiting for it to finalize. You can always read back the job using the function <code>read_slurm_job([path-to-the-temp])</code></p></li>
+<li><p>You can submit the job and quit the R session without waiting for it to finalize. You can always read back the job using the function <code>read_slurm_job([path-to-the-temp])</code></p></li>
 </ul>
 </section>
 <section id="case-5-skipping-the-.slurm-file" class="level3" data-number="4.2.3">
@@ -482,10 +530,24 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(ans, <span class="st">"05-sapply.rds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>From the R console (is OK if you are in the Head node)</p>
 <div class="sourceCode" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>slurmR<span class="sc">::</span><span class="fu">sourceSlurm</span>(<span class="st">"05-sapply.R"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>And voilá! A temporary bash file will be generated and used submit the R script to the queue.</p>
+<p>And voilá! A temporary bash file will be generated and used to submit the R script to the queue.</p>
 
 
+<div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
+<div id="ref-slurmRpaper" class="csl-entry" role="listitem">
+Vega Yon, George, and Paul Marjoram. 2019. <span>“slurmR: A Lightweight Wrapper for HPC with Slurm.”</span> <em>The Journal of Open Source Software</em> 4 (39). <a href="https://doi.org/10.21105/joss.01493">https://doi.org/10.21105/joss.01493</a>.
+</div>
+<div id="ref-slurmRpkg" class="csl-entry" role="listitem">
+———. 2022. <em><span class="nocase">slurmR: A Lightweight Wrapper for ’Slurm’</span></em>. <a href="https://github.com/USCbiostats/slurmR">https://github.com/USCbiostats/slurmR</a>.
+</div>
+</div>
 </section>
+</section>
+<section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn1"><p>This function is sort of a wrapper of <code>makeForkcluster</code>. <a href="https://en.wikipedia.org/w/index.php?title=Fork_(system_call)&amp;oldid=1145232797" target="_blank">Forking</a> provides a way to duplicate a process in the OS without replicating the memory, which is both faster and efficient.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
 </section>
 
 </main> <!-- /main -->
@@ -724,8 +786,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./fundamentals.html" class="pagination-link">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Fundamentals</span></span>
+      <a href="./slurm-fundamentals.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">A brief intro to Slurm</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">

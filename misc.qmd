@@ -100,7 +100,7 @@ Also, in your R code
 3.  It has multiple versions of R installed. Use your favorite one by running
 
     ``` {.bash}
-    module load usc r/[version number]
+    module load R/4.2.2/[version number]
     ```
 
     Where `[version number]` can be 3.5.6 and up to 4.0.3 (the latest update). The `usc` module automatically loads gcc/8.3.0, openblas/0.3.8, openmpi/4.0.2, and pmix/3.1.3.
