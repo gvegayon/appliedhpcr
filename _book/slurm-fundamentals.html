@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Applied HPC with R - 3&nbsp; A brief intro to Slurm</title>
+<title>Applied HPC with R - 3&nbsp; What is Slurm</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -126,7 +126,7 @@ div.csl-indent {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./slurm-fundamentals.html">Working with a Cluster</a></li><li class="breadcrumb-item"><a href="./slurm-fundamentals.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">A brief intro to Slurm</span></a></li></ol></nav>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./slurm-fundamentals.html">Working with a Cluster</a></li><li class="breadcrumb-item"><a href="./slurm-fundamentals.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">What is Slurm</span></a></li></ol></nav>
       <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
       </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -211,7 +211,7 @@ div.csl-indent {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./slurm-fundamentals.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">A brief intro to Slurm</span></span></a>
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">What is Slurm</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -261,9 +261,13 @@ div.csl-indent {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#step-1-copy-the-slurm-script-to-hpc" id="toc-step-1-copy-the-slurm-script-to-hpc" class="nav-link active" data-scroll-target="#step-1-copy-the-slurm-script-to-hpc"><span class="header-section-number">3.1</span> Step 1: Copy the Slurm script to HPC</a></li>
-  <li><a href="#step-2-logging-to-hpc" id="toc-step-2-logging-to-hpc" class="nav-link" data-scroll-target="#step-2-logging-to-hpc"><span class="header-section-number">3.2</span> Step 2: Logging to HPC</a></li>
-  <li><a href="#step-3-submitting-the-job" id="toc-step-3-submitting-the-job" class="nav-link" data-scroll-target="#step-3-submitting-the-job"><span class="header-section-number">3.3</span> Step 3: Submitting the job</a></li>
+  <li><a href="#definitions" id="toc-definitions" class="nav-link active" data-scroll-target="#definitions"><span class="header-section-number">3.1</span> Definitions</a></li>
+  <li><a href="#a-brief-intro-to-slurm" id="toc-a-brief-intro-to-slurm" class="nav-link" data-scroll-target="#a-brief-intro-to-slurm"><span class="header-section-number">4</span> A brief intro to Slurm</a>
+  <ul class="collapse">
+  <li><a href="#step-1-copy-the-slurm-script-to-hpc" id="toc-step-1-copy-the-slurm-script-to-hpc" class="nav-link" data-scroll-target="#step-1-copy-the-slurm-script-to-hpc"><span class="header-section-number">4.1</span> Step 1: Copy the Slurm script to HPC</a></li>
+  <li><a href="#step-2-logging-to-hpc" id="toc-step-2-logging-to-hpc" class="nav-link" data-scroll-target="#step-2-logging-to-hpc"><span class="header-section-number">4.2</span> Step 2: Logging to HPC</a></li>
+  <li><a href="#step-3-submitting-the-job" id="toc-step-3-submitting-the-job" class="nav-link" data-scroll-target="#step-3-submitting-the-job"><span class="header-section-number">4.3</span> Step 3: Submitting the job</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
@@ -272,7 +276,7 @@ div.csl-indent {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">A brief intro to Slurm</span></h1>
+<h1 class="title"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">What is Slurm</span></h1>
 </div>
 
 
@@ -287,14 +291,51 @@ div.csl-indent {
 
 </header>
 
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Most of this section was extracted from the <code>slurmR</code> R package’s vignette <a href="https://uscbiostats.github.io/slurmR/articles/working-with-slurm.html" target="_blank">“Working with Slurm.”</a></p>
+</div>
+</div>
+<p>Nowadays, high-performance-computing (HPC) clusters are commonly available tools for either in or out of cloud settings. <a href="https://slurm.schedmd.com/" target="_blank">Slurm Work Manager</a> (formerly <em>Simple Linux Utility for Resource Manager</em>) is a program written in C that is used to efficiently manage resources in HPC clusters. The slurmR R package–which we will be using in this book–provides tools for using R in HPC settings that work with Slurm. It provides wrappers and functions that allow the user to seamlessly integrate their analysis pipeline with HPC clusters, emphasizing on providing the user with a family of functions similar to those that the parallel R package provides.</p>
+<section id="definitions" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="definitions"><span class="header-section-number">3.1</span> Definitions</h2>
+<p>First, some important discussion points within the context of Slurm+R that users, in general, will find useful. Most of the points have to do with options available for Slurm, and in particular, with the <code>sbatch</code> command with is used to submit batch jobs to Slurm. Users who have used Slurm in the past may wish to skip this and continue reading the following section.</p>
+<ul>
+<li><p><strong>Node</strong> A single computer in the HPC: A lot of times jobs will be submitted to a single node. The simplest way of using R+Slurm is submitting a single job and requesting multiple CPUs to use, for example, <code>parallel::parLapply</code> or <code>parallel::mclapply</code>. Usually, users do not need to request a specific number of nodes to be used as Slurm will allocate the resources as needed.</p>
+<p>A common mistake of R users is to specify the number of nodes and expect that their script will be parallelized. This won’t happen unless the user explicitly writes a parallel computing script.</p>
+<p>The relevant flag for <code>sbatch</code> is <code>--nodes</code>.</p></li>
+<li><p><strong>Partition</strong> A group of nodes in HPC. Generally large nodes may have multiple partitions, meaning that nodes may be grouped in various ways. For example, nodes belonging to a single group of users may be in a single partition, and nodes dedicated to working with large data may be in another partition. Usually, partitions are associated with account privileges, so users may need to specify which account are they using when telling Slurm what partition they plan to use.</p>
+<p>The relevant flag for <code>sbatch</code> is <code>--partition</code>.</p></li>
+<li><p><strong>Account</strong> Accounts may be associated with partitions. Accounts can have privileges to use a partition or set of nodes. Often, users need to specify the account when submitting jobs to a particular partition.</p>
+<p>The relevant flag for <code>sbatch</code> is <code>--account</code>.</p></li>
+<li><p><strong>Task</strong> A step within a job. A particular job can have multiple tasks. tasks may span multiple nodes, so if the user wants to submit a multicore job, this option may not be the right one.</p>
+<p>The relevant flag for <code>sbatch</code> is <code>--ntasks</code></p></li>
+<li><p><strong>CPU</strong> generally this refers to core or thread (which may be different in systems supporting multithreaded cores). Users may want to specify how many CPUs they want to use for a task. And this is the relevant option when using things like OpenMP or functions that allow creating cluster objects in R (e.g.&nbsp;<code>makePSOCKcluster</code>, <code>makeForkCluster</code>).</p>
+<p>The relevant option in <code>sbatch</code> is <code>--cpus-per-task</code>. More information regarding CPUs in Slurm can be found <a href="https://slurm.schedmd.com/cpu_management.html" target="_blank">here</a>. Information regarding how Slurm counts CPUs/cores/threads can be found <a href="https://slurm.schedmd.com/faq.html#cpu_count" target="_blank">here</a>.</p></li>
+<li><p><strong>Job Array</strong> Slurm supports job arrays. A job array is in simple terms a job that is repeated multiple times by Slurm, this is, replicates a single job as requested per the user. In the case of R, when using this option, a single R script is spanned in multiple jobs, so the user can take advantage of this and parallelize jobs across multiple nodes. Besides from the fact that jobs within a Job Array may be spanned across multiple nodes, each job in that array has a unique ID that is available to the user via environment variables, in particular <code>SLURM_ARRAY_TASK_ID</code>.</p>
+<p>Within R, and hence the Rscript submitted to Slurm, users can access this environment variable with <code>Sys.getenv("SLURM_ARRAY_TASK_ID")</code>. Some of the functionalities of <code>slurmR</code> rely on Job Arrays.</p>
+<p>More information on Job Arrays can be found <a href="https://slurm.schedmd.com/job_array.html">here</a>. The relevant option for this in <code>sbatch</code> is <code>--array</code>.</p></li>
+</ul>
+<p>More information about Slurm can be found their official website <a href="https://slurm.schedmd.com/">here</a>. A tutorial about how to use Slurm with R can be found <a href="https://uscbiostats.github.io/slurmr-workshop/">here</a>.</p>
+</section>
+<section id="a-brief-intro-to-slurm" class="level1" data-number="4">
+<h1 data-number="4"><span class="header-section-number">4</span> A brief intro to Slurm</h1>
 <p>For a quick-n-dirty intro to Slurm <span class="citation" data-cites="Yoo_Jette_Grondona_2003">(<a href="references.html#ref-Yoo_Jette_Grondona_2003" role="doc-biblioref">Yoo, Jette, and Grondona 2003</a>)</span>, we will start with a simple “Hello world” using Slurm + R. For this, we need to go through the following steps:</p>
 <ol type="1">
 <li><p>Copy a Slurm script to HPC,</p></li>
 <li><p>Logging to HPC, and</p></li>
 <li><p>Submit the job using <code>sbatch</code>.</p></li>
 </ol>
-<section id="step-1-copy-the-slurm-script-to-hpc" class="level2" data-number="3.1">
-<h2 data-number="3.1" class="anchored" data-anchor-id="step-1-copy-the-slurm-script-to-hpc"><span class="header-section-number">3.1</span> Step 1: Copy the Slurm script to HPC</h2>
+<section id="step-1-copy-the-slurm-script-to-hpc" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="step-1-copy-the-slurm-script-to-hpc"><span class="header-section-number">4.1</span> Step 1: Copy the Slurm script to HPC</h2>
 <p>We need to copy the following Slurm script to HPC (<a href="00-hello-world.slurm" target="_blank">00-hello-world.slurm</a>):</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/sh</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --output=00-hello-world.out</span></span>
@@ -311,25 +352,26 @@ div.csl-indent {
 <div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">scp</span> 00-hello-world.slurm <span class="pp">[</span><span class="ss">userid</span><span class="pp">]</span>@notchpeak.chpc.utah.edu:/path/to/a/place/you/can/access</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>In words, “Using the username <code>[userid]</code>, connect to <code>notchpeak.chpc.utah.edu</code>, take the file <code>00-hello-world.slurm</code> and copy it to <code>/path/to/a/place/you/can/access</code>. With the file now available in the cluster, we can submit this job using Slurm.</p>
 </section>
-<section id="step-2-logging-to-hpc" class="level2" data-number="3.2">
-<h2 data-number="3.2" class="anchored" data-anchor-id="step-2-logging-to-hpc"><span class="header-section-number">3.2</span> Step 2: Logging to HPC</h2>
+<section id="step-2-logging-to-hpc" class="level2" data-number="4.2">
+<h2 data-number="4.2" class="anchored" data-anchor-id="step-2-logging-to-hpc"><span class="header-section-number">4.2</span> Step 2: Logging to HPC</h2>
 <ol type="1">
 <li><p>Log in using ssh. In the case of Windows users, download the <a href="https://www.chiark.greenend.org.uk/~sgtatham/putty/"><strong>Putty</strong></a> client.</p></li>
 <li><p>To log in, you will need to use your organization ID. Usually, if your email is something like <code>myemailuser@school.edu</code>, your ID is <code>myemailuser</code>. Then:</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ssh</span> myemailuser@notchpeak.chpc.utah.edu</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
 </ol>
 </section>
-<section id="step-3-submitting-the-job" class="level2" data-number="3.3">
-<h2 data-number="3.3" class="anchored" data-anchor-id="step-3-submitting-the-job"><span class="header-section-number">3.3</span> Step 3: Submitting the job</h2>
+<section id="step-3-submitting-the-job" class="level2" data-number="4.3">
+<h2 data-number="4.3" class="anchored" data-anchor-id="step-3-submitting-the-job"><span class="header-section-number">4.3</span> Step 3: Submitting the job</h2>
 <p>Overall, there are two ways to use the compute nodes: interactively (<code>salloc</code>) and in batch mode (<code>sbatch</code>). In this case, since we have a Slurm script, we will use the latter.</p>
 <p>To submit the job, we can type the following:</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">sbatch</span> 00-hello-world.slurm</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>And that’s it!</p>
+<p>And that’s it! That said, it is often required to specify the account and partition the user will be submitting the job. For example, if you have the account <code>my-account</code> and partition <code>my-partition</code> associated with your user, you can incorporate that information as follows:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">sbatch</span> 00-hello-world.slurm <span class="at">--acount</span><span class="op">=</span>my-account <span class="at">--partition</span><span class="op">=</span>my-partition</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>In the case of interactive sessions, You can start one using the <code>salloc</code> command. For example, if you wanted to run R with 8 cores, using 16 Gigs of memory in total, you would need to do the following:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">salloc</span> <span class="at">-n1</span> <span class="at">--cpus-per-task</span><span class="op">=</span>8 <span class="at">--mem-per-cpu</span><span class="op">=</span>2G <span class="at">--time</span><span class="op">=</span>01:00:00</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">salloc</span> <span class="at">-n1</span> <span class="at">--cpus-per-task</span><span class="op">=</span>8 <span class="at">--mem-per-cpu</span><span class="op">=</span>2G <span class="at">--time</span><span class="op">=</span>01:00:00</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Once your request is submitted, you will get access to a compute node. Within it, you can load the required modules and start R:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">module</span> load R/4.2.2</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="ex">R</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">module</span> load R/4.2.2</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="ex">R</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Interactive sessions are not recommended for long jobs. Instead, use this resource if you need to inspect some large dataset, debug your code, etc.</p>
 
 
@@ -338,6 +380,7 @@ div.csl-indent {
 Yoo, Andy B., Morris A. Jette, and Mark Grondona. 2003. <span>“SLURM: Simple Linux Utility for Resource Management.”</span> In <em>Job Scheduling Strategies for Parallel Processing</em>, edited by Dror Feitelson, Larry Rudolph, and Uwe Schwiegelshohn, 2862:44–60. Lecture Notes in Computer Science. Berlin, Heidelberg: Springer Berlin Heidelberg. <a href="https://doi.org/10.1007/10968987_3">https://doi.org/10.1007/10968987_3</a>.
 </div>
 </div>
+</section>
 </section>
 
 </main> <!-- /main -->

@@ -70,11 +70,11 @@ cat2(readLines("01-sapply.slurm"), sep="\n", lang = 'bash')
 
 This file has three components:
 
-- The Slurm flags `#SBATCH`.
+- **The Slurm flags `#SBATCH`**: These comment-like entries are used to pass Slurm options to the job. In this example, we are only specifying the options `job-name` and `time`. Other common options to include would be `account` and `partition`.
 
-- Loading R `module load R/4.2.2`.
+- **Loading R `module load R/4.2.2`**: Depending on your system's configuration, you may or may not need to load modules or run bash scripts before being able to run R. In this example, we are loading R version 4.2.2 using `LMod` (see previous section).
 
-- Executing the R script.
+- **Executing the R script**: Finally, after specifying Slurm options and loading whatever needs to be loaded before executing R, we are using `RScript` to execute the program we wrote.
 
 Submission is then done as follows:
 
@@ -134,11 +134,14 @@ This section will illustrate how to submit jobs using the `makeSlurmCluster()` f
 
 ### Case 3: Single job, multinode job
 
-In this case, there is no simple way to submit a multinodal job to Slurm... unless
-you use the [**slurmR**](https://github.com/USCbiostats/slurmR) package (see
-installation instructions [**here**](https://github.com/USCbiostats/slurmR#installation))
+In this case, there is no simple way to submit a multinodal job to Slurm... unless you use the [**slurmR**](https://github.com/USCbiostats/slurmR){target="_blank"} package.[^installingslurmr] In this example, we will combine `slurmR` with the parallel package's `parSapply` function to submit a multinodal job using the function `makeSlurmCluster()`. With it, `slurmR` will submit a job requesting `njobs` tasks (processors) that could span multiple nodes,[^notexactlymultinode] and create a Socket cluster out of it (like using `makePSOCKcluster`.) One thing to keep in mind is that Socket clusters are limited in the number of connections a single R session can span. You can read more about it [here](https://stat.ethz.ch/pipermail/r-sig-hpc/2012-May/001373.html){target="_blank"} and [here](https://github.com/HenrikBengtsson/Wishlist-for-R/issues/28){target="_blank"}.
 
-Once you have the `slurmR` package in your system, you can proceed as follow
+[^installingslurmr]: See installation instructions [**here**](https://github.com/USCbiostats/slurmR#installation){target="_blank"}
+
+[^notexactlymultinode]: Although possible, most multinode jobs will be allocated only if there are not enough threads within a single node. Remember Slurm does not run the jobs, but rather reserves computational resources for you to run it.
+
+
+
 
 R script ([03-parsapply-slurmr.R](03-parsapply-slurmr.R){target="_blank"}):
 
@@ -155,11 +158,7 @@ cat2(readLines("03-parsapply-slurmr.slurm"), sep="\n", lang = "bash")
 
 ### Case 4: Multi job, single/multi-core
 
-Another way to submit jobs is using [**job arrays**](https://slurm.schedmd.com/job_array.html). A job array is essentially a job
-that is repeated `njobs` times with the same configuration. The main difference
-between replicates is what you do with the `SLURM_ARRAY_TASK_ID` environment
-variable. This variable is defined within each replicate and can be used to make
-the "subjob" depending on that.
+Another way to submit jobs is using [**job arrays**](https://slurm.schedmd.com/job_array.html). A job array is essentially a job that is repeated `njobs` times with the same configuration. The main difference between replicates is what you do with the `SLURM_ARRAY_TASK_ID` environment variable. This variable is defined within each replicate and can be used to make the "subjob" depending on that.
 
 Here is a quick example using R
 

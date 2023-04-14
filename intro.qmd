@@ -91,7 +91,9 @@ nnodes <- 4L
 ```
 
 *   Why use OpenMP if GPU is _suited to compute-intensive operations_? Well, mostly because
-    OpenMP is **VERY** easy to implement (easier than CUDA, which is the easiest way to use GPU).
+    OpenMP is **VERY** easy to implement (easier than CUDA, which is the easiest way to use GPU).[^kokkos]
+
+[^kokkos]: [Sadia National Laboratories](https://www.sandia.gov/ccr/software/kokkos/){target="_blank"} started the [Kokkos project](https://kokkos.org/){target="_blank"}, which provides a one-fits-all C++ library for parallel programming. More information on the Kokkos's [wiki site](https://kokkos.github.io/kokkos-core-wiki/){target="_blank"}.
 
 
 ## When is it a good idea?

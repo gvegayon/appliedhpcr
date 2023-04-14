@@ -54,7 +54,26 @@ div.sourceCode
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="site_libs/quarto-nav/quarto-nav.js"></script>
@@ -194,7 +213,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./slurm-fundamentals.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">A brief intro to Slurm</span></span></a>
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">What is Slurm</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -244,18 +263,30 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#rcpparmadillo-and-openmp" id="toc-rcpparmadillo-and-openmp" class="nav-link active" data-scroll-target="#rcpparmadillo-and-openmp"><span class="header-section-number">6</span> RcppArmadillo and OpenMP</a>
+  <li><a href="#before-we-start" id="toc-before-we-start" class="nav-link active" data-scroll-target="#before-we-start"><span class="header-section-number">5.1</span> Before we start</a></li>
+  <li><a href="#r-is-great-but" id="toc-r-is-great-but" class="nav-link" data-scroll-target="#r-is-great-but"><span class="header-section-number">5.2</span> R is great, but…</a></li>
+  <li><a href="#enter-rcpp" id="toc-enter-rcpp" class="nav-link" data-scroll-target="#enter-rcpp"><span class="header-section-number">5.3</span> Enter Rcpp</a></li>
+  <li><a href="#why-bother" id="toc-why-bother" class="nav-link" data-scroll-target="#why-bother"><span class="header-section-number">5.4</span> Why bother?</a></li>
+  <li><a href="#example-1-looping-over-a-vector" id="toc-example-1-looping-over-a-vector" class="nav-link" data-scroll-target="#example-1-looping-over-a-vector"><span class="header-section-number">5.5</span> Example 1: Looping over a vector</a></li>
+  <li><a href="#how-much-fast" id="toc-how-much-fast" class="nav-link" data-scroll-target="#how-much-fast"><span class="header-section-number">5.6</span> How much fast?</a></li>
+  <li><a href="#main-differences-between-r-and-c" id="toc-main-differences-between-r-and-c" class="nav-link" data-scroll-target="#main-differences-between-r-and-c"><span class="header-section-number">5.7</span> Main differences between R and C++</a></li>
+  <li><a href="#crcpp-fundamentals-types" id="toc-crcpp-fundamentals-types" class="nav-link" data-scroll-target="#crcpp-fundamentals-types"><span class="header-section-number">5.8</span> C++/Rcpp fundamentals: Types</a></li>
+  <li><a href="#parts-of-an-rcpp-program" id="toc-parts-of-an-rcpp-program" class="nav-link" data-scroll-target="#parts-of-an-rcpp-program"><span class="header-section-number">5.9</span> Parts of “an Rcpp program”</a></li>
+  <li><a href="#example-running-.cpp-file" id="toc-example-running-.cpp-file" class="nav-link" data-scroll-target="#example-running-.cpp-file"><span class="header-section-number">5.10</span> Example running .cpp file</a></li>
+  <li><a href="#your-turn" id="toc-your-turn" class="nav-link" data-scroll-target="#your-turn"><span class="header-section-number">5.11</span> Your turn</a>
   <ul class="collapse">
-  <li><a href="#rcpparmadillo-and-openmp-workflow" id="toc-rcpparmadillo-and-openmp-workflow" class="nav-link" data-scroll-target="#rcpparmadillo-and-openmp-workflow"><span class="header-section-number">6.1</span> RcppArmadillo and OpenMP workflow</a></li>
-  <li><a href="#rcpparmadillo-and-openmp-workflow-1" id="toc-rcpparmadillo-and-openmp-workflow-1" class="nav-link" data-scroll-target="#rcpparmadillo-and-openmp-workflow-1"><span class="header-section-number">6.2</span> RcppArmadillo and OpenMP workflow</a></li>
-  <li><a href="#ex-5-rcpparmadillo-openmp" id="toc-ex-5-rcpparmadillo-openmp" class="nav-link" data-scroll-target="#ex-5-rcpparmadillo-openmp"><span class="header-section-number">6.3</span> Ex 5: RcppArmadillo + OpenMP</a></li>
-  <li><a href="#ex-6-the-future" id="toc-ex-6-the-future" class="nav-link" data-scroll-target="#ex-6-the-future"><span class="header-section-number">6.4</span> Ex 6: The future</a></li>
-  <li><a href="#ex-6-the-future-contd" id="toc-ex-6-the-future-contd" class="nav-link" data-scroll-target="#ex-6-the-future-contd"><span class="header-section-number">6.5</span> Ex 6: The future (cont’d)</a></li>
-  <li><a href="#see-also" id="toc-see-also" class="nav-link" data-scroll-target="#see-also"><span class="header-section-number">6.6</span> See also</a></li>
-  <li><a href="#session-info" id="toc-session-info" class="nav-link" data-scroll-target="#session-info"><span class="header-section-number">6.7</span> Session info</a></li>
-  <li><a href="#bonus-track-1-simulating-pi" id="toc-bonus-track-1-simulating-pi" class="nav-link" data-scroll-target="#bonus-track-1-simulating-pi"><span class="header-section-number">6.8</span> Bonus track 1: Simulating <span class="math inline">\(\pi\)</span></a></li>
-  <li><a href="#bonus-track-1-simulating-pi-contd" id="toc-bonus-track-1-simulating-pi-contd" class="nav-link" data-scroll-target="#bonus-track-1-simulating-pi-contd"><span class="header-section-number">6.9</span> Bonus track 1: Simulating <span class="math inline">\(\pi\)</span> (cont’d)</a></li>
+  <li><a href="#problem-1-adding-vectors" id="toc-problem-1-adding-vectors" class="nav-link" data-scroll-target="#problem-1-adding-vectors"><span class="header-section-number">5.11.1</span> Problem 1: Adding vectors</a></li>
+  <li><a href="#problem-2-fibonacci-series" id="toc-problem-2-fibonacci-series" class="nav-link" data-scroll-target="#problem-2-fibonacci-series"><span class="header-section-number">5.11.2</span> Problem 2: Fibonacci series</a></li>
+  <li><a href="#problem-2-fibonacci-series-solution" id="toc-problem-2-fibonacci-series-solution" class="nav-link" data-scroll-target="#problem-2-fibonacci-series-solution"><span class="header-section-number">5.11.3</span> Problem 2: Fibonacci series (solution)</a></li>
   </ul></li>
+  <li><a href="#rcpparmadillo-and-openmp" id="toc-rcpparmadillo-and-openmp" class="nav-link" data-scroll-target="#rcpparmadillo-and-openmp"><span class="header-section-number">5.12</span> RcppArmadillo and OpenMP</a>
+  <ul class="collapse">
+  <li><a href="#rcpparmadillo-and-openmp-workflow" id="toc-rcpparmadillo-and-openmp-workflow" class="nav-link" data-scroll-target="#rcpparmadillo-and-openmp-workflow"><span class="header-section-number">5.12.1</span> RcppArmadillo and OpenMP workflow</a></li>
+  <li><a href="#ex-5-rcpparmadillo-openmp" id="toc-ex-5-rcpparmadillo-openmp" class="nav-link" data-scroll-target="#ex-5-rcpparmadillo-openmp"><span class="header-section-number">5.12.2</span> Ex 5: RcppArmadillo + OpenMP</a></li>
+  <li><a href="#ex-6-the-future" id="toc-ex-6-the-future" class="nav-link" data-scroll-target="#ex-6-the-future"><span class="header-section-number">5.12.3</span> Ex 6: The future</a></li>
+  <li><a href="#bonus-track-1-simulating-pi" id="toc-bonus-track-1-simulating-pi" class="nav-link" data-scroll-target="#bonus-track-1-simulating-pi"><span class="header-section-number">5.12.4</span> Bonus track 1: Simulating <span class="math inline">\(\pi\)</span></a></li>
+  </ul></li>
+  <li><a href="#see-also" id="toc-see-also" class="nav-link" data-scroll-target="#see-also"><span class="header-section-number">5.13</span> See also</a></li>
   </ul>
 </nav>
     </div>
@@ -279,39 +310,299 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 </header>
 
-<section id="rcpparmadillo-and-openmp" class="level1" data-number="6">
-<h1 data-number="6"><span class="header-section-number">6</span> RcppArmadillo and OpenMP</h1>
+<p>What is Rcpp <span class="citation" data-cites="Eddelbuettel2011">Eddelbuettel and Balamuta (<a href="references.html#ref-Rcpp" role="doc-biblioref">2018</a>)</span>?</p>
+<section id="before-we-start" class="level2" data-number="5.1">
+<h2 data-number="5.1" class="anchored" data-anchor-id="before-we-start"><span class="header-section-number">5.1</span> Before we start</h2>
+<div style="text-align: center; margin: auto;">
+<p><a href="https://imgflip.com/i/38ji3q"><img src="https://i.imgflip.com/38ji3q.jpg" title="made at imgflip.com" width="30%"></a> <a href="https://imgflip.com/i/38jiku"><img src="https://i.imgflip.com/38jiku.jpg" title="made at imgflip.com" width="30%"></a></p>
+</div>
+<ol type="1">
+<li><p>You need to have Rcpp installed in your system:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"Rcpp"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+<li><p>You need to have a compiler</p>
+<ul>
+<li><p>Windows: You can download Rtools <a href="https://cran.r-project.org/bin/windows/Rtools/">from here</a>.</p></li>
+<li><p>MacOS: It is a bit complicated… Here are some options:</p>
+<ul>
+<li><p>CRAN’s manual to get the clang, clang++, and gfortran compilers <a href="https://cran.r-project.org/doc/manuals/r-release/R-admin.html#macOS">here</a>.</p></li>
+<li><p>A great guide by the coatless professor <a href="https://thecoatlessprofessor.com/programming/r-compiler-tools-for-rcpp-on-macos/">here</a></p></li>
+</ul></li>
+</ul></li>
+</ol>
+<p>And that’s it!</p>
+</section>
+<section id="r-is-great-but" class="level2" data-number="5.2">
+<h2 data-number="5.2" class="anchored" data-anchor-id="r-is-great-but"><span class="header-section-number">5.2</span> R is great, but…</h2>
+<ul>
+<li><p>The problem:</p>
+<ul>
+<li><p>As we saw, R is very fast… once vectorized</p></li>
+<li><p>What to do if your model cannot be vectorized?</p></li>
+</ul></li>
+<li><p>The solution: <strong>Use C/C++/Fotran! It works with R!</strong></p></li>
+<li><p>The problem to the solution: <strong>What R user knows any of those!?</strong></p></li>
+<li><p>R has had an API (application programming interface) for integrating C/C++ code with R for a long time.</p></li>
+<li><p>Unfortunately, it is not very straightforward</p></li>
+</ul>
+</section>
+<section id="enter-rcpp" class="level2" data-number="5.3">
+<h2 data-number="5.3" class="anchored" data-anchor-id="enter-rcpp"><span class="header-section-number">5.3</span> Enter Rcpp</h2>
+<ul>
+<li><p>One of the <strong>most important R packages on CRAN</strong>.</p></li>
+<li><p>As of January 22, 2023, about <a href="http://dirk.eddelbuettel.com/blog/2023/01/22/#rcpp_1.0.10">50% of CRAN packages depend on it</a> (directly or not).</p></li>
+<li><p>From the package description:</p></li>
+</ul>
+<blockquote class="blockquote">
+<p>The ‘Rcpp’ package provides R functions as well as C++ classes which offer a seamless integration of R and C++</p>
+</blockquote>
+</section>
+<section id="why-bother" class="level2" data-number="5.4">
+<h2 data-number="5.4" class="anchored" data-anchor-id="why-bother"><span class="header-section-number">5.4</span> Why bother?</h2>
+<ul>
+<li><p>To draw ten numbers from a normal distribution with sd = 100.0 using R C API:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>SEXP stats <span class="op">=</span> PROTECT<span class="op">(</span>R_FindNamespace<span class="op">(</span>mkString<span class="op">(</span><span class="st">"stats"</span><span class="op">)));</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>SEXP rnorm <span class="op">=</span> PROTECT<span class="op">(</span>findVarInFrame<span class="op">(</span>stats<span class="op">,</span> install<span class="op">(</span><span class="st">"rnorm"</span><span class="op">)));</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>SEXP call <span class="op">=</span> PROTECT<span class="op">(</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  LCONS<span class="op">(</span> rnorm<span class="op">,</span> CONS<span class="op">(</span>ScalarInteger<span class="op">(</span><span class="dv">10</span><span class="op">),</span> CONS<span class="op">(</span>ScalarReal<span class="op">(</span><span class="fl">100.0</span><span class="op">),</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  R_NilValue<span class="op">))));</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>SET_TAG<span class="op">(</span>CDDR<span class="op">(</span>call<span class="op">),</span>install<span class="op">(</span><span class="st">"sd"</span><span class="op">));</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>SEXP res <span class="op">=</span> PROTECT<span class="op">(</span>eval<span class="op">(</span>call<span class="op">,</span> R_GlobalEnv<span class="op">));</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>UNPROTECT<span class="op">(</span><span class="dv">4</span><span class="op">);</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="cf">return</span> res<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+<li><p>Using Rcpp:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>Environment stats<span class="op">(</span><span class="st">"package:stats"</span><span class="op">);</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>Function rnorm <span class="op">=</span> stats<span class="op">[</span><span class="st">"rnorm"</span><span class="op">];</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="cf">return</span> rnorm<span class="op">(</span><span class="dv">10</span><span class="op">,</span> Named<span class="op">(</span><span class="st">"sd"</span><span class="op">,</span> <span class="fl">100.0</span><span class="op">));</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+</ul>
+</section>
+<section id="example-1-looping-over-a-vector" class="level2" data-number="5.5">
+<h2 data-number="5.5" class="anchored" data-anchor-id="example-1-looping-over-a-vector"><span class="header-section-number">5.5</span> Example 1: Looping over a vector</h2>
+<div class="cell" data-hash="rcpp-part1_cache/html/rcpp-add1_49980a20acd13f25c1cd997127958ffe">
+<pre class="rcpp cell-code"><code>#include&lt;Rcpp.h&gt;
+using namespace Rcpp;
+// [[Rcpp::export]]
+NumericVector add1(NumericVector x) {
+  NumericVector ans(x.size());
+  for (int i = 0; i &lt; x.size(); ++i)
+    ans[i] = x[i] + 1;
+  return ans;
+}</code></pre>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">add1</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1]  2  3  4  5  6  7  8  9 10 11</code></pre>
+</div>
+</div>
+<p>Make it sweeter by adding some “sugar” (the Rcpp kind)</p>
+<div class="cell" data-hash="rcpp-part1_cache/html/unnamed-chunk-3_5894271b70b86fe1aa2f904962b9709b">
+<pre class="rcpp cell-code"><code>#include&lt;Rcpp.h&gt;
+using namespace Rcpp;
+// [[Rcpp::export]]
+NumericVector add1Cpp(NumericVector x) {
+  return x + 1;
+}</code></pre>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">add1Cpp</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1]  2  3  4  5  6  7  8  9 10 11</code></pre>
+</div>
+</div>
+</section>
+<section id="how-much-fast" class="level2" data-number="5.6">
+<h2 data-number="5.6" class="anchored" data-anchor-id="how-much-fast"><span class="header-section-number">5.6</span> How much fast?</h2>
+<p>Compared to this:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>add1R <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(x))</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    x[i] <span class="ot">&lt;-</span> x[i] <span class="sc">+</span> <span class="dv">1</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  x</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>microbenchmark<span class="sc">::</span><span class="fu">microbenchmark</span>(<span class="fu">add1R</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">1000</span>), <span class="fu">add1Cpp</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">1000</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Unit: microseconds
+            expr    min      lq     mean  median      uq      max neval cld
+   add1R(1:1000) 33.267 34.8675 52.82951 35.4605 35.9155 1735.658   100  a 
+ add1Cpp(1:1000)  2.256  2.6090  8.45682  2.9330  5.3635  436.364   100   b</code></pre>
+</div>
+</div>
+</section>
+<section id="main-differences-between-r-and-c" class="level2" data-number="5.7">
+<h2 data-number="5.7" class="anchored" data-anchor-id="main-differences-between-r-and-c"><span class="header-section-number">5.7</span> Main differences between R and C++</h2>
+<ol type="1">
+<li><p>One is compiled, and the other interpreted</p></li>
+<li><p>Indexing objects: In C++ the indices range from 0 to <code>(n - 1)</code>, whereas in R is from 1 to <code>n</code>.</p></li>
+<li><p>All expressions end with a <code>;</code> (optional in R).</p></li>
+<li><p>In C++ object need to be declared, in R not (<a href="https://en.wikipedia.org/wiki/Dynamic_programming_language">dynamic</a>).</p></li>
+</ol>
+</section>
+<section id="crcpp-fundamentals-types" class="level2" data-number="5.8">
+<h2 data-number="5.8" class="anchored" data-anchor-id="crcpp-fundamentals-types"><span class="header-section-number">5.8</span> C++/Rcpp fundamentals: Types</h2>
+<p>Besides C-like data types (<code>double</code>, <code>int</code>, <code>char</code>, and <code>bool</code>), we can use the following types of objects with Rcpp:</p>
+<ul>
+<li><p>Matrices: <code>NumericMatrix</code>, <code>IntegerMatrix</code>, <code>LogicalMatrix</code>, <code>CharacterMatrix</code></p></li>
+<li><p>Vectors: <code>NumericVector</code>, <code>IntegerVector</code>, <code>LogicalVector</code>, <code>CharacterVector</code></p></li>
+<li><p>And more!: <code>DataFrame</code>, <code>List</code>, <code>Function</code>, <code>Environment</code></p></li>
+</ul>
+</section>
+<section id="parts-of-an-rcpp-program" class="level2" data-number="5.9">
+<h2 data-number="5.9" class="anchored" data-anchor-id="parts-of-an-rcpp-program"><span class="header-section-number">5.9</span> Parts of “an Rcpp program”</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb12-1"><a href="#cb12-1"></a><span class="pp">#include</span><span class="im">&lt;Rcpp.h&gt;</span></span>
+<span id="cb12-2"><a href="#cb12-2"></a><span class="kw">using</span> <span class="kw">namespace</span> Rcpp</span>
+<span id="cb12-3"><a href="#cb12-3"></a><span class="co">// [[Rcpp::export]]</span></span>
+<span id="cb12-4"><a href="#cb12-4"></a>NumericVector add1<span class="op">(</span>NumericVector x<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb12-5"><a href="#cb12-5"></a>  NumericVector ans<span class="op">(</span>x<span class="op">.</span>size<span class="op">());</span></span>
+<span id="cb12-6"><a href="#cb12-6"></a>  <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> x<span class="op">.</span>size<span class="op">();</span> <span class="op">++</span>i<span class="op">)</span></span>
+<span id="cb12-7"><a href="#cb12-7"></a>    ans<span class="op">[</span>i<span class="op">]</span> <span class="op">=</span> x<span class="op">[</span>i<span class="op">]</span> <span class="op">+</span> <span class="dv">1</span><span class="op">;</span></span>
+<span id="cb12-8"><a href="#cb12-8"></a>  <span class="cf">return</span> ans<span class="op">;</span></span>
+<span id="cb12-9"><a href="#cb12-9"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Line by line, we see the following:</p>
+<ol type="1">
+<li><p>The <text style="color:white;font-family:monospace;background-color: darkgray;">#include&lt;Rcpp.h&gt;</text> is similar to <code>library(...)</code> in R, it brings in all that we need to write C++ code for Rcpp.</p></li>
+<li><p><text style="color:white;font-family:monospace;background-color: darkgray;">using namespace Rcpp</text> is somewhat similar to <code>detach(...)</code>. This simplifies syntax. If we don’t include this, all calls to Rcpp members need to be explicit, <strong>e.g.</strong>, instead of typing <code>NumericVector</code>, we would need to type <code>Rcpp::NumericVector</code></p></li>
+<li><p>The <code>//</code> starts a comment in C++, in this case, the <text style="color:white;font-family:monospace;background-color: darkgray;">// [[Rcpp::export]]</text> comment is a flag Rcpp uses to “export” this C++ function to R.</p></li>
+<li><p>It is the first part of the function definition. We are creating a function that returns a <text style="color:white;font-family:monospace;background-color: darkgray;">NumericVector</text>, is called <text style="color:white;font-family:monospace;background-color: darkgray;">add1</text>, has a single input element named <text style="color:white;font-family:monospace;background-color: darkgray;">x</text> that is also a <text style="color:white;font-family:monospace;background-color: darkgray;">NumericVector</text>.</p></li>
+<li><p>Here, we are declaring an object called <text style="color:white;font-family:monospace;background-color: darkgray;">ans</text>, which is a <text style="color:white;font-family:monospace;background-color: darkgray;">NumericVector</text> with an initial size equal to the size of <text style="color:white;font-family:monospace;background-color: darkgray;">x</text>. Notice that <text style="color:white;font-family:monospace;background-color: darkgray;">.size()</text> is called a “member function” of the <code>x</code> object, which is of class <code>NumericVector</code>.</p></li>
+<li><p>We are declaring a for-loop (three parts):</p>
+<ol type="a">
+<li><p><text style="color:white;font-family:monospace;background-color: darkgray;">int i = 0</text> We declare the variable <code>i</code>, an integer, and initialize it at 0.</p></li>
+<li><p><text style="color:white;font-family:monospace;background-color: darkgray;">i &lt; x.size()</text> This loop will end when <code>i</code>’s value is at or above the length of <code>x</code>.</p></li>
+<li><p><text style="color:white;font-family:monospace;background-color: darkgray;">++i</text> At each iteration, <code>i</code> will increment in one unit.</p></li>
+</ol></li>
+<li><p><text style="color:white;font-family:monospace;background-color: darkgray;">ans[i] = x[i] + 1</text> set the i-th element of <code>ans</code> equal to the i-th element of <code>x</code> plus 1.</p></li>
+<li><p><text style="color:white;font-family:monospace;background-color: darkgray;">return ans</text> exists the function returning the vector <code>ans</code>.</p></li>
+</ol>
+<p>Now, where to execute/run this?</p>
+<ul>
+<li>You can use the <code>sourceCpp</code> function from the <code>Rcpp</code> package to run .cpp scripts (this is what I do most of the time).</li>
+<li>There’s also <code>cppFunction</code>, which allows compiling a single function.</li>
+<li>Write an R package that works with Rcpp.</li>
+</ul>
+<p>For now, let’s use the first option.</p>
+</section>
+<section id="example-running-.cpp-file" class="level2" data-number="5.10">
+<h2 data-number="5.10" class="anchored" data-anchor-id="example-running-.cpp-file"><span class="header-section-number">5.10</span> Example running .cpp file</h2>
+<p>Imagine that we have the following file named <code>norm.cpp</code></p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;Rcpp.h&gt;</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> Rcpp<span class="op">;</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="co">// [[Rcpp::export]]</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="dt">double</span> normRcpp<span class="op">(</span>NumericVector x<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> sqrt<span class="op">(</span>sum<span class="op">(</span>pow<span class="op">(</span>x<span class="op">,</span> <span class="fl">2.0</span><span class="op">)));</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>We can compile and obtain this function using this line <code>Rcpp::sourceCpp("norm.cpp")</code>. Once compiled, a function called <code>normRcpp</code> will be available in the current R session.</p>
+</section>
+<section id="your-turn" class="level2" data-number="5.11">
+<h2 data-number="5.11" class="anchored" data-anchor-id="your-turn"><span class="header-section-number">5.11</span> Your turn</h2>
+<section id="problem-1-adding-vectors" class="level3 smaller" data-number="5.11.1">
+<h3 class="smaller anchored" data-number="5.11.1" data-anchor-id="problem-1-adding-vectors"><span class="header-section-number">5.11.1</span> Problem 1: Adding vectors</h3>
+<ol type="1">
+<li>Using what you have just learned about Rcpp, write a function to add two vectors of the same length. Use the following template</li>
+</ol>
+<div class="sourceCode" id="cb14"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;Rcpp.h&gt;</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> Rcpp<span class="op">;</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="co">// [[Rcpp::export]]</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>NumericVector add_vectors<span class="op">([</span>declare vector <span class="dv">1</span><span class="op">],</span> <span class="op">[</span>declare vector <span class="dv">2</span><span class="op">])</span> <span class="op">{</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  <span class="op">...</span> magick <span class="op">...</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> <span class="op">[</span>something<span class="op">];</span></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ol start="2" type="1">
+<li>Now, we have to check for lengths. Use the <code>stop</code> function to make sure lengths match. Add the following lines in your code</li>
+</ol>
+<div class="sourceCode" id="cb15"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="op">([</span>some condition<span class="op">])</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  stop<span class="op">(</span><span class="st">"an arbitrary error message :)"</span><span class="op">);</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="problem-2-fibonacci-series" class="level3 smaller" data-number="5.11.2">
+<h3 class="smaller anchored" data-number="5.11.2" data-anchor-id="problem-2-fibonacci-series"><span class="header-section-number">5.11.2</span> Problem 2: Fibonacci series</h3>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Fibonacci_Spiral.svg/512px-Fibonacci_Spiral.svg.png" class="img-fluid figure-img" style="width:50.0%" alt="Fibonacci Spiral"></p>
+</figure>
+</div>
+<p>Each element of the sequence is determined by the following:</p>
+<p><span class="math display">\[
+F(n) = \left\{\begin{array}{ll}
+n, &amp; \mbox{ if }n \leq 1\\
+F(n - 1) + F(n - 2), &amp; \mbox{otherwise}
+\end{array}\right.
+\]</span></p>
+<p>Using recursions, we can implement this algorithm in R as follows:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>fibR <span class="ot">&lt;-</span> <span class="cf">function</span>(n) {</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (n <span class="sc">&lt;=</span> <span class="dv">1</span>)</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(n)</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fibR</span>(n <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">+</span> <span class="fu">fibR</span>(n <span class="sc">-</span> <span class="dv">2</span>)</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Is it working?</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fibR</span>(<span class="dv">0</span>), <span class="fu">fibR</span>(<span class="dv">1</span>), <span class="fu">fibR</span>(<span class="dv">2</span>),</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fibR</span>(<span class="dv">3</span>), <span class="fu">fibR</span>(<span class="dv">4</span>), <span class="fu">fibR</span>(<span class="dv">5</span>),</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fibR</span>(<span class="dv">6</span>)</span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0 1 1 2 3 5 8</code></pre>
+</div>
+</div>
+<p>Now, let’s translate this code into Rcpp and see how much speed boost we get!</p>
+</section>
+<section id="problem-2-fibonacci-series-solution" class="level3" data-number="5.11.3">
+<h3 data-number="5.11.3" class="anchored" data-anchor-id="problem-2-fibonacci-series-solution"><span class="header-section-number">5.11.3</span> Problem 2: Fibonacci series (solution)</h3>
+<div class="cell" data-hash="rcpp-part1_cache/html/fib_0c3ff024a1fb644e4fde80481e8e64e9">
+<details>
+<summary>Code</summary>
+<pre class="rcpp cell-code"><code>#include &lt;Rcpp.h&gt;
+// [[Rcpp::export]]
+int fibCpp(int n) {
+  if (n &lt;= 1)
+    return n;
+  
+  return fibCpp(n - 1) + fibCpp(n - 2);
+  
+}</code></pre>
+</details>
+</div>
+<div class="cell" data-hash="rcpp-part1_cache/html/unnamed-chunk-10_01f956def8f56962897761e15062b0cf">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>microbenchmark<span class="sc">::</span><span class="fu">microbenchmark</span>(<span class="fu">fibR</span>(<span class="dv">20</span>), <span class="fu">fibCpp</span>(<span class="dv">20</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Unit: microseconds
+       expr      min       lq       mean   median       uq      max neval cld
+   fibR(20) 5350.894 5643.050 5982.69115 5724.878 5810.474 8855.542   100  a 
+ fibCpp(20)   11.928   12.479   24.21755   15.318   21.728  706.360   100   b</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="rcpparmadillo-and-openmp" class="level2" data-number="5.12">
+<h2 data-number="5.12" class="anchored" data-anchor-id="rcpparmadillo-and-openmp"><span class="header-section-number">5.12</span> RcppArmadillo and OpenMP</h2>
 <ul>
 <li><p>Friendlier than <a href="http://rcppcore.github.io/RcppParallel/"><strong>RcppParallel</strong></a>… at least for ‘I-use-Rcpp-but-don’t-actually-know-much-about-C++’ users (like myself!).</p></li>
 <li><p>Must run only ‘Thread-safe’ calls, so calling R within parallel blocks can cause problems (almost all the time).</p></li>
-<li><p>Use <code>arma</code> objects, e.g.&nbsp;<code>arma::mat</code>, <code>arma::vec</code>, etc. Or, if you are used to them <code>std::vector</code> objects as these are thread safe.</p></li>
-</ul>
-<hr>
-<ul>
-<li><p>Pseudo Random Number Generation is not very straight forward… But C++11 has a <a href="http://en.cppreference.com/w/cpp/numeric/random">nice set of functions</a> that can be used together with OpenMP</p></li>
-<li><p>Need to think about how processors work, cache memory, etc. Otherwise you could get into trouble… if your code is slower when run in parallel, then you probably are facing <a href="https://software.intel.com/en-us/articles/avoiding-and-identifying-false-sharing-among-threads">false sharing</a></p></li>
+<li><p>Use <code>arma</code> objects, e.g.&nbsp;<code>arma::mat</code>, <code>arma::vec</code>, etc. Or, if you are used to them <code>std::vector</code> objects as these are thread-safe.</p></li>
+<li><p>Pseudo Random Number Generation is not very straightforward… But C++11 has a <a href="http://en.cppreference.com/w/cpp/numeric/random">nice set of functions</a> that can be used together with OpenMP</p></li>
+<li><p>Need to think about how processors work, cache memory, etc. Otherwise, you could get into trouble… if your code is slower when run in parallel, then you probably are facing <a href="https://software.intel.com/en-us/articles/avoiding-and-identifying-false-sharing-among-threads">false sharing</a></p></li>
 <li><p>If R crashes… try running R with a debugger (see <a href="https://cran.r-project.org/doc/manuals/r-release/R-exts.html#Checking-memory-access">Section 4.3 in Writing R extensions</a>):</p>
 <pre class="shell"><code>~$ R --debugger=valgrind</code></pre></li>
 </ul>
-<section id="rcpparmadillo-and-openmp-workflow" class="level2" data-number="6.1">
-<h2 data-number="6.1" class="anchored" data-anchor-id="rcpparmadillo-and-openmp-workflow"><span class="header-section-number">6.1</span> RcppArmadillo and OpenMP workflow</h2>
+<section id="rcpparmadillo-and-openmp-workflow" class="level3" data-number="5.12.1">
+<h3 data-number="5.12.1" class="anchored" data-anchor-id="rcpparmadillo-and-openmp-workflow"><span class="header-section-number">5.12.1</span> RcppArmadillo and OpenMP workflow</h3>
 <ol type="1">
 <li><p>Tell Rcpp that you need to include that in the compiler:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;omp.h&gt;</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co">// [[Rcpp::plugins(openmp)]]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+<div class="sourceCode" id="cb22"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;omp.h&gt;</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="co">// [[Rcpp::plugins(openmp)]]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
 <li><p>Within your function, set the number of cores, e.g</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Setting the cores</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>omp_set_num_threads<span class="op">(</span>cores<span class="op">);</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
-</ol>
-</section>
-<section id="rcpparmadillo-and-openmp-workflow-1" class="level2" data-number="6.2">
-<h2 data-number="6.2" class="anchored" data-anchor-id="rcpparmadillo-and-openmp-workflow-1"><span class="header-section-number">6.2</span> RcppArmadillo and OpenMP workflow</h2>
-<ol start="3" type="1">
+<div class="sourceCode" id="cb23"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Setting the cores</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>omp_set_num_threads<span class="op">(</span>cores<span class="op">);</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
 <li><p>Tell the compiler that you’ll be running a block in parallel with OpenMP</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#pragma omp [directives] [options]</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="op">...</span>your neat parallel code<span class="op">...</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb24"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#pragma omp [directives] [options]</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="op">...</span>your neat parallel code<span class="op">...</span></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>You’ll need to specify how OMP should handle the data:</p>
 <ul>
 <li><code>shared</code>: Default, all threads access the same copy.</li>
@@ -323,71 +614,69 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li><p>Compile!</p></li>
 </ol>
 </section>
-<section id="ex-5-rcpparmadillo-openmp" class="level2" data-number="6.3">
-<h2 data-number="6.3" class="anchored" data-anchor-id="ex-5-rcpparmadillo-openmp"><span class="header-section-number">6.3</span> Ex 5: RcppArmadillo + OpenMP</h2>
+<section id="ex-5-rcpparmadillo-openmp" class="level3" data-number="5.12.2">
+<h3 data-number="5.12.2" class="anchored" data-anchor-id="ex-5-rcpparmadillo-openmp"><span class="header-section-number">5.12.2</span> Ex 5: RcppArmadillo + OpenMP</h3>
 <p>Our own version of the <code>dist</code> function… but in parallel!</p>
 <div class="cell" data-hash="rcpp-part1_cache/html/dist-code_f9ed422b32809f9846988448c82c3641">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;omp.h&gt;</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;RcppArmadillo.h&gt;</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co">// [[Rcpp::depends(RcppArmadillo)]]</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co">// [[Rcpp::plugins(openmp)]]</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> Rcpp<span class="op">;</span></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co">// [[Rcpp::export]]</span></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>arma<span class="op">::</span>mat dist_par<span class="op">(</span><span class="at">const</span> arma<span class="op">::</span>mat <span class="op">&amp;</span> X<span class="op">,</span> <span class="dt">int</span> cores <span class="op">=</span> <span class="dv">1</span><span class="op">)</span> <span class="op">{</span></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Some constants</span></span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> N <span class="op">=</span> <span class="op">(</span><span class="dt">int</span><span class="op">)</span> X<span class="op">.</span>n_rows<span class="op">;</span></span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> K <span class="op">=</span> <span class="op">(</span><span class="dt">int</span><span class="op">)</span> X<span class="op">.</span>n_cols<span class="op">;</span></span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Output</span></span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>  arma<span class="op">::</span>mat D<span class="op">(</span>N<span class="op">,</span>N<span class="op">);</span></span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>  D<span class="op">.</span>zeros<span class="op">();</span> <span class="co">// Filling with zeros</span></span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Setting the cores</span></span>
-<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>  omp_set_num_threads<span class="op">(</span>cores<span class="op">);</span></span>
-<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a><span class="pp">#pragma omp parallel for shared(D, N, K, X) default(none)</span></span>
-<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i<span class="op">=</span><span class="dv">0</span><span class="op">;</span> i<span class="op">&lt;</span>N<span class="op">;</span> <span class="op">++</span>i<span class="op">)</span></span>
-<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> j<span class="op">=</span><span class="dv">0</span><span class="op">;</span> j<span class="op">&lt;</span>i<span class="op">;</span> <span class="op">++</span>j<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>      <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> k<span class="op">=</span><span class="dv">0</span><span class="op">;</span> k<span class="op">&lt;</span>K<span class="op">;</span> k<span class="op">++)</span> </span>
-<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>        D<span class="op">.</span>at<span class="op">(</span>i<span class="op">,</span>j<span class="op">)</span> <span class="op">+=</span> pow<span class="op">(</span>X<span class="op">.</span>at<span class="op">(</span>i<span class="op">,</span>k<span class="op">)</span> <span class="op">-</span> X<span class="op">.</span>at<span class="op">(</span>j<span class="op">,</span>k<span class="op">),</span> <span class="fl">2.0</span><span class="op">);</span></span>
-<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>      </span>
-<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>      <span class="co">// Computing square root</span></span>
-<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>      D<span class="op">.</span>at<span class="op">(</span>i<span class="op">,</span>j<span class="op">)</span> <span class="op">=</span> sqrt<span class="op">(</span>D<span class="op">.</span>at<span class="op">(</span>i<span class="op">,</span>j<span class="op">));</span></span>
-<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>      D<span class="op">.</span>at<span class="op">(</span>j<span class="op">,</span>i<span class="op">)</span> <span class="op">=</span> D<span class="op">.</span>at<span class="op">(</span>i<span class="op">,</span>j<span class="op">);</span></span>
-<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>      </span>
-<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>  <span class="co">// My nice distance matrix</span></span>
-<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> D<span class="op">;</span></span>
-<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<pre class="rcpp cell-code"><code>#include &lt;omp.h&gt;
+#include &lt;RcppArmadillo.h&gt;
+// [[Rcpp::depends(RcppArmadillo)]]
+// [[Rcpp::plugins(openmp)]]
+using namespace Rcpp;
+// [[Rcpp::export]]
+arma::mat dist_par(const arma::mat &amp; X, int cores = 1) {
+  
+  // Some constants
+  int N = (int) X.n_rows;
+  int K = (int) X.n_cols;
+  
+  // Output
+  arma::mat D(N,N);
+  D.zeros(); // Filling with zeros
+  
+  // Setting the cores
+  omp_set_num_threads(cores);
+  
+#pragma omp parallel for shared(D, N, K, X) default(none)
+  for (int i=0; i&lt;N; ++i)
+    for (int j=0; j&lt;i; ++j) {
+      for (int k=0; k&lt;K; k++) 
+        D.at(i,j) += pow(X.at(i,k) - X.at(j,k), 2.0);
+      
+      // Computing square root
+      D.at(i,j) = sqrt(D.at(i,j));
+      D.at(j,i) = D.at(i,j);
+    }
+      
+  
+  // My nice distance matrix
+  return D;
+}</code></pre>
 </div>
-<hr>
-<div class="cell" data-hash="rcpp-part1_cache/html/dist-dat_572ce43ce19d51411aaea2996b60acff">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulating data</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1231</span>)</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>K <span class="ot">&lt;-</span> <span class="dv">5000</span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">500</span></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">rnorm</span>(n<span class="sc">*</span>K), <span class="at">ncol=</span>K)</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Are we getting the same?</span></span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(<span class="fu">as.matrix</span>(<span class="fu">dist</span>(x)) <span class="sc">-</span> <span class="fu">dist_par</span>(x, <span class="dv">4</span>)) <span class="co"># Only zeros</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="rcpp-part1_cache/html/dist-dat_9ccf03b0498bdc782cce5ec66404ee1a">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulating data</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1231</span>)</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>K <span class="ot">&lt;-</span> <span class="dv">5000</span></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">500</span></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">rnorm</span>(n<span class="sc">*</span>K), <span class="at">ncol=</span>K)</span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Are we getting the same?</span></span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(<span class="fu">as.matrix</span>(<span class="fu">dist</span>(x)) <span class="sc">-</span> <span class="fu">dist_par</span>(x, <span class="dv">4</span>)) <span class="co"># Only zeros</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
      0 
 250000 </code></pre>
 </div>
 </div>
-<hr>
 <div class="cell" data-hash="rcpp-part1_cache/html/dist-benchmark_27bd2cc0aa85aa999d1e297ac6a2ef83">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Benchmarking!</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>microbenchmark<span class="sc">::</span><span class="fu">microbenchmark</span>(</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">dist</span>(x),                <span class="co"># stats::dist</span></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">dist_par</span>(x, <span class="at">cores =</span> <span class="dv">1</span>), <span class="co"># 1 core</span></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">dist_par</span>(x, <span class="at">cores =</span> <span class="dv">2</span>), <span class="co"># 2 cores</span></span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">dist_par</span>(x, <span class="at">cores =</span> <span class="dv">4</span>), <span class="co"># 4 cores</span></span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">times =</span> <span class="dv">1</span>, </span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">unit =</span> <span class="st">"ms"</span></span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Benchmarking!</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>microbenchmark<span class="sc">::</span><span class="fu">microbenchmark</span>(</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">dist</span>(x),                <span class="co"># stats::dist</span></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">dist_par</span>(x, <span class="at">cores =</span> <span class="dv">1</span>), <span class="co"># 1 core</span></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">dist_par</span>(x, <span class="at">cores =</span> <span class="dv">2</span>), <span class="co"># 2 cores</span></span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">dist_par</span>(x, <span class="at">cores =</span> <span class="dv">4</span>), <span class="co"># 4 cores</span></span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">times =</span> <span class="dv">1</span>, </span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">unit =</span> <span class="st">"ms"</span></span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Unit: milliseconds
                    expr      min       lq     mean   median       uq      max
@@ -403,8 +692,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </section>
-<section id="ex-6-the-future" class="level2" data-number="6.4">
-<h2 data-number="6.4" class="anchored" data-anchor-id="ex-6-the-future"><span class="header-section-number">6.4</span> Ex 6: The future</h2>
+<section id="ex-6-the-future" class="level3" data-number="5.12.3">
+<h3 data-number="5.12.3" class="anchored" data-anchor-id="ex-6-the-future"><span class="header-section-number">5.12.3</span> Ex 6: The future</h3>
 <ul>
 <li><p><a href="https://cran.r-project.org/package=future"><strong>future</strong></a> is an R package that was designed “to provide a very simple and uniform way of evaluating R expressions asynchronously using various resources available to the user.”</p></li>
 <li><p><code>future</code> class objects are either resolved or unresolved.</p></li>
@@ -412,124 +701,72 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li><p>Futures can be parallel/serial, in a single (local or remote) computer, or a cluster of them.</p></li>
 </ul>
 <p>Let’s see a brief example</p>
-</section>
-<section id="ex-6-the-future-contd" class="level2" data-number="6.5">
-<h2 data-number="6.5" class="anchored" data-anchor-id="ex-6-the-future-contd"><span class="header-section-number">6.5</span> Ex 6: The future (cont’d)</h2>
 <div class="cell" data-hash="rcpp-part1_cache/html/future_41d5f37dbe94f184738b5ea0a7db0bde">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(future)</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plan</span>(multicore)</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co"># We are creating a global variable</span></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>a <span class="ot">&lt;-</span> <span class="dv">2</span></span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Creating the futures has only the overhead (setup) time</span></span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="fu">system.time</span>({</span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  x1 <span class="sc">%&lt;-%</span> {<span class="fu">Sys.sleep</span>(<span class="dv">3</span>);a<span class="sc">^</span><span class="dv">2</span>}</span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  x2 <span class="sc">%&lt;-%</span> {<span class="fu">Sys.sleep</span>(<span class="dv">3</span>);a<span class="sc">^</span><span class="dv">3</span>}</span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>})</span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="do">##    user  system elapsed </span></span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="do">##   0.018   0.012   0.030</span></span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Let's just wait 5 seconds to make sure all the cores have returned</span></span>
-<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a><span class="fu">Sys.sleep</span>(<span class="dv">3</span>)</span>
-<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a><span class="fu">system.time</span>({</span>
-<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(x1)</span>
-<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(x2)</span>
-<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>})</span>
-<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 4</span></span>
-<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 8</span></span>
-<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a><span class="do">##    user  system elapsed </span></span>
-<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a><span class="do">##   0.003   0.000   0.003</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(future)</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plan</span>(multicore)</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a><span class="co"># We are creating a global variable</span></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>a <span class="ot">&lt;-</span> <span class="dv">2</span></span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Creating the futures has only the overhead (setup) time</span></span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a><span class="fu">system.time</span>({</span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>  x1 <span class="sc">%&lt;-%</span> {<span class="fu">Sys.sleep</span>(<span class="dv">3</span>);a<span class="sc">^</span><span class="dv">2</span>}</span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>  x2 <span class="sc">%&lt;-%</span> {<span class="fu">Sys.sleep</span>(<span class="dv">3</span>);a<span class="sc">^</span><span class="dv">3</span>}</span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a><span class="do">##    user  system elapsed </span></span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a><span class="do">##   0.018   0.012   0.030</span></span>
+<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Let's just wait 5 seconds to make sure all the cores have returned</span></span>
+<span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a><span class="fu">Sys.sleep</span>(<span class="dv">3</span>)</span>
+<span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a><span class="fu">system.time</span>({</span>
+<span id="cb30-15"><a href="#cb30-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(x1)</span>
+<span id="cb30-16"><a href="#cb30-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(x2)</span>
+<span id="cb30-17"><a href="#cb30-17" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb30-18"><a href="#cb30-18" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 4</span></span>
+<span id="cb30-19"><a href="#cb30-19" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 8</span></span>
+<span id="cb30-20"><a href="#cb30-20" aria-hidden="true" tabindex="-1"></a><span class="do">##    user  system elapsed </span></span>
+<span id="cb30-21"><a href="#cb30-21" aria-hidden="true" tabindex="-1"></a><span class="do">##   0.003   0.000   0.003</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="see-also" class="level2" data-number="6.6">
-<h2 data-number="6.6" class="anchored" data-anchor-id="see-also"><span class="header-section-number">6.6</span> See also</h2>
-<ul>
-<li><a href="https://stat.ethz.ch/R-manual/R-devel/library/parallel/doc/parallel.pdf">Package parallel</a></li>
-<li><a href="https://cran.r-project.org/web/packages/iterators/vignettes/iterators.pdf">Using the iterators package</a></li>
-<li><a href="https://cran.r-project.org/web/packages/foreach/vignettes/foreach.pdf">Using the foreach package</a></li>
-<li><a href="https://software.intel.com/en-us/articles/32-openmp-traps-for-c-developers">32 OpenMP traps for C++ developers</a></li>
-<li><a href="http://www.openmp.org/">The OpenMP API specification for parallel programming</a></li>
-<li><a href="gallery.rcpp.org/tags/openmp/">‘openmp’ tag in Rcpp gallery</a></li>
-<li><a href="http://www.openmp.org/resources/tutorials-articles/">OpenMP tutorials and articles</a></li>
-</ul>
-<p>For more, checkout the <a href="https://cran.r-project.org/web/views/HighPerformanceComputing.html" target="_blank">CRAN Task View on HPC</a></p>
-</section>
-<section id="session-info" class="level2" data-number="6.7">
-<h2 data-number="6.7" class="anchored" data-anchor-id="session-info"><span class="header-section-number">6.7</span> Session info</h2>
-<div class="cell">
-<div class="cell-output cell-output-stdout">
-<pre><code>R version 4.2.3 (2023-03-15)
-Platform: x86_64-pc-linux-gnu (64-bit)
-Running under: Ubuntu 22.04.2 LTS
-
-Matrix products: default
-BLAS:   /usr/lib/x86_64-linux-gnu/blas/libblas.so.3.10.0
-LAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.10.0
-
-locale:
- [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
- [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
- [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
- [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
- [9] LC_ADDRESS=C               LC_TELEPHONE=C            
-[11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
-
-attached base packages:
-[1] stats     graphics  grDevices utils     datasets  methods   base     
-
-loaded via a namespace (and not attached):
- [1] Rcpp_1.0.10       digest_0.6.29     jsonlite_1.7.3    magrittr_2.0.2   
- [5] evaluate_0.15     rlang_1.1.0       stringi_1.7.6     cli_3.6.1        
- [9] rmarkdown_2.20    tools_4.2.3       stringr_1.4.0     htmlwidgets_1.5.4
-[13] xfun_0.37         yaml_2.3.5        fastmap_1.1.0     compiler_4.2.3   
-[17] htmltools_0.5.4   knitr_1.37       </code></pre>
-</div>
-</div>
-</section>
-<section id="bonus-track-1-simulating-pi" class="level2" data-number="6.8">
-<h2 data-number="6.8" class="anchored" data-anchor-id="bonus-track-1-simulating-pi"><span class="header-section-number">6.8</span> Bonus track 1: Simulating <span class="math inline">\(\pi\)</span></h2>
+<section id="bonus-track-1-simulating-pi" class="level3" data-number="5.12.4">
+<h3 data-number="5.12.4" class="anchored" data-anchor-id="bonus-track-1-simulating-pi"><span class="header-section-number">5.12.4</span> Bonus track 1: Simulating <span class="math inline">\(\pi\)</span></h3>
 <ul>
 <li><p>We know that <span class="math inline">\(\pi = \frac{A}{r^2}\)</span>. We approximate it by randomly adding points <span class="math inline">\(x\)</span> to a square of size 2 centered at the origin.</p></li>
 <li><p>So, we approximate <span class="math inline">\(\pi\)</span> as <span class="math inline">\(\Pr\{\|x\| \leq 1\}\times 2^2\)</span></p></li>
 </ul>
 <div class="cell">
 <div class="cell-output-display">
-<p><img src="rcpp-part1_files/figure-html/unnamed-chunk-3-1.jpeg" width="300" height="300"></p>
+<p><img src="rcpp-part1_files/figure-html/unnamed-chunk-12-1.jpeg" width="300" height="300"></p>
 </div>
 </div>
-<hr>
 <p>The R code to do this</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>pisim <span class="ot">&lt;-</span> <span class="cf">function</span>(i, nsim) {  <span class="co"># Notice we don't use the -i-</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Random points</span></span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  ans  <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">runif</span>(nsim<span class="sc">*</span><span class="dv">2</span>), <span class="at">ncol=</span><span class="dv">2</span>)</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Distance to the origin</span></span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  ans  <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">rowSums</span>(ans<span class="sc">^</span><span class="dv">2</span>))</span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Estimated pi</span></span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>  (<span class="fu">sum</span>(ans <span class="sc">&lt;=</span> <span class="dv">1</span>)<span class="sc">*</span><span class="dv">4</span>)<span class="sc">/</span>nsim</span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>pisim <span class="ot">&lt;-</span> <span class="cf">function</span>(i, nsim) {  <span class="co"># Notice we don't use the -i-</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Random points</span></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>  ans  <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">runif</span>(nsim<span class="sc">*</span><span class="dv">2</span>), <span class="at">ncol=</span><span class="dv">2</span>)</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Distance to the origin</span></span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>  ans  <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">rowSums</span>(ans<span class="sc">^</span><span class="dv">2</span>))</span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Estimated pi</span></span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>  (<span class="fu">sum</span>(ans <span class="sc">&lt;=</span> <span class="dv">1</span>)<span class="sc">*</span><span class="dv">4</span>)<span class="sc">/</span>nsim</span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-</section>
-<section id="bonus-track-1-simulating-pi-contd" class="level2" data-number="6.9">
-<h2 data-number="6.9" class="anchored" data-anchor-id="bonus-track-1-simulating-pi-contd"><span class="header-section-number">6.9</span> Bonus track 1: Simulating <span class="math inline">\(\pi\)</span> (cont’d)</h2>
 <div class="cell" data-hash="rcpp-part1_cache/html/parallel-ex2_d48263c227e17bc2555843d19f366377">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(parallel)</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Setup</span></span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>cl <span class="ot">&lt;-</span> <span class="fu">makePSOCKcluster</span>(4L)</span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="fu">clusterSetRNGStream</span>(cl, <span class="dv">123</span>)</span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Number of simulations we want each time to run</span></span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>nsim <span class="ot">&lt;-</span> <span class="fl">1e5</span></span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="co"># We need to make -nsim- and -pisim- available to the</span></span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="co"># cluster</span></span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a><span class="fu">clusterExport</span>(cl, <span class="fu">c</span>(<span class="st">"nsim"</span>, <span class="st">"pisim"</span>))</span>
-<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Benchmarking: parSapply and sapply will run this simulation</span></span>
-<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a><span class="co"># a hundred times each, so at the end we have 1e5*100 points</span></span>
-<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a><span class="co"># to approximate pi</span></span>
-<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>microbenchmark<span class="sc">::</span><span class="fu">microbenchmark</span>(</span>
-<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">parallel =</span> <span class="fu">parSapply</span>(cl, <span class="dv">1</span><span class="sc">:</span><span class="dv">100</span>, pisim, <span class="at">nsim=</span>nsim),</span>
-<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">serial   =</span> <span class="fu">sapply</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">100</span>, pisim, <span class="at">nsim=</span>nsim),</span>
-<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">times    =</span> <span class="dv">1</span></span>
-<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(parallel)</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Setup</span></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>cl <span class="ot">&lt;-</span> <span class="fu">makePSOCKcluster</span>(4L)</span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a><span class="fu">clusterSetRNGStream</span>(cl, <span class="dv">123</span>)</span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Number of simulations we want each time to run</span></span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>nsim <span class="ot">&lt;-</span> <span class="fl">1e5</span></span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a><span class="co"># We need to make -nsim- and -pisim- available to the</span></span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a><span class="co"># cluster</span></span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a><span class="fu">clusterExport</span>(cl, <span class="fu">c</span>(<span class="st">"nsim"</span>, <span class="st">"pisim"</span>))</span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Benchmarking: parSapply and sapply will run this simulation</span></span>
+<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a><span class="co"># a hundred times each, so at the end we have 1e5*100 points</span></span>
+<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a><span class="co"># to approximate pi</span></span>
+<span id="cb32-13"><a href="#cb32-13" aria-hidden="true" tabindex="-1"></a>microbenchmark<span class="sc">::</span><span class="fu">microbenchmark</span>(</span>
+<span id="cb32-14"><a href="#cb32-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">parallel =</span> <span class="fu">parSapply</span>(cl, <span class="dv">1</span><span class="sc">:</span><span class="dv">100</span>, pisim, <span class="at">nsim=</span>nsim),</span>
+<span id="cb32-15"><a href="#cb32-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">serial   =</span> <span class="fu">sapply</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">100</span>, pisim, <span class="at">nsim=</span>nsim),</span>
+<span id="cb32-16"><a href="#cb32-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">times    =</span> <span class="dv">1</span></span>
+<span id="cb32-17"><a href="#cb32-17" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Unit: milliseconds
      expr      min       lq     mean   median       uq      max neval
@@ -539,9 +776,9 @@ loaded via a namespace (and not attached):
 </div>
 <hr>
 <div class="cell" data-hash="rcpp-part1_cache/html/printing-and-stop_9f60d076bc87777cb221a0343d4785cd">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>ans_par <span class="ot">&lt;-</span> <span class="fu">parSapply</span>(cl, <span class="dv">1</span><span class="sc">:</span><span class="dv">100</span>, pisim, <span class="at">nsim=</span>nsim)</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>ans_ser <span class="ot">&lt;-</span> <span class="fu">sapply</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">100</span>, pisim, <span class="at">nsim=</span>nsim)</span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="fu">stopCluster</span>(cl)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>ans_par <span class="ot">&lt;-</span> <span class="fu">parSapply</span>(cl, <span class="dv">1</span><span class="sc">:</span><span class="dv">100</span>, pisim, <span class="at">nsim=</span>nsim)</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>ans_ser <span class="ot">&lt;-</span> <span class="fu">sapply</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">100</span>, pisim, <span class="at">nsim=</span>nsim)</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a><span class="fu">stopCluster</span>(cl)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
@@ -549,9 +786,33 @@ loaded via a namespace (and not attached):
 3.141762 3.141266 3.141593 </code></pre>
 </div>
 </div>
-
-
 </section>
+</section>
+<section id="see-also" class="level2" data-number="5.13">
+<h2 data-number="5.13" class="anchored" data-anchor-id="see-also"><span class="header-section-number">5.13</span> See also</h2>
+<ul>
+<li><a href="https://stat.ethz.ch/R-manual/R-devel/library/parallel/doc/parallel.pdf">Package parallel</a></li>
+<li><a href="https://cran.r-project.org/web/packages/iterators/vignettes/iterators.pdf">Using the iterators package</a></li>
+<li><a href="https://cran.r-project.org/web/packages/foreach/vignettes/foreach.pdf">Using the foreach package</a></li>
+<li><a href="https://software.intel.com/en-us/articles/32-openmp-traps-for-c-developers">32 OpenMP traps for C++ developers</a></li>
+<li><a href="http://www.openmp.org/">The OpenMP API specification for parallel programming</a></li>
+<li><a href="gallery.rcpp.org/tags/openmp/">‘openmp’ tag in Rcpp gallery</a></li>
+<li><a href="http://www.openmp.org/resources/tutorials-articles/">OpenMP tutorials and articles</a></li>
+</ul>
+<p>For more, check out the <a href="https://cran.r-project.org/web/views/HighPerformanceComputing.html" target="_blank">CRAN Task View on HPC</a></p>
+
+
+<div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
+<div id="ref-RcppBook" class="csl-entry" role="listitem">
+Eddelbuettel, Dirk. 2013. <em>Seamless <span>R</span> and <span>C++</span> Integration with <span>Rcpp</span></em>. New York: Springer. <a href="https://doi.org/10.1007/978-1-4614-6868-4">https://doi.org/10.1007/978-1-4614-6868-4</a>.
+</div>
+<div id="ref-Rcpp" class="csl-entry" role="listitem">
+Eddelbuettel, Dirk, and James Joseph Balamuta. 2018. <span>“<span class="nocase">Extending extit<span>R</span> with extit<span>C++</span>: A Brief Introduction to extit<span>Rcpp</span></span>.”</span> <em>The American Statistician</em> 72 (1): 28–36. <a href="https://doi.org/10.1080/00031305.2017.1375990">https://doi.org/10.1080/00031305.2017.1375990</a>.
+</div>
+<div id="ref-Eddelbuettel2011" class="csl-entry" role="listitem">
+Eddelbuettel, Dirk, and Romain François. 2011. <span>“<span>Rcpp</span>: Seamless <span>R</span> and <span>C++</span> Integration.”</span> <em>Journal of Statistical Software</em> 40 (8): 1–18. <a href="https://doi.org/10.18637/jss.v040.i08">https://doi.org/10.18637/jss.v040.i08</a>.
+</div>
+</div>
 </section>
 
 </main> <!-- /main -->

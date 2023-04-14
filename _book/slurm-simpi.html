@@ -213,7 +213,7 @@ div.csl-indent {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./slurm-fundamentals.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">A brief intro to Slurm</span></span></a>
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">What is Slurm</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -326,9 +326,9 @@ div.csl-indent {
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> <span class="at">--vanilla</span> 01-sapply.R</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>This file has three components:</p>
 <ul>
-<li><p>The Slurm flags <code>#SBATCH</code>.</p></li>
-<li><p>Loading R <code>module load R/4.2.2</code>.</p></li>
-<li><p>Executing the R script.</p></li>
+<li><p><strong>The Slurm flags <code>#SBATCH</code></strong>: These comment-like entries are used to pass Slurm options to the job. In this example, we are only specifying the options <code>job-name</code> and <code>time</code>. Other common options to include would be <code>account</code> and <code>partition</code>.</p></li>
+<li><p><strong>Loading R <code>module load R/4.2.2</code></strong>: Depending on your system’s configuration, you may or may not need to load modules or run bash scripts before being able to run R. In this example, we are loading R version 4.2.2 using <code>LMod</code> (see previous section).</p></li>
+<li><p><strong>Executing the R script</strong>: Finally, after specifying Slurm options and loading whatever needs to be loaded before executing R, we are using <code>RScript</code> to execute the program we wrote.</p></li>
 </ul>
 <p>Submission is then done as follows:</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">sbatch</span> 01-sapply.slurm</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -405,8 +405,7 @@ div.csl-indent {
 <p>This section will illustrate how to submit jobs using the <code>makeSlurmCluster()</code> function and <code>Slurm_sapply</code>. Furthermore, the last example demonstrates how we can skip writing Slurm scripts entirely using the <code>sourceSlurm()</code> function included in the package.</p>
 <section id="case-3-single-job-multinode-job" class="level3" data-number="4.2.1">
 <h3 data-number="4.2.1" class="anchored" data-anchor-id="case-3-single-job-multinode-job"><span class="header-section-number">4.2.1</span> Case 3: Single job, multinode job</h3>
-<p>In this case, there is no simple way to submit a multinodal job to Slurm… unless you use the <a href="https://github.com/USCbiostats/slurmR"><strong>slurmR</strong></a> package (see installation instructions <a href="https://github.com/USCbiostats/slurmR#installation"><strong>here</strong></a>)</p>
-<p>Once you have the <code>slurmR</code> package in your system, you can proceed as follow</p>
+<p>In this case, there is no simple way to submit a multinodal job to Slurm… unless you use the <a href="https://github.com/USCbiostats/slurmR" target="_blank"><strong>slurmR</strong></a> package.<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a> In this example, we will combine <code>slurmR</code> with the parallel package’s <code>parSapply</code> function to submit a multinodal job using the function <code>makeSlurmCluster()</code>. With it, <code>slurmR</code> will submit a job requesting <code>njobs</code> tasks (processors) that could span multiple nodes,<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a> and create a Socket cluster out of it (like using <code>makePSOCKcluster</code>.) One thing to keep in mind is that Socket clusters are limited in the number of connections a single R session can span. You can read more about it <a href="https://stat.ethz.ch/pipermail/r-sig-hpc/2012-May/001373.html" target="_blank">here</a> and <a href="https://github.com/HenrikBengtsson/Wishlist-for-R/issues/28" target="_blank">here</a>.</p>
 <p>R script (<a href="03-parsapply-slurmr.R" target="_blank">03-parsapply-slurmr.R</a>):</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Model parameters</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>nsims  <span class="ot">&lt;-</span> <span class="fl">1e3</span></span>
@@ -547,6 +546,8 @@ Vega Yon, George, and Paul Marjoram. 2019. <span>“slurmR: A Lightweight Wrappe
 <hr>
 <ol>
 <li id="fn1"><p>This function is sort of a wrapper of <code>makeForkcluster</code>. <a href="https://en.wikipedia.org/w/index.php?title=Fork_(system_call)&amp;oldid=1145232797" target="_blank">Forking</a> provides a way to duplicate a process in the OS without replicating the memory, which is both faster and efficient.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p>See installation instructions <a href="https://github.com/USCbiostats/slurmR#installation" target="_blank"><strong>here</strong></a><a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3"><p>Although possible, most multinode jobs will be allocated only if there are not enough threads within a single node. Remember Slurm does not run the jobs, but rather reserves computational resources for you to run it.<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
 </section>
 
@@ -787,7 +788,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
       <a href="./slurm-fundamentals.html" class="pagination-link">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">A brief intro to Slurm</span></span>
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">What is Slurm</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
