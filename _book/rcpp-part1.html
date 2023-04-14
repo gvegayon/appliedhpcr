@@ -310,7 +310,7 @@ div.csl-indent {
 
 </header>
 
-<p>What is Rcpp <span class="citation" data-cites="Eddelbuettel2011">Eddelbuettel and Balamuta (<a href="references.html#ref-Rcpp" role="doc-biblioref">2018</a>)</span>?</p>
+<p>What is Rcpp <span class="citation" data-cites="Eddelbuettel2011 RcppBook Rcpp">(<a href="references.html#ref-Eddelbuettel2011" role="doc-biblioref">Eddelbuettel and François 2011</a>; <a href="references.html#ref-RcppBook" role="doc-biblioref">Eddelbuettel 2013</a>; <a href="references.html#ref-Rcpp" role="doc-biblioref">Eddelbuettel and Balamuta 2018</a>)</span>?</p>
 <section id="before-we-start" class="level2" data-number="5.1">
 <h2 data-number="5.1" class="anchored" data-anchor-id="before-we-start"><span class="header-section-number">5.1</span> Before we start</h2>
 <div style="text-align: center; margin: auto;">
@@ -422,9 +422,9 @@ NumericVector add1Cpp(NumericVector x) {
 <span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>microbenchmark<span class="sc">::</span><span class="fu">microbenchmark</span>(<span class="fu">add1R</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">1000</span>), <span class="fu">add1Cpp</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">1000</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Unit: microseconds
-            expr    min      lq     mean  median      uq      max neval cld
-   add1R(1:1000) 33.267 34.8675 52.82951 35.4605 35.9155 1735.658   100  a 
- add1Cpp(1:1000)  2.256  2.6090  8.45682  2.9330  5.3635  436.364   100   b</code></pre>
+            expr    min     lq     mean  median      uq      max neval cld
+   add1R(1:1000) 33.979 34.492 51.45831 35.8840 36.4935 1579.275   100  a 
+ add1Cpp(1:1000)  2.260  2.535  8.13880  2.9835  5.4980  422.496   100   b</code></pre>
 </div>
 </div>
 </section>

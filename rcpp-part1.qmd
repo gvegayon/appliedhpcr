@@ -1,6 +1,6 @@
 # Rcpp
 
-What is Rcpp [@Eddelbuettel2011, @RcppBook, @Rcpp]?
+What is Rcpp [@Eddelbuettel2011; @RcppBook; @Rcpp]?
 
 ## Before we start
 
