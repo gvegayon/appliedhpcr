@@ -422,9 +422,9 @@ NumericVector add1Cpp(NumericVector x) {
 <span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>microbenchmark<span class="sc">::</span><span class="fu">microbenchmark</span>(<span class="fu">add1R</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">1000</span>), <span class="fu">add1Cpp</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">1000</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Unit: microseconds
-            expr    min     lq     mean  median      uq      max neval cld
-   add1R(1:1000) 33.979 34.492 51.45831 35.8840 36.4935 1579.275   100  a 
- add1Cpp(1:1000)  2.260  2.535  8.13880  2.9835  5.4980  422.496   100   b</code></pre>
+            expr    min      lq     mean  median      uq      max neval cld
+   add1R(1:1000) 33.630 34.6720 52.35089 35.3800 36.3190 1711.512   100  a 
+ add1Cpp(1:1000)  2.209  2.5265  8.21128  2.9595  5.2305  428.240   100   b</code></pre>
 </div>
 </div>
 </section>

@@ -297,8 +297,8 @@ div.csl-indent {
 
 </header>
 
-<p>This is the same old example that lots of people (including me) have been using to illustrate parallel computing with R. The example is very simple, we want to approximate pi by doing some Monte Carlo simulations.</p>
-<p>We know that the area of a circle is <span class="math inline">\(A = \pi r^2\)</span>, which is equivalent to say <span class="math inline">\(\pi = A/r^2\)</span>, so, if we can approximate the Area of a circle, then we can approximate <span class="math inline">\(\pi\)</span>. How do we do this?</p>
+<p>The following is an example many people (including me) have used to illustrate parallel computing with R. The example is straightforward: we want to approximate pi by doing some Monte Carlo simulations.</p>
+<p>We know that the area of a circle is <span class="math inline">\(A = \pi r^2\)</span>, which is equivalent to <span class="math inline">\(\pi = A/r^2\)</span>, so if we can approximate the Area of a circle, then we can approximate <span class="math inline">\(\pi\)</span>. How do we do this?</p>
 <p>Using Monte Carlo experiments, we can approximate the probability of a random point <span class="math inline">\(x\)</span> falling within the unit circle using the following formula:</p>
 <p><span class="math display">\[
 \hat p = \frac{1}{n}\sum_i \mathbf{1}(x \in \mbox{Circle})
@@ -317,7 +317,7 @@ div.csl-indent {
 </div>
 <section id="submitting-jobs-to-slurm" class="level2" data-number="4.1">
 <h2 data-number="4.1" class="anchored" data-anchor-id="submitting-jobs-to-slurm"><span class="header-section-number">4.1</span> Submitting jobs to Slurm</h2>
-<p>The main way that we will be working is by submitting jobs using the <code>sbatch</code> function. This function takes as a main argument a bash file with the program to execute. In the case of R, a regular bash file looks something like this:</p>
+<p>We will primarily work by submitting jobs using the <code>sbatch</code> function. This function takes as its main argument a bash file with the program to execute. In the case of R, a regular bash file looks something like this:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/sh</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --job-name=sapply</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --time=00:10:00</span></span>
@@ -326,16 +326,16 @@ div.csl-indent {
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> <span class="at">--vanilla</span> 01-sapply.R</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>This file has three components:</p>
 <ul>
-<li><p><strong>The Slurm flags <code>#SBATCH</code></strong>: These comment-like entries are used to pass Slurm options to the job. In this example, we are only specifying the options <code>job-name</code> and <code>time</code>. Other common options to include would be <code>account</code> and <code>partition</code>.</p></li>
+<li><p><strong>The Slurm flags <code>#SBATCH</code></strong>: These comment-like entries pass Slurm options to the job. In this example, we only specify the options <code>job-name</code> and <code>time</code>. Other common options would include <code>account</code> and <code>partition</code>.</p></li>
 <li><p><strong>Loading R <code>module load R/4.2.2</code></strong>: Depending on your system’s configuration, you may or may not need to load modules or run bash scripts before being able to run R. In this example, we are loading R version 4.2.2 using <code>LMod</code> (see previous section).</p></li>
-<li><p><strong>Executing the R script</strong>: Finally, after specifying Slurm options and loading whatever needs to be loaded before executing R, we are using <code>RScript</code> to execute the program we wrote.</p></li>
+<li><p><strong>Executing the R script</strong>: After specifying Slurm options and loading whatever needs to be loaded before executing R, we are using <code>RScript</code> to execute the program we wrote.</p></li>
 </ul>
-<p>Submission is then done as follows:</p>
+<p>Submission is then made as follows:</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">sbatch</span> 01-sapply.slurm</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>The following examples have two files, a bash script and an R script to be called by Slurm.</p>
+<p>The following examples have two files, a bash script and an R script, to be called by Slurm.</p>
 <section id="case-1-single-job-single-core-job" class="level3" data-number="4.1.1">
 <h3 data-number="4.1.1" class="anchored" data-anchor-id="case-1-single-job-single-core-job"><span class="header-section-number">4.1.1</span> Case 1: Single job, single core job</h3>
-<p>The most basic way is submitting a job using the <code>sbatch</code> command. In this case, you need to have 2 files: (1) An R script, and (2) a bash script. e.g.</p>
+<p>The most basic way is submitting a job using the <code>sbatch</code> command. In this case, you must have two files: (1) An R script and (2) a bash script. e.g.</p>
 <p>The contents of the R script (<a href="01-sapply.R" target="_blank">01-sapply.R</a>) are:</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Model parameters</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>nsims <span class="ot">&lt;-</span> <span class="fl">1e3</span></span>
@@ -366,7 +366,7 @@ div.csl-indent {
 </section>
 <section id="case-2-single-job-multicore-job" class="level3" data-number="4.1.2">
 <h3 data-number="4.1.2" class="anchored" data-anchor-id="case-2-single-job-multicore-job"><span class="header-section-number">4.1.2</span> Case 2: Single job, multicore job</h3>
-<p>Now, imagine that we would like to use more than one processor for this job, using something like the <code>parallel::mclapply</code> function from the parallel package.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> Then, besides adapting the code, we need to tell Slurm that we are using more than one core per task, as in the following example:</p>
+<p>Imagine that we would like to use more than one processor for this job, using the <code>parallel::mclapply</code> function from the parallel package.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> Then, besides adapting the code, we need to tell Slurm that we are using more than one core per task, as in the following example:</p>
 <p>R script (<a href="02-mclapply.R" target="_blank">02-mclapply.R</a>):</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Model parameters</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>nsims  <span class="ot">&lt;-</span> <span class="fl">1e3</span></span>
@@ -401,11 +401,11 @@ div.csl-indent {
 </section>
 <section id="jobs-with-the-slurmr-package" class="level2" data-number="4.2">
 <h2 data-number="4.2" class="anchored" data-anchor-id="jobs-with-the-slurmr-package"><span class="header-section-number">4.2</span> Jobs with the slurmR package</h2>
-<p>The <code>slurmR</code> R package <span class="citation" data-cites="slurmRpaper slurmRpkg">(<a href="references.html#ref-slurmRpaper" role="doc-biblioref">Vega Yon and Marjoram 2019</a>, <a href="references.html#ref-slurmRpkg" role="doc-biblioref">2022</a>)</span> is a lightweight wrapper of Slurm. The package’s main functions are the <code>*apply</code> family–mostly through Slurm job arrays–and the <code>makeSlurmCluster()</code>–which is a wrapper of <code>makePSOCKcluster</code>.</p>
+<p>The <code>slurmR</code> R package <span class="citation" data-cites="slurmRpaper slurmRpkg">(<a href="references.html#ref-slurmRpaper" role="doc-biblioref">Vega Yon and Marjoram 2019</a>, <a href="references.html#ref-slurmRpkg" role="doc-biblioref">2022</a>)</span> is a lightweight wrapper of Slurm. The package’s primary functions are the <code>*apply</code> family–mainly through Slurm job arrays–and the <code>makeSlurmCluster()</code>–which is a wrapper of <code>makePSOCKcluster</code>.</p>
 <p>This section will illustrate how to submit jobs using the <code>makeSlurmCluster()</code> function and <code>Slurm_sapply</code>. Furthermore, the last example demonstrates how we can skip writing Slurm scripts entirely using the <code>sourceSlurm()</code> function included in the package.</p>
 <section id="case-3-single-job-multinode-job" class="level3" data-number="4.2.1">
 <h3 data-number="4.2.1" class="anchored" data-anchor-id="case-3-single-job-multinode-job"><span class="header-section-number">4.2.1</span> Case 3: Single job, multinode job</h3>
-<p>In this case, there is no simple way to submit a multinodal job to Slurm… unless you use the <a href="https://github.com/USCbiostats/slurmR" target="_blank"><strong>slurmR</strong></a> package.<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a> In this example, we will combine <code>slurmR</code> with the parallel package’s <code>parSapply</code> function to submit a multinodal job using the function <code>makeSlurmCluster()</code>. With it, <code>slurmR</code> will submit a job requesting <code>njobs</code> tasks (processors) that could span multiple nodes,<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a> and create a Socket cluster out of it (like using <code>makePSOCKcluster</code>.) One thing to keep in mind is that Socket clusters are limited in the number of connections a single R session can span. You can read more about it <a href="https://stat.ethz.ch/pipermail/r-sig-hpc/2012-May/001373.html" target="_blank">here</a> and <a href="https://github.com/HenrikBengtsson/Wishlist-for-R/issues/28" target="_blank">here</a>.</p>
+<p>In this case, there is no simple way to submit a multinodal job to Slurm; unless you use the <a href="https://github.com/USCbiostats/slurmR" target="_blank"><strong>slurmR</strong></a> package.<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a> In this example, we will combine <code>slurmR</code> with the parallel package’s <code>parSapply</code> function to submit a multinodal job using the function <code>makeSlurmCluster()</code>. With it, <code>slurmR</code> will submit a job requesting <code>njobs</code> tasks (processors) that could span multiple nodes,<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a> and create a Socket cluster out of it (like using <code>makePSOCKcluster</code>.) One thing to keep in mind is that Socket clusters are limited in the number of connections a single R session can span. You can read more about it <a href="https://stat.ethz.ch/pipermail/r-sig-hpc/2012-May/001373.html" target="_blank">here</a> and <a href="https://github.com/HenrikBengtsson/Wishlist-for-R/issues/28" target="_blank">here</a>.</p>
 <p>R script (<a href="03-parsapply-slurmr.R" target="_blank">03-parsapply-slurmr.R</a>):</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Model parameters</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>nsims  <span class="ot">&lt;-</span> <span class="fl">1e3</span></span>
@@ -446,7 +446,7 @@ div.csl-indent {
 </section>
 <section id="case-4-multi-job-singlemulti-core" class="level3" data-number="4.2.2">
 <h3 data-number="4.2.2" class="anchored" data-anchor-id="case-4-multi-job-singlemulti-core"><span class="header-section-number">4.2.2</span> Case 4: Multi job, single/multi-core</h3>
-<p>Another way to submit jobs is using <a href="https://slurm.schedmd.com/job_array.html"><strong>job arrays</strong></a>. A job array is essentially a job that is repeated <code>njobs</code> times with the same configuration. The main difference between replicates is what you do with the <code>SLURM_ARRAY_TASK_ID</code> environment variable. This variable is defined within each replicate and can be used to make the “subjob” depending on that.</p>
+<p>Another way to submit jobs is using <a href="https://slurm.schedmd.com/job_array.html"><strong>job arrays</strong></a>. A job array is a job repeated <code>njobs</code> times with the same configuration. The main difference between replicates is what you do with the <code>SLURM_ARRAY_TASK_ID</code> environment variable. This variable is defined within each replicate and can be used to make the “subjob” depending on that.</p>
 <p>Here is a quick example using R</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>ID <span class="ot">&lt;-</span> <span class="fu">Sys.getenv</span>(<span class="st">"SLURM_ARRAY_TASK_ID"</span>)</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (ID <span class="sc">==</span> <span class="dv">1</span>) {</span>
@@ -529,7 +529,8 @@ div.csl-indent {
 <span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(ans, <span class="st">"05-sapply.rds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>From the R console (is OK if you are in the Head node)</p>
 <div class="sourceCode" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>slurmR<span class="sc">::</span><span class="fu">sourceSlurm</span>(<span class="st">"05-sapply.R"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>And voilá! A temporary bash file will be generated and used to submit the R script to the queue.</p>
+<p>And voilá! A temporary bash file will be generated to submit the R script to the queue. The following video shows a possible output on the University of Utah’s CHPC with slurmR version 0.5-3:</p>
+<div class="quarto-video ratio ratio-16x9"><iframe data-external="1" src="https://www.youtube.com/embed/OasEla5EszI" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
 
 
 <div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
@@ -547,7 +548,7 @@ Vega Yon, George, and Paul Marjoram. 2019. <span>“slurmR: A Lightweight Wrappe
 <ol>
 <li id="fn1"><p>This function is sort of a wrapper of <code>makeForkcluster</code>. <a href="https://en.wikipedia.org/w/index.php?title=Fork_(system_call)&amp;oldid=1145232797" target="_blank">Forking</a> provides a way to duplicate a process in the OS without replicating the memory, which is both faster and efficient.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 <li id="fn2"><p>See installation instructions <a href="https://github.com/USCbiostats/slurmR#installation" target="_blank"><strong>here</strong></a><a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn3"><p>Although possible, most multinode jobs will be allocated only if there are not enough threads within a single node. Remember Slurm does not run the jobs, but rather reserves computational resources for you to run it.<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3"><p>Although possible, most multinode jobs will be allocated if insufficient threads are within a single node. Remember Slurm does not run the jobs but rather reserves computational resources for you to run it.<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
 </section>
 
