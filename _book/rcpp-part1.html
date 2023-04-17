@@ -310,7 +310,7 @@ div.csl-indent {
 
 </header>
 
-<p>What is Rcpp <span class="citation" data-cites="Eddelbuettel2011 RcppBook Rcpp">(<a href="references.html#ref-Eddelbuettel2011" role="doc-biblioref">Eddelbuettel and François 2011</a>; <a href="references.html#ref-RcppBook" role="doc-biblioref">Eddelbuettel 2013</a>; <a href="references.html#ref-Rcpp" role="doc-biblioref">Eddelbuettel and Balamuta 2018</a>)</span>?</p>
+<p>When parallel computing is not enough, you can boost your R code using a lower-level programming language<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> like C++, C, or Fortran. With R itself written in C, it provides access points (APIs) to connect C++/C/Fortran functions to R. Although not impossible, using lower-level languages to enhance R can be cumbersome; Rcpp <span class="citation" data-cites="Eddelbuettel2011 RcppBook Rcpp">(<a href="references.html#ref-Eddelbuettel2011" role="doc-biblioref">Eddelbuettel and François 2011</a>; <a href="references.html#ref-RcppBook" role="doc-biblioref">Eddelbuettel 2013</a>; <a href="references.html#ref-Rcpp" role="doc-biblioref">Eddelbuettel and Balamuta 2018</a>)</span> can make things <strong>very</strong> easy. This chapter shows you how to use Rcpp–the most popular way to connect C++ with R–to accelerate your R code.</p>
 <section id="before-we-start" class="level2" data-number="5.1">
 <h2 data-number="5.1" class="anchored" data-anchor-id="before-we-start"><span class="header-section-number">5.1</span> Before we start</h2>
 <div style="text-align: center; margin: auto;">
@@ -423,8 +423,8 @@ NumericVector add1Cpp(NumericVector x) {
 <div class="cell-output cell-output-stdout">
 <pre><code>Unit: microseconds
             expr    min      lq     mean  median      uq      max neval cld
-   add1R(1:1000) 33.630 34.6720 52.35089 35.3800 36.3190 1711.512   100  a 
- add1Cpp(1:1000)  2.209  2.5265  8.21128  2.9595  5.2305  428.240   100   b</code></pre>
+   add1R(1:1000) 33.463 34.1235 53.44880 34.8650 35.5350 1872.713   100  a 
+ add1Cpp(1:1000)  2.228  2.5210  8.93245  2.8835  5.3175  484.195   100   b</code></pre>
 </div>
 </div>
 </section>
@@ -813,6 +813,12 @@ Eddelbuettel, Dirk, and James Joseph Balamuta. 2018. <span>“<span class="nocas
 Eddelbuettel, Dirk, and Romain François. 2011. <span>“<span>Rcpp</span>: Seamless <span>R</span> and <span>C++</span> Integration.”</span> <em>Journal of Statistical Software</em> 40 (8): 1–18. <a href="https://doi.org/10.18637/jss.v040.i08">https://doi.org/10.18637/jss.v040.i08</a>.
 </div>
 </div>
+</section>
+<section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn1"><p>In general, a low-level programming language is “<em>a programming language that provides little or no abstraction from a computer’s set architecture […]</em>” (<a href="https://en.wikipedia.org/w/index.php?title=Low-level_programming_language&amp;oldid=1147973157">wiki</a>), yet, here we use that term to refer to programming languages that are closer to machine code than what R is.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
 </section>
 
 </main> <!-- /main -->

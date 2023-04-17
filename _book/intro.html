@@ -232,11 +232,11 @@ div.csl-indent {
   <li><a href="#parallel-computing" id="toc-parallel-computing" class="nav-link" data-scroll-target="#parallel-computing"><span class="header-section-number">1.3</span> Parallel computing</a></li>
   <li><a href="#parallel-computing-1" id="toc-parallel-computing-1" class="nav-link" data-scroll-target="#parallel-computing-1"><span class="header-section-number">1.4</span> Parallel computing</a>
   <ul class="collapse">
-  <li><a href="#serial-vs-parallel" id="toc-serial-vs-parallel" class="nav-link" data-scroll-target="#serial-vs-parallel"><span class="header-section-number">1.4.1</span> Serial vs Parallel</a></li>
+  <li><a href="#serial-vs.-parallel" id="toc-serial-vs.-parallel" class="nav-link" data-scroll-target="#serial-vs.-parallel"><span class="header-section-number">1.4.1</span> Serial vs.&nbsp;Parallel</a></li>
   </ul></li>
   <li><a href="#parallel-computing-2" id="toc-parallel-computing-2" class="nav-link" data-scroll-target="#parallel-computing-2"><span class="header-section-number">1.5</span> Parallel computing</a></li>
   <li><a href="#some-vocabulary-for-hpc" id="toc-some-vocabulary-for-hpc" class="nav-link" data-scroll-target="#some-vocabulary-for-hpc"><span class="header-section-number">1.6</span> Some vocabulary for HPC</a></li>
-  <li><a href="#gpu-vs-cpu" id="toc-gpu-vs-cpu" class="nav-link" data-scroll-target="#gpu-vs-cpu"><span class="header-section-number">1.7</span> GPU vs CPU</a></li>
+  <li><a href="#gpu-vs.-cpu" id="toc-gpu-vs.-cpu" class="nav-link" data-scroll-target="#gpu-vs.-cpu"><span class="header-section-number">1.7</span> GPU vs.&nbsp;CPU</a></li>
   <li><a href="#when-is-it-a-good-idea" id="toc-when-is-it-a-good-idea" class="nav-link" data-scroll-target="#when-is-it-a-good-idea"><span class="header-section-number">1.8</span> When is it a good idea?</a></li>
   <li><a href="#parallel-computing-in-r" id="toc-parallel-computing-in-r" class="nav-link" data-scroll-target="#parallel-computing-in-r"><span class="header-section-number">1.9</span> Parallel computing in R</a></li>
   </ul>
@@ -262,7 +262,7 @@ div.csl-indent {
 
 </header>
 
-<p>While most people see R as a slow programming language, it has some powerful features that accelerate your code dramatically<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>. Although R wasn’t necessarily built for speed, there are some tools and ways in which we can accelerate R. This chapter introduces what we will understand as High-performance computing in R.</p>
+<p>While most people see R as a slow programming language, it has powerful features that dramatically accelerate your code <a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>. Although R wasn’t necessarily built for speed, there are some tools and ways in which we can accelerate R. This chapter introduces what we will understand as High-performance computing in R.</p>
 <section id="high-performance-computing-an-overview" class="level2" data-number="1.1">
 <h2 data-number="1.1" class="anchored" data-anchor-id="high-performance-computing-an-overview"><span class="header-section-number">1.1</span> High-Performance Computing: An overview</h2>
 <p>Loosely, from R’s perspective, we can think of HPC in terms of two, maybe three things:</p>
@@ -279,7 +279,7 @@ div.csl-indent {
 <li><p>Buy a bigger computer/RAM (not the best solution!)</p></li>
 <li><p>Use out-of-memory storage, i.e., don’t load all your data in the RAM. e.g. The <a href="https://CRAN.R-project.org/package=bigmemory">bigmemory</a>, <a href="https://CRAN.R-project.org/package=data.table">data.table</a>, <a href="https://CRAN.R-project.org/package=HadoopStreaming">HadoopStreaming</a> R packages</p></li>
 <li><p>Efficient algorithms for big data, e.g.: <a href="https://cran.r-project.org/package=biglm">biglm</a>, <a href="https://cran.r-project.org/package=biglasso">biglasso</a></p></li>
-<li><p>Store it more efficiently, e.g.: Sparse Matrices (take a look at the <code>dgCMatrix</code> objects from the <a href="https://CRAN.R-project.org/package=Matrix">Matrix</a> R package)</p></li>
+<li><p>Store it more efficiently, <em>e.g.</em>: Sparse Matrices (take a look at the <code>dgCMatrix</code> objects from the <a href="https://CRAN.R-project.org/package=Matrix">Matrix</a> R package)</p></li>
 </ul>
 </section>
 <section id="parallel-computing" class="level2" data-number="1.3">
@@ -306,8 +306,8 @@ div.csl-indent {
 </figure>
 </div>
 <p>Streaming SIMD Extensions [<a href="https://en.wikipedia.org/w/index.php?title=Streaming_SIMD_Extensions&amp;oldid=1149173008" target="_blank">SSE</a>] and Advanced Vector Extensions [<a href="https://en.wikipedia.org/w/index.php?title=Advanced_Vector_Extensions&amp;oldid=1148504462" target="_blank">AVX</a>]</p>
-<section id="serial-vs-parallel" class="level3" data-number="1.4.1">
-<h3 data-number="1.4.1" class="anchored" data-anchor-id="serial-vs-parallel"><span class="header-section-number">1.4.1</span> Serial vs Parallel</h3>
+<section id="serial-vs.-parallel" class="level3" data-number="1.4.1">
+<h3 data-number="1.4.1" class="anchored" data-anchor-id="serial-vs.-parallel"><span class="header-section-number">1.4.1</span> Serial vs.&nbsp;Parallel</h3>
 <p style="text-align:center;">
 <img src="fig/serialProblem.png" style="width:45%;"> <img src="fig/parallelProblem.png" style="width:45%;"> source: <a href="https://computing.llnl.gov/tutorials/parallel_comp/">Blaise Barney, <strong>Introduction to Parallel Computing</strong>, Lawrence Livermore National Laboratory</a>
 </p>
@@ -330,10 +330,10 @@ div.csl-indent {
 <li><p>High-Performance Computing (HPC): <strong>Multiple</strong> machines within a <strong>single</strong> network.</p></li>
 <li><p>High Throughput Computing (HTC): <strong>Multiple</strong> machines across <strong>multiple</strong> networks.</p></li>
 </ul>
-<p>You may not have access to a supercomputer, but certainly, HPC/HTC clusters are more accessible these days, e.g.&nbsp;AWS provides a service to create HPC clusters at a low cost (allegedly, since nobody understands how pricing works)</p>
+<p>You may not have access to a supercomputer, but certainly, HPC/HTC clusters are more accessible these days, <em>e.g.</em>, AWS provides a service to create HPC clusters at a low cost (allegedly, since nobody understands how pricing works)</p>
 </section>
-<section id="gpu-vs-cpu" class="level2" data-number="1.7">
-<h2 data-number="1.7" class="anchored" data-anchor-id="gpu-vs-cpu"><span class="header-section-number">1.7</span> GPU vs CPU</h2>
+<section id="gpu-vs.-cpu" class="level2" data-number="1.7">
+<h2 data-number="1.7" class="anchored" data-anchor-id="gpu-vs.-cpu"><span class="header-section-number">1.7</span> GPU vs.&nbsp;CPU</h2>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
@@ -395,7 +395,7 @@ LUMI consortium. 2023. <span>“Documentation - Distribution and Binding.”</sp
 <section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
 <hr>
 <ol>
-<li id="fn1"><p>Nonetheless this claim can be said about almost any programming language, there are notable like the R package <a href="https://cran.r-project.org" target="_blank"><code>data.table</code></a> <span class="citation" data-cites="datatable">(<a href="references.html#ref-datatable" role="doc-biblioref">Dowle and Srinivasan 2021</a>)</span> which has been demonstrated to <a href="https://h2oai.github.io/db-benchmark/">out-perform most data wrangling tools</a>.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn1"><p>Nonetheless, this claim can be said about almost any programming language; there are notable examples like the R package <a href="https://cran.r-project.org" target="_blank"><code>data.table</code></a> <span class="citation" data-cites="datatable">(<a href="references.html#ref-datatable" role="doc-biblioref">Dowle and Srinivasan 2021</a>)</span> which has been demonstrated to <a href="https://h2oai.github.io/db-benchmark/">out-perform most data wrangling tools</a>.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 <li id="fn2"><p><a href="https://www.sandia.gov/ccr/software/kokkos/" target="_blank">Sadia National Laboratories</a> started the <a href="https://kokkos.org/" target="_blank">Kokkos project</a>, which provides a one-fits-all C++ library for parallel programming. More information on the Kokkos’s <a href="https://kokkos.github.io/kokkos-core-wiki/" target="_blank">wiki site</a>.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
 </section>

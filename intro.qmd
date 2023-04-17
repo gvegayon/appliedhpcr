@@ -1,8 +1,8 @@
 # Introduction
 
-While most people see R as a slow programming language, it has some powerful features that accelerate your code dramatically[^exampledatatable]. Although R wasn't necessarily built for speed, there are some tools and ways in which we can accelerate R. This chapter introduces what we will understand as High-performance computing in R.
+While most people see R as a slow programming language, it has powerful features that dramatically accelerate your code [^exampledatatable]. Although R wasn't necessarily built for speed, there are some tools and ways in which we can accelerate R. This chapter introduces what we will understand as High-performance computing in R.
 
-[^exampledatatable]: Nonetheless this claim can be said about almost any programming language, there are notable like the R package [`data.table`](https://cran.r-project.org){target="_blank"} [@datatable] which has been demonstrated to [out-perform most data wrangling tools](https://h2oai.github.io/db-benchmark/). 
+[^exampledatatable]: Nonetheless, this claim can be said about almost any programming language; there are notable examples like the R package [`data.table`](https://cran.r-project.org){target="_blank"} [@datatable] which has been demonstrated to [out-perform most data wrangling tools](https://h2oai.github.io/db-benchmark/). 
 
 ## High-Performance Computing: An overview
 
@@ -29,7 +29,7 @@ Loosely, from R's perspective, we can think of HPC in terms of two, maybe three 
 *   Efficient algorithms for big data, e.g.: [biglm](https://cran.r-project.org/package=biglm),
     [biglasso](https://cran.r-project.org/package=biglasso)
 
-*   Store it more efficiently, e.g.: Sparse Matrices (take a look at the `dgCMatrix` objects
+*   Store it more efficiently, *e.g.*: Sparse Matrices (take a look at the `dgCMatrix` objects
     from the [Matrix](https://CRAN.R-project.org/package=Matrix) R package)
 
 ## Parallel computing
@@ -48,7 +48,7 @@ In general terms, a parallel computing program is one in which we use two or mor
 
 Streaming SIMD Extensions \[[SSE](https://en.wikipedia.org/w/index.php?title=Streaming_SIMD_Extensions&oldid=1149173008){target="_blank"}\] and Advanced Vector Extensions \[[AVX](https://en.wikipedia.org/w/index.php?title=Advanced_Vector_Extensions&oldid=1148504462){target="_blank"}\]
 
-### Serial vs Parallel
+### Serial vs. Parallel
 
 <p style="text-align:center;">
 <img src="fig/serialProblem.png" style="width:45%;">
@@ -80,10 +80,10 @@ In raw terms
     networks.
     
 You may not have access to a supercomputer, but certainly, HPC/HTC clusters are
-more accessible these days, e.g. AWS provides a service to create HPC clusters
+more accessible these days, *e.g.*, AWS provides a service to create HPC clusters
 at a low cost (allegedly, since nobody understands how pricing works)
 
-## GPU vs CPU
+## GPU vs. CPU
 
 ```{r gpu-cpu, echo=FALSE, fig.cap="[NVIDIA Blog](http://www.nvidia.com/object/what-is-gpu-computing.html)", fig.align='center'}
 knitr::include_graphics("fig/cpuvsgpu.jpg")
@@ -137,6 +137,4 @@ GPU
 *   [**tensorflow**](https://cran.r-project.org/package=tensorflow) an R interface to
 [TensorFlow](https://www.tensorflow.org/).
 
-A ton of other types of resources, notably the tools for working with 
-batch schedulers such as [Slurm](http://slurm.schedmd.com), and
-[HTCondor](https://research.cs.wisc.edu/htcondor/).
+A ton of other types of resources, notably the tools for working with batch schedulers such as [Slurm](http://slurm.schedmd.com), and [HTCondor](https://research.cs.wisc.edu/htcondor/).

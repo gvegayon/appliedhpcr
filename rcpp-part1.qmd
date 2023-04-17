@@ -1,6 +1,8 @@
 # Rcpp
 
-What is Rcpp [@Eddelbuettel2011; @RcppBook; @Rcpp]?
+When parallel computing is not enough, you can boost your R code using a lower-level programming language[^lowwhat] like C++, C, or Fortran. With R itself written in C, it provides access points (APIs) to connect C++/C/Fortran functions to R. Although not impossible, using lower-level languages to enhance R can be cumbersome; Rcpp [@Eddelbuettel2011; @RcppBook; @Rcpp] can make things **very** easy. This chapter shows you how to use Rcpp--the most popular way to connect C++ with R--to accelerate your R code.
+
+[^lowwhat]: In general, a low-level programming language is "*a programming language that provides little or no abstraction from a computer's set architecture \[...\]*" ([wiki](https://en.wikipedia.org/w/index.php?title=Low-level_programming_language&oldid=1147973157)), yet, here we use that term to refer to programming languages that are closer to machine code than what R is.
 
 ## Before we start
 

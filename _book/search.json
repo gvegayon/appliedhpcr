@@ -4,7 +4,7 @@
     "href": "index.html",
     "title": "Applied HPC with R",
     "section": "",
-    "text": "Preface\nThe R programming language (R Core Team 2023) can be fantastic for most daily tasks. But as soon as you start dealing with more complicated problems, you may face the for-loop bottle-neck. If you ever encounter such a problem, this book is for you. Applied HPC with R is a collection of talks and lectures I have given about speeding up your R code using parallel computing and other resources such as C++. The contents have been primarily developed during my time at USC and UofU1"
+    "text": "Preface\nThe R programming language (R Core Team 2023) can be fantastic for most daily tasks. But as soon as you start dealing with more complicated problems, you may face the for-loop bottle-neck. If you ever encounter such a problem, this book is for you. Applied HPC with R is a collection of talks and lectures I have given about speeding up your R code using parallel computing and other resources such as C++. The contents have been primarily developed during my time at USC and UofU.1\nThe book was written using quarto and is hosted on GitHub , where you can access all the source code."
   },
   {
     "objectID": "index.html#footnotes",
@@ -39,7 +39,7 @@
     "href": "intro.html#parallel-computing-1",
     "title": "1  Introduction",
     "section": "1.4 Parallel computing",
-    "text": "1.4 Parallel computing\nIn general terms, a parallel computing program is one in which we use two or more computational threads simultaneously. Although computational thread usually means core, there are multiple levels at which a computer program can be parallelized. To understand this, we first need to see what composes a modern computer:\n\n\n\nSource: Original figure from LUMI consortium documentation (LUMI consortium 2023)\n\n\nStreaming SIMD Extensions [SSE] and Advanced Vector Extensions [AVX]\n\n1.4.1 Serial vs Parallel\n\n  source: Blaise Barney, Introduction to Parallel Computing, Lawrence Livermore National Laboratory"
+    "text": "1.4 Parallel computing\nIn general terms, a parallel computing program is one in which we use two or more computational threads simultaneously. Although computational thread usually means core, there are multiple levels at which a computer program can be parallelized. To understand this, we first need to see what composes a modern computer:\n\n\n\nSource: Original figure from LUMI consortium documentation (LUMI consortium 2023)\n\n\nStreaming SIMD Extensions [SSE] and Advanced Vector Extensions [AVX]\n\n1.4.1 Serial vs. Parallel\n\n  source: Blaise Barney, Introduction to Parallel Computing, Lawrence Livermore National Laboratory"
   },
   {
     "objectID": "intro.html#parallel-computing-2",
@@ -53,14 +53,14 @@
     "href": "intro.html#some-vocabulary-for-hpc",
     "title": "1  Introduction",
     "section": "1.6 Some vocabulary for HPC",
-    "text": "1.6 Some vocabulary for HPC\nIn raw terms\n\nSupercomputer: A single big machine with thousands of cores/GPGPUs.\nHigh-Performance Computing (HPC): Multiple machines within a single network.\nHigh Throughput Computing (HTC): Multiple machines across multiple networks.\n\nYou may not have access to a supercomputer, but certainly, HPC/HTC clusters are more accessible these days, e.g. AWS provides a service to create HPC clusters at a low cost (allegedly, since nobody understands how pricing works)"
+    "text": "1.6 Some vocabulary for HPC\nIn raw terms\n\nSupercomputer: A single big machine with thousands of cores/GPGPUs.\nHigh-Performance Computing (HPC): Multiple machines within a single network.\nHigh Throughput Computing (HTC): Multiple machines across multiple networks.\n\nYou may not have access to a supercomputer, but certainly, HPC/HTC clusters are more accessible these days, e.g., AWS provides a service to create HPC clusters at a low cost (allegedly, since nobody understands how pricing works)"
   },
   {
-    "objectID": "intro.html#gpu-vs-cpu",
-    "href": "intro.html#gpu-vs-cpu",
+    "objectID": "intro.html#gpu-vs.-cpu",
+    "href": "intro.html#gpu-vs.-cpu",
     "title": "1  Introduction",
-    "section": "1.7 GPU vs CPU",
-    "text": "1.7 GPU vs CPU\n\n\n\n\n\nNVIDIA Blog\n\n\n\n\n\nWhy use OpenMP if GPU is suited to compute-intensive operations? Well, mostly because OpenMP is VERY easy to implement (easier than CUDA, which is the easiest way to use GPU).2"
+    "section": "1.7 GPU vs. CPU",
+    "text": "1.7 GPU vs. CPU\n\n\n\n\n\nNVIDIA Blog\n\n\n\n\n\nWhy use OpenMP if GPU is suited to compute-intensive operations? Well, mostly because OpenMP is VERY easy to implement (easier than CUDA, which is the easiest way to use GPU).2"
   },
   {
     "objectID": "intro.html#when-is-it-a-good-idea",
@@ -81,7 +81,7 @@
     "href": "intro.html#footnotes",
     "title": "1  Introduction",
     "section": "",
-    "text": "Nonetheless this claim can be said about almost any programming language, there are notable like the R package data.table (Dowle and Srinivasan 2021) which has been demonstrated to out-perform most data wrangling tools.↩︎\nSadia National Laboratories started the Kokkos project, which provides a one-fits-all C++ library for parallel programming. More information on the Kokkos’s wiki site.↩︎"
+    "text": "Nonetheless, this claim can be said about almost any programming language; there are notable examples like the R package data.table (Dowle and Srinivasan 2021) which has been demonstrated to out-perform most data wrangling tools.↩︎\nSadia National Laboratories started the Kokkos project, which provides a one-fits-all C++ library for parallel programming. More information on the Kokkos’s wiki site.↩︎"
   },
   {
     "objectID": "parallel-pkg.html#parallel-workflow",
@@ -95,35 +95,35 @@
     "href": "parallel-pkg.html#types-of-clusters-psock",
     "title": "2  The parallel R package",
     "section": "2.2 Types of clusters: PSOCK",
-    "text": "2.2 Types of clusters: PSOCK\n\nCan be created with makePSOCKCluster\nCreates brand new R Sessions (so nothing is inherited from the master), e.g.\n# This creates a cluster with 4 R sessions\ncl &lt;- makePSOCKCluster(4)\nChild sessions are connected to the master session via Socket connections\nCan be created outside of the current computer, i.e. across multiple computers!"
+    "text": "2.2 Types of clusters: PSOCK\n\nCan be created with makePSOCKCluster\nCreates brand new R Sessions (so nothing is inherited from the master), e.g.\n# This creates a cluster with 4 R sessions\ncl &lt;- makePSOCKCluster(4)\nChild sessions are connected to the master session via Socket connections\nCan be created outside the current computer, i.e., across multiple computers!"
   },
   {
     "objectID": "parallel-pkg.html#types-of-clusters-fork",
     "href": "parallel-pkg.html#types-of-clusters-fork",
     "title": "2  The parallel R package",
     "section": "2.3 Types of clusters: Fork",
-    "text": "2.3 Types of clusters: Fork\n\nFork Cluster makeForkCluster:\nUses OS Forking,\nCopies the current R session locally (so everything is inherited from the master up to that point).\nData is only duplicated if it is altered (need to double check when this happens!)\nNot available on Windows.\n\nOther makeCluster: passed to snow (Simple Network of Workstations)"
+    "text": "2.3 Types of clusters: Fork\n\nFork Cluster makeForkCluster:\nUses OS Forking,\nCopies the current R session locally (so everything is inherited from the master up to that point).\nData is only duplicated if altered (need to double check when this happens!)\nNot available on Windows.\n\nOther makeCluster: passed to snow (Simple Network of Workstations)"
   },
   {
     "objectID": "parallel-pkg.html#ex-1-parallel-rng-with-makepsockcluster",
     "href": "parallel-pkg.html#ex-1-parallel-rng-with-makepsockcluster",
     "title": "2  The parallel R package",
     "section": "2.4 Ex 1: Parallel RNG with makePSOCKCluster",
-    "text": "2.4 Ex 1: Parallel RNG with makePSOCKCluster\n\n# 1. CREATING A CLUSTER\nlibrary(parallel)\nnnodes &lt;- 4L\ncl     &lt;- makePSOCKcluster(nnodes)    \n# 2. PREPARING THE CLUSTER\nclusterSetRNGStream(cl, 123) # Equivalent to `set.seed(123)`\n# 3. DO YOUR CALL\nans &lt;- parSapply(cl, 1:nnodes, function(x) runif(1e3))\n(ans0 &lt;- var(ans))\n\n              [,1]          [,2]          [,3]          [,4]\n[1,]  0.0861888293 -0.0001633431  5.939143e-04 -3.672845e-04\n[2,] -0.0001633431  0.0853841838  2.390790e-03 -1.462154e-04\n[3,]  0.0005939143  0.0023907904  8.114219e-02 -4.714618e-06\n[4,] -0.0003672845 -0.0001462154 -4.714618e-06  8.467722e-02\n\n\n\nMaking sure is reproducible\n\n# I want to get the same!\nclusterSetRNGStream(cl, 123)\nans1 &lt;- var(parSapply(cl, 1:nnodes, function(x) runif(1e3)))\n# 4. STOP THE CLUSTER\nstopCluster(cl)\nall.equal(ans0, ans1) # All equal!\n\n[1] TRUE"
+    "text": "2.4 Ex 1: Parallel RNG with makePSOCKCluster\n\n\n\n\n\n\nCaution\n\n\n\nUsing more threads than cores available on your computer is never a good idea. As a rule of thumb, clusters should be created using parallel::detectCores() - 1 cores (so you leave one free for the rest of your computer.)\n\n\n\n# 1. CREATING A CLUSTER\nlibrary(parallel)\nnnodes &lt;- 4L\ncl     &lt;- makePSOCKcluster(nnodes)    \n# 2. PREPARING THE CLUSTER\nclusterSetRNGStream(cl, 123) # Equivalent to `set.seed(123)`\n# 3. DO YOUR CALL\nans &lt;- parSapply(cl, 1:nnodes, function(x) runif(1e3))\n(ans0 &lt;- var(ans))\n\n              [,1]          [,2]          [,3]          [,4]\n[1,]  0.0861888293 -0.0001633431  5.939143e-04 -3.672845e-04\n[2,] -0.0001633431  0.0853841838  2.390790e-03 -1.462154e-04\n[3,]  0.0005939143  0.0023907904  8.114219e-02 -4.714618e-06\n[4,] -0.0003672845 -0.0001462154 -4.714618e-06  8.467722e-02\n\n\nMaking sure it is reproducible\n\n# I want to get the same!\nclusterSetRNGStream(cl, 123)\nans1 &lt;- var(parSapply(cl, 1:nnodes, function(x) runif(1e3)))\n# 4. STOP THE CLUSTER\nstopCluster(cl)\nall.equal(ans0, ans1) # All equal!\n\n[1] TRUE"
   },
   {
     "objectID": "parallel-pkg.html#ex-2-parallel-rng-with-makeforkcluster",
     "href": "parallel-pkg.html#ex-2-parallel-rng-with-makeforkcluster",
     "title": "2  The parallel R package",
     "section": "2.5 Ex 2: Parallel RNG with makeForkCluster",
-    "text": "2.5 Ex 2: Parallel RNG with makeForkCluster\nIn the case of makeForkCluster\n\n# 1. CREATING A CLUSTER\nlibrary(parallel)\n# The fork cluster will copy the -nsims- object\nnsims  &lt;- 1e3\nnnodes &lt;- 4L\ncl     &lt;- makeForkCluster(nnodes)    \n# 2. PREPARING THE CLUSTER\nclusterSetRNGStream(cl, 123)\n# 3. DO YOUR CALL\nans &lt;- do.call(cbind, parLapply(cl, 1:nnodes, function(x) {\n  runif(nsims) # Look! we use the nsims object!\n               # This would have fail in makePSOCKCluster\n               # if we didn't copy -nsims- first.\n  }))\n(ans0 &lt;- var(ans))\n\n              [,1]          [,2]          [,3]          [,4]\n[1,]  0.0861888293 -0.0001633431  5.939143e-04 -3.672845e-04\n[2,] -0.0001633431  0.0853841838  2.390790e-03 -1.462154e-04\n[3,]  0.0005939143  0.0023907904  8.114219e-02 -4.714618e-06\n[4,] -0.0003672845 -0.0001462154 -4.714618e-06  8.467722e-02\n\n\n\nAgain, we want to make sure this is reproducible\n\n# Same sequence with same seed\nclusterSetRNGStream(cl, 123)\nans1 &lt;- var(do.call(cbind, parLapply(cl, 1:nnodes, function(x) runif(nsims))))\nans0 - ans1 # A matrix of zeros\n\n     [,1] [,2] [,3] [,4]\n[1,]    0    0    0    0\n[2,]    0    0    0    0\n[3,]    0    0    0    0\n[4,]    0    0    0    0\n\n# 4. STOP THE CLUSTER\nstopCluster(cl)\n\nWell, if you are a Mac-OS/Linux user, there’s a simpler way of doing this…"
+    "text": "2.5 Ex 2: Parallel RNG with makeForkCluster\nIn the case of makeForkCluster\n\n# 1. CREATING A CLUSTER\nlibrary(parallel)\n# The fork cluster will copy the -nsims- object\nnsims  &lt;- 1e3\nnnodes &lt;- 4L\ncl     &lt;- makeForkCluster(nnodes)    \n# 2. PREPARING THE CLUSTER\nclusterSetRNGStream(cl, 123)\n# 3. DO YOUR CALL\nans &lt;- do.call(cbind, parLapply(cl, 1:nnodes, function(x) {\n  runif(nsims) # Look! we use the nsims object!\n               # This would have fail in makePSOCKCluster\n               # if we didn't copy -nsims- first.\n  }))\n(ans0 &lt;- var(ans))\n\n              [,1]          [,2]          [,3]          [,4]\n[1,]  0.0861888293 -0.0001633431  5.939143e-04 -3.672845e-04\n[2,] -0.0001633431  0.0853841838  2.390790e-03 -1.462154e-04\n[3,]  0.0005939143  0.0023907904  8.114219e-02 -4.714618e-06\n[4,] -0.0003672845 -0.0001462154 -4.714618e-06  8.467722e-02\n\n\nAgain, we want to make sure this is reproducible\n\n# Same sequence with same seed\nclusterSetRNGStream(cl, 123)\nans1 &lt;- var(do.call(cbind, parLapply(cl, 1:nnodes, function(x) runif(nsims))))\nans0 - ans1 # A matrix of zeros\n\n     [,1] [,2] [,3] [,4]\n[1,]    0    0    0    0\n[2,]    0    0    0    0\n[3,]    0    0    0    0\n[4,]    0    0    0    0\n\n# 4. STOP THE CLUSTER\nstopCluster(cl)\n\nWell, if you are a Mac-OS/Linux user, there’s a more straightforward way of doing this…"
   },
   {
     "objectID": "parallel-pkg.html#ex-3-parallel-rng-with-mclapply-forking-on-the-fly",
     "href": "parallel-pkg.html#ex-3-parallel-rng-with-mclapply-forking-on-the-fly",
     "title": "2  The parallel R package",
     "section": "2.6 Ex 3: Parallel RNG with mclapply (Forking on the fly)",
-    "text": "2.6 Ex 3: Parallel RNG with mclapply (Forking on the fly)\nIn the case of mclapply, the forking (cluster creation) is done on the fly!\n\n# 1. CREATING A CLUSTER\nlibrary(parallel)\n# The fork cluster will copy the -nsims- object\nnsims  &lt;- 1e3\nnnodes &lt;- 4L\n# cl     &lt;- makeForkCluster(nnodes) # mclapply does it on the fly\n# 2. PREPARING THE CLUSTER\nset.seed(123) \n# 3. DO YOUR CALL\nans &lt;- do.call(cbind, mclapply(1:nnodes, function(x) runif(nsims)))\n(ans0 &lt;- var(ans))\n\n             [,1]        [,2]         [,3]         [,4]\n[1,]  0.085384184 0.002390790  0.006576204 -0.003998278\n[2,]  0.002390790 0.081142190  0.001846963  0.001476244\n[3,]  0.006576204 0.001846963  0.085175347 -0.002807348\n[4,] -0.003998278 0.001476244 -0.002807348  0.082425477\n\n\n\nOnce more, we want to make sure this is reproducible\n\n# Same sequence with same seed\nset.seed(123) \nans1 &lt;- var(do.call(cbind, mclapply(1:nnodes, function(x) runif(nsims))))\nans0 - ans1 # A matrix of zeros\n\n     [,1] [,2] [,3] [,4]\n[1,]    0    0    0    0\n[2,]    0    0    0    0\n[3,]    0    0    0    0\n[4,]    0    0    0    0\n\n# 4. STOP THE CLUSTER\n# stopCluster(cl) no need of doing this anymore"
+    "text": "2.6 Ex 3: Parallel RNG with mclapply (Forking on the fly)\nIn the case of mclapply, the forking (cluster creation) is done on the fly!\n\n# 1. CREATING A CLUSTER\nlibrary(parallel)\n# The fork cluster will copy the -nsims- object\nnsims  &lt;- 1e3\nnnodes &lt;- 4L\n# cl     &lt;- makeForkCluster(nnodes) # mclapply does it on the fly\n# 2. PREPARING THE CLUSTER\nset.seed(123) \n# 3. DO YOUR CALL\nans &lt;- do.call(cbind, mclapply(1:nnodes, function(x) runif(nsims)))\n(ans0 &lt;- var(ans))\n\n             [,1]        [,2]         [,3]         [,4]\n[1,]  0.085384184 0.002390790  0.006576204 -0.003998278\n[2,]  0.002390790 0.081142190  0.001846963  0.001476244\n[3,]  0.006576204 0.001846963  0.085175347 -0.002807348\n[4,] -0.003998278 0.001476244 -0.002807348  0.082425477\n\n\nOnce more, we want to make sure this is reproducible\n\n# Same sequence with same seed\nset.seed(123) \nans1 &lt;- var(do.call(cbind, mclapply(1:nnodes, function(x) runif(nsims))))\nans0 - ans1 # A matrix of zeros\n\n     [,1] [,2] [,3] [,4]\n[1,]    0    0    0    0\n[2,]    0    0    0    0\n[3,]    0    0    0    0\n[4,]    0    0    0    0\n\n# 4. STOP THE CLUSTER\n# stopCluster(cl) no need of doing this anymore"
   },
   {
     "objectID": "slurm-fundamentals.html",
@@ -221,7 +221,7 @@
     "href": "rcpp-part1.html#how-much-fast",
     "title": "5  Rcpp",
     "section": "5.6 How much fast?",
-    "text": "5.6 How much fast?\nCompared to this:\n\nadd1R &lt;- function(x) {\n  for (i in 1:length(x))\n    x[i] &lt;- x[i] + 1\n  x\n}\nmicrobenchmark::microbenchmark(add1R(1:1000), add1Cpp(1:1000))\n\nUnit: microseconds\n            expr    min      lq     mean  median      uq      max neval cld\n   add1R(1:1000) 33.630 34.6720 52.35089 35.3800 36.3190 1711.512   100  a \n add1Cpp(1:1000)  2.209  2.5265  8.21128  2.9595  5.2305  428.240   100   b"
+    "text": "5.6 How much fast?\nCompared to this:\n\nadd1R &lt;- function(x) {\n  for (i in 1:length(x))\n    x[i] &lt;- x[i] + 1\n  x\n}\nmicrobenchmark::microbenchmark(add1R(1:1000), add1Cpp(1:1000))\n\nUnit: microseconds\n            expr    min      lq     mean  median      uq      max neval cld\n   add1R(1:1000) 33.463 34.1235 53.44880 34.8650 35.5350 1872.713   100  a \n add1Cpp(1:1000)  2.228  2.5210  8.93245  2.8835  5.3175  484.195   100   b"
   },
   {
     "objectID": "rcpp-part1.html#main-differences-between-r-and-c",
@@ -271,6 +271,13 @@
     "title": "5  Rcpp",
     "section": "5.13 See also",
     "text": "5.13 See also\n\nPackage parallel\nUsing the iterators package\nUsing the foreach package\n32 OpenMP traps for C++ developers\nThe OpenMP API specification for parallel programming\n‘openmp’ tag in Rcpp gallery\nOpenMP tutorials and articles\n\nFor more, check out the CRAN Task View on HPC\n\n\n\n\nEddelbuettel, Dirk. 2013. Seamless R and C++ Integration with Rcpp. New York: Springer. https://doi.org/10.1007/978-1-4614-6868-4.\n\n\nEddelbuettel, Dirk, and James Joseph Balamuta. 2018. “Extending extitR with extitC++: A Brief Introduction to extitRcpp.” The American Statistician 72 (1): 28–36. https://doi.org/10.1080/00031305.2017.1375990.\n\n\nEddelbuettel, Dirk, and Romain François. 2011. “Rcpp: Seamless R and C++ Integration.” Journal of Statistical Software 40 (8): 1–18. https://doi.org/10.18637/jss.v040.i08."
+  },
+  {
+    "objectID": "rcpp-part1.html#footnotes",
+    "href": "rcpp-part1.html#footnotes",
+    "title": "5  Rcpp",
+    "section": "",
+    "text": "In general, a low-level programming language is “a programming language that provides little or no abstraction from a computer’s set architecture […]” (wiki), yet, here we use that term to refer to programming languages that are closer to machine code than what R is.↩︎"
   },
   {
     "objectID": "misc.html#general-resources",

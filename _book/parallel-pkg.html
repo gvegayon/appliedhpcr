@@ -271,6 +271,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 </header>
 
+<p>Although R was not built for parallel computing, multiple ways of parallelizing your R code exist. One of these is the <code>parallel</code> package. This R package, shipped with base R, provides various functions to parallelize R code using <a href="https://en.wikipedia.org/w/index.php?title=Embarrassingly_parallel&amp;oldid=1136401514" target="_blank">embarrassingly parallel computing</a>, i.e., a divide-and-conquer-type strategy. The basic idea is to start multiple R sessions (usually called child processes), connect the main session with those, and send them instructions. This section goes over a common workflow to work with R’s parallel.</p>
 <section id="parallel-workflow" class="level2" data-number="2.1">
 <h2 data-number="2.1" class="anchored" data-anchor-id="parallel-workflow"><span class="header-section-number">2.1</span> Parallel workflow</h2>
 <p>(Usually) We do the following:</p>
@@ -294,7 +295,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># This creates a cluster with 4 R sessions</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>cl <span class="ot">&lt;-</span> <span class="fu">makePSOCKCluster</span>(<span class="dv">4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
 <li><p>Child sessions are connected to the master session via Socket connections</p></li>
-<li><p>Can be created outside of the current computer, i.e.&nbsp;across multiple computers!</p></li>
+<li><p>Can be created outside the current computer, <strong>i.e.</strong>, across multiple computers!</p></li>
 </ul>
 </section>
 <section id="types-of-clusters-fork" class="level2" data-number="2.3">
@@ -303,13 +304,26 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li><p>Fork Cluster <code>makeForkCluster</code>:</p></li>
 <li><p>Uses OS <a href="https://en.wikipedia.org/wiki/Fork_(system_call)">Forking</a>,</p></li>
 <li><p>Copies the current R session locally (so everything is inherited from the master up to that point).</p></li>
-<li><p>Data is only duplicated if it is altered (need to double check when this happens!)</p></li>
+<li><p>Data is only duplicated if altered (need to double check when this happens!)</p></li>
 <li><p>Not available on Windows.</p></li>
 </ul>
 <p>Other <code>makeCluster</code>: passed to <a href="https://cran.r-project.org/package=snow"><strong>snow</strong></a> (Simple Network of Workstations)</p>
 </section>
 <section id="ex-1-parallel-rng-with-makepsockcluster" class="level2" data-number="2.4">
 <h2 data-number="2.4" class="anchored" data-anchor-id="ex-1-parallel-rng-with-makepsockcluster"><span class="header-section-number">2.4</span> Ex 1: Parallel RNG with <code>makePSOCKCluster</code></h2>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Caution
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Using more threads than cores available on your computer is never a good idea. As a rule of thumb, clusters should be created using <code>parallel::detectCores() - 1</code> cores (so you leave one free for the rest of your computer.)</p>
+</div>
+</div>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. CREATING A CLUSTER</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(parallel)</span>
@@ -328,8 +342,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 [4,] -0.0003672845 -0.0001462154 -4.714618e-06  8.467722e-02</code></pre>
 </div>
 </div>
-<hr>
-<p>Making sure is reproducible</p>
+<p>Making sure it is reproducible</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># I want to get the same!</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">clusterSetRNGStream</span>(cl, <span class="dv">123</span>)</span>
@@ -369,7 +382,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 [4,] -0.0003672845 -0.0001462154 -4.714618e-06  8.467722e-02</code></pre>
 </div>
 </div>
-<hr>
 <p>Again, we want to make sure this is reproducible</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Same sequence with same seed</span></span>
@@ -386,7 +398,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. STOP THE CLUSTER</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">stopCluster</span>(cl)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p><text style="color:white;">Well, if you are a Mac-OS/Linux user, there’s a simpler way of doing this…</text></p>
+<p><text style="color:white;">Well, if you are a Mac-OS/Linux user, there’s a more straightforward way of doing this…</text></p>
 </section>
 <section id="ex-3-parallel-rng-with-mclapply-forking-on-the-fly" class="level2" data-number="2.6">
 <h2 data-number="2.6" class="anchored" data-anchor-id="ex-3-parallel-rng-with-mclapply-forking-on-the-fly"><span class="header-section-number">2.6</span> Ex 3: Parallel RNG with <code>mclapply</code> (Forking on the fly)</h2>
@@ -411,7 +423,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 [4,] -0.003998278 0.001476244 -0.002807348  0.082425477</code></pre>
 </div>
 </div>
-<hr>
 <p>Once more, we want to make sure this is reproducible</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Same sequence with same seed</span></span>
