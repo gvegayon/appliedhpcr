@@ -2,6 +2,7 @@ project:
   type: book
 
 book:
+  google-analytics: "G-9D75EFV0TE"
   title: "Applied HPC with R"
   author: "George G. Vega Yon"
   date: "4/9/2023"
