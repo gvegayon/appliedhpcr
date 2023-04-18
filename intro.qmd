@@ -2,35 +2,23 @@
 
 While most people see R as a slow programming language, it has powerful features that dramatically accelerate your code [^exampledatatable]. Although R wasn't necessarily built for speed, there are some tools and ways in which we can accelerate R. This chapter introduces what we will understand as High-performance computing in R.
 
-[^exampledatatable]: Nonetheless, this claim can be said about almost any programming language; there are notable examples like the R package [`data.table`](https://cran.r-project.org){target="_blank"} [@datatable] which has been demonstrated to [out-perform most data wrangling tools](https://h2oai.github.io/db-benchmark/). 
+[^exampledatatable]: Nonetheless, this claim can be said about almost any programming language; there are notable examples like the R package [`data.table`](https://cran.r-project.org){target="_blank"} [@datatable] which has been demonstrated to [out-perform most data wrangling tools](https://h2oai.github.io/db-benchmark/){target="_blank"}. 
 
-## High-Performance Computing: An overview
+# High-Performance Computing: An overview
 
-Loosely, from R's perspective, we can think of HPC in terms of two, maybe three things:
+From R's perspective, we can think of HPC in terms of two or three things:[^crantask] Big data, parallel computing, and compiled code.  
 
-1.  Big data: How to work with data that doesn't fit your computer
-
-2.  Parallel computing: How to take advantage of multiple core systems
-
-3.  Compiled code: Write your low-level code (if R doesn't have it yet...)
-
-(Checkout [CRAN Task View on HPC](https://cran.r-project.org/web/views/HighPerformanceComputing.html))
-
+[^crantask]: Make sure to check out [CRAN Task View on HPC](https://CRAN.R-project.org/view=HighPerformanceComputing){target="_blank"}.
 
 ## Big Data
 
-*   Buy a bigger computer/RAM (not the best solution!)
+When we talk about big data, we refer to cases where your computer struggles to handle a dataset. A typical example of the latter is when the number of observations (rows) in your data frame is [too many to fit a linear regression model](https://stackoverflow.com/q/10326853/2097171){target="_blank"}. Instead of buying a bigger computer, there are many good solutions to solve memory-related problems:
     
-*   Use out-of-memory storage, i.e., don't load all your data in the RAM. e.g.
-    The [bigmemory](https://CRAN.R-project.org/package=bigmemory),
-    [data.table](https://CRAN.R-project.org/package=data.table),
-    [HadoopStreaming](https://CRAN.R-project.org/package=HadoopStreaming) R packages
+*   **Out-of-memory storage**. The idea is simple, instead of using your RAM to load the data, use other methods to load the data. Two notewirthy alternatives are the [bigmemory](https://CRAN.R-project.org/package=bigmemory){target="_blank"} and [implyr](https://cran.r-project.org/package=implyr) R packages. The `bigmemory` package provides methods for using "*file-backed*" matrices. On the other hand, `implyr` implements a wrapper to access Apache Impala, an [SQL query engine for a cluster running Apache Hadoop](https://en.wikipedia.org/w/index.php?title=Apache_Impala&oldid=1116544272){target="_blank"}. 
     
-*   Efficient algorithms for big data, e.g.: [biglm](https://cran.r-project.org/package=biglm),
-    [biglasso](https://cran.r-project.org/package=biglasso)
+*   **Efficient algorithms for big data**: To avoid running out of memory with your regression analysis, the R packages [biglm](https://cran.r-project.org/package=biglm){target="_blank"} and [biglasso](https://cran.r-project.org/package=biglasso){target="_blank"} deliver highly-efficient alternatives to `glm` and `glmnet`, respectively. Now, if your data fits your RAM, but you still struggle with data wrangling, the [data.table](https://CRAN.R-project.org/package=data.table) package is the solution.
 
-*   Store it more efficiently, *e.g.*: Sparse Matrices (take a look at the `dgCMatrix` objects
-    from the [Matrix](https://CRAN.R-project.org/package=Matrix) R package)
+*   **Store it more efficiently**: Finally, when it comes to linear algebra, the [Matrix](https://CRAN.R-project.org/package=Matrix){target="_blank"} R package shines with its formal classes and methods for managing Sparse Matrices, *i.e.*, big matrices whose entries are primarily zeros; for example, the `dgCMatrix` objects. Furthermore, `Matrix` comes shipped with R, which makes it even more appealing.
 
 ## Parallel computing
 
@@ -38,9 +26,7 @@ Loosely, from R's perspective, we can think of HPC in terms of two, maybe three 
 knitr::include_graphics("fig/flynnsTaxonomy.png")
 ```
 
-We will be focusing on the **S**ingle **I**nstruction stream **M**ultiple **D**ata stream
-
-## Parallel computing
+We will focus on the **S**ingle **I**nstruction stream **M**ultiple **D**ata stream.
 
 In general terms, a parallel computing program is one in which we use two or more *computational threads* simultaneously. Although computational thread usually means core, there are multiple levels at which a computer program can be parallelized. To understand this, we first need to see what composes a modern computer:
 
@@ -50,24 +36,30 @@ Streaming SIMD Extensions \[[SSE](https://en.wikipedia.org/w/index.php?title=Str
 
 ### Serial vs. Parallel
 
-<p style="text-align:center;">
-<img src="fig/serialProblem.png" style="width:45%;">
-<img src="fig/parallelProblem.png" style="width:45%;">
-source: [Blaise Barney, **Introduction to Parallel Computing**, Lawrence Livermore National Laboratory](https://computing.llnl.gov/tutorials/parallel_comp/)
-</p>
-
-## Parallel computing
-
-```{r}
-#| label: nodes-network
-#| echo: false
-knitr::include_graphics("fig/nodesNetwork.png")
-```
-
-source: [Blaise Barney, **Introduction to Parallel Computing**, Lawrence Livermore National Laboratory](https://computing.llnl.gov/tutorials/parallel_comp/)
 
 
-## Some vocabulary for HPC
+::: {.columns layout-align="center"} 
+
+::: {.column width="45%"}
+![](fig/serialProblem.png){width="100%"}
+:::
+
+::: {.column width="45%"}
+![](fig/parallelProblem.png){width="100%"}
+:::
+
+Source: [Blaise Barney, **Introduction to Parallel Computing**, Lawrence Livermore National Laboratory](https://computing.llnl.gov/tutorials/parallel_comp/){target="_blank"}
+:::
+
+
+
+![source: [Blaise Barney, **Introduction to Parallel Computing**, Lawrence Livermore National Laboratory](https://computing.llnl.gov/tutorials/parallel_comp/)](fig/nodesNetwork.png){fig-align="center" width="60%"}
+
+
+
+## High-performance computing in R
+
+### Some vocabulary for HPC
 
 In raw terms
 
@@ -120,8 +112,6 @@ we'll focus on the following R-packages for **explicit parallelism**:
     R with C++ and OpenMP is a library for high-level parallelism for C/C++ and
     FORTRAN.
     
----
-
 Others but not used here
 
 *   [**foreach**](https://cran.r-project.org/package=foreach) for iterating through lists in parallel.

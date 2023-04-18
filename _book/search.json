@@ -11,77 +11,63 @@
     "href": "index.html#footnotes",
     "title": "Applied HPC with R",
     "section": "",
-    "text": "With many to thank, including Paul Marjoram, Zhi Zhang, Emil Hvitfeldt, Malcolm Barrett, Garrett Weaver, USC’s IMAGE P01 research group, and my students both at USC and UoU.↩︎"
+    "text": "With many to thank, including Paul Marjoram, Zhi Yang, Emil Hvitfeldt, Malcolm Barrett, Garrett Weaver, USC’s IMAGE P01 research group, and my students both at USC and UoU.↩︎"
   },
   {
-    "objectID": "intro.html#high-performance-computing-an-overview",
-    "href": "intro.html#high-performance-computing-an-overview",
+    "objectID": "intro.html",
+    "href": "intro.html",
     "title": "1  Introduction",
-    "section": "1.1 High-Performance Computing: An overview",
-    "text": "1.1 High-Performance Computing: An overview\nLoosely, from R’s perspective, we can think of HPC in terms of two, maybe three things:\n\nBig data: How to work with data that doesn’t fit your computer\nParallel computing: How to take advantage of multiple core systems\nCompiled code: Write your low-level code (if R doesn’t have it yet…)\n\n(Checkout CRAN Task View on HPC)"
+    "section": "",
+    "text": "2 High-Performance Computing: An overview\nFrom R’s perspective, we can think of HPC in terms of two or three things:2 Big data, parallel computing, and compiled code."
   },
   {
     "objectID": "intro.html#big-data",
     "href": "intro.html#big-data",
     "title": "1  Introduction",
-    "section": "1.2 Big Data",
-    "text": "1.2 Big Data\n\nBuy a bigger computer/RAM (not the best solution!)\nUse out-of-memory storage, i.e., don’t load all your data in the RAM. e.g. The bigmemory, data.table, HadoopStreaming R packages\nEfficient algorithms for big data, e.g.: biglm, biglasso\nStore it more efficiently, e.g.: Sparse Matrices (take a look at the dgCMatrix objects from the Matrix R package)"
+    "section": "2.1 Big Data",
+    "text": "2.1 Big Data\nWhen we talk about big data, we refer to cases where your computer struggles to handle a dataset. A typical example of the latter is when the number of observations (rows) in your data frame is too many to fit a linear regression model. Instead of buying a bigger computer, there are many good solutions to solve memory-related problems:\n\nOut-of-memory storage. The idea is simple, instead of using your RAM to load the data, use other methods to load the data. Two notewirthy alternatives are the bigmemory and implyr R packages. The bigmemory package provides methods for using “file-backed” matrices. On the other hand, implyr implements a wrapper to access Apache Impala, an SQL query engine for a cluster running Apache Hadoop.\nEfficient algorithms for big data: To avoid running out of memory with your regression analysis, the R packages biglm and biglasso deliver highly-efficient alternatives to glm and glmnet, respectively. Now, if your data fits your RAM, but you still struggle with data wrangling, the data.table package is the solution.\nStore it more efficiently: Finally, when it comes to linear algebra, the Matrix R package shines with its formal classes and methods for managing Sparse Matrices, i.e., big matrices whose entries are primarily zeros; for example, the dgCMatrix objects. Furthermore, Matrix comes shipped with R, which makes it even more appealing."
   },
   {
     "objectID": "intro.html#parallel-computing",
     "href": "intro.html#parallel-computing",
     "title": "1  Introduction",
-    "section": "1.3 Parallel computing",
-    "text": "1.3 Parallel computing\n\n\n\n\n\nFlynn’s Classical Taxonomy (Blaise Barney, Introduction to Parallel Computing, Lawrence Livermore National Laboratory)\n\n\n\n\nWe will be focusing on the Single Instruction stream Multiple Data stream"
+    "section": "2.2 Parallel computing",
+    "text": "2.2 Parallel computing\n\n\n\n\n\nFlynn’s Classical Taxonomy (Blaise Barney, Introduction to Parallel Computing, Lawrence Livermore National Laboratory)\n\n\n\n\nWe will focus on the Single Instruction stream Multiple Data stream.\nIn general terms, a parallel computing program is one in which we use two or more computational threads simultaneously. Although computational thread usually means core, there are multiple levels at which a computer program can be parallelized. To understand this, we first need to see what composes a modern computer:\n\n\n\nSource: Original figure from LUMI consortium documentation (LUMI consortium 2023)\n\n\nStreaming SIMD Extensions [SSE] and Advanced Vector Extensions [AVX]\n\n2.2.1 Serial vs. Parallel\n\n\n\n\n\nSource: Blaise Barney, Introduction to Parallel Computing, Lawrence Livermore National Laboratory\n\n\n\n\nsource: Blaise Barney, Introduction to Parallel Computing, Lawrence Livermore National Laboratory"
   },
   {
-    "objectID": "intro.html#parallel-computing-1",
-    "href": "intro.html#parallel-computing-1",
+    "objectID": "intro.html#high-performance-computing-in-r",
+    "href": "intro.html#high-performance-computing-in-r",
     "title": "1  Introduction",
-    "section": "1.4 Parallel computing",
-    "text": "1.4 Parallel computing\nIn general terms, a parallel computing program is one in which we use two or more computational threads simultaneously. Although computational thread usually means core, there are multiple levels at which a computer program can be parallelized. To understand this, we first need to see what composes a modern computer:\n\n\n\nSource: Original figure from LUMI consortium documentation (LUMI consortium 2023)\n\n\nStreaming SIMD Extensions [SSE] and Advanced Vector Extensions [AVX]\n\n1.4.1 Serial vs. Parallel\n\n  source: Blaise Barney, Introduction to Parallel Computing, Lawrence Livermore National Laboratory"
-  },
-  {
-    "objectID": "intro.html#parallel-computing-2",
-    "href": "intro.html#parallel-computing-2",
-    "title": "1  Introduction",
-    "section": "1.5 Parallel computing",
-    "text": "1.5 Parallel computing\n\n\n\n\n\nsource: Blaise Barney, Introduction to Parallel Computing, Lawrence Livermore National Laboratory"
-  },
-  {
-    "objectID": "intro.html#some-vocabulary-for-hpc",
-    "href": "intro.html#some-vocabulary-for-hpc",
-    "title": "1  Introduction",
-    "section": "1.6 Some vocabulary for HPC",
-    "text": "1.6 Some vocabulary for HPC\nIn raw terms\n\nSupercomputer: A single big machine with thousands of cores/GPGPUs.\nHigh-Performance Computing (HPC): Multiple machines within a single network.\nHigh Throughput Computing (HTC): Multiple machines across multiple networks.\n\nYou may not have access to a supercomputer, but certainly, HPC/HTC clusters are more accessible these days, e.g., AWS provides a service to create HPC clusters at a low cost (allegedly, since nobody understands how pricing works)"
+    "section": "2.3 High-performance computing in R",
+    "text": "2.3 High-performance computing in R\n\n2.3.1 Some vocabulary for HPC\nIn raw terms\n\nSupercomputer: A single big machine with thousands of cores/GPGPUs.\nHigh-Performance Computing (HPC): Multiple machines within a single network.\nHigh Throughput Computing (HTC): Multiple machines across multiple networks.\n\nYou may not have access to a supercomputer, but certainly, HPC/HTC clusters are more accessible these days, e.g., AWS provides a service to create HPC clusters at a low cost (allegedly, since nobody understands how pricing works)"
   },
   {
     "objectID": "intro.html#gpu-vs.-cpu",
     "href": "intro.html#gpu-vs.-cpu",
     "title": "1  Introduction",
-    "section": "1.7 GPU vs. CPU",
-    "text": "1.7 GPU vs. CPU\n\n\n\n\n\nNVIDIA Blog\n\n\n\n\n\nWhy use OpenMP if GPU is suited to compute-intensive operations? Well, mostly because OpenMP is VERY easy to implement (easier than CUDA, which is the easiest way to use GPU).2"
+    "section": "2.4 GPU vs. CPU",
+    "text": "2.4 GPU vs. CPU\n\n\n\n\n\nNVIDIA Blog\n\n\n\n\n\nWhy use OpenMP if GPU is suited to compute-intensive operations? Well, mostly because OpenMP is VERY easy to implement (easier than CUDA, which is the easiest way to use GPU).3"
   },
   {
     "objectID": "intro.html#when-is-it-a-good-idea",
     "href": "intro.html#when-is-it-a-good-idea",
     "title": "1  Introduction",
-    "section": "1.8 When is it a good idea?",
-    "text": "1.8 When is it a good idea?\n\n\n\n\n\nAsk yourself these questions before jumping into HPC!"
+    "section": "2.5 When is it a good idea?",
+    "text": "2.5 When is it a good idea?\n\n\n\n\n\nAsk yourself these questions before jumping into HPC!"
   },
   {
     "objectID": "intro.html#parallel-computing-in-r",
     "href": "intro.html#parallel-computing-in-r",
     "title": "1  Introduction",
-    "section": "1.9 Parallel computing in R",
-    "text": "1.9 Parallel computing in R\nWhile there are several alternatives (just take a look at the High-Performance Computing Task View), we’ll focus on the following R-packages for explicit parallelism:\n\nparallel: R package that provides ‘[s]upport for parallel computation, including random-number generation’.\nfuture: ‘[A] lightweight and unified Future API for sequential and parallel processing of R expression via futures.’\nRcpp + OpenMP: Rcpp is an R package for integrating R with C++ and OpenMP is a library for high-level parallelism for C/C++ and FORTRAN.\n\n\nOthers but not used here\n\nforeach for iterating through lists in parallel.\nRmpi for creating MPI clusters.\n\nAnd tools for implicit parallelism (out-of-the-box tools that allow the programmer not to worry about parallelization):\n\ngpuR for Matrix manipulation using GPU\ntensorflow an R interface to TensorFlow.\n\nA ton of other types of resources, notably the tools for working with batch schedulers such as Slurm, and HTCondor.\n\n\n\n\nDowle, Matt, and Arun Srinivasan. 2021. Data.table: Extension of ‘Data.frame‘. https://CRAN.R-project.org/package=data.table.\n\n\nLUMI consortium. 2023. “Documentation - Distribution and Binding.” https://docs.lumi-supercomputer.eu/runjobs/scheduled-jobs/distribution-binding/."
+    "section": "2.6 Parallel computing in R",
+    "text": "2.6 Parallel computing in R\nWhile there are several alternatives (just take a look at the High-Performance Computing Task View), we’ll focus on the following R-packages for explicit parallelism:\n\nparallel: R package that provides ‘[s]upport for parallel computation, including random-number generation’.\nfuture: ‘[A] lightweight and unified Future API for sequential and parallel processing of R expression via futures.’\nRcpp + OpenMP: Rcpp is an R package for integrating R with C++ and OpenMP is a library for high-level parallelism for C/C++ and FORTRAN.\n\nOthers but not used here\n\nforeach for iterating through lists in parallel.\nRmpi for creating MPI clusters.\n\nAnd tools for implicit parallelism (out-of-the-box tools that allow the programmer not to worry about parallelization):\n\ngpuR for Matrix manipulation using GPU\ntensorflow an R interface to TensorFlow.\n\nA ton of other types of resources, notably the tools for working with batch schedulers such as Slurm, and HTCondor.\n\n\n\n\nDowle, Matt, and Arun Srinivasan. 2021. Data.table: Extension of ‘Data.frame‘. https://CRAN.R-project.org/package=data.table.\n\n\nLUMI consortium. 2023. “Documentation - Distribution and Binding.” https://docs.lumi-supercomputer.eu/runjobs/scheduled-jobs/distribution-binding/."
   },
   {
     "objectID": "intro.html#footnotes",
     "href": "intro.html#footnotes",
     "title": "1  Introduction",
     "section": "",
-    "text": "Nonetheless, this claim can be said about almost any programming language; there are notable examples like the R package data.table (Dowle and Srinivasan 2021) which has been demonstrated to out-perform most data wrangling tools.↩︎\nSadia National Laboratories started the Kokkos project, which provides a one-fits-all C++ library for parallel programming. More information on the Kokkos’s wiki site.↩︎"
+    "text": "Nonetheless, this claim can be said about almost any programming language; there are notable examples like the R package data.table (Dowle and Srinivasan 2021) which has been demonstrated to out-perform most data wrangling tools.↩︎\nMake sure to check out CRAN Task View on HPC.↩︎\nSadia National Laboratories started the Kokkos project, which provides a one-fits-all C++ library for parallel programming. More information on the Kokkos’s wiki site.↩︎"
   },
   {
     "objectID": "parallel-pkg.html#parallel-workflow",
@@ -163,21 +149,21 @@
   {
     "objectID": "slurm-simpi.html#submitting-jobs-to-slurm",
     "href": "slurm-simpi.html#submitting-jobs-to-slurm",
-    "title": "4  Simulating pi (once more)",
+    "title": "4  Simulating \\(pi\\)",
     "section": "4.1 Submitting jobs to Slurm",
     "text": "4.1 Submitting jobs to Slurm\nWe will primarily work by submitting jobs using the sbatch function. This function takes as its main argument a bash file with the program to execute. In the case of R, a regular bash file looks something like this:\n#!/bin/sh\n#SBATCH --job-name=sapply\n#SBATCH --time=00:10:00\n\nmodule load R/4.2.2\nRscript --vanilla 01-sapply.R\nThis file has three components:\n\nThe Slurm flags #SBATCH: These comment-like entries pass Slurm options to the job. In this example, we only specify the options job-name and time. Other common options would include account and partition.\nLoading R module load R/4.2.2: Depending on your system’s configuration, you may or may not need to load modules or run bash scripts before being able to run R. In this example, we are loading R version 4.2.2 using LMod (see previous section).\nExecuting the R script: After specifying Slurm options and loading whatever needs to be loaded before executing R, we are using RScript to execute the program we wrote.\n\nSubmission is then made as follows:\nsbatch 01-sapply.slurm\nThe following examples have two files, a bash script and an R script, to be called by Slurm.\n\n4.1.1 Case 1: Single job, single core job\nThe most basic way is submitting a job using the sbatch command. In this case, you must have two files: (1) An R script and (2) a bash script. e.g.\nThe contents of the R script (01-sapply.R) are:\n# Model parameters\nnsims &lt;- 1e3\nn     &lt;- 1e4\n\n# Function to simulate pi\nsimpi &lt;- function(i) {\n  \n  p &lt;- matrix(runif(n*2, -1, 1), ncol = 2)\n  mean(sqrt(rowSums(p^2)) &lt;= 1) * 4\n  \n}\n\n# Approximation\nset.seed(12322)\nans &lt;- sapply(1:nsims, simpi)\n\nmessage(\"Pi: \", mean(ans))\n\nsaveRDS(ans, \"01-sapply.rds\")\nThe contents of the bashfile (01-sapply.slurm) are:\n#!/bin/sh\n#SBATCH --job-name=sapply\n#SBATCH --time=00:10:00\n\nmodule load R/4.2.2\nRscript --vanilla 01-sapply.R\n\n\n4.1.2 Case 2: Single job, multicore job\nImagine that we would like to use more than one processor for this job, using the parallel::mclapply function from the parallel package.1 Then, besides adapting the code, we need to tell Slurm that we are using more than one core per task, as in the following example:\nR script (02-mclapply.R):\n# Model parameters\nnsims  &lt;- 1e3\nn      &lt;- 1e4\nncores &lt;- 4L\n\n# Function to simulate pi\nsimpi &lt;- function(i) {\n  \n  p &lt;- matrix(runif(n*2, -1, 1), ncol = 2)\n  mean(sqrt(rowSums(p^2)) &lt;= 1) * 4\n  \n}\n\n# Approximation\nset.seed(12322)\nans &lt;- parallel::mclapply(1:nsims, simpi, mc.cores = ncores)\nans &lt;- unlist(ans)\n\nmessage(\"Pi: \", mean(ans))\n\nsaveRDS(ans, \"02-mclpply.rds\")\nBashfile (02-mclapply.slurm):\n#!/bin/sh\n#SBATCH --job-name=mclapply\n#SBATCH --time=00:10:00\n#SBATCH --cpus-per-task=4\n\nmodule load R/4.2.2\nRscript --vanilla 02-mclapply.R"
   },
   {
     "objectID": "slurm-simpi.html#jobs-with-the-slurmr-package",
     "href": "slurm-simpi.html#jobs-with-the-slurmr-package",
-    "title": "4  Simulating pi (once more)",
+    "title": "4  Simulating \\(pi\\)",
     "section": "4.2 Jobs with the slurmR package",
     "text": "4.2 Jobs with the slurmR package\nThe slurmR R package (Vega Yon and Marjoram 2019, 2022) is a lightweight wrapper of Slurm. The package’s primary functions are the *apply family–mainly through Slurm job arrays–and the makeSlurmCluster()–which is a wrapper of makePSOCKcluster.\nThis section will illustrate how to submit jobs using the makeSlurmCluster() function and Slurm_sapply. Furthermore, the last example demonstrates how we can skip writing Slurm scripts entirely using the sourceSlurm() function included in the package.\n\n4.2.1 Case 3: Single job, multinode job\nIn this case, there is no simple way to submit a multinodal job to Slurm; unless you use the slurmR package.2 In this example, we will combine slurmR with the parallel package’s parSapply function to submit a multinodal job using the function makeSlurmCluster(). With it, slurmR will submit a job requesting njobs tasks (processors) that could span multiple nodes,3 and create a Socket cluster out of it (like using makePSOCKcluster.) One thing to keep in mind is that Socket clusters are limited in the number of connections a single R session can span. You can read more about it here and here.\nR script (03-parsapply-slurmr.R):\n# Model parameters\nnsims  &lt;- 1e3\nn      &lt;- 1e4\nncores &lt;- 4L\n\n# Function to simulate pi\nsimpi &lt;- function(i) {\n  \n  p &lt;- matrix(runif(n*2, -1, 1), ncol = 2)\n  mean(sqrt(rowSums(p^2)) &lt;= 1) * 4\n  \n}\n\n# Setting up slurmR\nlibrary(slurmR) # This also loads the parallel package\n\n# Making the cluster, and exporting the variables\ncl &lt;- makeSlurmCluster(ncores)\n\n# Approximation\nclusterExport(cl, c(\"n\", \"simpi\"))\nans &lt;- parSapply(cl, 1:nsims, simpi)\n\n# Closing connection\nstopCluster(cl)\n\nmessage(\"Pi: \", mean(ans))\n\nsaveRDS(ans, \"03-parsapply-slurmr.rds\")\nBashfile (03-parsapply-slurmr.slurm):\n#!/bin/sh\n#SBATCH --job-name=parsapply\n#SBATCH --time=00:10:00\n\nmodule load R/4.2.2\nRscript --vanilla 03-parsapply-slurmr.R\n\n\n4.2.2 Case 4: Multi job, single/multi-core\nAnother way to submit jobs is using job arrays. A job array is a job repeated njobs times with the same configuration. The main difference between replicates is what you do with the SLURM_ARRAY_TASK_ID environment variable. This variable is defined within each replicate and can be used to make the “subjob” depending on that.\nHere is a quick example using R\nID &lt;- Sys.getenv(\"SLURM_ARRAY_TASK_ID\")\nif (ID == 1) {\n  ...[do this]...\n} else if (ID == 2) {\n  ...[do that]...\n}\nThe slurmR R package makes submitting job arrays easy. Again, with the simulation of pi, we can do it in the following way:\nR script (04-slurm_sapply.R):\n# Model parameters\nnsims  &lt;- 1e3\nn      &lt;- 1e4\n# ncores &lt;- 4L\nnjobs  &lt;- 4L\n\n# Function to simulate pi\nsimpi &lt;- function(i, n.) {\n  \n  p &lt;- matrix(runif(n.*2, -1, 1), ncol = 2)\n  mean(sqrt(rowSums(p^2)) &lt;= 1) * 4\n  \n}\n\n# Setting up slurmR\nlibrary(slurmR) # This also loads the parallel package\n\n# Approximation\nans &lt;- Slurm_sapply(\n  1:nsims, simpi,\n  n.       = n,\n  njobs    = njobs,\n  plan     = \"collect\",\n  tmp_path = \"/scratch/vegayon\" # This is where all temp files will be exported\n  )\n\nmessage(\"Pi: \", mean(ans))\n\nsaveRDS(ans, \"04-slurm_sapply.rds\")\nBashfile (04-slurm_sapply.slurm):\n#!/bin/sh\n#SBATCH --job-name=slurm_sapply\n#SBATCH --time=00:10:00\n\nmodule load R/4.2.2\nRscript --vanilla 04-slurm_sapply.R\nOne of the main benefits of using this approach instead of the makeSlurmCluster function (and thus, working with a SOCK cluster) are:\n\nThe number of jobs is not limited here (only by the admin, but not by R).\nIf a job fails, then we can re-run it using sbatch once again (see example here).\nYou can check the individual logs of each process using the function Slurm_lob().\nYou can submit the job and quit the R session without waiting for it to finalize. You can always read back the job using the function read_slurm_job([path-to-the-temp])\n\n\n\n4.2.3 Case 5: Skipping the .slurm file\nThe slurmR package has a function named sourceSlurm that can be used to avoid creating the .slurm file. The user can add the SBATCH options to the top of the R script (including the #!/bin/sh line) and submit the job from within R as follows:\nR script (05-sapply.R):\n#!/bin/sh\n#SBATCH --job-name=sapply-sourceSlurm\n#SBATCH --time=00:10:00\n\n# Model parameters\nnsims &lt;- 1e3\nn     &lt;- 1e4\n\n# Function to simulate pi\nsimpi &lt;- function(i) {\n  \n  p &lt;- matrix(runif(n*2, -1, 1), ncol = 2)\n  mean(sqrt(rowSums(p^2)) &lt;= 1) * 4\n  \n}\n\n# Approximation\nset.seed(12322)\nans &lt;- sapply(1:nsims, simpi)\n\nmessage(\"Pi: \", mean(ans))\n\nsaveRDS(ans, \"05-sapply.rds\")\nFrom the R console (is OK if you are in the Head node)\nslurmR::sourceSlurm(\"05-sapply.R\")\nAnd voilá! A temporary bash file will be generated to submit the R script to the queue. The following video shows a possible output on the University of Utah’s CHPC with slurmR version 0.5-3:\n\n\n\n\n\nVega Yon, George, and Paul Marjoram. 2019. “slurmR: A Lightweight Wrapper for HPC with Slurm.” The Journal of Open Source Software 4 (39). https://doi.org/10.21105/joss.01493.\n\n\n———. 2022. slurmR: A Lightweight Wrapper for ’Slurm’. https://github.com/USCbiostats/slurmR."
   },
   {
     "objectID": "slurm-simpi.html#footnotes",
     "href": "slurm-simpi.html#footnotes",
-    "title": "4  Simulating pi (once more)",
+    "title": "4  Simulating \\(pi\\)",
     "section": "",
     "text": "This function is sort of a wrapper of makeForkcluster. Forking provides a way to duplicate a process in the OS without replicating the memory, which is both faster and efficient.↩︎\nSee installation instructions here↩︎\nAlthough possible, most multinode jobs will be allocated if insufficient threads are within a single node. Remember Slurm does not run the jobs but rather reserves computational resources for you to run it.↩︎"
   },
@@ -221,7 +207,7 @@
     "href": "rcpp-part1.html#how-much-fast",
     "title": "5  Rcpp",
     "section": "5.6 How much fast?",
-    "text": "5.6 How much fast?\nCompared to this:\n\nadd1R &lt;- function(x) {\n  for (i in 1:length(x))\n    x[i] &lt;- x[i] + 1\n  x\n}\nmicrobenchmark::microbenchmark(add1R(1:1000), add1Cpp(1:1000))\n\nUnit: microseconds\n            expr    min      lq     mean  median      uq      max neval cld\n   add1R(1:1000) 33.463 34.1235 53.44880 34.8650 35.5350 1872.713   100  a \n add1Cpp(1:1000)  2.228  2.5210  8.93245  2.8835  5.3175  484.195   100   b"
+    "text": "5.6 How much fast?\nCompared to this:\n\nadd1R &lt;- function(x) {\n  for (i in 1:length(x))\n    x[i] &lt;- x[i] + 1\n  x\n}\nmicrobenchmark::microbenchmark(add1R(1:1000), add1Cpp(1:1000))\n\nUnit: microseconds\n            expr    min      lq     mean  median      uq      max neval cld\n   add1R(1:1000) 34.364 35.5345 60.04437 36.9450 42.4775 2167.173   100  a \n add1Cpp(1:1000)  2.343  2.8220  9.36950  3.2845  5.2715  531.286   100   b"
   },
   {
     "objectID": "rcpp-part1.html#main-differences-between-r-and-c",

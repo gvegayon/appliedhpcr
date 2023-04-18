@@ -2,7 +2,7 @@
 
 The R programming language [@R] can be fantastic for most daily tasks. But as soon as you start dealing with more complicated problems, you may face the for-loop bottle-neck. If you ever encounter such a problem, this book is for you. Applied HPC with R is a collection of talks and lectures I have given about speeding up your R code using parallel computing and other resources such as C++. The contents have been primarily developed during my time at USC and UofU.[^thanksto]
 
-[^thanksto]: With many to thank, including [Paul Marjoram](https://keck.usc.edu/faculty-search/paul-marjoram/), [Zhi Zhang](https://zhiyang.netlify.app/){target="_blank"}, [Emil Hvitfeldt](https://www.emilhvitfeldt.com/){target="_blank"}, [Malcolm Barrett](https://malco.io/){target="_blank"}, [Garrett Weaver](https://www.linkedin.com/in/gmwusc/){target="_blank"}, [USC's IMAGE P01 research group](https://p01.uscbiostatistics.org/){target="_target"}, and my students both at USC and UoU.
+[^thanksto]: With many to thank, including [Paul Marjoram](https://keck.usc.edu/faculty-search/paul-marjoram/), [Zhi Yang](https://zhiyang.netlify.app/){target="_blank"}, [Emil Hvitfeldt](https://www.emilhvitfeldt.com/){target="_blank"}, [Malcolm Barrett](https://malco.io/){target="_blank"}, [Garrett Weaver](https://www.linkedin.com/in/gmwusc/){target="_blank"}, [USC's IMAGE P01 research group](https://p01.uscbiostatistics.org/){target="_target"}, and my students both at USC and UoU.
 
 ```{r}
 #| echo: false
