@@ -234,3 +234,6 @@ To inspect an error with GDB, we have to follow these steps:
     And here is an example using `info locals`, `info args`, `list`, and `print`.
 
     ![](fig/rcpp/rcpp-gdb-info-list-print.png){width="90%" fig-align="center"}
+
+5. Finally, to exit the program, type `exit` (similar to `q()` in R.)
+
