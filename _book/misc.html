@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Applied HPC with R - 6&nbsp; Misc</title>
+<title>Applied HPC with R - 7&nbsp; Misc</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -65,7 +65,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
 <link href="./references.html" rel="next">
-<link href="./rcpp-part1.html" rel="prev">
+<link href="./rcpp-debugging.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -118,7 +118,7 @@ gtag('config', 'G-9D75EFV0TE', { 'anonymize_ip': true});
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./misc.html"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Misc</span></a></li></ol></nav>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./misc.html"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Misc</span></a></li></ol></nav>
       <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
       </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -229,12 +229,18 @@ gtag('config', 'G-9D75EFV0TE', { 'anonymize_ip': true});
  <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Rcpp</span></span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./rcpp-debugging.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Debugging R w C++/C code</span></span></a>
+  </div>
+</li>
       </ul>
   </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./misc.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Misc</span></span></a>
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Misc</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -253,12 +259,12 @@ gtag('config', 'G-9D75EFV0TE', { 'anonymize_ip': true});
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#general-resources" id="toc-general-resources" class="nav-link active" data-scroll-target="#general-resources"><span class="header-section-number">6.1</span> General resources</a></li>
-  <li><a href="#data-pointers" id="toc-data-pointers" class="nav-link" data-scroll-target="#data-pointers"><span class="header-section-number">6.2</span> Data Pointers</a></li>
-  <li><a href="#the-slurm-options-they-forgot-to-tell-you-about" id="toc-the-slurm-options-they-forgot-to-tell-you-about" class="nav-link" data-scroll-target="#the-slurm-options-they-forgot-to-tell-you-about"><span class="header-section-number">6.3</span> The Slurm options they forgot to tell you about…</a></li>
-  <li><a href="#good-practices-recomendations" id="toc-good-practices-recomendations" class="nav-link" data-scroll-target="#good-practices-recomendations"><span class="header-section-number">6.4</span> Good practices (recomendations)</a></li>
-  <li><a href="#running-r-interactively" id="toc-running-r-interactively" class="nav-link" data-scroll-target="#running-r-interactively"><span class="header-section-number">6.5</span> Running R interactively</a></li>
-  <li><a href="#nonos-when-using-r" id="toc-nonos-when-using-r" class="nav-link" data-scroll-target="#nonos-when-using-r"><span class="header-section-number">6.6</span> NoNos when using R</a></li>
+  <li><a href="#general-resources" id="toc-general-resources" class="nav-link active" data-scroll-target="#general-resources"><span class="header-section-number">7.1</span> General resources</a></li>
+  <li><a href="#data-pointers" id="toc-data-pointers" class="nav-link" data-scroll-target="#data-pointers"><span class="header-section-number">7.2</span> Data Pointers</a></li>
+  <li><a href="#the-slurm-options-they-forgot-to-tell-you-about" id="toc-the-slurm-options-they-forgot-to-tell-you-about" class="nav-link" data-scroll-target="#the-slurm-options-they-forgot-to-tell-you-about"><span class="header-section-number">7.3</span> The Slurm options they forgot to tell you about…</a></li>
+  <li><a href="#good-practices-recomendations" id="toc-good-practices-recomendations" class="nav-link" data-scroll-target="#good-practices-recomendations"><span class="header-section-number">7.4</span> Good practices (recomendations)</a></li>
+  <li><a href="#running-r-interactively" id="toc-running-r-interactively" class="nav-link" data-scroll-target="#running-r-interactively"><span class="header-section-number">7.5</span> Running R interactively</a></li>
+  <li><a href="#nonos-when-using-r" id="toc-nonos-when-using-r" class="nav-link" data-scroll-target="#nonos-when-using-r"><span class="header-section-number">7.6</span> NoNos when using R</a></li>
   </ul>
 </nav>
     </div>
@@ -267,7 +273,7 @@ gtag('config', 'G-9D75EFV0TE', { 'anonymize_ip': true});
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Misc</span></h1>
+<h1 class="title"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Misc</span></h1>
 </div>
 
 
@@ -282,8 +288,8 @@ gtag('config', 'G-9D75EFV0TE', { 'anonymize_ip': true});
 
 </header>
 
-<section id="general-resources" class="level2" data-number="6.1">
-<h2 data-number="6.1" class="anchored" data-anchor-id="general-resources"><span class="header-section-number">6.1</span> General resources</h2>
+<section id="general-resources" class="level2" data-number="7.1">
+<h2 data-number="7.1" class="anchored" data-anchor-id="general-resources"><span class="header-section-number">7.1</span> General resources</h2>
 <p>The Center for Advanced Research Computing (formerly HPCC) has tons of resources online. Here are a couple of useful links:</p>
 <ul>
 <li><p><strong>Center for Advanced Research Computing Website</strong> https://carc.usc.edu</p></li>
@@ -293,8 +299,8 @@ gtag('config', 'G-9D75EFV0TE', { 'anonymize_ip': true});
 <li><p><strong>Using R</strong> https://carc.usc.edu/user-information/user-guides/software-and-programming/r</p></li>
 </ul>
 </section>
-<section id="data-pointers" class="level2" data-number="6.2">
-<h2 data-number="6.2" class="anchored" data-anchor-id="data-pointers"><span class="header-section-number">6.2</span> Data Pointers</h2>
+<section id="data-pointers" class="level2" data-number="7.2">
+<h2 data-number="7.2" class="anchored" data-anchor-id="data-pointers"><span class="header-section-number">7.2</span> Data Pointers</h2>
 <p>IMHO, these are the most important things to know about data management at USC’s HPC:</p>
 <ol type="1">
 <li><p>Do your data transfer using the transfer nodes (it is faster).</p></li>
@@ -303,8 +309,8 @@ gtag('config', 'G-9D75EFV0TE', { 'anonymize_ip': true});
 <li><p>Finally, besides of <strong>Secure copy protocol (scp)</strong>, if you are like me, try setting up a GUI client for moving your data (see <a href="https://carc.usc.edu/user-information/user-guides/data-management/transferring-files-gui">this</a>).</p></li>
 </ol>
 </section>
-<section id="the-slurm-options-they-forgot-to-tell-you-about" class="level2" data-number="6.3">
-<h2 data-number="6.3" class="anchored" data-anchor-id="the-slurm-options-they-forgot-to-tell-you-about"><span class="header-section-number">6.3</span> The Slurm options they forgot to tell you about…</h2>
+<section id="the-slurm-options-they-forgot-to-tell-you-about" class="level2" data-number="7.3">
+<h2 data-number="7.3" class="anchored" data-anchor-id="the-slurm-options-they-forgot-to-tell-you-about"><span class="header-section-number">7.3</span> The Slurm options they forgot to tell you about…</h2>
 <p>First of all, you have to be aware that the only thing Slurm does is allocate resources. If your application uses parallel computing or not, that’s another story.</p>
 <p>Here some options that you need to be aware of:</p>
 <ul>
@@ -323,8 +329,8 @@ gtag('config', 'G-9D75EFV0TE', { 'anonymize_ip': true});
 <p>More information about the partitions <a href="https://hpcc.usc.edu/support/infrastructure/node-allocation/" target="_blank">here</a></p></li>
 </ul>
 </section>
-<section id="good-practices-recomendations" class="level2" data-number="6.4">
-<h2 data-number="6.4" class="anchored" data-anchor-id="good-practices-recomendations"><span class="header-section-number">6.4</span> Good practices (recomendations)</h2>
+<section id="good-practices-recomendations" class="level2" data-number="7.4">
+<h2 data-number="7.4" class="anchored" data-anchor-id="good-practices-recomendations"><span class="header-section-number">7.4</span> Good practices (recomendations)</h2>
 <p>This is what you should use as a minimum:</p>
 <pre><code>#SBATCH --output=simulation.out
 #SBATCH --job-name=simulation
@@ -342,8 +348,8 @@ gtag('config', 'G-9D75EFV0TE', { 'anonymize_ip': true});
 <li>Any I/O should be done to either Scratch (<code>/scratch/[your usc net id]</code>) or Tmp <code>Sys.getenv("TMPDIR")</code>.</li>
 </ul>
 </section>
-<section id="running-r-interactively" class="level2" data-number="6.5">
-<h2 data-number="6.5" class="anchored" data-anchor-id="running-r-interactively"><span class="header-section-number">6.5</span> Running R interactively</h2>
+<section id="running-r-interactively" class="level2" data-number="7.5">
+<h2 data-number="7.5" class="anchored" data-anchor-id="running-r-interactively"><span class="header-section-number">7.5</span> Running R interactively</h2>
 <ol type="1">
 <li><p>The HPC has several pre-installed pieces of software. R is one of those.</p></li>
 <li><p>To access the pre-installed software, we use the <a href="https://lmod.readthedocs.io/en/latest/"><strong>Lmod module system</strong></a> (more information <a href="https://carc.usc.edu/user-information/user-guides/software-and-programming/lmod"><strong>here</strong></a>)</p></li>
@@ -360,8 +366,8 @@ gtag('config', 'G-9D75EFV0TE', { 'anonymize_ip': true});
 <p>This would put me in a single node allocating 2 gigs of memory for a maximum of 2 hours.</p></li>
 </ol>
 </section>
-<section id="nonos-when-using-r" class="level2" data-number="6.6">
-<h2 data-number="6.6" class="anchored" data-anchor-id="nonos-when-using-r"><span class="header-section-number">6.6</span> NoNos when using R</h2>
+<section id="nonos-when-using-r" class="level2" data-number="7.6">
+<h2 data-number="7.6" class="anchored" data-anchor-id="nonos-when-using-r"><span class="header-section-number">7.6</span> NoNos when using R</h2>
 <ul>
 <li><p>Do computation on the head node (compile stuff is OK)</p></li>
 <li><p>Request a number of nodes (unless you know what you are doing)</p></li>
@@ -608,8 +614,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./rcpp-part1.html" class="pagination-link">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Rcpp</span></span>
+      <a href="./rcpp-debugging.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Debugging R w C++/C code</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">

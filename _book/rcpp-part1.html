@@ -83,7 +83,7 @@ div.csl-indent {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./misc.html" rel="next">
+<link href="./rcpp-debugging.html" rel="next">
 <link href="./slurm-simpi.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -248,12 +248,18 @@ gtag('config', 'G-9D75EFV0TE', { 'anonymize_ip': true});
  <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Rcpp</span></span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./rcpp-debugging.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Debugging R w C++/C code</span></span></a>
+  </div>
+</li>
       </ul>
   </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./misc.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Misc</span></span></a>
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Misc</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -432,8 +438,8 @@ NumericVector add1Cpp(NumericVector x) {
 <div class="cell-output cell-output-stdout">
 <pre><code>Unit: microseconds
             expr    min      lq     mean  median      uq      max neval cld
-   add1R(1:1000) 34.364 35.5345 60.04437 36.9450 42.4775 2167.173   100  a 
- add1Cpp(1:1000)  2.343  2.8220  9.36950  3.2845  5.2715  531.286   100   b</code></pre>
+   add1R(1:1000) 34.428 35.4710 54.67290 35.7770 37.0875 1859.230   100  a 
+ add1Cpp(1:1000)  2.197  2.5235  8.65308  2.8855  5.1100  475.757   100   b</code></pre>
 </div>
 </div>
 </section>
@@ -531,7 +537,7 @@ NumericVector add1Cpp(NumericVector x) {
 <h3 class="smaller anchored" data-number="5.11.2" data-anchor-id="problem-2-fibonacci-series"><span class="header-section-number">5.11.2</span> Problem 2: Fibonacci series</h3>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Fibonacci_Spiral.svg/512px-Fibonacci_Spiral.svg.png" class="img-fluid figure-img" style="width:50.0%" alt="Fibonacci Spiral"></p>
+<p><img src="fig/640px-Fibonacci_Spiral.svg.png" class="img-fluid figure-img" style="width:50.0%" alt="Fibonacci Spiral"></p>
 </figure>
 </div>
 <p>Each element of the sequence is determined by the following:</p>
@@ -1071,8 +1077,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./misc.html" class="pagination-link">
-        <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Misc</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./rcpp-debugging.html" class="pagination-link">
+        <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Debugging R w C++/C code</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

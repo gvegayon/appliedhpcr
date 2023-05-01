@@ -1,6 +1,7 @@
 project:
   type: book
 
+engine: knitr
 book:
   google-analytics: "G-9D75EFV0TE"
   title: "Applied HPC with R"
@@ -19,6 +20,7 @@ book:
     - part: "Using C++"
       chapters:
         - rcpp-part1.qmd
+        - rcpp-debugging.qmd
     - misc.qmd
     - references.qmd
   downloads:

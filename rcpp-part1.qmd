@@ -280,7 +280,7 @@ if ([some condition])
 
 ### Problem 2: Fibonacci series {.smaller}
 
-![](https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Fibonacci_Spiral.svg/512px-Fibonacci_Spiral.svg.png){width="50%" fig-alt="Fibonacci Spiral" fig-align="center"}
+![](fig/640px-Fibonacci_Spiral.svg.png){width="50%" fig-alt="Fibonacci Spiral" fig-align="center"}
 
 Each element of the sequence is determined by the following:
 
