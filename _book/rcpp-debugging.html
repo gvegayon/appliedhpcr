@@ -54,7 +54,26 @@ div.sourceCode
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="site_libs/quarto-nav/quarto-nav.js"></script>
@@ -259,7 +278,7 @@ gtag('config', 'G-9D75EFV0TE', { 'anonymize_ip': true});
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#starting-r-with-a-debugger" id="toc-starting-r-with-a-debugger" class="nav-link active" data-scroll-target="#starting-r-with-a-debugger"><span class="header-section-number">6.1</span> Starting R with a debugger</a></li>
+  <li><a href="#debugging-with-valgrind" id="toc-debugging-with-valgrind" class="nav-link active" data-scroll-target="#debugging-with-valgrind"><span class="header-section-number">6.1</span> Debugging with Valgrind</a></li>
   <li><a href="#using-gdb" id="toc-using-gdb" class="nav-link" data-scroll-target="#using-gdb"><span class="header-section-number">6.2</span> Using GDB</a></li>
   </ul>
 </nav>
@@ -285,9 +304,23 @@ gtag('config', 'G-9D75EFV0TE', { 'anonymize_ip': true});
 </header>
 
 <p>Although debugging R code is easy, the same doesn’t apply to compiled code in R<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>. This chapter shows a few ways to debug your R + C++ code. You will need the <a href="https://en.wikipedia.org/w/index.php?title=GNU_Debugger&amp;oldid=1146565095" target="_blank">GNU Debugger (GDB)</a> and <a href="https://en.wikipedia.org/w/index.php?title=Valgrind&amp;oldid=1135729346" target="_blank">Valgrind</a>.</p>
-<section id="starting-r-with-a-debugger" class="level2" data-number="6.1">
-<h2 data-number="6.1" class="anchored" data-anchor-id="starting-r-with-a-debugger"><span class="header-section-number">6.1</span> Starting R with a debugger</h2>
-<p>We must launch the program through the command line to use a debugger within R. To lunch R with Valgrind, we use the following:</p>
+<p>Before we start, remember that we will not deal with the good old-fashioned <code>Rprint("Your code is working up to here")</code> approach. Printing messages while your program runs can be very informative, but using Valgrind and GDB is, in my humble opinion, faster as, most of the time, those will scream at you, indicating the location of your problem.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The manual Writing R Extensions <span class="citation" data-cites="R">(<a href="references.html#ref-R" role="doc-biblioref">R Core Team 2023</a>)</span> has a fair amount of information about debugging compiled code in R <a href="https://cran.r-project.org/doc/manuals/R-exts.html#Debugging-compiled-code" target="_blank">here</a>. <a href="https://dirk.eddelbuettel.com/" target="_blank">Dirk Eddelbuettel</a> (lead author of Rcpp) has an <a href="https://stackoverflow.com/a/11363085/2097171">excellent post on Stackoverflow</a> and recommends <a href="https://contributions.bioconductor.org/debugging-cc-code.html">a tutorial hosted on BioConductor</a> <span class="citation" data-cites="rue-albrechtWelcomeBioconductorPackages">(<a href="references.html#ref-rue-albrechtWelcomeBioconductorPackages" role="doc-biblioref">Rue-Albrecht et al. n.d.</a>)</span>.</p>
+</div>
+</div>
+<section id="debugging-with-valgrind" class="level2" data-number="6.1">
+<h2 data-number="6.1" class="anchored" data-anchor-id="debugging-with-valgrind"><span class="header-section-number">6.1</span> Debugging with Valgrind</h2>
+<p>As a starting point, we will use Valgrind. Valgrind provides a mature framework for memory debugging and profiling. We must launch the program through the command line to use a debugger within R. To lunch R with Valgrind, we use the following:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> R <span class="at">--debugger</span><span class="op">=</span>valgrind</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Which will result in something like the following:</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">==31245==</span> Memcheck, a memory error detector</span>
@@ -586,10 +619,18 @@ print       # Print/display an expression</code></pre>
 <p><img src="fig/rcpp/rcpp-gdb-info-list-print.png" class="img-fluid figure-img" style="width:90.0%"></p>
 </figure>
 </div></li>
-<li><p>Finally, to exit the program, just type <code>exit</code> (similar to <code>q()</code> in R.)</p></li>
+<li><p>Finally, to exit the program, type <code>exit</code> (similar to <code>q()</code> in R.)</p></li>
 </ol>
 
 
+<div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
+<div id="ref-R" class="csl-entry" role="listitem">
+R Core Team. 2023. <em>R: A Language and Environment for Statistical Computing</em>. Vienna, Austria: R Foundation for Statistical Computing. <a href="https://www.R-project.org/">https://www.R-project.org/</a>.
+</div>
+<div id="ref-rue-albrechtWelcomeBioconductorPackages" class="csl-entry" role="listitem">
+Rue-Albrecht, Kevin, Daniela Cassol, Johannes Rainer, and Lori Shepherd. n.d. <em>Welcome | <span>Bioconductor Packages</span>: <span>Development</span>, <span>Maintenance</span>, and <span>Peer Review</span></em>. Accessed May 2, 2023.
+</div>
+</div>
 </section>
 <section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
 <hr>

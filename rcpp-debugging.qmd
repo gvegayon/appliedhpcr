@@ -2,11 +2,17 @@
 
 Although debugging R code is easy, the same doesn't apply to compiled code in R[^debug-vscode]. This chapter shows a few ways to debug your R + C++ code. You will need the [GNU Debugger (GDB)](https://en.wikipedia.org/w/index.php?title=GNU_Debugger&oldid=1146565095){target="_blank"} and [Valgrind](https://en.wikipedia.org/w/index.php?title=Valgrind&oldid=1135729346){target="_blank"}.
 
+Before we start, remember that we will not deal with the good old-fashioned `Rprint("Your code is working up to here")` approach. Printing messages while your program runs can be very informative, but using Valgrind and GDB is, in my humble opinion, faster as, most of the time, those will scream at you, indicating the location of your problem.
+
+::: {.callout-note}
+The manual Writing R Extensions [@R] has a fair amount of information about debugging compiled code in R [here](https://cran.r-project.org/doc/manuals/R-exts.html#Debugging-compiled-code){target="_blank"}. [Dirk Eddelbuettel](https://dirk.eddelbuettel.com/){target="_blank"} (lead author of Rcpp) has an [excellent post on Stackoverflow](https://stackoverflow.com/a/11363085/2097171) and recommends [a tutorial hosted on BioConductor](https://contributions.bioconductor.org/debugging-cc-code.html) [@rue-albrechtWelcomeBioconductorPackages].
+:::
+
 [^debug-vscode]: Debugging **only** C++/C code is easy, though. If you already work with compiled code, you must be aware of [VS Code](https://code.visualstudio.com/){target="_blank"} and the many other tools out there for debugging C++/C code.
 
-## Starting R with a debugger
+## Debugging with Valgrind
 
-We must launch the program through the command line to use a debugger within R. To lunch R with Valgrind, we use the following:
+As a starting point, we will use Valgrind. Valgrind provides a mature framework for memory debugging and profiling. We must launch the program through the command line to use a debugger within R. To lunch R with Valgrind, we use the following:
 
 ```bash
 $ R --debugger=valgrind
