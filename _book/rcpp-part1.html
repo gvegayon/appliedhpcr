@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.3.298">
+<meta name="generator" content="quarto-1.7.33">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Applied HPC with R - 5&nbsp; Rcpp</title>
+<title>7&nbsp; Rcpp – Applied HPC with R</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -21,6 +21,7 @@ ul.task-list li input[type="checkbox"] {
   vertical-align: middle;
 }
 /* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
 pre > code.sourceCode { white-space: pre; position: relative; }
 pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
@@ -58,6 +59,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 div.csl-bib-body { }
 div.csl-entry {
   clear: both;
+  margin-bottom: 0em;
 }
 .hanging-indent div.csl-entry {
   margin-left:2em;
@@ -85,22 +87,29 @@ div.csl-indent {
 <meta name="quarto:offset" content="./">
 <link href="./rcpp-debugging.html" rel="next">
 <link href="./slurm-simpi.html" rel="prev">
-<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-ea385d0e468b0dd5ea5bf0780b1290d9.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-364982630eef5352dd1537128a8ed5cb.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
   "collapse-after": 3,
   "panel-placement": "start",
   "type": "textbox",
-  "limit": 20,
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
   "language": {
     "search-no-results-text": "No results",
     "search-matching-documents-text": "matching documents",
@@ -109,8 +118,10 @@ div.csl-indent {
     "search-more-match-text": "more match in this document",
     "search-more-matches-text": "more matches in this document",
     "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
     "search-detached-cancel-button-title": "Cancel",
-    "search-submit-button-title": "Submit"
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
   }
 }</script>
 <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-9D75EFV0TE"></script>
@@ -123,23 +134,50 @@ gtag('js', new Date());
 gtag('config', 'G-9D75EFV0TE', { 'anonymize_ip': true});
 </script>
 
-  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
-<body class="nav-sidebar floating">
+<body class="nav-sidebar floating quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
   <nav class="quarto-secondary-nav">
     <div class="container-fluid d-flex">
-      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./rcpp-part1.html">Using C++</a></li><li class="breadcrumb-item"><a href="./rcpp-part1.html"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Rcpp</span></a></li></ol></nav>
-      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
-      </a>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./rcpp-part1.html">Using C++</a></li><li class="breadcrumb-item"><a href="./rcpp-part1.html"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Rcpp</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
         <i class="bi bi-search"></i>
       </button>
@@ -149,23 +187,24 @@ gtag('config', 'G-9D75EFV0TE', { 'anonymize_ip': true});
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
       <a href="./">Applied HPC with R</a> 
         <div class="sidebar-tools-main">
+    <a href="https://github.com/gvegayon/appliedhpcr" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
     <div class="dropdown">
-      <a href="" title="Download" id="quarto-navigation-tool-dropdown-0" class="quarto-navigation-tool dropdown-toggle px-1" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download"><i class="bi bi-download"></i></a>
+      <a href="" title="Download" id="quarto-navigation-tool-dropdown-0" class="quarto-navigation-tool dropdown-toggle px-1" data-bs-toggle="dropdown" aria-expanded="false" role="link" aria-label="Download"><i class="bi bi-download"></i></a>
       <ul class="dropdown-menu" aria-labelledby="quarto-navigation-tool-dropdown-0">
           <li>
             <a class="dropdown-item sidebar-tools-main-item" href="./Applied-HPC-with-R.epub">
-              <i class="bi bi-bi-journal pe-1"></i>
+              <i class="bi bi-journal pe-1"></i>
             Download ePub
             </a>
           </li>
           <li>
             <a class="dropdown-item sidebar-tools-main-item" href="./Applied-HPC-with-R.pdf">
-              <i class="bi bi-bi-file-pdf pe-1"></i>
+              <i class="bi bi-file-pdf pe-1"></i>
             Download PDF
             </a>
           </li>
@@ -189,69 +228,92 @@ gtag('config', 'G-9D75EFV0TE', { 'anonymize_ip': true});
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
- <span class="menu-text">Parallel computing</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Toggle section">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Fundamentals</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./intro.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></span></a>
+  <a href="./profiling.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Profiling</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./parallel-pkg.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">The parallel R package</span></span></a>
+  <a href="./efficiency.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Writing efficient code</span></span></a>
   </div>
 </li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
- <span class="menu-text">Working with a Cluster</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true" aria-label="Toggle section">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Parallel computing</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./slurm-fundamentals.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">What is Slurm</span></span></a>
+  <a href="./intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Introduction</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./slurm-simpi.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Simulating <span class="math inline">\(pi\)</span></span></span></a>
+  <a href="./parallel-pkg.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Parallel workflow</span></span></a>
   </div>
 </li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
- <span class="menu-text">Using C++</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true" aria-label="Toggle section">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Working with a Cluster</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
       <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="./slurm-fundamentals.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">What is Slurm</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./slurm-simpi.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Simulating <span class="math inline">\(pi\)</span></span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">Using C++</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="./rcpp-part1.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Rcpp</span></span></a>
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Rcpp</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./rcpp-debugging.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Debugging R w C++/C code</span></span></a>
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Debugging R w C++/C code</span></span></a>
   </div>
 </li>
       </ul>
@@ -259,7 +321,7 @@ gtag('config', 'G-9D75EFV0TE', { 'anonymize_ip': true});
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./misc.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Misc</span></span></a>
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Misc</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -271,46 +333,46 @@ gtag('config', 'G-9D75EFV0TE', { 'anonymize_ip': true});
     </ul>
     </div>
 </nav>
-<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#before-we-start" id="toc-before-we-start" class="nav-link active" data-scroll-target="#before-we-start"><span class="header-section-number">5.1</span> Before we start</a></li>
-  <li><a href="#r-is-great-but" id="toc-r-is-great-but" class="nav-link" data-scroll-target="#r-is-great-but"><span class="header-section-number">5.2</span> R is great, but…</a></li>
-  <li><a href="#enter-rcpp" id="toc-enter-rcpp" class="nav-link" data-scroll-target="#enter-rcpp"><span class="header-section-number">5.3</span> Enter Rcpp</a></li>
-  <li><a href="#why-bother" id="toc-why-bother" class="nav-link" data-scroll-target="#why-bother"><span class="header-section-number">5.4</span> Why bother?</a></li>
-  <li><a href="#example-1-looping-over-a-vector" id="toc-example-1-looping-over-a-vector" class="nav-link" data-scroll-target="#example-1-looping-over-a-vector"><span class="header-section-number">5.5</span> Example 1: Looping over a vector</a></li>
-  <li><a href="#how-much-fast" id="toc-how-much-fast" class="nav-link" data-scroll-target="#how-much-fast"><span class="header-section-number">5.6</span> How much fast?</a></li>
-  <li><a href="#main-differences-between-r-and-c" id="toc-main-differences-between-r-and-c" class="nav-link" data-scroll-target="#main-differences-between-r-and-c"><span class="header-section-number">5.7</span> Main differences between R and C++</a></li>
-  <li><a href="#crcpp-fundamentals-types" id="toc-crcpp-fundamentals-types" class="nav-link" data-scroll-target="#crcpp-fundamentals-types"><span class="header-section-number">5.8</span> C++/Rcpp fundamentals: Types</a></li>
-  <li><a href="#parts-of-an-rcpp-program" id="toc-parts-of-an-rcpp-program" class="nav-link" data-scroll-target="#parts-of-an-rcpp-program"><span class="header-section-number">5.9</span> Parts of “an Rcpp program”</a></li>
-  <li><a href="#example-running-.cpp-file" id="toc-example-running-.cpp-file" class="nav-link" data-scroll-target="#example-running-.cpp-file"><span class="header-section-number">5.10</span> Example running .cpp file</a></li>
-  <li><a href="#your-turn" id="toc-your-turn" class="nav-link" data-scroll-target="#your-turn"><span class="header-section-number">5.11</span> Your turn</a>
+  <li><a href="#before-we-start" id="toc-before-we-start" class="nav-link active" data-scroll-target="#before-we-start"><span class="header-section-number">7.1</span> Before we start</a></li>
+  <li><a href="#r-is-great-but" id="toc-r-is-great-but" class="nav-link" data-scroll-target="#r-is-great-but"><span class="header-section-number">7.2</span> R is great, but…</a></li>
+  <li><a href="#enter-rcpp" id="toc-enter-rcpp" class="nav-link" data-scroll-target="#enter-rcpp"><span class="header-section-number">7.3</span> Enter Rcpp</a></li>
+  <li><a href="#why-bother" id="toc-why-bother" class="nav-link" data-scroll-target="#why-bother"><span class="header-section-number">7.4</span> Why bother?</a></li>
+  <li><a href="#example-1-looping-over-a-vector" id="toc-example-1-looping-over-a-vector" class="nav-link" data-scroll-target="#example-1-looping-over-a-vector"><span class="header-section-number">7.5</span> Example 1: Looping over a vector</a></li>
+  <li><a href="#how-much-fast" id="toc-how-much-fast" class="nav-link" data-scroll-target="#how-much-fast"><span class="header-section-number">7.6</span> How much fast?</a></li>
+  <li><a href="#main-differences-between-r-and-c" id="toc-main-differences-between-r-and-c" class="nav-link" data-scroll-target="#main-differences-between-r-and-c"><span class="header-section-number">7.7</span> Main differences between R and C++</a></li>
+  <li><a href="#crcpp-fundamentals-types" id="toc-crcpp-fundamentals-types" class="nav-link" data-scroll-target="#crcpp-fundamentals-types"><span class="header-section-number">7.8</span> C++/Rcpp fundamentals: Types</a></li>
+  <li><a href="#parts-of-an-rcpp-program" id="toc-parts-of-an-rcpp-program" class="nav-link" data-scroll-target="#parts-of-an-rcpp-program"><span class="header-section-number">7.9</span> Parts of “an Rcpp program”</a></li>
+  <li><a href="#example-running-.cpp-file" id="toc-example-running-.cpp-file" class="nav-link" data-scroll-target="#example-running-.cpp-file"><span class="header-section-number">7.10</span> Example running .cpp file</a></li>
+  <li><a href="#your-turn" id="toc-your-turn" class="nav-link" data-scroll-target="#your-turn"><span class="header-section-number">7.11</span> Your turn</a>
   <ul class="collapse">
-  <li><a href="#problem-1-adding-vectors" id="toc-problem-1-adding-vectors" class="nav-link" data-scroll-target="#problem-1-adding-vectors"><span class="header-section-number">5.11.1</span> Problem 1: Adding vectors</a></li>
-  <li><a href="#problem-2-fibonacci-series" id="toc-problem-2-fibonacci-series" class="nav-link" data-scroll-target="#problem-2-fibonacci-series"><span class="header-section-number">5.11.2</span> Problem 2: Fibonacci series</a></li>
-  <li><a href="#problem-2-fibonacci-series-solution" id="toc-problem-2-fibonacci-series-solution" class="nav-link" data-scroll-target="#problem-2-fibonacci-series-solution"><span class="header-section-number">5.11.3</span> Problem 2: Fibonacci series (solution)</a></li>
+  <li><a href="#problem-1-adding-vectors" id="toc-problem-1-adding-vectors" class="nav-link" data-scroll-target="#problem-1-adding-vectors"><span class="header-section-number">7.11.1</span> Problem 1: Adding vectors</a></li>
+  <li><a href="#problem-2-fibonacci-series" id="toc-problem-2-fibonacci-series" class="nav-link" data-scroll-target="#problem-2-fibonacci-series"><span class="header-section-number">7.11.2</span> Problem 2: Fibonacci series</a></li>
+  <li><a href="#problem-2-fibonacci-series-solution" id="toc-problem-2-fibonacci-series-solution" class="nav-link" data-scroll-target="#problem-2-fibonacci-series-solution"><span class="header-section-number">7.11.3</span> Problem 2: Fibonacci series (solution)</a></li>
   </ul></li>
-  <li><a href="#rcpparmadillo-and-openmp" id="toc-rcpparmadillo-and-openmp" class="nav-link" data-scroll-target="#rcpparmadillo-and-openmp"><span class="header-section-number">5.12</span> RcppArmadillo and OpenMP</a>
+  <li><a href="#rcpparmadillo-and-openmp" id="toc-rcpparmadillo-and-openmp" class="nav-link" data-scroll-target="#rcpparmadillo-and-openmp"><span class="header-section-number">7.12</span> RcppArmadillo and OpenMP</a>
   <ul class="collapse">
-  <li><a href="#rcpparmadillo-and-openmp-workflow" id="toc-rcpparmadillo-and-openmp-workflow" class="nav-link" data-scroll-target="#rcpparmadillo-and-openmp-workflow"><span class="header-section-number">5.12.1</span> RcppArmadillo and OpenMP workflow</a></li>
-  <li><a href="#ex-5-rcpparmadillo-openmp" id="toc-ex-5-rcpparmadillo-openmp" class="nav-link" data-scroll-target="#ex-5-rcpparmadillo-openmp"><span class="header-section-number">5.12.2</span> Ex 5: RcppArmadillo + OpenMP</a></li>
-  <li><a href="#ex-6-the-future" id="toc-ex-6-the-future" class="nav-link" data-scroll-target="#ex-6-the-future"><span class="header-section-number">5.12.3</span> Ex 6: The future</a></li>
-  <li><a href="#bonus-track-1-simulating-pi" id="toc-bonus-track-1-simulating-pi" class="nav-link" data-scroll-target="#bonus-track-1-simulating-pi"><span class="header-section-number">5.12.4</span> Bonus track 1: Simulating <span class="math inline">\(\pi\)</span></a></li>
+  <li><a href="#rcpparmadillo-and-openmp-workflow" id="toc-rcpparmadillo-and-openmp-workflow" class="nav-link" data-scroll-target="#rcpparmadillo-and-openmp-workflow"><span class="header-section-number">7.12.1</span> RcppArmadillo and OpenMP workflow</a></li>
+  <li><a href="#ex-5-rcpparmadillo-openmp" id="toc-ex-5-rcpparmadillo-openmp" class="nav-link" data-scroll-target="#ex-5-rcpparmadillo-openmp"><span class="header-section-number">7.12.2</span> Ex 5: RcppArmadillo + OpenMP</a></li>
+  <li><a href="#ex-6-the-future" id="toc-ex-6-the-future" class="nav-link" data-scroll-target="#ex-6-the-future"><span class="header-section-number">7.12.3</span> Ex 6: The future</a></li>
+  <li><a href="#bonus-track-1-simulating-pi" id="toc-bonus-track-1-simulating-pi" class="nav-link" data-scroll-target="#bonus-track-1-simulating-pi"><span class="header-section-number">7.12.4</span> Bonus track 1: Simulating <span class="math inline">\(\pi\)</span></a></li>
   </ul></li>
-  <li><a href="#see-also" id="toc-see-also" class="nav-link" data-scroll-target="#see-also"><span class="header-section-number">5.13</span> See also</a></li>
+  <li><a href="#see-also" id="toc-see-also" class="nav-link" data-scroll-target="#see-also"><span class="header-section-number">7.13</span> See also</a></li>
   </ul>
-</nav>
+<div class="toc-actions"><ul><li><a href="https://github.com/gvegayon/appliedhpcr/edit/master/rcpp-part1.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/gvegayon/appliedhpcr/blob/master/rcpp-part1.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li><li><a href="https://github.com/gvegayon/appliedhpcr/issues" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default">
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./rcpp-part1.html">Using C++</a></li><li class="breadcrumb-item"><a href="./rcpp-part1.html"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Rcpp</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Rcpp</span></h1>
+<h1 class="title"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Rcpp</span></h1>
 </div>
 
 
@@ -323,11 +385,13 @@ gtag('config', 'G-9D75EFV0TE', { 'anonymize_ip': true});
   </div>
   
 
+
 </header>
 
+
 <p>When parallel computing is not enough, you can boost your R code using a lower-level programming language<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> like C++, C, or Fortran. With R itself written in C, it provides access points (APIs) to connect C++/C/Fortran functions to R. Although not impossible, using lower-level languages to enhance R can be cumbersome; Rcpp <span class="citation" data-cites="Eddelbuettel2011 RcppBook Rcpp">(<a href="references.html#ref-Eddelbuettel2011" role="doc-biblioref">Eddelbuettel and François 2011</a>; <a href="references.html#ref-RcppBook" role="doc-biblioref">Eddelbuettel 2013</a>; <a href="references.html#ref-Rcpp" role="doc-biblioref">Eddelbuettel and Balamuta 2018</a>)</span> can make things <strong>very</strong> easy. This chapter shows you how to use Rcpp–the most popular way to connect C++ with R–to accelerate your R code.</p>
-<section id="before-we-start" class="level2" data-number="5.1">
-<h2 data-number="5.1" class="anchored" data-anchor-id="before-we-start"><span class="header-section-number">5.1</span> Before we start</h2>
+<section id="before-we-start" class="level2" data-number="7.1">
+<h2 data-number="7.1" class="anchored" data-anchor-id="before-we-start"><span class="header-section-number">7.1</span> Before we start</h2>
 <div style="text-align: center; margin: auto;">
 <p><a href="https://imgflip.com/i/38ji3q"><img src="https://i.imgflip.com/38ji3q.jpg" title="made at imgflip.com" width="30%"></a> <a href="https://imgflip.com/i/38jiku"><img src="https://i.imgflip.com/38jiku.jpg" title="made at imgflip.com" width="30%"></a></p>
 </div>
@@ -346,8 +410,8 @@ gtag('config', 'G-9D75EFV0TE', { 'anonymize_ip': true});
 </ol>
 <p>And that’s it!</p>
 </section>
-<section id="r-is-great-but" class="level2" data-number="5.2">
-<h2 data-number="5.2" class="anchored" data-anchor-id="r-is-great-but"><span class="header-section-number">5.2</span> R is great, but…</h2>
+<section id="r-is-great-but" class="level2" data-number="7.2">
+<h2 data-number="7.2" class="anchored" data-anchor-id="r-is-great-but"><span class="header-section-number">7.2</span> R is great, but…</h2>
 <ul>
 <li><p>The problem:</p>
 <ul>
@@ -360,8 +424,8 @@ gtag('config', 'G-9D75EFV0TE', { 'anonymize_ip': true});
 <li><p>Unfortunately, it is not very straightforward</p></li>
 </ul>
 </section>
-<section id="enter-rcpp" class="level2" data-number="5.3">
-<h2 data-number="5.3" class="anchored" data-anchor-id="enter-rcpp"><span class="header-section-number">5.3</span> Enter Rcpp</h2>
+<section id="enter-rcpp" class="level2" data-number="7.3">
+<h2 data-number="7.3" class="anchored" data-anchor-id="enter-rcpp"><span class="header-section-number">7.3</span> Enter Rcpp</h2>
 <ul>
 <li><p>One of the <strong>most important R packages on CRAN</strong>.</p></li>
 <li><p>As of January 22, 2023, about <a href="http://dirk.eddelbuettel.com/blog/2023/01/22/#rcpp_1.0.10">50% of CRAN packages depend on it</a> (directly or not).</p></li>
@@ -371,8 +435,8 @@ gtag('config', 'G-9D75EFV0TE', { 'anonymize_ip': true});
 <p>The ‘Rcpp’ package provides R functions as well as C++ classes which offer a seamless integration of R and C++</p>
 </blockquote>
 </section>
-<section id="why-bother" class="level2" data-number="5.4">
-<h2 data-number="5.4" class="anchored" data-anchor-id="why-bother"><span class="header-section-number">5.4</span> Why bother?</h2>
+<section id="why-bother" class="level2" data-number="7.4">
+<h2 data-number="7.4" class="anchored" data-anchor-id="why-bother"><span class="header-section-number">7.4</span> Why bother?</h2>
 <ul>
 <li><p>To draw ten numbers from a normal distribution with sd = 100.0 using R C API:</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>SEXP stats <span class="op">=</span> PROTECT<span class="op">(</span>R_FindNamespace<span class="op">(</span>mkString<span class="op">(</span><span class="st">"stats"</span><span class="op">)));</span></span>
@@ -390,18 +454,18 @@ gtag('config', 'G-9D75EFV0TE', { 'anonymize_ip': true});
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="cf">return</span> rnorm<span class="op">(</span><span class="dv">10</span><span class="op">,</span> Named<span class="op">(</span><span class="st">"sd"</span><span class="op">,</span> <span class="fl">100.0</span><span class="op">));</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
 </ul>
 </section>
-<section id="example-1-looping-over-a-vector" class="level2" data-number="5.5">
-<h2 data-number="5.5" class="anchored" data-anchor-id="example-1-looping-over-a-vector"><span class="header-section-number">5.5</span> Example 1: Looping over a vector</h2>
-<div class="cell" data-hash="rcpp-part1_cache/html/rcpp-add1_49980a20acd13f25c1cd997127958ffe">
-<pre class="rcpp cell-code"><code>#include&lt;Rcpp.h&gt;
-using namespace Rcpp;
-// [[Rcpp::export]]
-NumericVector add1(NumericVector x) {
-  NumericVector ans(x.size());
-  for (int i = 0; i &lt; x.size(); ++i)
-    ans[i] = x[i] + 1;
-  return ans;
-}</code></pre>
+<section id="example-1-looping-over-a-vector" class="level2" data-number="7.5">
+<h2 data-number="7.5" class="anchored" data-anchor-id="example-1-looping-over-a-vector"><span class="header-section-number">7.5</span> Example 1: Looping over a vector</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include</span><span class="im">&lt;Rcpp.h&gt;</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> Rcpp<span class="op">;</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co">// [[Rcpp::export]]</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>NumericVector add1<span class="op">(</span>NumericVector x<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  NumericVector ans<span class="op">(</span>x<span class="op">.</span>size<span class="op">());</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> x<span class="op">.</span>size<span class="op">();</span> <span class="op">++</span>i<span class="op">)</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    ans<span class="op">[</span>i<span class="op">]</span> <span class="op">=</span> x<span class="op">[</span>i<span class="op">]</span> <span class="op">+</span> <span class="dv">1</span><span class="op">;</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> ans<span class="op">;</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">add1</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -410,13 +474,13 @@ NumericVector add1(NumericVector x) {
 </div>
 </div>
 <p>Make it sweeter by adding some “sugar” (the Rcpp kind)</p>
-<div class="cell" data-hash="rcpp-part1_cache/html/unnamed-chunk-3_5894271b70b86fe1aa2f904962b9709b">
-<pre class="rcpp cell-code"><code>#include&lt;Rcpp.h&gt;
-using namespace Rcpp;
-// [[Rcpp::export]]
-NumericVector add1Cpp(NumericVector x) {
-  return x + 1;
-}</code></pre>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include</span><span class="im">&lt;Rcpp.h&gt;</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> Rcpp<span class="op">;</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co">// [[Rcpp::export]]</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>NumericVector add1Cpp<span class="op">(</span>NumericVector x<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> x <span class="op">+</span> <span class="dv">1</span><span class="op">;</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">add1Cpp</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -425,8 +489,8 @@ NumericVector add1Cpp(NumericVector x) {
 </div>
 </div>
 </section>
-<section id="how-much-fast" class="level2" data-number="5.6">
-<h2 data-number="5.6" class="anchored" data-anchor-id="how-much-fast"><span class="header-section-number">5.6</span> How much fast?</h2>
+<section id="how-much-fast" class="level2" data-number="7.6">
+<h2 data-number="7.6" class="anchored" data-anchor-id="how-much-fast"><span class="header-section-number">7.6</span> How much fast?</h2>
 <p>Compared to this:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>add1R <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
@@ -437,14 +501,14 @@ NumericVector add1Cpp(NumericVector x) {
 <span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>microbenchmark<span class="sc">::</span><span class="fu">microbenchmark</span>(<span class="fu">add1R</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">1000</span>), <span class="fu">add1Cpp</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">1000</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Unit: microseconds
-            expr    min      lq     mean  median      uq      max neval cld
-   add1R(1:1000) 34.909 36.4040 52.46721 36.8550 38.0415 1541.597   100  a 
- add1Cpp(1:1000)  2.246  2.6205 11.78040  3.2645  5.4385  770.870   100   b</code></pre>
+            expr    min      lq     mean  median      uq      max neval
+   add1R(1:1000) 57.292 58.6255 81.31649 59.2095 64.8965 2005.917   100
+ add1Cpp(1:1000)  2.042  2.5010 16.61153  2.9800 12.7925  932.084   100</code></pre>
 </div>
 </div>
 </section>
-<section id="main-differences-between-r-and-c" class="level2" data-number="5.7">
-<h2 data-number="5.7" class="anchored" data-anchor-id="main-differences-between-r-and-c"><span class="header-section-number">5.7</span> Main differences between R and C++</h2>
+<section id="main-differences-between-r-and-c" class="level2" data-number="7.7">
+<h2 data-number="7.7" class="anchored" data-anchor-id="main-differences-between-r-and-c"><span class="header-section-number">7.7</span> Main differences between R and C++</h2>
 <ol type="1">
 <li><p>One is compiled, and the other interpreted</p></li>
 <li><p>Indexing objects: In C++ the indices range from 0 to <code>(n - 1)</code>, whereas in R is from 1 to <code>n</code>.</p></li>
@@ -452,8 +516,8 @@ NumericVector add1Cpp(NumericVector x) {
 <li><p>In C++ object need to be declared, in R not (<a href="https://en.wikipedia.org/wiki/Dynamic_programming_language">dynamic</a>).</p></li>
 </ol>
 </section>
-<section id="crcpp-fundamentals-types" class="level2" data-number="5.8">
-<h2 data-number="5.8" class="anchored" data-anchor-id="crcpp-fundamentals-types"><span class="header-section-number">5.8</span> C++/Rcpp fundamentals: Types</h2>
+<section id="crcpp-fundamentals-types" class="level2" data-number="7.8">
+<h2 data-number="7.8" class="anchored" data-anchor-id="crcpp-fundamentals-types"><span class="header-section-number">7.8</span> C++/Rcpp fundamentals: Types</h2>
 <p>Besides C-like data types (<code>double</code>, <code>int</code>, <code>char</code>, and <code>bool</code>), we can use the following types of objects with Rcpp:</p>
 <ul>
 <li><p>Matrices: <code>NumericMatrix</code>, <code>IntegerMatrix</code>, <code>LogicalMatrix</code>, <code>CharacterMatrix</code></p></li>
@@ -461,19 +525,17 @@ NumericVector add1Cpp(NumericVector x) {
 <li><p>And more!: <code>DataFrame</code>, <code>List</code>, <code>Function</code>, <code>Environment</code></p></li>
 </ul>
 </section>
-<section id="parts-of-an-rcpp-program" class="level2" data-number="5.9">
-<h2 data-number="5.9" class="anchored" data-anchor-id="parts-of-an-rcpp-program"><span class="header-section-number">5.9</span> Parts of “an Rcpp program”</h2>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb12-1"><a href="#cb12-1"></a><span class="pp">#include</span><span class="im">&lt;Rcpp.h&gt;</span></span>
-<span id="cb12-2"><a href="#cb12-2"></a><span class="kw">using</span> <span class="kw">namespace</span> Rcpp</span>
-<span id="cb12-3"><a href="#cb12-3"></a><span class="co">// [[Rcpp::export]]</span></span>
-<span id="cb12-4"><a href="#cb12-4"></a>NumericVector add1<span class="op">(</span>NumericVector x<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb12-5"><a href="#cb12-5"></a>  NumericVector ans<span class="op">(</span>x<span class="op">.</span>size<span class="op">());</span></span>
-<span id="cb12-6"><a href="#cb12-6"></a>  <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> x<span class="op">.</span>size<span class="op">();</span> <span class="op">++</span>i<span class="op">)</span></span>
-<span id="cb12-7"><a href="#cb12-7"></a>    ans<span class="op">[</span>i<span class="op">]</span> <span class="op">=</span> x<span class="op">[</span>i<span class="op">]</span> <span class="op">+</span> <span class="dv">1</span><span class="op">;</span></span>
-<span id="cb12-8"><a href="#cb12-8"></a>  <span class="cf">return</span> ans<span class="op">;</span></span>
-<span id="cb12-9"><a href="#cb12-9"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
+<section id="parts-of-an-rcpp-program" class="level2" data-number="7.9">
+<h2 data-number="7.9" class="anchored" data-anchor-id="parts-of-an-rcpp-program"><span class="header-section-number">7.9</span> Parts of “an Rcpp program”</h2>
+<div class="sourceCode" id="cb12"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include</span><span class="im">&lt;Rcpp.h&gt;</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> Rcpp</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co">// [[Rcpp::export]]</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>NumericVector add1<span class="op">(</span>NumericVector x<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  NumericVector ans<span class="op">(</span>x<span class="op">.</span>size<span class="op">());</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> x<span class="op">.</span>size<span class="op">();</span> <span class="op">++</span>i<span class="op">)</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    ans<span class="op">[</span>i<span class="op">]</span> <span class="op">=</span> x<span class="op">[</span>i<span class="op">]</span> <span class="op">+</span> <span class="dv">1</span><span class="op">;</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> ans<span class="op">;</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Line by line, we see the following:</p>
 <ol type="1">
 <li><p>The <text style="color:white;font-family:monospace;background-color: darkgray;">#include&lt;Rcpp.h&gt;</text> is similar to <code>library(...)</code> in R, it brings in all that we need to write C++ code for Rcpp.</p></li>
@@ -498,8 +560,8 @@ NumericVector add1Cpp(NumericVector x) {
 </ul>
 <p>For now, let’s use the first option.</p>
 </section>
-<section id="example-running-.cpp-file" class="level2" data-number="5.10">
-<h2 data-number="5.10" class="anchored" data-anchor-id="example-running-.cpp-file"><span class="header-section-number">5.10</span> Example running .cpp file</h2>
+<section id="example-running-.cpp-file" class="level2" data-number="7.10">
+<h2 data-number="7.10" class="anchored" data-anchor-id="example-running-.cpp-file"><span class="header-section-number">7.10</span> Example running .cpp file</h2>
 <p>Imagine that we have the following file named <code>norm.cpp</code></p>
 <div class="sourceCode" id="cb13"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;Rcpp.h&gt;</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> Rcpp<span class="op">;</span></span>
@@ -511,10 +573,10 @@ NumericVector add1Cpp(NumericVector x) {
 <span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>We can compile and obtain this function using this line <code>Rcpp::sourceCpp("norm.cpp")</code>. Once compiled, a function called <code>normRcpp</code> will be available in the current R session.</p>
 </section>
-<section id="your-turn" class="level2" data-number="5.11">
-<h2 data-number="5.11" class="anchored" data-anchor-id="your-turn"><span class="header-section-number">5.11</span> Your turn</h2>
-<section id="problem-1-adding-vectors" class="level3 smaller" data-number="5.11.1">
-<h3 class="smaller anchored" data-number="5.11.1" data-anchor-id="problem-1-adding-vectors"><span class="header-section-number">5.11.1</span> Problem 1: Adding vectors</h3>
+<section id="your-turn" class="level2" data-number="7.11">
+<h2 data-number="7.11" class="anchored" data-anchor-id="your-turn"><span class="header-section-number">7.11</span> Your turn</h2>
+<section id="problem-1-adding-vectors" class="level3 smaller" data-number="7.11.1">
+<h3 class="smaller anchored" data-number="7.11.1" data-anchor-id="problem-1-adding-vectors"><span class="header-section-number">7.11.1</span> Problem 1: Adding vectors</h3>
 <ol type="1">
 <li>Using what you have just learned about Rcpp, write a function to add two vectors of the same length. Use the following template</li>
 </ol>
@@ -533,11 +595,11 @@ NumericVector add1Cpp(NumericVector x) {
 <div class="sourceCode" id="cb15"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="op">([</span>some condition<span class="op">])</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  stop<span class="op">(</span><span class="st">"an arbitrary error message :)"</span><span class="op">);</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
-<section id="problem-2-fibonacci-series" class="level3 smaller" data-number="5.11.2">
-<h3 class="smaller anchored" data-number="5.11.2" data-anchor-id="problem-2-fibonacci-series"><span class="header-section-number">5.11.2</span> Problem 2: Fibonacci series</h3>
+<section id="problem-2-fibonacci-series" class="level3 smaller" data-number="7.11.2">
+<h3 class="smaller anchored" data-number="7.11.2" data-anchor-id="problem-2-fibonacci-series"><span class="header-section-number">7.11.2</span> Problem 2: Fibonacci series</h3>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="fig/640px-Fibonacci_Spiral.svg.png" class="img-fluid figure-img" style="width:50.0%" alt="Fibonacci Spiral"></p>
+<p><img src="fig/640px-Fibonacci_Spiral.svg.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:50.0%" alt="Fibonacci Spiral"></p>
 </figure>
 </div>
 <p>Each element of the sequence is determined by the following:</p>
@@ -566,35 +628,35 @@ F(n - 1) + F(n - 2), &amp; \mbox{otherwise}
 </div>
 <p>Now, let’s translate this code into Rcpp and see how much speed boost we get!</p>
 </section>
-<section id="problem-2-fibonacci-series-solution" class="level3" data-number="5.11.3">
-<h3 data-number="5.11.3" class="anchored" data-anchor-id="problem-2-fibonacci-series-solution"><span class="header-section-number">5.11.3</span> Problem 2: Fibonacci series (solution)</h3>
-<div class="cell" data-hash="rcpp-part1_cache/html/fib_0c3ff024a1fb644e4fde80481e8e64e9">
-<details>
+<section id="problem-2-fibonacci-series-solution" class="level3" data-number="7.11.3">
+<h3 data-number="7.11.3" class="anchored" data-anchor-id="problem-2-fibonacci-series-solution"><span class="header-section-number">7.11.3</span> Problem 2: Fibonacci series (solution)</h3>
+<div class="cell">
+<details class="code-fold">
 <summary>Code</summary>
-<pre class="rcpp cell-code"><code>#include &lt;Rcpp.h&gt;
-// [[Rcpp::export]]
-int fibCpp(int n) {
-  if (n &lt;= 1)
-    return n;
-  
-  return fibCpp(n - 1) + fibCpp(n - 2);
-  
-}</code></pre>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;Rcpp.h&gt;</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="co">// [[Rcpp::export]]</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> fibCpp<span class="op">(</span><span class="dt">int</span> n<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> <span class="op">(</span>n <span class="op">&lt;=</span> <span class="dv">1</span><span class="op">)</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> n<span class="op">;</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> fibCpp<span class="op">(</span>n <span class="op">-</span> <span class="dv">1</span><span class="op">)</span> <span class="op">+</span> fibCpp<span class="op">(</span>n <span class="op">-</span> <span class="dv">2</span><span class="op">);</span></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div class="cell" data-hash="rcpp-part1_cache/html/unnamed-chunk-10_01f956def8f56962897761e15062b0cf">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>microbenchmark<span class="sc">::</span><span class="fu">microbenchmark</span>(<span class="fu">fibR</span>(<span class="dv">20</span>), <span class="fu">fibCpp</span>(<span class="dv">20</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Unit: microseconds
-       expr      min       lq       mean   median       uq      max neval cld
-   fibR(20) 5350.894 5643.050 5982.69115 5724.878 5810.474 8855.542   100  a 
- fibCpp(20)   11.928   12.479   24.21755   15.318   21.728  706.360   100   b</code></pre>
+       expr      min       lq       mean   median        uq      max neval
+   fibR(20) 2611.249 2679.596 2957.93885 2715.922 2813.5430 6272.467   100
+ fibCpp(20)   17.384   17.958   24.88167   18.122   18.5525  379.824   100</code></pre>
 </div>
 </div>
 </section>
 </section>
-<section id="rcpparmadillo-and-openmp" class="level2" data-number="5.12">
-<h2 data-number="5.12" class="anchored" data-anchor-id="rcpparmadillo-and-openmp"><span class="header-section-number">5.12</span> RcppArmadillo and OpenMP</h2>
+<section id="rcpparmadillo-and-openmp" class="level2" data-number="7.12">
+<h2 data-number="7.12" class="anchored" data-anchor-id="rcpparmadillo-and-openmp"><span class="header-section-number">7.12</span> RcppArmadillo and OpenMP</h2>
 <ul>
 <li><p>Friendlier than <a href="http://rcppcore.github.io/RcppParallel/"><strong>RcppParallel</strong></a>… at least for ‘I-use-Rcpp-but-don’t-actually-know-much-about-C++’ users (like myself!).</p></li>
 <li><p>Must run only ‘Thread-safe’ calls, so calling R within parallel blocks can cause problems (almost all the time).</p></li>
@@ -604,8 +666,8 @@ int fibCpp(int n) {
 <li><p>If R crashes… try running R with a debugger (see <a href="https://cran.r-project.org/doc/manuals/r-release/R-exts.html#Checking-memory-access">Section 4.3 in Writing R extensions</a>):</p>
 <pre class="shell"><code>~$ R --debugger=valgrind</code></pre></li>
 </ul>
-<section id="rcpparmadillo-and-openmp-workflow" class="level3" data-number="5.12.1">
-<h3 data-number="5.12.1" class="anchored" data-anchor-id="rcpparmadillo-and-openmp-workflow"><span class="header-section-number">5.12.1</span> RcppArmadillo and OpenMP workflow</h3>
+<section id="rcpparmadillo-and-openmp-workflow" class="level3" data-number="7.12.1">
+<h3 data-number="7.12.1" class="anchored" data-anchor-id="rcpparmadillo-and-openmp-workflow"><span class="header-section-number">7.12.1</span> RcppArmadillo and OpenMP workflow</h3>
 <ol type="1">
 <li><p>Tell Rcpp that you need to include that in the compiler:</p>
 <div class="sourceCode" id="cb22"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;omp.h&gt;</span></span>
@@ -629,46 +691,46 @@ int fibCpp(int n) {
 <li><p>Compile!</p></li>
 </ol>
 </section>
-<section id="ex-5-rcpparmadillo-openmp" class="level3" data-number="5.12.2">
-<h3 data-number="5.12.2" class="anchored" data-anchor-id="ex-5-rcpparmadillo-openmp"><span class="header-section-number">5.12.2</span> Ex 5: RcppArmadillo + OpenMP</h3>
+<section id="ex-5-rcpparmadillo-openmp" class="level3" data-number="7.12.2">
+<h3 data-number="7.12.2" class="anchored" data-anchor-id="ex-5-rcpparmadillo-openmp"><span class="header-section-number">7.12.2</span> Ex 5: RcppArmadillo + OpenMP</h3>
 <p>Our own version of the <code>dist</code> function… but in parallel!</p>
-<div class="cell" data-hash="rcpp-part1_cache/html/dist-code_f9ed422b32809f9846988448c82c3641">
-<pre class="rcpp cell-code"><code>#include &lt;omp.h&gt;
-#include &lt;RcppArmadillo.h&gt;
-// [[Rcpp::depends(RcppArmadillo)]]
-// [[Rcpp::plugins(openmp)]]
-using namespace Rcpp;
-// [[Rcpp::export]]
-arma::mat dist_par(const arma::mat &amp; X, int cores = 1) {
-  
-  // Some constants
-  int N = (int) X.n_rows;
-  int K = (int) X.n_cols;
-  
-  // Output
-  arma::mat D(N,N);
-  D.zeros(); // Filling with zeros
-  
-  // Setting the cores
-  omp_set_num_threads(cores);
-  
-#pragma omp parallel for shared(D, N, K, X) default(none)
-  for (int i=0; i&lt;N; ++i)
-    for (int j=0; j&lt;i; ++j) {
-      for (int k=0; k&lt;K; k++) 
-        D.at(i,j) += pow(X.at(i,k) - X.at(j,k), 2.0);
-      
-      // Computing square root
-      D.at(i,j) = sqrt(D.at(i,j));
-      D.at(j,i) = D.at(i,j);
-    }
-      
-  
-  // My nice distance matrix
-  return D;
-}</code></pre>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;omp.h&gt;</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;RcppArmadillo.h&gt;</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="co">// [[Rcpp::depends(RcppArmadillo)]]</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="co">// [[Rcpp::plugins(openmp)]]</span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> Rcpp<span class="op">;</span></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a><span class="co">// [[Rcpp::export]]</span></span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>arma<span class="op">::</span>mat dist_par<span class="op">(</span><span class="at">const</span> arma<span class="op">::</span>mat <span class="op">&amp;</span> X<span class="op">,</span> <span class="dt">int</span> cores <span class="op">=</span> <span class="dv">1</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Some constants</span></span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> N <span class="op">=</span> <span class="op">(</span><span class="dt">int</span><span class="op">)</span> X<span class="op">.</span>n_rows<span class="op">;</span></span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> K <span class="op">=</span> <span class="op">(</span><span class="dt">int</span><span class="op">)</span> X<span class="op">.</span>n_cols<span class="op">;</span></span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Output</span></span>
+<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a>  arma<span class="op">::</span>mat D<span class="op">(</span>N<span class="op">,</span>N<span class="op">);</span></span>
+<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a>  D<span class="op">.</span>zeros<span class="op">();</span> <span class="co">// Filling with zeros</span></span>
+<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb25-17"><a href="#cb25-17" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Setting the cores</span></span>
+<span id="cb25-18"><a href="#cb25-18" aria-hidden="true" tabindex="-1"></a>  omp_set_num_threads<span class="op">(</span>cores<span class="op">);</span></span>
+<span id="cb25-19"><a href="#cb25-19" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb25-20"><a href="#cb25-20" aria-hidden="true" tabindex="-1"></a><span class="pp">#pragma omp parallel for shared(D, N, K, X) default(none)</span></span>
+<span id="cb25-21"><a href="#cb25-21" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i<span class="op">=</span><span class="dv">0</span><span class="op">;</span> i<span class="op">&lt;</span>N<span class="op">;</span> <span class="op">++</span>i<span class="op">)</span></span>
+<span id="cb25-22"><a href="#cb25-22" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> j<span class="op">=</span><span class="dv">0</span><span class="op">;</span> j<span class="op">&lt;</span>i<span class="op">;</span> <span class="op">++</span>j<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb25-23"><a href="#cb25-23" aria-hidden="true" tabindex="-1"></a>      <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> k<span class="op">=</span><span class="dv">0</span><span class="op">;</span> k<span class="op">&lt;</span>K<span class="op">;</span> k<span class="op">++)</span> </span>
+<span id="cb25-24"><a href="#cb25-24" aria-hidden="true" tabindex="-1"></a>        D<span class="op">.</span>at<span class="op">(</span>i<span class="op">,</span>j<span class="op">)</span> <span class="op">+=</span> pow<span class="op">(</span>X<span class="op">.</span>at<span class="op">(</span>i<span class="op">,</span>k<span class="op">)</span> <span class="op">-</span> X<span class="op">.</span>at<span class="op">(</span>j<span class="op">,</span>k<span class="op">),</span> <span class="fl">2.0</span><span class="op">);</span></span>
+<span id="cb25-25"><a href="#cb25-25" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb25-26"><a href="#cb25-26" aria-hidden="true" tabindex="-1"></a>      <span class="co">// Computing square root</span></span>
+<span id="cb25-27"><a href="#cb25-27" aria-hidden="true" tabindex="-1"></a>      D<span class="op">.</span>at<span class="op">(</span>i<span class="op">,</span>j<span class="op">)</span> <span class="op">=</span> sqrt<span class="op">(</span>D<span class="op">.</span>at<span class="op">(</span>i<span class="op">,</span>j<span class="op">));</span></span>
+<span id="cb25-28"><a href="#cb25-28" aria-hidden="true" tabindex="-1"></a>      D<span class="op">.</span>at<span class="op">(</span>j<span class="op">,</span>i<span class="op">)</span> <span class="op">=</span> D<span class="op">.</span>at<span class="op">(</span>i<span class="op">,</span>j<span class="op">);</span></span>
+<span id="cb25-29"><a href="#cb25-29" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb25-30"><a href="#cb25-30" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb25-31"><a href="#cb25-31" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb25-32"><a href="#cb25-32" aria-hidden="true" tabindex="-1"></a>  <span class="co">// My nice distance matrix</span></span>
+<span id="cb25-33"><a href="#cb25-33" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> D<span class="op">;</span></span>
+<span id="cb25-34"><a href="#cb25-34" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-hash="rcpp-part1_cache/html/dist-dat_9ccf03b0498bdc782cce5ec66404ee1a">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulating data</span></span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1231</span>)</span>
 <span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>K <span class="ot">&lt;-</span> <span class="dv">5000</span></span>
@@ -682,7 +744,7 @@ arma::mat dist_par(const arma::mat &amp; X, int cores = 1) {
 250000 </code></pre>
 </div>
 </div>
-<div class="cell" data-hash="rcpp-part1_cache/html/dist-benchmark_27bd2cc0aa85aa999d1e297ac6a2ef83">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Benchmarking!</span></span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>microbenchmark<span class="sc">::</span><span class="fu">microbenchmark</span>(</span>
 <span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">dist</span>(x),                <span class="co"># stats::dist</span></span>
@@ -695,10 +757,10 @@ arma::mat dist_par(const arma::mat &amp; X, int cores = 1) {
 <div class="cell-output cell-output-stdout">
 <pre><code>Unit: milliseconds
                    expr      min       lq     mean   median       uq      max
-                dist(x) 2188.525 2188.525 2188.525 2188.525 2188.525 2188.525
- dist_par(x, cores = 1) 2424.293 2424.293 2424.293 2424.293 2424.293 2424.293
- dist_par(x, cores = 2) 1863.913 1863.913 1863.913 1863.913 1863.913 1863.913
- dist_par(x, cores = 4) 1209.131 1209.131 1209.131 1209.131 1209.131 1209.131
+                dist(x) 6467.648 6467.648 6467.648 6467.648 6467.648 6467.648
+ dist_par(x, cores = 1) 3434.834 3434.834 3434.834 3434.834 3434.834 3434.834
+ dist_par(x, cores = 2) 2567.531 2567.531 2567.531 2567.531 2567.531 2567.531
+ dist_par(x, cores = 4) 1550.723 1550.723 1550.723 1550.723 1550.723 1550.723
  neval
      1
      1
@@ -707,8 +769,8 @@ arma::mat dist_par(const arma::mat &amp; X, int cores = 1) {
 </div>
 </div>
 </section>
-<section id="ex-6-the-future" class="level3" data-number="5.12.3">
-<h3 data-number="5.12.3" class="anchored" data-anchor-id="ex-6-the-future"><span class="header-section-number">5.12.3</span> Ex 6: The future</h3>
+<section id="ex-6-the-future" class="level3" data-number="7.12.3">
+<h3 data-number="7.12.3" class="anchored" data-anchor-id="ex-6-the-future"><span class="header-section-number">7.12.3</span> Ex 6: The future</h3>
 <ul>
 <li><p><a href="https://cran.r-project.org/package=future"><strong>future</strong></a> is an R package that was designed “to provide a very simple and uniform way of evaluating R expressions asynchronously using various resources available to the user.”</p></li>
 <li><p><code>future</code> class objects are either resolved or unresolved.</p></li>
@@ -716,7 +778,7 @@ arma::mat dist_par(const arma::mat &amp; X, int cores = 1) {
 <li><p>Futures can be parallel/serial, in a single (local or remote) computer, or a cluster of them.</p></li>
 </ul>
 <p>Let’s see a brief example</p>
-<div class="cell" data-hash="rcpp-part1_cache/html/future_41d5f37dbe94f184738b5ea0a7db0bde">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(future)</span>
 <span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plan</span>(multicore)</span>
 <span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a><span class="co"># We are creating a global variable</span></span>
@@ -727,7 +789,7 @@ arma::mat dist_par(const arma::mat &amp; X, int cores = 1) {
 <span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>  x2 <span class="sc">%&lt;-%</span> {<span class="fu">Sys.sleep</span>(<span class="dv">3</span>);a<span class="sc">^</span><span class="dv">3</span>}</span>
 <span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>})</span>
 <span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a><span class="do">##    user  system elapsed </span></span>
-<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a><span class="do">##   0.018   0.012   0.030</span></span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a><span class="do">##   0.036   0.021   0.058</span></span>
 <span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Let's just wait 5 seconds to make sure all the cores have returned</span></span>
 <span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a><span class="fu">Sys.sleep</span>(<span class="dv">3</span>)</span>
 <span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a><span class="fu">system.time</span>({</span>
@@ -737,18 +799,22 @@ arma::mat dist_par(const arma::mat &amp; X, int cores = 1) {
 <span id="cb30-18"><a href="#cb30-18" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 4</span></span>
 <span id="cb30-19"><a href="#cb30-19" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 8</span></span>
 <span id="cb30-20"><a href="#cb30-20" aria-hidden="true" tabindex="-1"></a><span class="do">##    user  system elapsed </span></span>
-<span id="cb30-21"><a href="#cb30-21" aria-hidden="true" tabindex="-1"></a><span class="do">##   0.003   0.000   0.003</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb30-21"><a href="#cb30-21" aria-hidden="true" tabindex="-1"></a><span class="do">##   0.006   0.000   0.006</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="bonus-track-1-simulating-pi" class="level3" data-number="5.12.4">
-<h3 data-number="5.12.4" class="anchored" data-anchor-id="bonus-track-1-simulating-pi"><span class="header-section-number">5.12.4</span> Bonus track 1: Simulating <span class="math inline">\(\pi\)</span></h3>
+<section id="bonus-track-1-simulating-pi" class="level3" data-number="7.12.4">
+<h3 data-number="7.12.4" class="anchored" data-anchor-id="bonus-track-1-simulating-pi"><span class="header-section-number">7.12.4</span> Bonus track 1: Simulating <span class="math inline">\(\pi\)</span></h3>
 <ul>
 <li><p>We know that <span class="math inline">\(\pi = \frac{A}{r^2}\)</span>. We approximate it by randomly adding points <span class="math inline">\(x\)</span> to a square of size 2 centered at the origin.</p></li>
 <li><p>So, we approximate <span class="math inline">\(\pi\)</span> as <span class="math inline">\(\Pr\{\|x\| \leq 1\}\times 2^2\)</span></p></li>
 </ul>
 <div class="cell">
 <div class="cell-output-display">
-<p><img src="rcpp-part1_files/figure-html/unnamed-chunk-12-1.jpeg" width="300" height="300"></p>
+<div>
+<figure class="figure">
+<p><img src="rcpp-part1_files/figure-html/unnamed-chunk-7-1.jpeg" width="300" height="300" class="figure-img"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>The R code to do this</p>
@@ -764,10 +830,10 @@ arma::mat dist_par(const arma::mat &amp; X, int cores = 1) {
 <span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>  (<span class="fu">sum</span>(ans <span class="sc">&lt;=</span> <span class="dv">1</span>)<span class="sc">*</span><span class="dv">4</span>)<span class="sc">/</span>nsim</span>
 <span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-hash="rcpp-part1_cache/html/parallel-ex2_d48263c227e17bc2555843d19f366377">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(parallel)</span>
 <span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Setup</span></span>
-<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>cl <span class="ot">&lt;-</span> <span class="fu">makePSOCKcluster</span>(4L)</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>cl <span class="ot">&lt;-</span> <span class="fu">makePSOCKcluster</span>(<span class="dv">4</span>L)</span>
 <span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a><span class="fu">clusterSetRNGStream</span>(cl, <span class="dv">123</span>)</span>
 <span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Number of simulations we want each time to run</span></span>
 <span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>nsim <span class="ot">&lt;-</span> <span class="fl">1e5</span></span>
@@ -784,13 +850,13 @@ arma::mat dist_par(const arma::mat &amp; X, int cores = 1) {
 <span id="cb32-17"><a href="#cb32-17" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Unit: milliseconds
-     expr      min       lq     mean   median       uq      max neval
- parallel 295.0158 295.0158 295.0158 295.0158 295.0158 295.0158     1
-   serial 405.3509 405.3509 405.3509 405.3509 405.3509 405.3509     1</code></pre>
+     expr       min        lq      mean    median        uq       max neval
+ parallel  420.7522  420.7522  420.7522  420.7522  420.7522  420.7522     1
+   serial 1182.0333 1182.0333 1182.0333 1182.0333 1182.0333 1182.0333     1</code></pre>
 </div>
 </div>
 <hr>
-<div class="cell" data-hash="rcpp-part1_cache/html/printing-and-stop_9f60d076bc87777cb221a0343d4785cd">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>ans_par <span class="ot">&lt;-</span> <span class="fu">parSapply</span>(cl, <span class="dv">1</span><span class="sc">:</span><span class="dv">100</span>, pisim, <span class="at">nsim=</span>nsim)</span>
 <span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>ans_ser <span class="ot">&lt;-</span> <span class="fu">sapply</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">100</span>, pisim, <span class="at">nsim=</span>nsim)</span>
 <span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a><span class="fu">stopCluster</span>(cl)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -803,8 +869,8 @@ arma::mat dist_par(const arma::mat &amp; X, int cores = 1) {
 </div>
 </section>
 </section>
-<section id="see-also" class="level2" data-number="5.13">
-<h2 data-number="5.13" class="anchored" data-anchor-id="see-also"><span class="header-section-number">5.13</span> See also</h2>
+<section id="see-also" class="level2" data-number="7.13">
+<h2 data-number="7.13" class="anchored" data-anchor-id="see-also"><span class="header-section-number">7.13</span> See also</h2>
 <ul>
 <li><a href="https://stat.ethz.ch/R-manual/R-devel/library/parallel/doc/parallel.pdf">Package parallel</a></li>
 <li><a href="https://cran.r-project.org/web/packages/iterators/vignettes/iterators.pdf">Using the iterators package</a></li>
@@ -817,7 +883,7 @@ arma::mat dist_par(const arma::mat &amp; X, int cores = 1) {
 <p>For more, check out the <a href="https://cran.r-project.org/web/views/HighPerformanceComputing.html" target="_blank">CRAN Task View on HPC</a></p>
 
 
-<div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
 <div id="ref-RcppBook" class="csl-entry" role="listitem">
 Eddelbuettel, Dirk. 2013. <em>Seamless <span>R</span> and <span>C++</span> Integration with <span>Rcpp</span></em>. New York: Springer. <a href="https://doi.org/10.1007/978-1-4614-6868-4">https://doi.org/10.1007/978-1-4614-6868-4</a>.
 </div>
@@ -838,247 +904,413 @@ Eddelbuettel, Dirk, and Romain François. 2011. <span>“<span>Rcpp</span>: Seam
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
-window.document.addEventListener("DOMContentLoaded", function (event) {
-  const toggleBodyColorMode = (bsSheetEl) => {
-    const mode = bsSheetEl.getAttribute("data-mode");
-    const bodyEl = window.document.querySelector("body");
-    if (mode === "dark") {
-      bodyEl.classList.add("quarto-dark");
-      bodyEl.classList.remove("quarto-light");
-    } else {
-      bodyEl.classList.add("quarto-light");
-      bodyEl.classList.remove("quarto-dark");
-    }
-  }
-  const toggleBodyColorPrimary = () => {
-    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
-    if (bsSheetEl) {
-      toggleBodyColorMode(bsSheetEl);
-    }
-  }
-  toggleBodyColorPrimary();  
-  const icon = "";
-  const anchorJS = new window.AnchorJS();
-  anchorJS.options = {
-    placement: 'right',
-    icon: icon
-  };
-  anchorJS.add('.anchored');
-  const isCodeAnnotation = (el) => {
-    for (const clz of el.classList) {
-      if (clz.startsWith('code-annotation-')) {                     
-        return true;
-      }
-    }
-    return false;
-  }
-  const clipboard = new window.ClipboardJS('.code-copy-button', {
-    text: function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
-        }
-      }
-      return codeEl.innerText;
-    }
-  });
-  clipboard.on('success', function(e) {
-    // button target
-    const button = e.trigger;
-    // don't keep focus
-    button.blur();
-    // flash "checked"
-    button.classList.add('code-copy-button-checked');
-    var currentTitle = button.getAttribute("title");
-    button.setAttribute("title", "Copied!");
-    let tooltip;
-    if (window.bootstrap) {
-      button.setAttribute("data-bs-toggle", "tooltip");
-      button.setAttribute("data-bs-placement", "left");
-      button.setAttribute("data-bs-title", "Copied!");
-      tooltip = new bootstrap.Tooltip(button, 
-        { trigger: "manual", 
-          customClass: "code-copy-button-tooltip",
-          offset: [0, -8]});
-      tooltip.show();    
-    }
-    setTimeout(function() {
-      if (tooltip) {
-        tooltip.hide();
-        button.removeAttribute("data-bs-title");
-        button.removeAttribute("data-bs-toggle");
-        button.removeAttribute("data-bs-placement");
-      }
-      button.setAttribute("title", currentTitle);
-      button.classList.remove('code-copy-button-checked');
-    }, 1000);
-    // clear code selection
-    e.clearSelection();
-  });
-  function tippyHover(el, contentFn) {
-    const config = {
-      allowHTML: true,
-      content: contentFn,
-      maxWidth: 500,
-      delay: 100,
-      arrow: false,
-      appendTo: function(el) {
-          return el.parentElement;
-      },
-      interactive: true,
-      interactiveBorder: 10,
-      theme: 'quarto',
-      placement: 'bottom-start'
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
     };
-    window.tippy(el, config); 
-  }
-  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
-  for (var i=0; i<noterefs.length; i++) {
-    const ref = noterefs[i];
-    tippyHover(ref, function() {
-      // use id or data attribute instead here
-      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
-      try { href = new URL(href).hash; } catch {}
-      const id = href.replace(/^#\/?/, "");
-      const note = window.document.getElementById(id);
-      return note.innerHTML;
-    });
-  }
-      let selectedAnnoteEl;
-      const selectorForAnnotation = ( cell, annotation) => {
-        let cellAttr = 'data-code-cell="' + cell + '"';
-        let lineAttr = 'data-code-annotation="' +  annotation + '"';
-        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
-        return selector;
-      }
-      const selectCodeLines = (annoteEl) => {
-        const doc = window.document;
-        const targetCell = annoteEl.getAttribute("data-target-cell");
-        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
-        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
-        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
-        const lineIds = lines.map((line) => {
-          return targetCell + "-" + line;
-        })
-        let top = null;
-        let height = null;
-        let parent = null;
-        if (lineIds.length > 0) {
-            //compute the position of the single el (top and bottom and make a div)
-            const el = window.document.getElementById(lineIds[0]);
-            top = el.offsetTop;
-            height = el.offsetHeight;
-            parent = el.parentElement.parentElement;
-          if (lineIds.length > 1) {
-            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
-            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
-            height = bottom - top;
-          }
-          if (top !== null && height !== null && parent !== null) {
-            // cook up a div (if necessary) and position it 
-            let div = window.document.getElementById("code-annotation-line-highlight");
-            if (div === null) {
-              div = window.document.createElement("div");
-              div.setAttribute("id", "code-annotation-line-highlight");
-              div.style.position = 'absolute';
-              parent.appendChild(div);
-            }
-            div.style.top = top - 2 + "px";
-            div.style.height = height + 4 + "px";
-            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
-            if (gutterDiv === null) {
-              gutterDiv = window.document.createElement("div");
-              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
-              gutterDiv.style.position = 'absolute';
-              const codeCell = window.document.getElementById(targetCell);
-              const gutter = codeCell.querySelector('.code-annotation-gutter');
-              gutter.appendChild(gutterDiv);
-            }
-            gutterDiv.style.top = top - 2 + "px";
-            gutterDiv.style.height = height + 4 + "px";
-          }
-          selectedAnnoteEl = annoteEl;
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
         }
-      };
-      const unselectCodeLines = () => {
-        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
-        elementsIds.forEach((elId) => {
-          const div = window.document.getElementById(elId);
-          if (div) {
-            div.remove();
-          }
-        });
-        selectedAnnoteEl = undefined;
-      };
-      // Attach click handler to the DT
-      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
-      for (const annoteDlNode of annoteDls) {
-        annoteDlNode.addEventListener('click', (event) => {
-          const clickedEl = event.target;
-          if (clickedEl !== selectedAnnoteEl) {
-            unselectCodeLines();
-            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
-            if (activeEl) {
-              activeEl.classList.remove('code-annotation-active');
-            }
-            selectCodeLines(clickedEl);
-            clickedEl.classList.add('code-annotation-active');
-          } else {
-            // Unselect the line
-            unselectCodeLines();
-            clickedEl.classList.remove('code-annotation-active');
-          }
-        });
       }
-  const findCites = (el) => {
-    const parentEl = el.parentElement;
-    if (parentEl) {
-      const cites = parentEl.dataset.cites;
-      if (cites) {
-        return {
-          el,
-          cites: cites.split(' ')
-        };
-      } else {
-        return findCites(el.parentElement)
-      }
-    } else {
-      return undefined;
+      return false;
     }
-  };
-  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
-  for (var i=0; i<bibliorefs.length; i++) {
-    const ref = bibliorefs[i];
-    const citeInfo = findCites(ref);
-    if (citeInfo) {
-      tippyHover(citeInfo.el, function() {
-        var popup = window.document.createElement('div');
-        citeInfo.cites.forEach(function(cite) {
-          var citeDiv = window.document.createElement('div');
-          citeDiv.classList.add('hanging-indent');
-          citeDiv.classList.add('csl-entry');
-          var biblioDiv = window.document.getElementById('ref-' + cite);
-          if (biblioDiv) {
-            citeDiv.innerHTML = biblioDiv.innerHTML;
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
           }
-          popup.appendChild(citeDiv);
-        });
-        return popup.innerHTML;
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
       });
     }
-  }
-});
-</script>
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./slurm-simpi.html" class="pagination-link">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Simulating <span class="math inline">\(pi\)</span></span></span>
+      <a href="./slurm-simpi.html" class="pagination-link" aria-label="Simulating $pi$">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Simulating <span class="math inline">\(pi\)</span></span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./rcpp-debugging.html" class="pagination-link">
-        <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Debugging R w C++/C code</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./rcpp-debugging.html" class="pagination-link" aria-label="Debugging R w C++/C code">
+        <span class="nav-page-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Debugging R w C++/C code</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
@@ -1086,4 +1318,5 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 
 
 
-</body></html>
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/gvegayon/appliedhpcr/edit/master/rcpp-part1.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/gvegayon/appliedhpcr/blob/master/rcpp-part1.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li><li><a href="https://github.com/gvegayon/appliedhpcr/issues" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>

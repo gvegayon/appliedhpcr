@@ -10,3 +10,19 @@ gh <- fontawesome::fa("github")
 ```
 
 The book was written using [quarto](https://quarto.org){target="_blank"} and is hosted on [GitHub `r gh`](https://github.com/gvegayon/appliedhpcr){target="_blank"}, where you can access all the source code.
+
+## About the Author
+
+I am a Research Assistant Professor at the <a href="https://medicine.utah.edu/internal-medicine/epidemiology" target="_blank">**University of Utah's Division of Epidemiology**</a>, where I work on studying Complex Systems using Statistical Computing. I was born and raised in Chile. I have over ten years of experience <a href="https://github.com/gvegayon" target="_blank">developing scientific software</a> focusing on high-performance computing, data visualization, and social network analysis. My training is in Public Policy (M.A. <a href="https://uai.cl" target="_blank">UAI</a>, 2011), Economics (M.Sc. <a href="https://caltech.edu" target="_blank">Caltech</a>, 2015), and Biostatistics (Ph.D. <a href="https://usc.edu" target="_blank">USC</a>, 2020).
+
+I obtained my Ph.D. in Biostatistics under the supervision of <a href="https://scholar.google.com/citations?user=Zj5ky5gAAAAJ&hl=en" target="_blank">**Prof. Paul Marjoram**</a> and <a href="https://kayladelahaye.net/" target="_blank">**Prof. Kayla de la Haye**</a>, with my dissertation titled "*Essays on Bioinformatics and Social Network Analysis: Statistical and Computational Methods for Complex Systems.*"
+
+If you'd like to learn more about me, please visit my website at <a href="https://ggvy.cl" target="_blank">https://ggvy.cl</a>.
+
+## AI Disclosure
+
+Starting in mid-2023, I have been using AI to help me write this book. Mainly, I use a combination of [GitHub co-pilot](https://github.com/features/copilot){target="_blank"}, which aids with code and text. AI's role has been to help me write faster and more accurately, but it has not been involved in the book's conceptualization or the development of the methods presented here.
+
+## About the cover
+
+The cover image was created using ChatGPT/Dall-E version 5 using the prompt "I need you to draw a picture representing high-performance computing using the R programming language (which is mostly used for statistics). The picture will go as the cover of the book "Applied HPC with R". It should feature components related to C++, parallel computing, and high-performance computing"

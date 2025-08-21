@@ -164,10 +164,7 @@ the following types of objects with Rcpp:
 ## Parts of "an Rcpp program"
 
 
-```{cpp, }
-#| eval: false
-#| echo: true
-#| code-line-numbers: true
+```cpp
 #include<Rcpp.h>
 using namespace Rcpp
 // [[Rcpp::export]]

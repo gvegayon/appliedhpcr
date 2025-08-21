@@ -5,3 +5,10 @@
 
 /.quarto/
 *_cache/
+*.html
+*.tex
+*.log
+*_files
+*_cache
+*.toc
+*_libs/

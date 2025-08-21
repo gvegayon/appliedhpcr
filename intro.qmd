@@ -30,7 +30,7 @@ We will focus on the **S**ingle **I**nstruction stream **M**ultiple **D**ata str
 
 In general terms, a parallel computing program is one in which we use two or more *computational threads* simultaneously. Although computational thread usually means core, there are multiple levels at which a computer program can be parallelized. To understand this, we first need to see what composes a modern computer:
 
-![Source: Original figure from LUMI consortium documentation [@lumi2023]](fig/socket-core-threads.svg){style="text-align: center"}
+![Source: Original figure from LUMI consortium documentation [@lumi2023]](fig/socket-core-threads.png){style="text-align: center"}
 
 Streaming SIMD Extensions \[[SSE](https://en.wikipedia.org/w/index.php?title=Streaming_SIMD_Extensions&oldid=1149173008){target="_blank"}\] and Advanced Vector Extensions \[[AVX](https://en.wikipedia.org/w/index.php?title=Advanced_Vector_Extensions&oldid=1148504462){target="_blank"}\]
 
@@ -91,7 +91,7 @@ nnodes <- 4L
 ## When is it a good idea?
 
 ```{r good-idea, echo=FALSE, fig.cap="Ask yourself these questions before jumping into HPC!", fig.align='center', out.width="85%"}
-knitr::include_graphics("fig/when_to_parallel.svg")
+knitr::include_graphics("fig/when_to_parallel.png")
 ```
 
 ## Parallel computing in R

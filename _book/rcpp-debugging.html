@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.3.298">
+<meta name="generator" content="quarto-1.7.33">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Applied HPC with R - 6&nbsp; Debugging R w C++/C code</title>
+<title>8&nbsp; Debugging R w C++/C code – Applied HPC with R</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -21,6 +21,7 @@ ul.task-list li input[type="checkbox"] {
   vertical-align: middle;
 }
 /* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
 pre > code.sourceCode { white-space: pre; position: relative; }
 pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
@@ -58,6 +59,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 div.csl-bib-body { }
 div.csl-entry {
   clear: both;
+  margin-bottom: 0em;
 }
 .hanging-indent div.csl-entry {
   margin-left:2em;
@@ -85,22 +87,29 @@ div.csl-indent {
 <meta name="quarto:offset" content="./">
 <link href="./misc.html" rel="next">
 <link href="./rcpp-part1.html" rel="prev">
-<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-ea385d0e468b0dd5ea5bf0780b1290d9.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-364982630eef5352dd1537128a8ed5cb.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
   "collapse-after": 3,
   "panel-placement": "start",
   "type": "textbox",
-  "limit": 20,
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
   "language": {
     "search-no-results-text": "No results",
     "search-matching-documents-text": "matching documents",
@@ -109,8 +118,10 @@ div.csl-indent {
     "search-more-match-text": "more match in this document",
     "search-more-matches-text": "more matches in this document",
     "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
     "search-detached-cancel-button-title": "Cancel",
-    "search-submit-button-title": "Submit"
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
   }
 }</script>
 <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-9D75EFV0TE"></script>
@@ -123,23 +134,50 @@ gtag('js', new Date());
 gtag('config', 'G-9D75EFV0TE', { 'anonymize_ip': true});
 </script>
 
-  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
-<body class="nav-sidebar floating">
+<body class="nav-sidebar floating quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
   <nav class="quarto-secondary-nav">
     <div class="container-fluid d-flex">
-      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./rcpp-part1.html">Using C++</a></li><li class="breadcrumb-item"><a href="./rcpp-debugging.html"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Debugging R w C++/C code</span></a></li></ol></nav>
-      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
-      </a>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./rcpp-part1.html">Using C++</a></li><li class="breadcrumb-item"><a href="./rcpp-debugging.html"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Debugging R w C++/C code</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
         <i class="bi bi-search"></i>
       </button>
@@ -149,23 +187,24 @@ gtag('config', 'G-9D75EFV0TE', { 'anonymize_ip': true});
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
       <a href="./">Applied HPC with R</a> 
         <div class="sidebar-tools-main">
+    <a href="https://github.com/gvegayon/appliedhpcr" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
     <div class="dropdown">
-      <a href="" title="Download" id="quarto-navigation-tool-dropdown-0" class="quarto-navigation-tool dropdown-toggle px-1" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download"><i class="bi bi-download"></i></a>
+      <a href="" title="Download" id="quarto-navigation-tool-dropdown-0" class="quarto-navigation-tool dropdown-toggle px-1" data-bs-toggle="dropdown" aria-expanded="false" role="link" aria-label="Download"><i class="bi bi-download"></i></a>
       <ul class="dropdown-menu" aria-labelledby="quarto-navigation-tool-dropdown-0">
           <li>
             <a class="dropdown-item sidebar-tools-main-item" href="./Applied-HPC-with-R.epub">
-              <i class="bi bi-bi-journal pe-1"></i>
+              <i class="bi bi-journal pe-1"></i>
             Download ePub
             </a>
           </li>
           <li>
             <a class="dropdown-item sidebar-tools-main-item" href="./Applied-HPC-with-R.pdf">
-              <i class="bi bi-bi-file-pdf pe-1"></i>
+              <i class="bi bi-file-pdf pe-1"></i>
             Download PDF
             </a>
           </li>
@@ -189,69 +228,92 @@ gtag('config', 'G-9D75EFV0TE', { 'anonymize_ip': true});
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
- <span class="menu-text">Parallel computing</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Toggle section">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Fundamentals</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./intro.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></span></a>
+  <a href="./profiling.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Profiling</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./parallel-pkg.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">The parallel R package</span></span></a>
+  <a href="./efficiency.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Writing efficient code</span></span></a>
   </div>
 </li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
- <span class="menu-text">Working with a Cluster</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true" aria-label="Toggle section">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Parallel computing</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./slurm-fundamentals.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">What is Slurm</span></span></a>
+  <a href="./intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Introduction</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./slurm-simpi.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Simulating <span class="math inline">\(pi\)</span></span></span></a>
+  <a href="./parallel-pkg.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Parallel workflow</span></span></a>
   </div>
 </li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
- <span class="menu-text">Using C++</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true" aria-label="Toggle section">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Working with a Cluster</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
       <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="./slurm-fundamentals.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">What is Slurm</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./slurm-simpi.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Simulating <span class="math inline">\(pi\)</span></span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">Using C++</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="./rcpp-part1.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Rcpp</span></span></a>
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Rcpp</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./rcpp-debugging.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Debugging R w C++/C code</span></span></a>
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Debugging R w C++/C code</span></span></a>
   </div>
 </li>
       </ul>
@@ -259,7 +321,7 @@ gtag('config', 'G-9D75EFV0TE', { 'anonymize_ip': true});
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./misc.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Misc</span></span></a>
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Misc</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -271,24 +333,24 @@ gtag('config', 'G-9D75EFV0TE', { 'anonymize_ip': true});
     </ul>
     </div>
 </nav>
-<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#debugging-with-valgrind" id="toc-debugging-with-valgrind" class="nav-link active" data-scroll-target="#debugging-with-valgrind"><span class="header-section-number">6.1</span> Debugging with Valgrind</a></li>
-  <li><a href="#using-gdb" id="toc-using-gdb" class="nav-link" data-scroll-target="#using-gdb"><span class="header-section-number">6.2</span> Using GDB</a></li>
+  <li><a href="#debugging-with-valgrind" id="toc-debugging-with-valgrind" class="nav-link active" data-scroll-target="#debugging-with-valgrind"><span class="header-section-number">8.1</span> Debugging with Valgrind</a></li>
+  <li><a href="#using-gdb" id="toc-using-gdb" class="nav-link" data-scroll-target="#using-gdb"><span class="header-section-number">8.2</span> Using GDB</a></li>
   </ul>
-</nav>
+<div class="toc-actions"><ul><li><a href="https://github.com/gvegayon/appliedhpcr/edit/master/rcpp-debugging.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/gvegayon/appliedhpcr/blob/master/rcpp-debugging.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li><li><a href="https://github.com/gvegayon/appliedhpcr/issues" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default">
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./rcpp-part1.html">Using C++</a></li><li class="breadcrumb-item"><a href="./rcpp-debugging.html"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Debugging R w C++/C code</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Debugging R w C++/C code</span></h1>
+<h1 class="title"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Debugging R w C++/C code</span></h1>
 </div>
 
 
@@ -301,7 +363,9 @@ gtag('config', 'G-9D75EFV0TE', { 'anonymize_ip': true});
   </div>
   
 
+
 </header>
+
 
 <p>Although debugging R code is easy, the same doesn’t apply to compiled code in R<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>. This chapter shows a few ways to debug your R + C++ code. You will need the <a href="https://en.wikipedia.org/w/index.php?title=GNU_Debugger&amp;oldid=1146565095" target="_blank">GNU Debugger (GDB)</a> and <a href="https://en.wikipedia.org/w/index.php?title=Valgrind&amp;oldid=1135729346" target="_blank">Valgrind</a>.</p>
 <p>Before we start, remember that we will not deal with the good old-fashioned <code>Rprint("Your code is working up to here")</code> approach. Printing messages while your program runs can be very informative, but using Valgrind and GDB is, in my humble opinion, faster as, most of the time, those will scream at you, indicating the location of your problem.</p>
@@ -318,8 +382,8 @@ Note
 <p>The manual Writing R Extensions <span class="citation" data-cites="R">(<a href="references.html#ref-R" role="doc-biblioref">R Core Team 2023</a>)</span> has a fair amount of information about debugging compiled code in R <a href="https://cran.r-project.org/doc/manuals/R-exts.html#Debugging-compiled-code" target="_blank">here</a>. <a href="https://dirk.eddelbuettel.com/" target="_blank">Dirk Eddelbuettel</a> (lead author of Rcpp) has an <a href="https://stackoverflow.com/a/11363085/2097171">excellent post on Stackoverflow</a> and recommends <a href="https://contributions.bioconductor.org/debugging-cc-code.html">a tutorial hosted on BioConductor</a> <span class="citation" data-cites="rue-albrechtWelcomeBioconductorPackages">(<a href="references.html#ref-rue-albrechtWelcomeBioconductorPackages" role="doc-biblioref">Rue-Albrecht et al. n.d.</a>)</span>.</p>
 </div>
 </div>
-<section id="debugging-with-valgrind" class="level2" data-number="6.1">
-<h2 data-number="6.1" class="anchored" data-anchor-id="debugging-with-valgrind"><span class="header-section-number">6.1</span> Debugging with Valgrind</h2>
+<section id="debugging-with-valgrind" class="level2" data-number="8.1">
+<h2 data-number="8.1" class="anchored" data-anchor-id="debugging-with-valgrind"><span class="header-section-number">8.1</span> Debugging with Valgrind</h2>
 <p>As a starting point, we will use Valgrind. Valgrind provides a mature framework for memory debugging and profiling. We must launch the program through the command line to use a debugger within R. To lunch R with Valgrind, we use the following:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> R <span class="at">--debugger</span><span class="op">=</span>valgrind</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Which will result in something like the following:</p>
@@ -369,16 +433,15 @@ Note
 <span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="co">*/</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>We can use the <code>-e</code> flag in the <code>R</code> command to compile the <code>Rcpp</code> script using <code>sourceCpp</code>:</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">R</span> <span class="at">--debugger</span><span class="op">=</span>valgrind <span class="at">-e</span> <span class="st">'Rcpp::sourceCpp("rcpp-debugging-faulty.cpp")'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell" data-hash="rcpp-debugging_cache/html/rcpp-debug-memleak_751d27bfcf603e60e1b589bdccf5f1d0">
-<pre><code>==51618== Memcheck, a memory error detector
-==51618== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
-==51618== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
-==51618== Command: /usr/lib/R/bin/exec/R -e Rcpp::sourceCpp("rcpp-debugging-faulty.cpp")
-==51618== 
+<pre><code>==3276== Memcheck, a memory error detector
+==3276== Copyright (C) 2002-2022, and GNU GPL'd, by Julian Seward et al.
+==3276== Using Valgrind-3.22.0 and LibVEX; rerun with -h for copyright info
+==3276== Command: /usr/local/lib/R/bin/exec/R -e Rcpp::sourceCpp("rcpp-debugging-faulty.cpp")
+==3276== 
 
-R version 4.2.3 (2023-03-15) -- "Shortstop Beagle"
-Copyright (C) 2023 The R Foundation for Statistical Computing
-Platform: x86_64-pc-linux-gnu (64-bit)
+R version 4.5.1 (2025-06-13) -- "Great Square Root"
+Copyright (C) 2025 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
@@ -399,26 +462,24 @@ Type 'q()' to quit R.
 &gt; faulty_program(10)
  [1] 0 0 0 0 0 0 0 0 0 0
 &gt; 
-&gt; 
-==51618== 
-==51618== HEAP SUMMARY:
-==51618==     in use at exit: 55,450,061 bytes in 10,732 blocks
-==51618==   total heap usage: 31,980 allocs, 21,248 frees, 95,390,564 bytes allocated
-==51618== 
-==51618== LEAK SUMMARY:
-==51618==    definitely lost: 24 bytes in 1 blocks
-==51618==    indirectly lost: 0 bytes in 0 blocks
-==51618==      possibly lost: 0 bytes in 0 blocks
-==51618==    still reachable: 55,450,037 bytes in 10,731 blocks
-==51618==                       of which reachable via heuristic:
-==51618==                         newarray           : 4,264 bytes in 1 blocks
-==51618==         suppressed: 0 bytes in 0 blocks
-==51618== Rerun with --leak-check=full to see details of leaked memory
-==51618== 
-==51618== For lists of detected and suppressed errors, rerun with: -s
-==51618== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+==3276== 
+==3276== HEAP SUMMARY:
+==3276==     in use at exit: 60,654,762 bytes in 11,486 blocks
+==3276==   total heap usage: 31,698 allocs, 20,212 frees, 93,771,414 bytes allocated
+==3276== 
+==3276== LEAK SUMMARY:
+==3276==    definitely lost: 32 bytes in 1 blocks
+==3276==    indirectly lost: 0 bytes in 0 blocks
+==3276==      possibly lost: 0 bytes in 0 blocks
+==3276==    still reachable: 60,654,730 bytes in 11,485 blocks
+==3276==                       of which reachable via heuristic:
+==3276==                         newarray           : 4,264 bytes in 1 blocks
+==3276==         suppressed: 0 bytes in 0 blocks
+==3276== Rerun with --leak-check=full to see details of leaked memory
+==3276== 
+==3276== For lists of detected and suppressed errors, rerun with: -s
+==3276== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
 </code></pre>
-</div>
 <p>By the end of the output, in the <code>LEAK SUMMARY</code> section, we see <code>definitely lost: 24 bytes in 1 block</code>, <em>i.e.</em>, a memory leak. If we change the program by deleting the pointer before returning, the leak will be solved:</p>
 <div class="columns">
 <div class="column" data-layout-align="center" style="width:40%;">
@@ -439,28 +500,26 @@ Type 'q()' to quit R.
 </div>
 <p>Re-running R with Valgrind returns the following (only the last few lines):</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="ex">R</span> <span class="at">--debugger</span><span class="op">=</span>valgrind <span class="at">-e</span> <span class="st">'Rcpp::sourceCpp("rcpp-debugging-faulty-fixed.cpp")'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell" data-hash="rcpp-debugging_cache/html/rcpp-debug-memleak-fixed_2ddf1f8bc6c42e130e5a8f92a3edcd61">
-<div class="sourceCode" id="cb9"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="ex">==50287==</span> HEAP SUMMARY:</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="ex">==50287==</span>     in use at exit: 55,450,707 bytes in 10,731 blocks</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="ex">==50287==</span>   total heap usage: 32,017 allocs, 21,286 frees, 95,411,007 bytes allocated</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="ex">==50287==</span> </span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="ex">==50287==</span> LEAK SUMMARY:</span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="ex">==50287==</span>    definitely lost: 0 bytes in 0 blocks</span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="ex">==50287==</span>    indirectly lost: 0 bytes in 0 blocks</span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="ex">==50287==</span>      possibly lost: 0 bytes in 0 blocks</span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="ex">==50287==</span>    still reachable: 55,450,707 bytes in 10,731 blocks</span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="ex">==50287==</span>                       of which reachable via heuristic:</span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="ex">==50287==</span>                         newarray           : 4,264 bytes in 1 blocks</span>
-<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="ex">==50287==</span>         suppressed: 0 bytes in 0 blocks</span>
-<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a><span class="ex">==50287==</span> Rerun with <span class="at">--leak-check</span><span class="op">=</span>full to see details of leaked memory</span>
-<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a><span class="ex">==50287==</span> </span>
-<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a><span class="ex">==50287==</span> For lists of detected and suppressed errors, rerun with: <span class="at">-s</span></span>
-<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a><span class="ex">==50287==</span> ERROR SUMMARY: 0 errors from 0 contexts <span class="er">(</span><span class="ex">suppressed:</span> 0 from 0<span class="kw">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="ex">==3429==</span> HEAP SUMMARY:</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="ex">==3429==</span>     in use at exit: 60,655,403 bytes in 11,485 blocks</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="ex">==3429==</span>   total heap usage: 31,735 allocs, 20,250 frees, 93,791,884 bytes allocated</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="ex">==3429==</span> </span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="ex">==3429==</span> LEAK SUMMARY:</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="ex">==3429==</span>    definitely lost: 0 bytes in 0 blocks</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="ex">==3429==</span>    indirectly lost: 0 bytes in 0 blocks</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="ex">==3429==</span>      possibly lost: 0 bytes in 0 blocks</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="ex">==3429==</span>    still reachable: 60,655,403 bytes in 11,485 blocks</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="ex">==3429==</span>                       of which reachable via heuristic:</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="ex">==3429==</span>                         newarray           : 4,264 bytes in 1 blocks</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="ex">==3429==</span>         suppressed: 0 bytes in 0 blocks</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a><span class="ex">==3429==</span> Rerun with <span class="at">--leak-check</span><span class="op">=</span>full to see details of leaked memory</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a><span class="ex">==3429==</span> </span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a><span class="ex">==3429==</span> For lists of detected and suppressed errors, rerun with: <span class="at">-s</span></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a><span class="ex">==3429==</span> ERROR SUMMARY: 0 errors from 0 contexts <span class="er">(</span><span class="ex">suppressed:</span> 0 from 0<span class="kw">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>No more memory leaks.</p>
 </section>
-<section id="using-gdb" class="level2" data-number="6.2">
-<h2 data-number="6.2" class="anchored" data-anchor-id="using-gdb"><span class="header-section-number">6.2</span> Using GDB</h2>
+<section id="using-gdb" class="level2" data-number="8.2">
+<h2 data-number="8.2" class="anchored" data-anchor-id="using-gdb"><span class="header-section-number">8.2</span> Using GDB</h2>
 <p>Sometimes, we need to go further and inspect what’s going on <strong>inside</strong> the program. GBD is excellent for that. With GBD, we can set breakpoints that allow us to review the program while it is executed.</p>
 <p>The following Rcpp code generates a <code>memory not mapped</code> type error:</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;Rcpp.h&gt;</span></span>
@@ -482,16 +541,15 @@ Type 'q()' to quit R.
 <span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a><span class="co">faulty_program(10)</span></span>
 <span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a><span class="co">*/</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>In it, we try to access a location in the memory that hasn’t been allocated yet, namely, a <code>NumericVector</code> declared as a pointer but never assigned. Using <code>R --debugger=valgrind</code> generates the following code:</p>
-<div class="cell" data-hash="rcpp-debugging_cache/html/rcpp-debug-not-mapped_515dfe4fe806a20b17b5c132ad9b7db1">
-<div class="sourceCode" id="cb11"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ex">==54537==</span> Memcheck, a memory error detector</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="ex">==54537==</span> Copyright <span class="er">(</span><span class="ex">C</span><span class="kw">)</span> <span class="ex">2002-2017,</span> and GNU GPL<span class="st">'d, by Julian Seward et al.</span></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="st">==54537== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info</span></span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="st">==54537== Command: /usr/lib/R/bin/exec/R -e Rcpp::sourceCpp("rcpp-debugging-not-mapped.cpp")</span></span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="st">==54537== </span></span>
+<div class="sourceCode" id="cb11"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span> Memcheck, a memory error detector</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span> Copyright <span class="er">(</span><span class="ex">C</span><span class="kw">)</span> <span class="ex">2002-2022,</span> and GNU GPL<span class="st">'d, by Julian Seward et al.</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="st">==3574== Using Valgrind-3.22.0 and LibVEX; rerun with -h for copyright info</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="st">==3574== Command: /usr/local/lib/R/bin/exec/R -e Rcpp::sourceCpp("rcpp-debugging-not-mapped.cpp")</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="st">==3574== </span></span>
 <span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="st">R version 4.2.3 (2023-03-15) -- "Shortstop Beagle"</span></span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="st">Copyright (C) 2023 The R Foundation for Statistical Computing</span></span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="st">Platform: x86_64-pc-linux-gnu (64-bit)</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="st">R version 4.5.1 (2025-06-13) -- "Great Square Root"</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="st">Copyright (C) 2025 The R Foundation for Statistical Computing</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="st">Platform: x86_64-pc-linux-gnu</span></span>
 <span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="st">R is free software and comes with ABSOLUTELY NO WARRANTY.</span></span>
 <span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a><span class="st">You are welcome to redistribute it under certain conditions.</span></span>
@@ -510,96 +568,217 @@ Type 'q()' to quit R.
 <span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a><span class="st">&gt; Rcpp::sourceCpp("rcpp-debugging-not-mapped.cpp")</span></span>
 <span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a><span class="st">&gt; faulty_program(10)</span></span>
-<span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a><span class="st">==54537== Invalid read of size 8</span></span>
-<span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a><span class="st">==54537==    at 0x1222229A: get__ (PreserveStorage.h:52)</span></span>
-<span id="cb11-30"><a href="#cb11-30" aria-hidden="true" tabindex="-1"></a><span class="st">==54537==    by 0x1222229A: copy__&lt;Rcpp::Vector&lt;14, Rcpp::PreserveStorage&gt; &gt; (PreserveStorage.h:66)</span></span>
-<span id="cb11-31"><a href="#cb11-31" aria-hidden="true" tabindex="-1"></a><span class="st">==54537==    by 0x1222229A: Vector (Vector.h:64)</span></span>
-<span id="cb11-32"><a href="#cb11-32" aria-hidden="true" tabindex="-1"></a><span class="st">==54537==    by 0x1222229A: faulty_program(int) (rcpp-debugging-not-mapped.cpp:11)</span></span>
-<span id="cb11-33"><a href="#cb11-33" aria-hidden="true" tabindex="-1"></a><span class="st">==54537==    by 0x12222468: sourceCpp_1_faulty_program (rcpp-debugging-not-mapped.cpp:33)</span></span>
-<span id="cb11-34"><a href="#cb11-34" aria-hidden="true" tabindex="-1"></a><span class="st">==54537==    by 0x495391D: ??? (in /usr/lib/R/lib/libR.so)</span></span>
-<span id="cb11-35"><a href="#cb11-35" aria-hidden="true" tabindex="-1"></a><span class="st">==54537==    by 0x4953E9C: ??? (in /usr/lib/R/lib/libR.so)</span></span>
-<span id="cb11-36"><a href="#cb11-36" aria-hidden="true" tabindex="-1"></a><span class="st">==54537==    by 0x49ABD77: Rf_eval (in /usr/lib/R/lib/libR.so)</span></span>
-<span id="cb11-37"><a href="#cb11-37" aria-hidden="true" tabindex="-1"></a><span class="st">==54537==    by 0x49AD2AE: ??? (in /usr/lib/R/lib/libR.so)</span></span>
-<span id="cb11-38"><a href="#cb11-38" aria-hidden="true" tabindex="-1"></a><span class="st">==54537==    by 0x49AE0F4: Rf_applyClosure (in /usr/lib/R/lib/libR.so)</span></span>
-<span id="cb11-39"><a href="#cb11-39" aria-hidden="true" tabindex="-1"></a><span class="st">==54537==    by 0x49AB84B: Rf_eval (in /usr/lib/R/lib/libR.so)</span></span>
-<span id="cb11-40"><a href="#cb11-40" aria-hidden="true" tabindex="-1"></a><span class="st">==54537==    by 0x49B120B: ??? (in /usr/lib/R/lib/libR.so)</span></span>
-<span id="cb11-41"><a href="#cb11-41" aria-hidden="true" tabindex="-1"></a><span class="st">==54537==    by 0x498E694: ??? (in /usr/lib/R/lib/libR.so)</span></span>
-<span id="cb11-42"><a href="#cb11-42" aria-hidden="true" tabindex="-1"></a><span class="st">==54537==    by 0x49AB71F: Rf_eval (in /usr/lib/R/lib/libR.so)</span></span>
-<span id="cb11-43"><a href="#cb11-43" aria-hidden="true" tabindex="-1"></a><span class="st">==54537==    by 0x49AD2AE: ??? (in /usr/lib/R/lib/libR.so)</span></span>
-<span id="cb11-44"><a href="#cb11-44" aria-hidden="true" tabindex="-1"></a><span class="st">==54537==  Address 0x0 is not stack'</span><span class="ex">d,</span> malloc<span class="st">'d or (recently) free'</span>d</span>
-<span id="cb11-45"><a href="#cb11-45" aria-hidden="true" tabindex="-1"></a><span class="ex">==54537==</span> </span>
-<span id="cb11-46"><a href="#cb11-46" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-47"><a href="#cb11-47" aria-hidden="true" tabindex="-1"></a> <span class="ex">***</span> caught segfault <span class="pp">***</span></span>
-<span id="cb11-48"><a href="#cb11-48" aria-hidden="true" tabindex="-1"></a><span class="ex">address</span> <span class="er">(</span><span class="ex">nil</span><span class="kw">)</span><span class="ex">,</span> cause <span class="st">'memory not mapped'</span></span>
-<span id="cb11-49"><a href="#cb11-49" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-50"><a href="#cb11-50" aria-hidden="true" tabindex="-1"></a><span class="ex">Traceback:</span></span>
-<span id="cb11-51"><a href="#cb11-51" aria-hidden="true" tabindex="-1"></a> <span class="ex">1:</span> .Call<span class="er">(</span><span class="op">&lt;</span>pointer: <span class="ex">0x122223f0</span><span class="op">&gt;</span>, n<span class="kw">)</span></span>
-<span id="cb11-52"><a href="#cb11-52" aria-hidden="true" tabindex="-1"></a> <span class="ex">2:</span> faulty_program<span class="er">(</span><span class="ex">10</span><span class="kw">)</span></span>
-<span id="cb11-53"><a href="#cb11-53" aria-hidden="true" tabindex="-1"></a> <span class="ex">3:</span> eval<span class="er">(</span><span class="ex">ei,</span> envir<span class="kw">)</span></span>
-<span id="cb11-54"><a href="#cb11-54" aria-hidden="true" tabindex="-1"></a> <span class="ex">4:</span> eval<span class="er">(</span><span class="ex">ei,</span> envir<span class="kw">)</span></span>
-<span id="cb11-55"><a href="#cb11-55" aria-hidden="true" tabindex="-1"></a> <span class="ex">5:</span> withVisible<span class="er">(</span><span class="bu">eval</span><span class="er">(</span><span class="ex">ei,</span> envir<span class="kw">))</span></span>
-<span id="cb11-56"><a href="#cb11-56" aria-hidden="true" tabindex="-1"></a> <span class="ex">6:</span> source<span class="er">(</span><span class="fu">file</span> = srcConn, local = env, echo = echo<span class="kw">)</span></span>
-<span id="cb11-57"><a href="#cb11-57" aria-hidden="true" tabindex="-1"></a> <span class="ex">7:</span> Rcpp::sourceCpp<span class="er">(</span><span class="st">"rcpp-debugging-not-mapped.cpp"</span><span class="kw">)</span></span>
-<span id="cb11-58"><a href="#cb11-58" aria-hidden="true" tabindex="-1"></a><span class="ex">An</span> irrecoverable exception occurred. R is aborting now ...</span>
-<span id="cb11-59"><a href="#cb11-59" aria-hidden="true" tabindex="-1"></a><span class="ex">==54537==</span> </span>
-<span id="cb11-60"><a href="#cb11-60" aria-hidden="true" tabindex="-1"></a><span class="ex">==54537==</span> Process terminating with default action of signal 11 <span class="er">(</span><span class="ex">SIGSEGV</span><span class="kw">)</span></span>
-<span id="cb11-61"><a href="#cb11-61" aria-hidden="true" tabindex="-1"></a><span class="ex">==54537==</span>    at 0x4DB4A7C: __pthread_kill_implementation <span class="er">(</span><span class="ex">pthread_kill.c:44</span><span class="kw">)</span></span>
-<span id="cb11-62"><a href="#cb11-62" aria-hidden="true" tabindex="-1"></a><span class="ex">==54537==</span>    by 0x4DB4A7C: __pthread_kill_internal <span class="er">(</span><span class="ex">pthread_kill.c:78</span><span class="kw">)</span></span>
-<span id="cb11-63"><a href="#cb11-63" aria-hidden="true" tabindex="-1"></a><span class="ex">==54537==</span>    by 0x4DB4A7C: pthread_kill@@GLIBC_2.34 <span class="er">(</span><span class="ex">pthread_kill.c:89</span><span class="kw">)</span></span>
-<span id="cb11-64"><a href="#cb11-64" aria-hidden="true" tabindex="-1"></a><span class="ex">==54537==</span>    by 0x4D60475: raise <span class="er">(</span><span class="ex">raise.c:26</span><span class="kw">)</span></span>
-<span id="cb11-65"><a href="#cb11-65" aria-hidden="true" tabindex="-1"></a><span class="ex">==54537==</span>    by 0x4D6051F: <span class="pp">???</span> <span class="er">(in</span> <span class="ex">/usr/lib/x86_64-linux-gnu/libc.so.6</span><span class="kw">)</span></span>
-<span id="cb11-66"><a href="#cb11-66" aria-hidden="true" tabindex="-1"></a><span class="ex">==54537==</span>    by 0x12222299: copy__<span class="op">&lt;</span>Rcpp::Vector<span class="op">&lt;</span>14, Rcpp::PreserveStorage<span class="op">&gt;</span> <span class="op">&gt;</span> <span class="er">(</span><span class="ex">PreserveStorage.h:65</span><span class="kw">)</span></span>
-<span id="cb11-67"><a href="#cb11-67" aria-hidden="true" tabindex="-1"></a><span class="ex">==54537==</span>    by 0x12222299: Vector <span class="er">(</span><span class="ex">Vector.h:64</span><span class="kw">)</span></span>
-<span id="cb11-68"><a href="#cb11-68" aria-hidden="true" tabindex="-1"></a><span class="ex">==54537==</span>    by 0x12222299: faulty_program<span class="er">(</span><span class="ex">int</span><span class="kw">)</span> <span class="kw">(</span><span class="ex">rcpp-debugging-not-mapped.cpp:11</span><span class="kw">)</span></span>
-<span id="cb11-69"><a href="#cb11-69" aria-hidden="true" tabindex="-1"></a><span class="ex">==54537==</span> </span>
-<span id="cb11-70"><a href="#cb11-70" aria-hidden="true" tabindex="-1"></a><span class="ex">==54537==</span> HEAP SUMMARY:</span>
-<span id="cb11-71"><a href="#cb11-71" aria-hidden="true" tabindex="-1"></a><span class="ex">==54537==</span>     in use at exit: 55,590,287 bytes in 10,969 blocks</span>
-<span id="cb11-72"><a href="#cb11-72" aria-hidden="true" tabindex="-1"></a><span class="ex">==54537==</span>   total heap usage: 31,943 allocs, 20,974 frees, 95,324,688 bytes allocated</span>
-<span id="cb11-73"><a href="#cb11-73" aria-hidden="true" tabindex="-1"></a><span class="ex">==54537==</span> </span>
-<span id="cb11-74"><a href="#cb11-74" aria-hidden="true" tabindex="-1"></a><span class="ex">==54537==</span> LEAK SUMMARY:</span>
-<span id="cb11-75"><a href="#cb11-75" aria-hidden="true" tabindex="-1"></a><span class="ex">==54537==</span>    definitely lost: 0 bytes in 0 blocks</span>
-<span id="cb11-76"><a href="#cb11-76" aria-hidden="true" tabindex="-1"></a><span class="ex">==54537==</span>    indirectly lost: 0 bytes in 0 blocks</span>
-<span id="cb11-77"><a href="#cb11-77" aria-hidden="true" tabindex="-1"></a><span class="ex">==54537==</span>      possibly lost: 5,007 bytes in 15 blocks</span>
-<span id="cb11-78"><a href="#cb11-78" aria-hidden="true" tabindex="-1"></a><span class="ex">==54537==</span>    still reachable: 55,585,280 bytes in 10,954 blocks</span>
-<span id="cb11-79"><a href="#cb11-79" aria-hidden="true" tabindex="-1"></a><span class="ex">==54537==</span>                       of which reachable via heuristic:</span>
-<span id="cb11-80"><a href="#cb11-80" aria-hidden="true" tabindex="-1"></a><span class="ex">==54537==</span>                         newarray           : 4,264 bytes in 1 blocks</span>
-<span id="cb11-81"><a href="#cb11-81" aria-hidden="true" tabindex="-1"></a><span class="ex">==54537==</span>         suppressed: 0 bytes in 0 blocks</span>
-<span id="cb11-82"><a href="#cb11-82" aria-hidden="true" tabindex="-1"></a><span class="ex">==54537==</span> Rerun with <span class="at">--leak-check</span><span class="op">=</span>full to see details of leaked memory</span>
-<span id="cb11-83"><a href="#cb11-83" aria-hidden="true" tabindex="-1"></a><span class="ex">==54537==</span> </span>
-<span id="cb11-84"><a href="#cb11-84" aria-hidden="true" tabindex="-1"></a><span class="ex">==54537==</span> For lists of detected and suppressed errors, rerun with: <span class="at">-s</span></span>
-<span id="cb11-85"><a href="#cb11-85" aria-hidden="true" tabindex="-1"></a><span class="ex">==54537==</span> ERROR SUMMARY: 1 errors from 1 contexts <span class="er">(</span><span class="ex">suppressed:</span> 0 from 0<span class="kw">)</span></span>
-<span id="cb11-86"><a href="#cb11-86" aria-hidden="true" tabindex="-1"></a><span class="ex">Segmentation</span> fault <span class="er">(</span><span class="ex">core</span> dumped<span class="kw">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
+<span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a><span class="st">==3574== Invalid read of size 8</span></span>
+<span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a><span class="st">==3574==    at 0x57FC85D6: get__ (PreserveStorage.h:52)</span></span>
+<span id="cb11-30"><a href="#cb11-30" aria-hidden="true" tabindex="-1"></a><span class="st">==3574==    by 0x57FC85D6: copy__&lt;Rcpp::Vector&lt;14, Rcpp::PreserveStorage&gt; &gt; (PreserveStorage.h:66)</span></span>
+<span id="cb11-31"><a href="#cb11-31" aria-hidden="true" tabindex="-1"></a><span class="st">==3574==    by 0x57FC85D6: Vector (Vector.h:64)</span></span>
+<span id="cb11-32"><a href="#cb11-32" aria-hidden="true" tabindex="-1"></a><span class="st">==3574==    by 0x57FC85D6: faulty_program(int) (rcpp-debugging-not-mapped.cpp:11)</span></span>
+<span id="cb11-33"><a href="#cb11-33" aria-hidden="true" tabindex="-1"></a><span class="st">==3574==    by 0x57FC8758: sourceCpp_1_faulty_program (rcpp-debugging-not-mapped.cpp:33)</span></span>
+<span id="cb11-34"><a href="#cb11-34" aria-hidden="true" tabindex="-1"></a><span class="st">==3574==    by 0x495D56D: R_doDotCall (dotcode.c:754)</span></span>
+<span id="cb11-35"><a href="#cb11-35" aria-hidden="true" tabindex="-1"></a><span class="st">==3574==    by 0x495DAE6: do_dotcall (dotcode.c:1437)</span></span>
+<span id="cb11-36"><a href="#cb11-36" aria-hidden="true" tabindex="-1"></a><span class="st">==3574==    by 0x49AC44C: Rf_eval (eval.c:1260)</span></span>
+<span id="cb11-37"><a href="#cb11-37" aria-hidden="true" tabindex="-1"></a><span class="st">==3574==    by 0x49AE06D: R_execClosure (eval.c:2393)</span></span>
+<span id="cb11-38"><a href="#cb11-38" aria-hidden="true" tabindex="-1"></a><span class="st">==3574==    by 0x49AEDC6: applyClosure_core (eval.c:2306)</span></span>
+<span id="cb11-39"><a href="#cb11-39" aria-hidden="true" tabindex="-1"></a><span class="st">==3574==    by 0x49ABF65: Rf_applyClosure (eval.c:2328)</span></span>
+<span id="cb11-40"><a href="#cb11-40" aria-hidden="true" tabindex="-1"></a><span class="st">==3574==    by 0x49ABF65: Rf_eval (eval.c:1280)</span></span>
+<span id="cb11-41"><a href="#cb11-41" aria-hidden="true" tabindex="-1"></a><span class="st">==3574==    by 0x49B2AD3: do_eval (eval.c:3959)</span></span>
+<span id="cb11-42"><a href="#cb11-42" aria-hidden="true" tabindex="-1"></a><span class="st">==3574==    by 0x499EDD4: bcEval_loop (eval.c:8118)</span></span>
+<span id="cb11-43"><a href="#cb11-43" aria-hidden="true" tabindex="-1"></a><span class="st">==3574==    by 0x49ABA59: bcEval (eval.c:7501)</span></span>
+<span id="cb11-44"><a href="#cb11-44" aria-hidden="true" tabindex="-1"></a><span class="st">==3574==    by 0x49ABA59: bcEval (eval.c:7486)</span></span>
+<span id="cb11-45"><a href="#cb11-45" aria-hidden="true" tabindex="-1"></a><span class="st">==3574==    by 0x49ABE2A: Rf_eval (eval.c:1167)</span></span>
+<span id="cb11-46"><a href="#cb11-46" aria-hidden="true" tabindex="-1"></a><span class="st">==3574==  Address 0x0 is not stack'</span><span class="ex">d,</span> malloc<span class="st">'d or (recently) free'</span>d</span>
+<span id="cb11-47"><a href="#cb11-47" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span> </span>
+<span id="cb11-48"><a href="#cb11-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-49"><a href="#cb11-49" aria-hidden="true" tabindex="-1"></a> <span class="ex">***</span> caught segfault <span class="pp">***</span></span>
+<span id="cb11-50"><a href="#cb11-50" aria-hidden="true" tabindex="-1"></a><span class="ex">address</span> <span class="er">(</span><span class="ex">nil</span><span class="kw">)</span><span class="ex">,</span> cause <span class="st">'memory not mapped'</span></span>
+<span id="cb11-51"><a href="#cb11-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-52"><a href="#cb11-52" aria-hidden="true" tabindex="-1"></a><span class="ex">Traceback:</span></span>
+<span id="cb11-53"><a href="#cb11-53" aria-hidden="true" tabindex="-1"></a> <span class="ex">1:</span> .Call<span class="er">(</span><span class="op">&lt;</span>pointer: <span class="ex">0x57fc86e0</span><span class="op">&gt;</span>, n<span class="kw">)</span></span>
+<span id="cb11-54"><a href="#cb11-54" aria-hidden="true" tabindex="-1"></a> <span class="ex">2:</span> faulty_program<span class="er">(</span><span class="ex">10</span><span class="kw">)</span></span>
+<span id="cb11-55"><a href="#cb11-55" aria-hidden="true" tabindex="-1"></a> <span class="ex">3:</span> eval<span class="er">(</span><span class="ex">ei,</span> envir<span class="kw">)</span></span>
+<span id="cb11-56"><a href="#cb11-56" aria-hidden="true" tabindex="-1"></a> <span class="ex">4:</span> eval<span class="er">(</span><span class="ex">ei,</span> envir<span class="kw">)</span></span>
+<span id="cb11-57"><a href="#cb11-57" aria-hidden="true" tabindex="-1"></a> <span class="ex">5:</span> withVisible<span class="er">(</span><span class="bu">eval</span><span class="er">(</span><span class="ex">ei,</span> envir<span class="kw">))</span></span>
+<span id="cb11-58"><a href="#cb11-58" aria-hidden="true" tabindex="-1"></a> <span class="ex">6:</span> source<span class="er">(</span><span class="fu">file</span> = srcConn, local = env, echo = echo<span class="kw">)</span></span>
+<span id="cb11-59"><a href="#cb11-59" aria-hidden="true" tabindex="-1"></a> <span class="ex">7:</span> Rcpp::sourceCpp<span class="er">(</span><span class="st">"rcpp-debugging-not-mapped.cpp"</span><span class="kw">)</span></span>
+<span id="cb11-60"><a href="#cb11-60" aria-hidden="true" tabindex="-1"></a><span class="ex">An</span> irrecoverable exception occurred. R is aborting now ...</span>
+<span id="cb11-61"><a href="#cb11-61" aria-hidden="true" tabindex="-1"></a><span class="ex">--3574--</span> VALGRIND INTERNAL ERROR: Valgrind received a signal 11 <span class="er">(</span><span class="ex">SIGSEGV</span><span class="kw">)</span> <span class="ex">-</span> exiting</span>
+<span id="cb11-62"><a href="#cb11-62" aria-hidden="true" tabindex="-1"></a><span class="ex">--3574--</span> si_code=1<span class="kw">;</span>  <span class="ex">Faulting</span> address: 0x0<span class="kw">;</span>  <span class="ex">sp:</span> 0x1002da9cb0</span>
+<span id="cb11-63"><a href="#cb11-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-64"><a href="#cb11-64" aria-hidden="true" tabindex="-1"></a><span class="ex">valgrind:</span> the <span class="st">'impossible'</span> happened:</span>
+<span id="cb11-65"><a href="#cb11-65" aria-hidden="true" tabindex="-1"></a>   <span class="ex">Killed</span> by fatal signal</span>
+<span id="cb11-66"><a href="#cb11-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-67"><a href="#cb11-67" aria-hidden="true" tabindex="-1"></a><span class="ex">host</span> stacktrace:</span>
+<span id="cb11-68"><a href="#cb11-68" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    at 0x580EAEDB: <span class="pp">???</span> <span class="er">(in</span> <span class="ex">/usr/libexec/valgrind/memcheck-amd64-linux</span><span class="kw">)</span></span>
+<span id="cb11-69"><a href="#cb11-69" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x5809FEE2: <span class="pp">???</span> <span class="er">(in</span> <span class="ex">/usr/libexec/valgrind/memcheck-amd64-linux</span><span class="kw">)</span></span>
+<span id="cb11-70"><a href="#cb11-70" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x5809B6E2: <span class="pp">???</span> <span class="er">(in</span> <span class="ex">/usr/libexec/valgrind/memcheck-amd64-linux</span><span class="kw">)</span></span>
+<span id="cb11-71"><a href="#cb11-71" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x5809D7F8: <span class="pp">???</span> <span class="er">(in</span> <span class="ex">/usr/libexec/valgrind/memcheck-amd64-linux</span><span class="kw">)</span></span>
+<span id="cb11-72"><a href="#cb11-72" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x580EB087: <span class="pp">???</span> <span class="er">(in</span> <span class="ex">/usr/libexec/valgrind/memcheck-amd64-linux</span><span class="kw">)</span></span>
+<span id="cb11-73"><a href="#cb11-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-74"><a href="#cb11-74" aria-hidden="true" tabindex="-1"></a><span class="ex">sched</span> status:</span>
+<span id="cb11-75"><a href="#cb11-75" aria-hidden="true" tabindex="-1"></a>  <span class="va">running_tid</span><span class="op">=</span>0</span>
+<span id="cb11-76"><a href="#cb11-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-77"><a href="#cb11-77" aria-hidden="true" tabindex="-1"></a><span class="ex">Thread</span> 1: status = VgTs_WaitSys syscall 234 <span class="er">(</span><span class="ex">lwpid</span> 3574<span class="kw">)</span></span>
+<span id="cb11-78"><a href="#cb11-78" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    at 0x4D6AB2C: __pthread_kill_implementation <span class="er">(</span><span class="ex">pthread_kill.c:44</span><span class="kw">)</span></span>
+<span id="cb11-79"><a href="#cb11-79" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D6AB2C: __pthread_kill_internal <span class="er">(</span><span class="ex">pthread_kill.c:78</span><span class="kw">)</span></span>
+<span id="cb11-80"><a href="#cb11-80" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D6AB2C: pthread_kill@@GLIBC_2.34 <span class="er">(</span><span class="ex">pthread_kill.c:89</span><span class="kw">)</span></span>
+<span id="cb11-81"><a href="#cb11-81" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D1127D: raise <span class="er">(</span><span class="ex">raise.c:26</span><span class="kw">)</span></span>
+<span id="cb11-82"><a href="#cb11-82" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D1132F: <span class="pp">???</span> <span class="er">(in</span> <span class="ex">/usr/lib/x86_64-linux-gnu/libc.so.6</span><span class="kw">)</span></span>
+<span id="cb11-83"><a href="#cb11-83" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x57FC85D5: copy__<span class="op">&lt;</span>Rcpp::Vector<span class="op">&lt;</span>14, Rcpp::PreserveStorage<span class="op">&gt;</span> <span class="op">&gt;</span> <span class="er">(</span><span class="ex">PreserveStorage.h:65</span><span class="kw">)</span></span>
+<span id="cb11-84"><a href="#cb11-84" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x57FC85D5: Vector <span class="er">(</span><span class="ex">Vector.h:64</span><span class="kw">)</span></span>
+<span id="cb11-85"><a href="#cb11-85" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x57FC85D5: faulty_program<span class="er">(</span><span class="ex">int</span><span class="kw">)</span> <span class="kw">(</span><span class="ex">rcpp-debugging-not-mapped.cpp:11</span><span class="kw">)</span></span>
+<span id="cb11-86"><a href="#cb11-86" aria-hidden="true" tabindex="-1"></a><span class="ex">client</span> stack range: <span class="pp">???????</span> client SP: 0xA1251C0</span>
+<span id="cb11-87"><a href="#cb11-87" aria-hidden="true" tabindex="-1"></a><span class="fu">valgrind</span> stack range: [0x1002CAA000 0x1002DA9FFF] top usage: 18232 of 1048576</span>
+<span id="cb11-88"><a href="#cb11-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-89"><a href="#cb11-89" aria-hidden="true" tabindex="-1"></a><span class="ex">Thread</span> 2: status = VgTs_WaitSys syscall 202 <span class="er">(</span><span class="ex">lwpid</span> 3604<span class="kw">)</span></span>
+<span id="cb11-90"><a href="#cb11-90" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    at 0x4D64D71: __futex_abstimed_wait_common64 <span class="er">(</span><span class="ex">futex-internal.c:57</span><span class="kw">)</span></span>
+<span id="cb11-91"><a href="#cb11-91" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D64D71: __futex_abstimed_wait_common <span class="er">(</span><span class="ex">futex-internal.c:87</span><span class="kw">)</span></span>
+<span id="cb11-92"><a href="#cb11-92" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D64D71: __futex_abstimed_wait_cancelable64 <span class="er">(</span><span class="ex">futex-internal.c:139</span><span class="kw">)</span></span>
+<span id="cb11-93"><a href="#cb11-93" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D677EC: __pthread_cond_wait_common <span class="er">(</span><span class="ex">pthread_cond_wait.c:503</span><span class="kw">)</span></span>
+<span id="cb11-94"><a href="#cb11-94" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D677EC: pthread_cond_wait@@GLIBC_2.3.2 <span class="er">(</span><span class="ex">pthread_cond_wait.c:627</span><span class="kw">)</span></span>
+<span id="cb11-95"><a href="#cb11-95" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x5BA4AFA: <span class="pp">???</span> <span class="er">(in</span> <span class="ex">/usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.26.so</span><span class="kw">)</span></span>
+<span id="cb11-96"><a href="#cb11-96" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D68AA3: start_thread <span class="er">(</span><span class="ex">pthread_create.c:447</span><span class="kw">)</span></span>
+<span id="cb11-97"><a href="#cb11-97" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4DF5A33: clone <span class="er">(</span><span class="ex">clone.S:100</span><span class="kw">)</span></span>
+<span id="cb11-98"><a href="#cb11-98" aria-hidden="true" tabindex="-1"></a><span class="ex">client</span> stack range: [0xA35B000 0xAB4AFFF] client SP: 0xAB4ACE0</span>
+<span id="cb11-99"><a href="#cb11-99" aria-hidden="true" tabindex="-1"></a><span class="fu">valgrind</span> stack range: [0x1006760000 0x100685FFFF] top usage: 5624 of 1048576</span>
+<span id="cb11-100"><a href="#cb11-100" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-101"><a href="#cb11-101" aria-hidden="true" tabindex="-1"></a><span class="ex">Thread</span> 3: status = VgTs_WaitSys syscall 202 <span class="er">(</span><span class="ex">lwpid</span> 3605<span class="kw">)</span></span>
+<span id="cb11-102"><a href="#cb11-102" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    at 0x4D64D71: __futex_abstimed_wait_common64 <span class="er">(</span><span class="ex">futex-internal.c:57</span><span class="kw">)</span></span>
+<span id="cb11-103"><a href="#cb11-103" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D64D71: __futex_abstimed_wait_common <span class="er">(</span><span class="ex">futex-internal.c:87</span><span class="kw">)</span></span>
+<span id="cb11-104"><a href="#cb11-104" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D64D71: __futex_abstimed_wait_cancelable64 <span class="er">(</span><span class="ex">futex-internal.c:139</span><span class="kw">)</span></span>
+<span id="cb11-105"><a href="#cb11-105" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D677EC: __pthread_cond_wait_common <span class="er">(</span><span class="ex">pthread_cond_wait.c:503</span><span class="kw">)</span></span>
+<span id="cb11-106"><a href="#cb11-106" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D677EC: pthread_cond_wait@@GLIBC_2.3.2 <span class="er">(</span><span class="ex">pthread_cond_wait.c:627</span><span class="kw">)</span></span>
+<span id="cb11-107"><a href="#cb11-107" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x5BA4AFA: <span class="pp">???</span> <span class="er">(in</span> <span class="ex">/usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.26.so</span><span class="kw">)</span></span>
+<span id="cb11-108"><a href="#cb11-108" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D68AA3: start_thread <span class="er">(</span><span class="ex">pthread_create.c:447</span><span class="kw">)</span></span>
+<span id="cb11-109"><a href="#cb11-109" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4DF5A33: clone <span class="er">(</span><span class="ex">clone.S:100</span><span class="kw">)</span></span>
+<span id="cb11-110"><a href="#cb11-110" aria-hidden="true" tabindex="-1"></a><span class="ex">client</span> stack range: [0xAB5C000 0xB34BFFF] client SP: 0xB34BCE0</span>
+<span id="cb11-111"><a href="#cb11-111" aria-hidden="true" tabindex="-1"></a><span class="fu">valgrind</span> stack range: [0x10068E8000 0x10069E7FFF] top usage: 5624 of 1048576</span>
+<span id="cb11-112"><a href="#cb11-112" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-113"><a href="#cb11-113" aria-hidden="true" tabindex="-1"></a><span class="ex">Thread</span> 4: status = VgTs_WaitSys syscall 202 <span class="er">(</span><span class="ex">lwpid</span> 3607<span class="kw">)</span></span>
+<span id="cb11-114"><a href="#cb11-114" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    at 0x4D64D71: __futex_abstimed_wait_common64 <span class="er">(</span><span class="ex">futex-internal.c:57</span><span class="kw">)</span></span>
+<span id="cb11-115"><a href="#cb11-115" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D64D71: __futex_abstimed_wait_common <span class="er">(</span><span class="ex">futex-internal.c:87</span><span class="kw">)</span></span>
+<span id="cb11-116"><a href="#cb11-116" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D64D71: __futex_abstimed_wait_cancelable64 <span class="er">(</span><span class="ex">futex-internal.c:139</span><span class="kw">)</span></span>
+<span id="cb11-117"><a href="#cb11-117" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D677EC: __pthread_cond_wait_common <span class="er">(</span><span class="ex">pthread_cond_wait.c:503</span><span class="kw">)</span></span>
+<span id="cb11-118"><a href="#cb11-118" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D677EC: pthread_cond_wait@@GLIBC_2.3.2 <span class="er">(</span><span class="ex">pthread_cond_wait.c:627</span><span class="kw">)</span></span>
+<span id="cb11-119"><a href="#cb11-119" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x5BA4AFA: <span class="pp">???</span> <span class="er">(in</span> <span class="ex">/usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.26.so</span><span class="kw">)</span></span>
+<span id="cb11-120"><a href="#cb11-120" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D68AA3: start_thread <span class="er">(</span><span class="ex">pthread_create.c:447</span><span class="kw">)</span></span>
+<span id="cb11-121"><a href="#cb11-121" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4DF5A33: clone <span class="er">(</span><span class="ex">clone.S:100</span><span class="kw">)</span></span>
+<span id="cb11-122"><a href="#cb11-122" aria-hidden="true" tabindex="-1"></a><span class="ex">client</span> stack range: [0xB35D000 0xBB4CFFF] client SP: 0xBB4CCE0</span>
+<span id="cb11-123"><a href="#cb11-123" aria-hidden="true" tabindex="-1"></a><span class="fu">valgrind</span> stack range: [0x1006BEC000 0x1006CEBFFF] top usage: 5624 of 1048576</span>
+<span id="cb11-124"><a href="#cb11-124" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-125"><a href="#cb11-125" aria-hidden="true" tabindex="-1"></a><span class="ex">Thread</span> 5: status = VgTs_WaitSys syscall 202 <span class="er">(</span><span class="ex">lwpid</span> 3610<span class="kw">)</span></span>
+<span id="cb11-126"><a href="#cb11-126" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    at 0x4D64D71: __futex_abstimed_wait_common64 <span class="er">(</span><span class="ex">futex-internal.c:57</span><span class="kw">)</span></span>
+<span id="cb11-127"><a href="#cb11-127" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D64D71: __futex_abstimed_wait_common <span class="er">(</span><span class="ex">futex-internal.c:87</span><span class="kw">)</span></span>
+<span id="cb11-128"><a href="#cb11-128" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D64D71: __futex_abstimed_wait_cancelable64 <span class="er">(</span><span class="ex">futex-internal.c:139</span><span class="kw">)</span></span>
+<span id="cb11-129"><a href="#cb11-129" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D677EC: __pthread_cond_wait_common <span class="er">(</span><span class="ex">pthread_cond_wait.c:503</span><span class="kw">)</span></span>
+<span id="cb11-130"><a href="#cb11-130" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D677EC: pthread_cond_wait@@GLIBC_2.3.2 <span class="er">(</span><span class="ex">pthread_cond_wait.c:627</span><span class="kw">)</span></span>
+<span id="cb11-131"><a href="#cb11-131" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x5BA4AFA: <span class="pp">???</span> <span class="er">(in</span> <span class="ex">/usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.26.so</span><span class="kw">)</span></span>
+<span id="cb11-132"><a href="#cb11-132" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D68AA3: start_thread <span class="er">(</span><span class="ex">pthread_create.c:447</span><span class="kw">)</span></span>
+<span id="cb11-133"><a href="#cb11-133" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4DF5A33: clone <span class="er">(</span><span class="ex">clone.S:100</span><span class="kw">)</span></span>
+<span id="cb11-134"><a href="#cb11-134" aria-hidden="true" tabindex="-1"></a><span class="ex">client</span> stack range: [0xBB5E000 0xC34DFFF] client SP: 0xC34DCE0</span>
+<span id="cb11-135"><a href="#cb11-135" aria-hidden="true" tabindex="-1"></a><span class="fu">valgrind</span> stack range: [0x1006EF0000 0x1006FEFFFF] top usage: 5624 of 1048576</span>
+<span id="cb11-136"><a href="#cb11-136" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-137"><a href="#cb11-137" aria-hidden="true" tabindex="-1"></a><span class="ex">Thread</span> 6: status = VgTs_WaitSys syscall 202 <span class="er">(</span><span class="ex">lwpid</span> 3612<span class="kw">)</span></span>
+<span id="cb11-138"><a href="#cb11-138" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    at 0x4D64D71: __futex_abstimed_wait_common64 <span class="er">(</span><span class="ex">futex-internal.c:57</span><span class="kw">)</span></span>
+<span id="cb11-139"><a href="#cb11-139" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D64D71: __futex_abstimed_wait_common <span class="er">(</span><span class="ex">futex-internal.c:87</span><span class="kw">)</span></span>
+<span id="cb11-140"><a href="#cb11-140" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D64D71: __futex_abstimed_wait_cancelable64 <span class="er">(</span><span class="ex">futex-internal.c:139</span><span class="kw">)</span></span>
+<span id="cb11-141"><a href="#cb11-141" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D677EC: __pthread_cond_wait_common <span class="er">(</span><span class="ex">pthread_cond_wait.c:503</span><span class="kw">)</span></span>
+<span id="cb11-142"><a href="#cb11-142" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D677EC: pthread_cond_wait@@GLIBC_2.3.2 <span class="er">(</span><span class="ex">pthread_cond_wait.c:627</span><span class="kw">)</span></span>
+<span id="cb11-143"><a href="#cb11-143" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x5BA4AFA: <span class="pp">???</span> <span class="er">(in</span> <span class="ex">/usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.26.so</span><span class="kw">)</span></span>
+<span id="cb11-144"><a href="#cb11-144" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D68AA3: start_thread <span class="er">(</span><span class="ex">pthread_create.c:447</span><span class="kw">)</span></span>
+<span id="cb11-145"><a href="#cb11-145" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4DF5A33: clone <span class="er">(</span><span class="ex">clone.S:100</span><span class="kw">)</span></span>
+<span id="cb11-146"><a href="#cb11-146" aria-hidden="true" tabindex="-1"></a><span class="ex">client</span> stack range: [0xC35F000 0xCB4EFFF] client SP: 0xCB4ECE0</span>
+<span id="cb11-147"><a href="#cb11-147" aria-hidden="true" tabindex="-1"></a><span class="fu">valgrind</span> stack range: [0x10071F4000 0x10072F3FFF] top usage: 5624 of 1048576</span>
+<span id="cb11-148"><a href="#cb11-148" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-149"><a href="#cb11-149" aria-hidden="true" tabindex="-1"></a><span class="ex">Thread</span> 7: status = VgTs_WaitSys syscall 202 <span class="er">(</span><span class="ex">lwpid</span> 3613<span class="kw">)</span></span>
+<span id="cb11-150"><a href="#cb11-150" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    at 0x4D64D71: __futex_abstimed_wait_common64 <span class="er">(</span><span class="ex">futex-internal.c:57</span><span class="kw">)</span></span>
+<span id="cb11-151"><a href="#cb11-151" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D64D71: __futex_abstimed_wait_common <span class="er">(</span><span class="ex">futex-internal.c:87</span><span class="kw">)</span></span>
+<span id="cb11-152"><a href="#cb11-152" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D64D71: __futex_abstimed_wait_cancelable64 <span class="er">(</span><span class="ex">futex-internal.c:139</span><span class="kw">)</span></span>
+<span id="cb11-153"><a href="#cb11-153" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D677EC: __pthread_cond_wait_common <span class="er">(</span><span class="ex">pthread_cond_wait.c:503</span><span class="kw">)</span></span>
+<span id="cb11-154"><a href="#cb11-154" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D677EC: pthread_cond_wait@@GLIBC_2.3.2 <span class="er">(</span><span class="ex">pthread_cond_wait.c:627</span><span class="kw">)</span></span>
+<span id="cb11-155"><a href="#cb11-155" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x5BA4AFA: <span class="pp">???</span> <span class="er">(in</span> <span class="ex">/usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.26.so</span><span class="kw">)</span></span>
+<span id="cb11-156"><a href="#cb11-156" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D68AA3: start_thread <span class="er">(</span><span class="ex">pthread_create.c:447</span><span class="kw">)</span></span>
+<span id="cb11-157"><a href="#cb11-157" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4DF5A33: clone <span class="er">(</span><span class="ex">clone.S:100</span><span class="kw">)</span></span>
+<span id="cb11-158"><a href="#cb11-158" aria-hidden="true" tabindex="-1"></a><span class="ex">client</span> stack range: [0xCB60000 0xD34FFFF] client SP: 0xD34FCE0</span>
+<span id="cb11-159"><a href="#cb11-159" aria-hidden="true" tabindex="-1"></a><span class="fu">valgrind</span> stack range: [0x10074F8000 0x10075F7FFF] top usage: 5624 of 1048576</span>
+<span id="cb11-160"><a href="#cb11-160" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-161"><a href="#cb11-161" aria-hidden="true" tabindex="-1"></a><span class="ex">Thread</span> 8: status = VgTs_WaitSys syscall 202 <span class="er">(</span><span class="ex">lwpid</span> 3614<span class="kw">)</span></span>
+<span id="cb11-162"><a href="#cb11-162" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    at 0x4D64D71: __futex_abstimed_wait_common64 <span class="er">(</span><span class="ex">futex-internal.c:57</span><span class="kw">)</span></span>
+<span id="cb11-163"><a href="#cb11-163" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D64D71: __futex_abstimed_wait_common <span class="er">(</span><span class="ex">futex-internal.c:87</span><span class="kw">)</span></span>
+<span id="cb11-164"><a href="#cb11-164" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D64D71: __futex_abstimed_wait_cancelable64 <span class="er">(</span><span class="ex">futex-internal.c:139</span><span class="kw">)</span></span>
+<span id="cb11-165"><a href="#cb11-165" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D677EC: __pthread_cond_wait_common <span class="er">(</span><span class="ex">pthread_cond_wait.c:503</span><span class="kw">)</span></span>
+<span id="cb11-166"><a href="#cb11-166" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D677EC: pthread_cond_wait@@GLIBC_2.3.2 <span class="er">(</span><span class="ex">pthread_cond_wait.c:627</span><span class="kw">)</span></span>
+<span id="cb11-167"><a href="#cb11-167" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x5BA4AFA: <span class="pp">???</span> <span class="er">(in</span> <span class="ex">/usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.26.so</span><span class="kw">)</span></span>
+<span id="cb11-168"><a href="#cb11-168" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D68AA3: start_thread <span class="er">(</span><span class="ex">pthread_create.c:447</span><span class="kw">)</span></span>
+<span id="cb11-169"><a href="#cb11-169" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4DF5A33: clone <span class="er">(</span><span class="ex">clone.S:100</span><span class="kw">)</span></span>
+<span id="cb11-170"><a href="#cb11-170" aria-hidden="true" tabindex="-1"></a><span class="ex">client</span> stack range: [0xD361000 0xDB50FFF] client SP: 0xDB50CE0</span>
+<span id="cb11-171"><a href="#cb11-171" aria-hidden="true" tabindex="-1"></a><span class="fu">valgrind</span> stack range: [0x1007800000 0x10078FFFFF] top usage: 5624 of 1048576</span>
+<span id="cb11-172"><a href="#cb11-172" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-173"><a href="#cb11-173" aria-hidden="true" tabindex="-1"></a><span class="ex">Thread</span> 9: status = VgTs_WaitSys syscall 202 <span class="er">(</span><span class="ex">lwpid</span> 3615<span class="kw">)</span></span>
+<span id="cb11-174"><a href="#cb11-174" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    at 0x4D64D71: __futex_abstimed_wait_common64 <span class="er">(</span><span class="ex">futex-internal.c:57</span><span class="kw">)</span></span>
+<span id="cb11-175"><a href="#cb11-175" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D64D71: __futex_abstimed_wait_common <span class="er">(</span><span class="ex">futex-internal.c:87</span><span class="kw">)</span></span>
+<span id="cb11-176"><a href="#cb11-176" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D64D71: __futex_abstimed_wait_cancelable64 <span class="er">(</span><span class="ex">futex-internal.c:139</span><span class="kw">)</span></span>
+<span id="cb11-177"><a href="#cb11-177" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D677EC: __pthread_cond_wait_common <span class="er">(</span><span class="ex">pthread_cond_wait.c:503</span><span class="kw">)</span></span>
+<span id="cb11-178"><a href="#cb11-178" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D677EC: pthread_cond_wait@@GLIBC_2.3.2 <span class="er">(</span><span class="ex">pthread_cond_wait.c:627</span><span class="kw">)</span></span>
+<span id="cb11-179"><a href="#cb11-179" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x5BA4AFA: <span class="pp">???</span> <span class="er">(in</span> <span class="ex">/usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.26.so</span><span class="kw">)</span></span>
+<span id="cb11-180"><a href="#cb11-180" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D68AA3: start_thread <span class="er">(</span><span class="ex">pthread_create.c:447</span><span class="kw">)</span></span>
+<span id="cb11-181"><a href="#cb11-181" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4DF5A33: clone <span class="er">(</span><span class="ex">clone.S:100</span><span class="kw">)</span></span>
+<span id="cb11-182"><a href="#cb11-182" aria-hidden="true" tabindex="-1"></a><span class="ex">client</span> stack range: [0xDB62000 0xE351FFF] client SP: 0xE351CE0</span>
+<span id="cb11-183"><a href="#cb11-183" aria-hidden="true" tabindex="-1"></a><span class="fu">valgrind</span> stack range: [0x1007B04000 0x1007C03FFF] top usage: 5624 of 1048576</span>
+<span id="cb11-184"><a href="#cb11-184" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-185"><a href="#cb11-185" aria-hidden="true" tabindex="-1"></a><span class="ex">Thread</span> 10: status = VgTs_WaitSys syscall 202 <span class="er">(</span><span class="ex">lwpid</span> 3616<span class="kw">)</span></span>
+<span id="cb11-186"><a href="#cb11-186" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    at 0x4D64D71: __futex_abstimed_wait_common64 <span class="er">(</span><span class="ex">futex-internal.c:57</span><span class="kw">)</span></span>
+<span id="cb11-187"><a href="#cb11-187" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D64D71: __futex_abstimed_wait_common <span class="er">(</span><span class="ex">futex-internal.c:87</span><span class="kw">)</span></span>
+<span id="cb11-188"><a href="#cb11-188" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D64D71: __futex_abstimed_wait_cancelable64 <span class="er">(</span><span class="ex">futex-internal.c:139</span><span class="kw">)</span></span>
+<span id="cb11-189"><a href="#cb11-189" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D677EC: __pthread_cond_wait_common <span class="er">(</span><span class="ex">pthread_cond_wait.c:503</span><span class="kw">)</span></span>
+<span id="cb11-190"><a href="#cb11-190" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D677EC: pthread_cond_wait@@GLIBC_2.3.2 <span class="er">(</span><span class="ex">pthread_cond_wait.c:627</span><span class="kw">)</span></span>
+<span id="cb11-191"><a href="#cb11-191" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x5BA4AFA: <span class="pp">???</span> <span class="er">(in</span> <span class="ex">/usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.26.so</span><span class="kw">)</span></span>
+<span id="cb11-192"><a href="#cb11-192" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D68AA3: start_thread <span class="er">(</span><span class="ex">pthread_create.c:447</span><span class="kw">)</span></span>
+<span id="cb11-193"><a href="#cb11-193" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4DF5A33: clone <span class="er">(</span><span class="ex">clone.S:100</span><span class="kw">)</span></span>
+<span id="cb11-194"><a href="#cb11-194" aria-hidden="true" tabindex="-1"></a><span class="ex">client</span> stack range: [0xE363000 0xEB52FFF] client SP: 0xEB52CE0</span>
+<span id="cb11-195"><a href="#cb11-195" aria-hidden="true" tabindex="-1"></a><span class="fu">valgrind</span> stack range: [0x1007E08000 0x1007F07FFF] top usage: 5624 of 1048576</span>
+<span id="cb11-196"><a href="#cb11-196" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-197"><a href="#cb11-197" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-198"><a href="#cb11-198" aria-hidden="true" tabindex="-1"></a><span class="ex">Note:</span> see also the FAQ in the source distribution.</span>
+<span id="cb11-199"><a href="#cb11-199" aria-hidden="true" tabindex="-1"></a><span class="ex">It</span> contains workarounds to several common problems.</span>
+<span id="cb11-200"><a href="#cb11-200" aria-hidden="true" tabindex="-1"></a><span class="ex">In</span> particular, if Valgrind aborted or crashed after</span>
+<span id="cb11-201"><a href="#cb11-201" aria-hidden="true" tabindex="-1"></a><span class="ex">identifying</span> problems in your program, there<span class="st">'s a good chance</span></span>
+<span id="cb11-202"><a href="#cb11-202" aria-hidden="true" tabindex="-1"></a><span class="st">that fixing those problems will prevent Valgrind aborting or</span></span>
+<span id="cb11-203"><a href="#cb11-203" aria-hidden="true" tabindex="-1"></a><span class="st">crashing, especially if it happened in m_mallocfree.c.</span></span>
+<span id="cb11-204"><a href="#cb11-204" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-205"><a href="#cb11-205" aria-hidden="true" tabindex="-1"></a><span class="st">If that doesn'</span>t help, please report this bug to: www.valgrind.org</span>
+<span id="cb11-206"><a href="#cb11-206" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-207"><a href="#cb11-207" aria-hidden="true" tabindex="-1"></a><span class="ex">In</span> the bug report, send all the above text, the valgrind</span>
+<span id="cb11-208"><a href="#cb11-208" aria-hidden="true" tabindex="-1"></a><span class="ex">version,</span> and what OS and version you are using.  Thanks.</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>To inspect an error with GDB, we have to follow these steps:</p>
 <ol type="1">
 <li><p>Run R with gdb as debugger: <code>R --debugger=gdb</code>. R won’t start immediately, so we have time to add breakpoints.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="fig/rcpp/rcpp-start-gdb.png" class="img-fluid figure-img" style="width:90.0%"></p>
+<p><img src="fig/rcpp/rcpp-start-gdb.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:90.0%"></p>
 </figure>
 </div></li>
 <li><p>We can set a breakpoint on the given function with <code>break faulty_program</code>. GDB will grab it on the fly, so choose <code>yes</code>. It most likely will warn you that there’s no symbol for that function.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="fig/rcpp/rcpp-gdb-break.png" class="img-fluid figure-img" style="width:90.0%"></p>
+<p><img src="fig/rcpp/rcpp-gdb-break.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:90.0%"></p>
 </figure>
 </div></li>
 <li><p>Run R using the <code>run</code> command in gdb:</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="fig/rcpp/rcpp-gdb-run.png" class="img-fluid figure-img" style="width:90.0%"></p>
+<p><img src="fig/rcpp/rcpp-gdb-run.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:90.0%"></p>
 </figure>
 </div></li>
 <li><p>Source the program using <code>Rcpp::sourceCpp</code>, and wait for <code>gdb</code> to pause the program once it reaches the breakpoint.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="fig/rcpp/rcpp-gdb-sourcecpp.png" class="img-fluid figure-img" style="width:90.0%"></p>
+<p><img src="fig/rcpp/rcpp-gdb-sourcecpp.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:90.0%"></p>
 </figure>
 </div></li>
 <li><p>Once the program has paused, we can inspect the context.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="fig/rcpp/rcpp-gdb-pause-at-break.png" class="img-fluid figure-img" style="width:90.0%"></p>
+<p><img src="fig/rcpp/rcpp-gdb-pause-at-break.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:90.0%"></p>
 </figure>
 </div>
 <p>Because of the number of options it has, using GBD can be overwhelming. Here is the list of commands I use the most:</p>
@@ -616,14 +795,14 @@ print       # Print/display an expression</code></pre>
 <p>And here is an example using <code>info locals</code>, <code>info args</code>, <code>list</code>, and <code>print</code>.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="fig/rcpp/rcpp-gdb-info-list-print.png" class="img-fluid figure-img" style="width:90.0%"></p>
+<p><img src="fig/rcpp/rcpp-gdb-info-list-print.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:90.0%"></p>
 </figure>
 </div></li>
 <li><p>Finally, to exit the program, type <code>exit</code> (similar to <code>q()</code> in R.)</p></li>
 </ol>
 
 
-<div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
 <div id="ref-R" class="csl-entry" role="listitem">
 R Core Team. 2023. <em>R: A Language and Environment for Statistical Computing</em>. Vienna, Austria: R Foundation for Statistical Computing. <a href="https://www.R-project.org/">https://www.R-project.org/</a>.
 </div>
@@ -641,247 +820,413 @@ Rue-Albrecht, Kevin, Daniela Cassol, Johannes Rainer, and Lori Shepherd. n.d. <e
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
-window.document.addEventListener("DOMContentLoaded", function (event) {
-  const toggleBodyColorMode = (bsSheetEl) => {
-    const mode = bsSheetEl.getAttribute("data-mode");
-    const bodyEl = window.document.querySelector("body");
-    if (mode === "dark") {
-      bodyEl.classList.add("quarto-dark");
-      bodyEl.classList.remove("quarto-light");
-    } else {
-      bodyEl.classList.add("quarto-light");
-      bodyEl.classList.remove("quarto-dark");
-    }
-  }
-  const toggleBodyColorPrimary = () => {
-    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
-    if (bsSheetEl) {
-      toggleBodyColorMode(bsSheetEl);
-    }
-  }
-  toggleBodyColorPrimary();  
-  const icon = "";
-  const anchorJS = new window.AnchorJS();
-  anchorJS.options = {
-    placement: 'right',
-    icon: icon
-  };
-  anchorJS.add('.anchored');
-  const isCodeAnnotation = (el) => {
-    for (const clz of el.classList) {
-      if (clz.startsWith('code-annotation-')) {                     
-        return true;
-      }
-    }
-    return false;
-  }
-  const clipboard = new window.ClipboardJS('.code-copy-button', {
-    text: function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
-        }
-      }
-      return codeEl.innerText;
-    }
-  });
-  clipboard.on('success', function(e) {
-    // button target
-    const button = e.trigger;
-    // don't keep focus
-    button.blur();
-    // flash "checked"
-    button.classList.add('code-copy-button-checked');
-    var currentTitle = button.getAttribute("title");
-    button.setAttribute("title", "Copied!");
-    let tooltip;
-    if (window.bootstrap) {
-      button.setAttribute("data-bs-toggle", "tooltip");
-      button.setAttribute("data-bs-placement", "left");
-      button.setAttribute("data-bs-title", "Copied!");
-      tooltip = new bootstrap.Tooltip(button, 
-        { trigger: "manual", 
-          customClass: "code-copy-button-tooltip",
-          offset: [0, -8]});
-      tooltip.show();    
-    }
-    setTimeout(function() {
-      if (tooltip) {
-        tooltip.hide();
-        button.removeAttribute("data-bs-title");
-        button.removeAttribute("data-bs-toggle");
-        button.removeAttribute("data-bs-placement");
-      }
-      button.setAttribute("title", currentTitle);
-      button.classList.remove('code-copy-button-checked');
-    }, 1000);
-    // clear code selection
-    e.clearSelection();
-  });
-  function tippyHover(el, contentFn) {
-    const config = {
-      allowHTML: true,
-      content: contentFn,
-      maxWidth: 500,
-      delay: 100,
-      arrow: false,
-      appendTo: function(el) {
-          return el.parentElement;
-      },
-      interactive: true,
-      interactiveBorder: 10,
-      theme: 'quarto',
-      placement: 'bottom-start'
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
     };
-    window.tippy(el, config); 
-  }
-  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
-  for (var i=0; i<noterefs.length; i++) {
-    const ref = noterefs[i];
-    tippyHover(ref, function() {
-      // use id or data attribute instead here
-      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
-      try { href = new URL(href).hash; } catch {}
-      const id = href.replace(/^#\/?/, "");
-      const note = window.document.getElementById(id);
-      return note.innerHTML;
-    });
-  }
-      let selectedAnnoteEl;
-      const selectorForAnnotation = ( cell, annotation) => {
-        let cellAttr = 'data-code-cell="' + cell + '"';
-        let lineAttr = 'data-code-annotation="' +  annotation + '"';
-        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
-        return selector;
-      }
-      const selectCodeLines = (annoteEl) => {
-        const doc = window.document;
-        const targetCell = annoteEl.getAttribute("data-target-cell");
-        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
-        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
-        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
-        const lineIds = lines.map((line) => {
-          return targetCell + "-" + line;
-        })
-        let top = null;
-        let height = null;
-        let parent = null;
-        if (lineIds.length > 0) {
-            //compute the position of the single el (top and bottom and make a div)
-            const el = window.document.getElementById(lineIds[0]);
-            top = el.offsetTop;
-            height = el.offsetHeight;
-            parent = el.parentElement.parentElement;
-          if (lineIds.length > 1) {
-            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
-            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
-            height = bottom - top;
-          }
-          if (top !== null && height !== null && parent !== null) {
-            // cook up a div (if necessary) and position it 
-            let div = window.document.getElementById("code-annotation-line-highlight");
-            if (div === null) {
-              div = window.document.createElement("div");
-              div.setAttribute("id", "code-annotation-line-highlight");
-              div.style.position = 'absolute';
-              parent.appendChild(div);
-            }
-            div.style.top = top - 2 + "px";
-            div.style.height = height + 4 + "px";
-            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
-            if (gutterDiv === null) {
-              gutterDiv = window.document.createElement("div");
-              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
-              gutterDiv.style.position = 'absolute';
-              const codeCell = window.document.getElementById(targetCell);
-              const gutter = codeCell.querySelector('.code-annotation-gutter');
-              gutter.appendChild(gutterDiv);
-            }
-            gutterDiv.style.top = top - 2 + "px";
-            gutterDiv.style.height = height + 4 + "px";
-          }
-          selectedAnnoteEl = annoteEl;
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
         }
-      };
-      const unselectCodeLines = () => {
-        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
-        elementsIds.forEach((elId) => {
-          const div = window.document.getElementById(elId);
-          if (div) {
-            div.remove();
-          }
-        });
-        selectedAnnoteEl = undefined;
-      };
-      // Attach click handler to the DT
-      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
-      for (const annoteDlNode of annoteDls) {
-        annoteDlNode.addEventListener('click', (event) => {
-          const clickedEl = event.target;
-          if (clickedEl !== selectedAnnoteEl) {
-            unselectCodeLines();
-            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
-            if (activeEl) {
-              activeEl.classList.remove('code-annotation-active');
-            }
-            selectCodeLines(clickedEl);
-            clickedEl.classList.add('code-annotation-active');
-          } else {
-            // Unselect the line
-            unselectCodeLines();
-            clickedEl.classList.remove('code-annotation-active');
-          }
-        });
       }
-  const findCites = (el) => {
-    const parentEl = el.parentElement;
-    if (parentEl) {
-      const cites = parentEl.dataset.cites;
-      if (cites) {
-        return {
-          el,
-          cites: cites.split(' ')
-        };
-      } else {
-        return findCites(el.parentElement)
-      }
-    } else {
-      return undefined;
+      return false;
     }
-  };
-  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
-  for (var i=0; i<bibliorefs.length; i++) {
-    const ref = bibliorefs[i];
-    const citeInfo = findCites(ref);
-    if (citeInfo) {
-      tippyHover(citeInfo.el, function() {
-        var popup = window.document.createElement('div');
-        citeInfo.cites.forEach(function(cite) {
-          var citeDiv = window.document.createElement('div');
-          citeDiv.classList.add('hanging-indent');
-          citeDiv.classList.add('csl-entry');
-          var biblioDiv = window.document.getElementById('ref-' + cite);
-          if (biblioDiv) {
-            citeDiv.innerHTML = biblioDiv.innerHTML;
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
           }
-          popup.appendChild(citeDiv);
-        });
-        return popup.innerHTML;
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
       });
     }
-  }
-});
-</script>
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./rcpp-part1.html" class="pagination-link">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Rcpp</span></span>
+      <a href="./rcpp-part1.html" class="pagination-link" aria-label="Rcpp">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Rcpp</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./misc.html" class="pagination-link">
-        <span class="nav-page-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Misc</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./misc.html" class="pagination-link" aria-label="Misc">
+        <span class="nav-page-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Misc</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
@@ -889,4 +1234,5 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 
 
 
-</body></html>
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/gvegayon/appliedhpcr/edit/master/rcpp-debugging.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/gvegayon/appliedhpcr/blob/master/rcpp-debugging.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li><li><a href="https://github.com/gvegayon/appliedhpcr/issues" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>

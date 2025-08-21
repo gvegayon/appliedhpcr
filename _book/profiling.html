@@ -6,8 +6,10 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="author" content="George G. Vega Yon, Ph.D.">
+<meta name="dcterms.date" content="2025-08-14">
 
-<title>References – Applied HPC with R</title>
+<title>1&nbsp; Profiling – Applied HPC with R</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,26 +22,42 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-/* CSS for citations */
-div.csl-bib-body { }
-div.csl-entry {
-  clear: both;
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
 }
-.hanging-indent div.csl-entry {
-  margin-left:2em;
-  text-indent:-2em;
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
-div.csl-left-margin {
-  min-width:2em;
-  float:left;
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-div.csl-right-inline {
-  margin-left:2em;
-  padding-left:1em;
-}
-div.csl-indent {
-  margin-left: 2em;
-}</style>
+</style>
 
 
 <script src="site_libs/quarto-nav/quarto-nav.js"></script>
@@ -49,7 +67,8 @@ div.csl-indent {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./misc.html" rel="prev">
+<link href="./efficiency.html" rel="next">
+<link href="./index.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -138,7 +157,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./references.html">References</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./profiling.html">Fundamentals</a></li><li class="breadcrumb-item"><a href="./profiling.html"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Profiling</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -200,7 +219,7 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./profiling.html" class="sidebar-item-text sidebar-link">
+  <a href="./profiling.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Profiling</span></span></a>
   </div>
 </li>
@@ -289,7 +308,7 @@ window.Quarto = {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./references.html" class="sidebar-item-text sidebar-link active">
+  <a href="./references.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">References</span></a>
   </div>
 </li>
@@ -298,22 +317,42 @@ window.Quarto = {
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#a-proposed-workflow" id="toc-a-proposed-workflow" class="nav-link active" data-scroll-target="#a-proposed-workflow"><span class="header-section-number">1.1</span> A proposed workflow</a></li>
+  <li><a href="#profiling-code-in-r" id="toc-profiling-code-in-r" class="nav-link" data-scroll-target="#profiling-code-in-r"><span class="header-section-number">1.2</span> Profiling code in R</a></li>
+  <li><a href="#exercise-identifying-the-bottle-neckbottleneck" id="toc-exercise-identifying-the-bottle-neckbottleneck" class="nav-link" data-scroll-target="#exercise-identifying-the-bottle-neckbottleneck"><span class="header-section-number">1.3</span> Exercise: Identifying the bottle neck</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/gvegayon/appliedhpcr/edit/master/profiling.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/gvegayon/appliedhpcr/blob/master/profiling.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li><li><a href="https://github.com/gvegayon/appliedhpcr/issues" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default">
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./profiling.html">Fundamentals</a></li><li class="breadcrumb-item"><a href="./profiling.html"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Profiling</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title">References</h1>
+<h1 class="title"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Profiling</span></h1>
 </div>
 
 
 
 <div class="quarto-title-meta">
 
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>George G. Vega Yon, Ph.D. </p>
+          </div>
+  </div>
     
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">August 14, 2025</p>
+    </div>
+  </div>
   
     
   </div>
@@ -323,61 +362,105 @@ window.Quarto = {
 </header>
 
 
-<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
-<div id="ref-datatable" class="csl-entry" role="listitem">
-Dowle, Matt, and Arun Srinivasan. 2021. <em>Data.table: Extension of
-‘Data.frame‘</em>. <a href="https://CRAN.R-project.org/package=data.table">https://CRAN.R-project.org/package=data.table</a>.
+<p>Code profiling is a fundamental tool for programmers. With profiling, it is possible to <strong>identify potential bottle necks in your code</strong>, as well as exessive memory usage. Some important things to consider when profiling your code:</p>
+<ul>
+<li><p><strong>It has a stochastic component</strong>: Unrelated to computational complexity, a program can exhibit different performance characteristics across different runs. This means that you should always profile your code multiple times and take the average performance as the final result.</p></li>
+<li><p><strong>It is worthless if the program is too quick</strong>: Most of the time, code profiling must be done on programs that take a noticeable amount of time to run. If a program runs too quickly, the overhead of the profiling itself can skew the results. If you still need to address this, you can, for example, do multiple runs or use a larger dataset to increase the run time of the program.</p></li>
+<li><p><strong>Don’t do it too early</strong>: Most of the time, developers tend to optimizing (and thus profiling) their code too early. You don’t want to spend time doing code profiling on something that could quickly change. So it is better to do it on a working code rather than pieces of it.</p>
+<p>Instead of profiling the code too early, make sure that you have a good design and implementation plan.</p></li>
+<li><p><strong>Be strategic</strong>: Not everything needs to be optimized. Focus on the parts of the code that are critical for performance and user experience. You can think of it in terms of how much time the program/user spends on each bit.</p></li>
+<li><p><strong>AI can give you good tips</strong>: In my personal experience, AI can be useful doing code profiling too. This works better if you are using an <a href="https://en.wikipedia.org/w/index.php?title=Agentic_AI&amp;oldid=1305674453" target="_blank">agentic AI</a>, as it is more likely to get good feedback from it (it will test the code for you).</p></li>
+</ul>
+<p>Here is a proposed workflow for profiling and optimizing your code in general</p>
+<section id="a-proposed-workflow" class="level2" data-number="1.1">
+<h2 data-number="1.1" class="anchored" data-anchor-id="a-proposed-workflow"><span class="header-section-number">1.1</span> A proposed workflow</h2>
+<p>Here is a formula to follow when doing code profiling/optimization:</p>
+<ol type="1">
+<li>Ask yourself these questions before you jump into profiling:</li>
+</ol>
+<!-- https://mermaid.live/edit#pako:eNpNUNFO4zAQ_BVrXy6RQkTatGmjEydoywnpQCfgBZQXt942vou9leOoF5L--9ktBN52PDM7s-5gQwIhh21Fh03JjWW_HgvN2HUQPFkHw_Di4uqmu6uZtN_X5qp2uh9Hr7hxRP-Cdb_org2ylpoT3xj8wj-QZQZ5VbXR-4I_TW1ZTY0WNdsQVXEc98sgWGkRht628LZ73q7RM6vumf_Fmiky6N225JolSmqfMch9i9vPjgcytnTzucdqUAzogfrl2X57hhG7-6aGdmsXJjzyqneNWxAx1bJKbk9FBO7Rn0DaBfU_g-C3oQ2iYAdpSy-gvZVKvnErSYchRLAzUkBuTYMRKDSKewidTyjAlqiwgNyNAre8qWwBhT46257rVyL14TTU7ErIt7yqHWr2gltcSr4zXA2vxjVDs3B_bCEfTU47IO_gH-TJPIuTNBml09E0uRxnkzSCFvLxPE7HWZrNp7PxZJ5NZ8cI3k6pl_Esmxz_A2q8spU -->
+<p><img src="fig/when_to_profile.png" class="img-fluid" alt="Figure showing a silly diagram about when to profile. Generally, you only want to do that if it is taking more than a few seconds."></p>
+<ol start="2" type="1">
+<li><p>If you succeed, then ensure that the profiling is done in a finite time, this is, use a subset of the data to avoid having long waits. <strong>Running the profiler will add overhead computing time, so try to keep it short (e.g., 1 minute)</strong>.</p></li>
+<li><p>There may be many things that could be optimized, focus on what would deliver the highest impact. Could be a function that is only called once but takes a long time to execute, or a function that is called multiple times but is relatively fast.</p></li>
+<li><p>Before making any changes, ensure that you have a backup of your original code, as well as a copy of the current profiling results. <strong>You should also ensure to save (if possible) the outcome of the code.</strong></p></li>
+<li><p>Re-run the profiler and compare performance. If no changes are observed, then go back to step 2. <strong>Ensure the new version of the code maintains the same functionality as the original (check the results).</strong></p></li>
+</ol>
+</section>
+<section id="profiling-code-in-r" class="level2" data-number="1.2">
+<h2 data-number="1.2" class="anchored" data-anchor-id="profiling-code-in-r"><span class="header-section-number">1.2</span> Profiling code in R</h2>
+<p>In the R programming language, the most used profiling tool comes with the <a href="https://cran.r-project.org/package=profvis"><code>profvis</code> package</a>. The package provides a wrapper of the <code>Rprof</code> function, which is a built-in R function for profiling code. The <code>profvis</code> package makes it easier to visualize the profiling results in a web-based interface.</p>
+<p>To use <code>profvis</code>, you first need to install it from CRAN:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"profvis"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Then, you can use it to profile your R code like this:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(profvis)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">profvis</span>({</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Your R code here</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>This will execute the code and generate a visualization of the profiling results in a new browser window. You can also save the output using the <code>htmlwidgets</code> package:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>pv <span class="ot">&lt;-</span> <span class="fu">profvis</span>({</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Your R code here</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>htmlwidgets<span class="sc">::</span><span class="fu">saveWidget</span>(pv, <span class="st">"profvis.html"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Once open, you will see two visualizations: the flamegraph and the data. The flamegraph is one of the most useful visualizations. It directly maps the time and memory used by each line of code</p>
+<p><img src="fig/profvis_flame_graph.png" class="img-fluid"></p>
+<p>The data visualization shows the distribution of time spent in each function. Using a tree structure, which allows taking deep dives into the call stack.</p>
+<p><img src="fig/profvis_data.png" class="img-fluid"></p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
 </div>
-<div id="ref-RcppBook" class="csl-entry" role="listitem">
-Eddelbuettel, Dirk. 2013. <em>Seamless <span>R</span> and
-<span>C++</span> Integration with <span>Rcpp</span></em>. New York:
-Springer. <a href="https://doi.org/10.1007/978-1-4614-6868-4">https://doi.org/10.1007/978-1-4614-6868-4</a>.
-</div>
-<div id="ref-Rcpp" class="csl-entry" role="listitem">
-Eddelbuettel, Dirk, and James Joseph Balamuta. 2018. <span>“<span class="nocase">Extending extit<span>R</span> with extit<span>C++</span>:
-A Brief Introduction to extit<span>Rcpp</span></span>.”</span> <em>The
-American Statistician</em> 72 (1): 28–36. <a href="https://doi.org/10.1080/00031305.2017.1375990">https://doi.org/10.1080/00031305.2017.1375990</a>.
-</div>
-<div id="ref-Eddelbuettel2011" class="csl-entry" role="listitem">
-Eddelbuettel, Dirk, and Romain François. 2011. <span>“<span>Rcpp</span>:
-Seamless <span>R</span> and <span>C++</span> Integration.”</span>
-<em>Journal of Statistical Software</em> 40 (8): 1–18. <a href="https://doi.org/10.18637/jss.v040.i08">https://doi.org/10.18637/jss.v040.i08</a>.
-</div>
-<div id="ref-lumi2023" class="csl-entry" role="listitem">
-LUMI consortium. 2023. <span>“Documentation - Distribution and
-Binding.”</span> <a href="https://docs.lumi-supercomputer.eu/runjobs/scheduled-jobs/distribution-binding/">https://docs.lumi-supercomputer.eu/runjobs/scheduled-jobs/distribution-binding/</a>.
-</div>
-<div id="ref-R" class="csl-entry" role="listitem">
-R Core Team. 2023. <em>R: A Language and Environment for Statistical
-Computing</em>. Vienna, Austria: R Foundation for Statistical Computing.
-<a href="https://www.R-project.org/">https://www.R-project.org/</a>.
-</div>
-<div id="ref-rue-albrechtWelcomeBioconductorPackages" class="csl-entry" role="listitem">
-Rue-Albrecht, Kevin, Daniela Cassol, Johannes Rainer, and Lori Shepherd.
-n.d. <em>Welcome | <span>Bioconductor Packages</span>:
-<span>Development</span>, <span>Maintenance</span>, and <span>Peer
-Review</span></em>. Accessed May 2, 2023.
-</div>
-<div id="ref-slurmRpaper" class="csl-entry" role="listitem">
-Vega Yon, George, and Paul Marjoram. 2019. <span>“slurmR: A Lightweight
-Wrapper for HPC with Slurm.”</span> <em>The Journal of Open Source
-Software</em> 4 (39). <a href="https://doi.org/10.21105/joss.01493">https://doi.org/10.21105/joss.01493</a>.
-</div>
-<div id="ref-slurmRpkg" class="csl-entry" role="listitem">
-———. 2022. <em><span class="nocase">slurmR: A Lightweight Wrapper for
-’Slurm’</span></em>. <a href="https://github.com/USCbiostats/slurmR">https://github.com/USCbiostats/slurmR</a>.
-</div>
-<div id="ref-Yoo_Jette_Grondona_2003" class="csl-entry" role="listitem">
-Yoo, Andy B., Morris A. Jette, and Mark Grondona. 2003. <span>“SLURM:
-Simple Linux Utility for Resource Management.”</span> In <em>Job
-Scheduling Strategies for Parallel Processing</em>, edited by Dror
-Feitelson, Larry Rudolph, and Uwe Schwiegelshohn, 2862:44–60. Lecture
-Notes in Computer Science. Berlin, Heidelberg: Springer Berlin
-Heidelberg. <a href="https://doi.org/10.1007/10968987_3">https://doi.org/10.1007/10968987_3</a>.
+<div class="callout-title-container flex-fill">
+Tip
 </div>
 </div>
+<div class="callout-body-container callout-body">
+<p>When developing R packages, it is a good idea to pair your <code>profvis::profvis</code> call with <code>devtools::load_all()</code> to ensure that all source code is available to the profiler. Otherwise, the flamegraph won’t show your code (it will say “unavailable”).</p>
+</div>
+</div>
+</section>
+<section id="exercise-identifying-the-bottle-neckbottleneck" class="level2" data-number="1.3">
+<h2 data-number="1.3" class="anchored" data-anchor-id="exercise-identifying-the-bottle-neckbottleneck"><span class="header-section-number">1.3</span> Exercise: Identifying the bottle neck<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate data</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>times <span class="ot">&lt;-</span> <span class="fl">4e5</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>cols <span class="ot">&lt;-</span> <span class="dv">150</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="at">x =</span> <span class="fu">matrix</span>(<span class="fu">rnorm</span>(times <span class="sc">*</span> cols, <span class="at">mean =</span> <span class="dv">5</span>), <span class="at">ncol =</span> cols))</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">cbind</span>(<span class="at">id =</span> <span class="fu">paste0</span>(<span class="st">"g"</span>, <span class="fu">seq_len</span>(times)), data)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>pv <span class="ot">&lt;-</span> profvis<span class="sc">::</span><span class="fu">profvis</span>({</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  data1 <span class="ot">&lt;-</span> data   <span class="co"># Store in another variable for this run</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Get column means</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  means <span class="ot">&lt;-</span> <span class="fu">apply</span>(data1[, <span class="fu">names</span>(data1) <span class="sc">!=</span> <span class="st">"id"</span>], <span class="dv">2</span>, mean)</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Subtract mean from each column</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">seq_along</span>(means)) {</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>    data1[, <span class="fu">names</span>(data1) <span class="sc">!=</span> <span class="st">"id"</span>][, i] <span class="ot">&lt;-</span> data1[, <span class="fu">names</span>(data1) <span class="sc">!=</span> <span class="st">"id"</span>][, i] <span class="sc">-</span> means[i]</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>htmlwidgets<span class="sc">::</span><span class="fu">saveWidget</span>(pv, <span class="st">"profvis-slow-code.html"</span>)</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a><span class="co"># In interactive mode, we can directly view the profiling results</span></span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">interactive</span>())</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(pv)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<iframe src="profvis-slow-code.html" width="100%" height="600px">
+</iframe>
+<p>Can you identify where is the bottleneck in the code? What would you do to speed it up?</p>
 
 
+</section>
+<section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn1"><p>Code copied verbatim from the <code>profvis</code> R package <a href="https://profvis.r-lib.org/articles/examples.html#example-2" target="_blank">here</a>.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -781,11 +864,14 @@ Heidelberg. <a href="https://doi.org/10.1007/10968987_3">https://doi.org/10.1007
   </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./misc.html" class="pagination-link" aria-label="Misc">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Misc</span></span>
+      <a href="./index.html" class="pagination-link" aria-label="Preface">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Preface</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
+      <a href="./efficiency.html" class="pagination-link" aria-label="Writing efficient code">
+        <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Writing efficient code</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
   </div>
 </nav>
 </div> <!-- /content -->
@@ -793,4 +879,4 @@ Heidelberg. <a href="https://doi.org/10.1007/10968987_3">https://doi.org/10.1007
 
 
 
-<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions"><ul><li><a href="https://github.com/gvegayon/appliedhpcr/edit/master/references.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/gvegayon/appliedhpcr/blob/master/references.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li><li><a href="https://github.com/gvegayon/appliedhpcr/issues" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/gvegayon/appliedhpcr/edit/master/profiling.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/gvegayon/appliedhpcr/blob/master/profiling.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li><li><a href="https://github.com/gvegayon/appliedhpcr/issues" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>

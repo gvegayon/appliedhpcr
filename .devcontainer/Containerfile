@@ -1,0 +1,37 @@
+FROM rocker/tidyverse:4.5.1
+
+# Installing quarto
+RUN apt update && apt install -y --no-install-recommends \
+    wget libpod-simple-perl && \
+    wget https://github.com/quarto-dev/quarto-cli/releases/download/v1.7.33/quarto-1.7.33-linux-amd64.deb && \
+    dpkg -i quarto*
+
+RUN install2.r --error tinytex && Rscript -e 'tinytex::install_tinytex()'
+
+# Making sure that the path is available
+ENV PATH="/root/.TinyTeX/bin/x86_64-linux/:${PATH}"
+
+RUN install2.r --error languageserver && \
+    installGithub.r nx10/httpgd
+
+# Installing needed packages
+RUN install2.r --error microbenchmark slurmR future Rcpp RcppArmadillo \
+    quarto rsvg lobstr
+
+# Needed for the rsvg package
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    librsvg2-dev \
+    libnss3 \
+    libatk1.0-0 \
+    libatk-bridge2.0-0 \
+    libcups2 \
+    libdrm2 \
+    libgtk-3-0 \
+    libgbm1 \
+    libasound2-dev
+
+RUN quarto install chromium
+
+RUN apt install valgrind -y --no-install-recommends
+
+CMD ["bash"]

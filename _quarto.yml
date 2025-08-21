@@ -6,9 +6,19 @@ book:
   google-analytics: "G-9D75EFV0TE"
   title: "Applied HPC with R"
   author: "George G. Vega Yon"
+  repo-url: https://github.com/gvegayon/appliedhpcr
+  repo-branch: master
+  issue-url: https://github.com/gvegayon/appliedhpcr/issues
+  repo-actions: [edit, source, issue]
+  cover-image: 'fig/cover.png'
+  cover-image-alt: 'Cover image for Applied HPC with R'
   date: "4/9/2023"
   chapters:
     - index.qmd
+    - part: "Fundamentals"
+      chapters:
+      - profiling.qmd
+      - efficiency.qmd
     - part: "Parallel computing"
       chapters:
       - intro.qmd
