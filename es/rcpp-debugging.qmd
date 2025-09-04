@@ -1,0 +1,48 @@
+---
+title: Depuración de Rcpp
+author: George G. Vega Yon, Ph.D.
+date: 2025-08-14
+---
+
+*[El contenido completo de este capítulo será traducido al español. Por ahora, esta es una versión preliminar.]*
+
+## Depuración de Código C++ en R
+
+La depuración de código Rcpp requiere técnicas especiales debido a la integración entre R y C++. Este capítulo cubre:
+
+- Herramientas de depuración
+- Técnicas de diagnóstico
+- Errores comunes y sus soluciones
+- Mejores prácticas para evitar problemas
+
+## Herramientas de Depuración
+
+1. **GDB**: El depurador GNU para código C++
+2. **Valgrind**: Para detectar errores de memoria
+3. **AddressSanitizer**: Detector de errores de acceso a memoria
+4. **Print debugging**: Usando `Rcout` para depuración simple
+
+## Errores Comunes
+
+- Acceso fuera de límites
+- Problemas de gestión de memoria
+- Incompatibilidades de tipos
+- Errores de compilación
+
+```cpp
+// Ejemplo de depuración con Rcout
+#include <Rcpp.h>
+using namespace Rcpp;
+
+// [[Rcpp::export]]
+double funcion_debug(NumericVector x) {
+  Rcout << "Tamaño del vector: " << x.size() << std::endl;
+  // ... resto del código
+}
+```
+
+::: {.callout-note}
+## Trabajo en Progreso
+
+Esta traducción está en desarrollo. El contenido completo incluirá ejemplos prácticos de depuración y resolución de problemas comunes.
+:::

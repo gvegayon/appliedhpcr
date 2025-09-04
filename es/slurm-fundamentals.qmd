@@ -1,0 +1,41 @@
+---
+title: Fundamentos de SLURM
+author: George G. Vega Yon, Ph.D.
+date: 2025-08-14
+---
+
+*[El contenido completo de este capítulo será traducido al español. Por ahora, esta es una versión preliminar.]*
+
+## ¿Qué es SLURM?
+
+SLURM (Simple Linux Utility for Resource Management) es un sistema de gestión de colas y planificación de trabajos de código abierto para clusters de Linux. Es ampliamente utilizado en centros de cómputo de alto rendimiento.
+
+## Comandos Básicos de SLURM
+
+- `sinfo`: Mostrar información sobre particiones y nodos
+- `squeue`: Mostrar información sobre trabajos en cola
+- `sbatch`: Enviar un script de trabajo por lotes
+- `scancel`: Cancelar trabajos
+- `srun`: Ejecutar trabajo interactivo
+
+## Ejemplo de Script SLURM
+
+```bash
+#!/bin/bash
+#SBATCH --job-name=mi_trabajo_r
+#SBATCH --time=01:00:00
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=1
+#SBATCH --cpus-per-task=4
+#SBATCH --mem=8G
+
+module load R
+
+Rscript mi_script.R
+```
+
+::: {.callout-note}
+## Trabajo en Progreso
+
+Esta traducción está en desarrollo. El contenido completo incluirá ejemplos prácticos de envío de trabajos R a clusters SLURM y optimización de recursos.
+:::

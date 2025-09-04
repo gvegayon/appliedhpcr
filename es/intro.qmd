@@ -1,0 +1,33 @@
+---
+title: Introducción a la Computación Paralela
+author: George G. Vega Yon, Ph.D.
+date: 2025-08-14
+---
+
+*[El contenido completo de este capítulo será traducido al español. Por ahora, esta es una versión preliminar.]*
+
+## ¿Qué es la Computación Paralela?
+
+La computación paralela es una técnica de programación donde múltiples procesadores trabajan simultáneamente para resolver un problema computacional. En el contexto de R, esto puede significar:
+
+- Usar múltiples núcleos de CPU
+- Distribuir cálculos entre múltiples máquinas
+- Aprovechar GPU para cálculos específicos
+
+## Tipos de Paralelización
+
+1. **Paralelización de Datos**: Dividir los datos entre procesadores
+2. **Paralelización de Tareas**: Dividir diferentes tareas entre procesadores
+3. **Paralelización Pipeline**: Procesar datos en etapas paralelas
+
+## Cuándo Usar Computación Paralela
+
+- Cuando tienes tareas independientes que pueden ejecutarse simultáneamente
+- Cuando el overhead de comunicación es menor que la ganancia de velocidad
+- Cuando tienes suficientes recursos computacionales disponibles
+
+::: {.callout-note}
+## Trabajo en Progreso
+
+Esta traducción está en desarrollo. El contenido completo incluirá ejemplos prácticos usando paquetes como `parallel`, `foreach`, y `future`.
+:::

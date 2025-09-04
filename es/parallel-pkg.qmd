@@ -1,0 +1,43 @@
+---
+title: El Paquete parallel
+author: George G. Vega Yon, Ph.D.
+date: 2025-08-14
+---
+
+*[El contenido completo de este capítulo será traducido al español. Por ahora, esta es una versión preliminar.]*
+
+## El Paquete `parallel` en R
+
+El paquete `parallel` es la herramienta estándar para computación paralela en R. Proporciona funciones para:
+
+- `mclapply()`: Versión paralela de `lapply()` (solo Unix/Linux)
+- `parLapply()`: Versión paralela multiplataforma
+- `makeCluster()`: Crear clusters de trabajadores
+- `clusterApply()`: Aplicar funciones en clusters
+
+## Funciones Principales
+
+```r
+library(parallel)
+
+# Detectar número de núcleos
+num_cores <- detectCores()
+
+# Ejemplo con mclapply (Unix/Linux/Mac)
+result <- mclapply(data, function(x) {
+  # Tu función aquí
+}, mc.cores = num_cores)
+
+# Ejemplo con clusters (Multiplataforma)
+cl <- makeCluster(num_cores)
+result <- parLapply(cl, data, function(x) {
+  # Tu función aquí
+})
+stopCluster(cl)
+```
+
+::: {.callout-note}
+## Trabajo en Progreso
+
+Esta traducción está en desarrollo. El contenido completo incluirá ejemplos detallados, comparaciones de rendimiento y mejores prácticas para usar el paquete parallel.
+:::

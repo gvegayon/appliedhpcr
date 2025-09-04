@@ -1,0 +1,49 @@
+---
+title: Perfilado de Código
+author: George G. Vega Yon, Ph.D.
+date: 2025-08-14
+---
+
+El perfilado de código es una herramienta fundamental para programadores. Con el perfilado, es posible **identificar posibles cuellos de botella en tu código**, así como uso excesivo de memoria. Algunas cosas importantes a considerar al perfilar tu código:
+
+- **Tiene un componente estocástico**: Independientemente de la complejidad computacional, un programa puede exhibir diferentes características de rendimiento en diferentes ejecuciones. Esto significa que siempre debes perfilar tu código múltiples veces y tomar el rendimiento promedio como resultado final.
+
+- **Es inútil si el programa es demasiado rápido**: La mayoría del tiempo, el perfilado de código debe hacerse en programas que toman una cantidad notable de tiempo para ejecutarse. Si un programa se ejecuta demasiado rápido, la sobrecarga del perfilado mismo puede sesgar los resultados. Si aún necesitas abordar esto, puedes, por ejemplo, hacer múltiples ejecuciones o usar un conjunto de datos más grande para aumentar el tiempo de ejecución del programa.
+
+- **No lo hagas demasiado temprano**: La mayoría del tiempo, los desarrolladores tienden a optimizar (y por tanto perfilar) su código demasiado temprano. No quieres gastar tiempo haciendo perfilado de código en algo que podría cambiar rápidamente. Por lo tanto, es mejor hacerlo en código que funciona en lugar de en piezas del mismo.
+  
+  En lugar de perfilar el código demasiado temprano, asegúrate de tener un buen plan de diseño e implementación.
+
+- **Sé estratégico**: No todo necesita ser optimizado. Enfócate en las partes del código que son críticas para el rendimiento y la experiencia del usuario. Puedes pensar en términos de cuánto tiempo el programa/usuario gasta en cada parte.
+
+- **La IA puede darte buenos consejos**: En mi experiencia personal, la IA puede ser útil para hacer perfilado de código también. Esto funciona mejor si estás usando una [IA agéntica](https://en.wikipedia.org/w/index.php?title=Agentic_AI&oldid=1305674453){target="_blank"}, ya que es más probable obtener buena retroalimentación de ella (probará el código por ti).
+
+*[El contenido completo de este capítulo será traducido al español. Por ahora, esta es una versión preliminar.]*
+
+## Herramientas de Perfilado en R
+
+R proporciona varias herramientas para el perfilado de código:
+
+- **`Rprof()`**: La herramienta de perfilado básica incluida en R base
+- **`profvis`**: Un paquete que proporciona una interfaz visual para los resultados de perfilado
+- **`microbenchmark`**: Para comparar el rendimiento de pequeños fragmentos de código
+- **`bench`**: Una alternativa moderna a microbenchmark
+
+## Ejemplo Básico
+
+```r
+# Ejemplo básico de perfilado
+library(profvis)
+
+profvis({
+  # Tu código aquí
+  x <- rnorm(1000000)
+  y <- mean(x)
+})
+```
+
+::: {.callout-note}
+## Trabajo en Progreso
+
+Esta traducción está en desarrollo. El contenido completo del capítulo original incluye ejemplos detallados, mejores prácticas y estudios de caso que serán traducidos próximamente.
+:::

@@ -1,0 +1,43 @@
+---
+title: SLURM con Parallel Simulado
+author: George G. Vega Yon, Ph.D.
+date: 2025-08-14
+---
+
+*[El contenido completo de este capítulo será traducido al español. Por ahora, esta es una versión preliminar.]*
+
+## Simulación con SLURM
+
+Este capítulo cubre cómo usar SLURM para ejecutar simulaciones paralelas en R, incluyendo:
+
+- Configuración de trabajos de simulación
+- Gestión de arrays de trabajos
+- Recolección de resultados
+- Mejores prácticas para simulaciones de Monte Carlo
+
+## Array Jobs en SLURM
+
+```bash
+#!/bin/bash
+#SBATCH --job-name=simulacion_array
+#SBATCH --array=1-100
+#SBATCH --time=00:30:00
+#SBATCH --cpus-per-task=1
+#SBATCH --mem=2G
+
+module load R
+
+Rscript simulacion.R $SLURM_ARRAY_TASK_ID
+```
+
+## Gestión de Resultados
+
+- Organización de archivos de salida
+- Combinación de resultados de múltiples trabajos
+- Verificación de completitud
+
+::: {.callout-note}
+## Trabajo en Progreso
+
+Esta traducción está en desarrollo. El contenido completo incluirá ejemplos completos de simulaciones distribuidas y análisis de resultados.
+:::

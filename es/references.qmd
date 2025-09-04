@@ -1,0 +1,33 @@
+---
+title: "Referencias"
+---
+
+# Referencias {.unnumbered}
+
+::: {#refs}
+:::
+
+## Recursos Adicionales
+
+### Libros Recomendados
+
+- **Advanced R** por Hadley Wickham
+- **Efficient R Programming** por Colin Gillespie y Robin Lovelace
+- **Parallel R** por Q. Ethan McCallum y Stephen Weston
+- **Seamless R and C++ Integration with Rcpp** por Dirk Eddelbuettel
+
+### Sitios Web y Documentación
+
+- [CRAN Task View: High-Performance Computing](https://cran.r-project.org/web/views/HighPerformanceComputing.html)
+- [Rcpp Documentation](https://cran.r-project.org/package=Rcpp)
+- [SLURM Documentation](https://slurm.schedmd.com/documentation.html)
+- [R Parallel Computing](https://stat.ethz.ch/R-manual/R-devel/library/parallel/doc/parallel.pdf)
+
+### Paquetes Relevantes
+
+- `parallel`: Computación paralela básica
+- `foreach`: Bucles paralelos
+- `future`: Framework unificado para computación paralela
+- `Rcpp`: Integración R/C++
+- `data.table`: Procesamiento eficiente de datos
+- `bench`: Benchmarking de código

@@ -1,0 +1,29 @@
+---
+title: Eficiencia
+author: George G. Vega Yon, Ph.D.
+date: 2025-08-14
+---
+
+*[El contenido completo de este capítulo será traducido al español. Por ahora, esta es una versión preliminar.]*
+
+## Escribiendo Código Eficiente en R
+
+La eficiencia en R implica tanto la velocidad de ejecución como el uso eficiente de memoria. Este capítulo cubre:
+
+- Vectorización en R
+- Evitar bucles innecesarios
+- Uso eficiente de estructuras de datos
+- Optimización de memoria
+
+## Principios Básicos
+
+1. **Vectoriza cuando sea posible**: R está optimizado para operaciones vectoriales
+2. **Pre-asigna memoria**: Evita hacer crecer objetos dinámicamente
+3. **Usa las funciones correctas**: Algunas funciones están más optimizadas que otras
+4. **Considera el tipo de datos**: Los tipos apropiados pueden mejorar significativamente el rendimiento
+
+::: {.callout-note}
+## Trabajo en Progreso
+
+Esta traducción está en desarrollo. El contenido completo incluirá ejemplos prácticos, comparaciones de rendimiento y mejores prácticas para escribir código R eficiente.
+:::

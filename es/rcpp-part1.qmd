@@ -1,0 +1,44 @@
+---
+title: Rcpp Parte 1
+author: George G. Vega Yon, Ph.D.
+date: 2025-08-14
+---
+
+*[El contenido completo de este capítulo será traducido al español. Por ahora, esta es una versión preliminar.]*
+
+## Introducción a Rcpp
+
+Rcpp es un paquete de R que facilita la integración de código C++ con R. Permite:
+
+- Escribir funciones C++ que pueden ser llamadas desde R
+- Acceso eficiente a objetos de R desde C++
+- Mejoras significativas de rendimiento para cálculos intensivos
+
+## ¿Por qué usar C++ con R?
+
+1. **Velocidad**: C++ es considerablemente más rápido para bucles y cálculos intensivos
+2. **Control de memoria**: Mejor gestión de memoria para datos grandes
+3. **Librerías existentes**: Acceso a librerías C++ optimizadas
+4. **Algoritmos personalizados**: Implementación de algoritmos especializados
+
+## Primer Ejemplo
+
+```cpp
+#include <Rcpp.h>
+using namespace Rcpp;
+
+// [[Rcpp::export]]
+double suma_cpp(NumericVector x) {
+  double resultado = 0;
+  for(int i = 0; i < x.size(); i++) {
+    resultado += x[i];
+  }
+  return resultado;
+}
+```
+
+::: {.callout-note}
+## Trabajo en Progreso
+
+Esta traducción está en desarrollo. El contenido completo incluirá ejemplos prácticos, tipos de datos, y mejores prácticas para programación con Rcpp.
+:::

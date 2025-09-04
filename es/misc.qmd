@@ -1,0 +1,37 @@
+---
+title: Misceláneos
+author: George G. Vega Yon, Ph.D.
+date: 2025-08-14
+---
+
+*[El contenido completo de este capítulo será traducido al español. Por ahora, esta es una versión preliminar.]*
+
+## Temas Adicionales en HPC con R
+
+Este capítulo cubre varios temas adicionales relacionados con computación de alto rendimiento en R:
+
+- Optimización de memoria
+- Uso de GPU con R
+- Herramientas de monitoreo de rendimiento
+- Mejores prácticas para desarrollo
+- Recursos adicionales y lecturas recomendadas
+
+## GPU Computing
+
+R puede aprovechar GPU para ciertas tareas usando paquetes como:
+
+- `gpuR`: Interfaz general para GPU
+- `tensorflow` y `torch`: Para deep learning
+- `OpenCL`: Para programación paralela en GPU
+
+## Monitoreo de Rendimiento
+
+- `htop`: Monitor del sistema en tiempo real
+- `iotop`: Monitor de I/O
+- `nvidia-smi`: Monitor de GPU NVIDIA
+
+::: {.callout-note}
+## Trabajo en Progreso
+
+Esta traducción está en desarrollo. El contenido completo incluirá guías detalladas sobre estos temas avanzados.
+:::
