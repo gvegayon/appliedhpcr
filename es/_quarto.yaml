@@ -4,6 +4,7 @@ project:
 engine: knitr
 book:
   version: 2025.09.03
+  language: es
   google-analytics: "G-9D75EFV0TE"
   title: "HPC Aplicado con R"
   author: "George G. Vega Yon"
@@ -43,6 +44,7 @@ book:
       chapters:
         - rcpp-part1.qmd
         - rcpp-debugging.qmd
+  appendices:
     - misc.qmd
     - references.qmd
     - news.qmd

@@ -7,6 +7,7 @@ book:
   google-analytics: "G-9D75EFV0TE"
   title: "Applied HPC with R"
   author: "George G. Vega Yon"
+  language: en
   repo-url: https://github.com/gvegayon/appliedhpcr
   repo-branch: master
   issue-url: https://github.com/gvegayon/appliedhpcr/issues
@@ -34,6 +35,7 @@ book:
       chapters:
         - rcpp-part1.qmd
         - rcpp-debugging.qmd
+  appendices: 
     - misc.qmd
     - references.qmd
     - news.qmd
