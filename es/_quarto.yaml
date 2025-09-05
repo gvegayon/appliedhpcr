@@ -1,16 +1,14 @@
 project:
   type: book
 
-execute: 
-  cache: false
-
+engine: knitr
 book:
   version: 0.1.0
   google-analytics: "G-9D75EFV0TE"
   title: "HPC Aplicado con R"
   author: "George G. Vega Yon"
   original-date: 2023-04-09
-  date: "2024-09-04"
+  date: 2025-09-04
   cover-image: ../fig/cover.png
   cover-image-alt: 'Imagen de portada para HPC Aplicado con R'
   page-footer: HPC Aplicado con R - [https://ggvy.cl](https://ggvy.cl){target="_blank"}
@@ -47,8 +45,8 @@ book:
         - rcpp-debugging.qmd
     - misc.qmd
     - references.qmd
+    - news.qmd
   downloads:
-    - epub
     - pdf
 
 bibliography: ../references.bib
