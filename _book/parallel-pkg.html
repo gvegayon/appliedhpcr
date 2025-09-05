@@ -556,9 +556,9 @@ Tip
 <span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Unit: milliseconds
-     expr       min        lq      mean    median        uq       max neval
-   serial  604.8473  614.5471  675.2646  677.8791  713.1369  757.1467    10
- parallel 1875.7810 1897.2439 1922.8449 1924.4849 1940.4673 1966.9728    10</code></pre>
+     expr       min        lq      mean    median        uq      max neval
+   serial  582.6643  594.1518  650.1741  636.9935  677.0963  767.169    10
+ parallel 1848.9411 1858.1207 1868.5899 1869.1913 1877.8450 1883.417    10</code></pre>
 </div>
 </div>
 <p>From the comparison, we can see that the parallel version is significantly slower than the serial version. Two things to note here are (a) the task we are running is already fast (about 0.3 seconds on average for the serial run) and (b) there is an overhead cost associated with creating, preparing, and stopping the cluster. As we mentioned earlier, parallel optimizations only make sense if your code is already talking a significant amount of time, making the overhead cost associated with the setup relatively small. The following implementation of the function should make it significantly faster:</p>
@@ -618,8 +618,8 @@ Tip
 <div class="cell-output cell-output-stdout">
 <pre><code>Unit: milliseconds
      expr      min       lq     mean   median       uq      max neval
-   serial 604.9276 647.5111 685.3129 659.5539 742.8166 792.2455    10
- parallel 301.8961 319.2118 331.6875 332.0564 340.6693 354.4636    10</code></pre>
+   serial 585.6767 599.5727 675.7175 678.3609 748.9226 759.3845    10
+ parallel 285.1549 313.2225 326.7649 325.9655 351.8708 358.0177    10</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># We need to stop the cluster</span></span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="fu">stopCluster</span>(cl)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -736,11 +736,11 @@ Caution
 <span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>ans <span class="ot">&lt;-</span> <span class="fu">do.call</span>(cbind, <span class="fu">mclapply</span>(<span class="dv">1</span><span class="sc">:</span>nnodes, <span class="cf">function</span>(x) <span class="fu">runif</span>(nsims)))</span>
 <span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>(ans0 <span class="ot">&lt;-</span> <span class="fu">var</span>(ans))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>              [,1]         [,2]          [,3]          [,4]
-[1,]  0.0834984510  0.002364067 -0.0011674655 -0.0004561904
-[2,]  0.0023640668  0.078067723 -0.0037976101  0.0018034164
-[3,] -0.0011674655 -0.003797610  0.0812791291 -0.0000453217
-[4,] -0.0004561904  0.001803416 -0.0000453217  0.0825930311</code></pre>
+<pre><code>            [,1]         [,2]         [,3]         [,4]
+[1,] 0.084294183  0.001145735  0.005046080  0.003309530
+[2,] 0.001145735  0.084392842 -0.003986792 -0.004903358
+[3,] 0.005046080 -0.003986792  0.080362938  0.001108832
+[4,] 0.003309530 -0.004903358  0.001108832  0.085262892</code></pre>
 </div>
 </div>
 <p>Once more, we want to make sure this is reproducible</p>
@@ -750,11 +750,11 @@ Caution
 <span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>ans1 <span class="ot">&lt;-</span> <span class="fu">var</span>(<span class="fu">do.call</span>(cbind, <span class="fu">mclapply</span>(<span class="dv">1</span><span class="sc">:</span>nnodes, <span class="cf">function</span>(x) <span class="fu">runif</span>(nsims))))</span>
 <span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>ans0 <span class="sc">-</span> ans1 <span class="co"># A matrix of zeros</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>              [,1]          [,2]          [,3]          [,4]
-[1,] -0.0032221716 -0.0004328978 -0.0059618375  0.0016662346
-[2,] -0.0004328978 -0.0019253088  0.0005051570  0.0009692983
-[3,] -0.0059618375  0.0005051570 -0.0001518347 -0.0012686069
-[4,]  0.0016662346  0.0009692983 -0.0012686069 -0.0032181379</code></pre>
+<pre><code>             [,1]         [,2]          [,3]          [,4]
+[1,] 0.0001507422  0.004321190  0.0059680375  0.0041495207
+[2,] 0.0043211900  0.002855620 -0.0056269319 -0.0019476080
+[3,] 0.0059680375 -0.005626932 -0.0008558795 -0.0009019224
+[4,] 0.0041495207 -0.001947608 -0.0009019224  0.0033762083</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. STOP THE CLUSTER</span></span>
 <span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="co"># stopCluster(cl) no need of doing this anymore</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>

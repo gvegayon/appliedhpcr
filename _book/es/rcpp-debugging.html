@@ -239,7 +239,7 @@ gtag('config', 'G-9D75EFV0TE', { 'anonymize_ip': true});
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./parallel-pkg.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">El Paquete parallel</span></a>
+  <a href="./parallel-pkg.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Nota de Traducción</span></a>
   </div>
 </li>
       </ul>
@@ -276,7 +276,7 @@ gtag('config', 'G-9D75EFV0TE', { 'anonymize_ip': true});
       <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./rcpp-part1.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Rcpp Parte 1</span></a>
+  <a href="./rcpp-part1.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Rcpp</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -445,11 +445,11 @@ Note
 <span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="co">*/</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Podemos usar la bandera <code>-e</code> en el comando <code>R</code> para compilar el script <code>Rcpp</code> usando <code>sourceCpp</code>:</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">R</span> <span class="at">--debugger</span><span class="op">=</span>valgrind <span class="at">-e</span> <span class="st">'Rcpp::sourceCpp("rcpp-debugging-faulty.cpp")'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<pre><code>==344== Memcheck, a memory error detector
-==344== Copyright (C) 2002-2022, and GNU GPL'd, by Julian Seward et al.
-==344== Using Valgrind-3.22.0 and LibVEX; rerun with -h for copyright info
-==344== Command: /usr/local/lib/R/bin/exec/R -e Rcpp::sourceCpp("rcpp-debugging-faulty.cpp")
-==344== 
+<pre><code>==1775== Memcheck, a memory error detector
+==1775== Copyright (C) 2002-2022, and GNU GPL'd, by Julian Seward et al.
+==1775== Using Valgrind-3.22.0 and LibVEX; rerun with -h for copyright info
+==1775== Command: /usr/local/lib/R/bin/exec/R -e Rcpp::sourceCpp("rcpp-debugging-faulty.cpp")
+==1775== 
 
 R version 4.5.1 (2025-06-13) -- "Great Square Root"
 Copyright (C) 2025 The R Foundation for Statistical Computing
@@ -474,23 +474,23 @@ Type 'q()' to quit R.
 &gt; faulty_program(10)
  [1] 0 0 0 0 0 0 0 0 0 0
 &gt; 
-==344== 
-==344== HEAP SUMMARY:
-==344==     in use at exit: 60,654,766 bytes in 11,486 blocks
-==344==   total heap usage: 31,685 allocs, 20,199 frees, 93,770,900 bytes allocated
-==344== 
-==344== LEAK SUMMARY:
-==344==    definitely lost: 32 bytes in 1 blocks
-==344==    indirectly lost: 0 bytes in 0 blocks
-==344==      possibly lost: 0 bytes in 0 blocks
-==344==    still reachable: 60,654,734 bytes in 11,485 blocks
-==344==                       of which reachable via heuristic:
-==344==                         newarray           : 4,264 bytes in 1 blocks
-==344==         suppressed: 0 bytes in 0 blocks
-==344== Rerun with --leak-check=full to see details of leaked memory
-==344== 
-==344== For lists of detected and suppressed errors, rerun with: -s
-==344== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+==1775== 
+==1775== HEAP SUMMARY:
+==1775==     in use at exit: 60,654,766 bytes in 11,486 blocks
+==1775==   total heap usage: 31,685 allocs, 20,199 frees, 93,770,900 bytes allocated
+==1775== 
+==1775== LEAK SUMMARY:
+==1775==    definitely lost: 32 bytes in 1 blocks
+==1775==    indirectly lost: 0 bytes in 0 blocks
+==1775==      possibly lost: 0 bytes in 0 blocks
+==1775==    still reachable: 60,654,734 bytes in 11,485 blocks
+==1775==                       of which reachable via heuristic:
+==1775==                         newarray           : 4,264 bytes in 1 blocks
+==1775==         suppressed: 0 bytes in 0 blocks
+==1775== Rerun with --leak-check=full to see details of leaked memory
+==1775== 
+==1775== For lists of detected and suppressed errors, rerun with: -s
+==1775== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
 </code></pre>
 <p>Al final de la salida, en la sección <code>LEAK SUMMARY</code>, vemos <code>definitely lost: 24 bytes in 1 block</code>, <em>es decir</em>, una fuga de memoria. Si cambiamos el programa eliminando el puntero antes de retornar, la fuga se resolverá:</p>
 <div class="columns">
@@ -512,22 +512,22 @@ Type 'q()' to quit R.
 </div>
 <p>Re-ejecutando R con Valgrind retorna lo siguiente (solo las últimas pocas líneas):</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="ex">R</span> <span class="at">--debugger</span><span class="op">=</span>valgrind <span class="at">-e</span> <span class="st">'Rcpp::sourceCpp("rcpp-debugging-faulty-fixed.cpp")'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="sourceCode" id="cb9"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="ex">==401==</span> HEAP SUMMARY:</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="ex">==401==</span>     in use at exit: 60,655,411 bytes in 11,485 blocks</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="ex">==401==</span>   total heap usage: 31,722 allocs, 20,237 frees, 93,791,343 bytes allocated</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="ex">==401==</span> </span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="ex">==401==</span> LEAK SUMMARY:</span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="ex">==401==</span>    definitely lost: 0 bytes in 0 blocks</span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="ex">==401==</span>    indirectly lost: 0 bytes in 0 blocks</span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="ex">==401==</span>      possibly lost: 0 bytes in 0 blocks</span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="ex">==401==</span>    still reachable: 60,655,411 bytes in 11,485 blocks</span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="ex">==401==</span>                       of which reachable via heuristic:</span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="ex">==401==</span>                         newarray           : 4,264 bytes in 1 blocks</span>
-<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="ex">==401==</span>         suppressed: 0 bytes in 0 blocks</span>
-<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a><span class="ex">==401==</span> Rerun with <span class="at">--leak-check</span><span class="op">=</span>full to see details of leaked memory</span>
-<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a><span class="ex">==401==</span> </span>
-<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a><span class="ex">==401==</span> For lists of detected and suppressed errors, rerun with: <span class="at">-s</span></span>
-<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a><span class="ex">==401==</span> ERROR SUMMARY: 0 errors from 0 contexts <span class="er">(</span><span class="ex">suppressed:</span> 0 from 0<span class="kw">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="ex">==1832==</span> HEAP SUMMARY:</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="ex">==1832==</span>     in use at exit: 60,655,412 bytes in 11,485 blocks</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="ex">==1832==</span>   total heap usage: 31,722 allocs, 20,237 frees, 93,791,345 bytes allocated</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="ex">==1832==</span> </span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="ex">==1832==</span> LEAK SUMMARY:</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="ex">==1832==</span>    definitely lost: 0 bytes in 0 blocks</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="ex">==1832==</span>    indirectly lost: 0 bytes in 0 blocks</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="ex">==1832==</span>      possibly lost: 0 bytes in 0 blocks</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="ex">==1832==</span>    still reachable: 60,655,412 bytes in 11,485 blocks</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="ex">==1832==</span>                       of which reachable via heuristic:</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="ex">==1832==</span>                         newarray           : 4,264 bytes in 1 blocks</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="ex">==1832==</span>         suppressed: 0 bytes in 0 blocks</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a><span class="ex">==1832==</span> Rerun with <span class="at">--leak-check</span><span class="op">=</span>full to see details of leaked memory</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a><span class="ex">==1832==</span> </span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a><span class="ex">==1832==</span> For lists of detected and suppressed errors, rerun with: <span class="at">-s</span></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a><span class="ex">==1832==</span> ERROR SUMMARY: 0 errors from 0 contexts <span class="er">(</span><span class="ex">suppressed:</span> 0 from 0<span class="kw">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>No más fugas de memoria.</p>
 </section>
 <section id="usando-gdb" class="level2">
@@ -553,11 +553,11 @@ Type 'q()' to quit R.
 <span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a><span class="co">faulty_program(10)</span></span>
 <span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a><span class="co">*/</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>En él, tratamos de acceder a una ubicación en la memoria que no ha sido asignada aún, es decir, un <code>NumericVector</code> declarado como un puntero pero nunca asignado. Usar <code>R --debugger=valgrind</code> genera el siguiente código:</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ex">==458==</span> Memcheck, a memory error detector</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="ex">==458==</span> Copyright <span class="er">(</span><span class="ex">C</span><span class="kw">)</span> <span class="ex">2002-2022,</span> and GNU GPL<span class="st">'d, by Julian Seward et al.</span></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="st">==458== Using Valgrind-3.22.0 and LibVEX; rerun with -h for copyright info</span></span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="st">==458== Command: /usr/local/lib/R/bin/exec/R -e Rcpp::sourceCpp("rcpp-debugging-not-mapped.cpp")</span></span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="st">==458== </span></span>
+<div class="sourceCode" id="cb11"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ex">==1889==</span> Memcheck, a memory error detector</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="ex">==1889==</span> Copyright <span class="er">(</span><span class="ex">C</span><span class="kw">)</span> <span class="ex">2002-2022,</span> and GNU GPL<span class="st">'d, by Julian Seward et al.</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="st">==1889== Using Valgrind-3.22.0 and LibVEX; rerun with -h for copyright info</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="st">==1889== Command: /usr/local/lib/R/bin/exec/R -e Rcpp::sourceCpp("rcpp-debugging-not-mapped.cpp")</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="st">==1889== </span></span>
 <span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="st">R version 4.5.1 (2025-06-13) -- "Great Square Root"</span></span>
 <span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="st">Copyright (C) 2025 The R Foundation for Statistical Computing</span></span>
@@ -580,26 +580,26 @@ Type 'q()' to quit R.
 <span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a><span class="st">&gt; Rcpp::sourceCpp("rcpp-debugging-not-mapped.cpp")</span></span>
 <span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a><span class="st">&gt; faulty_program(10)</span></span>
-<span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a><span class="st">==458== Invalid read of size 8</span></span>
-<span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a><span class="st">==458==    at 0x2EF4D5D6: get__ (PreserveStorage.h:52)</span></span>
-<span id="cb11-30"><a href="#cb11-30" aria-hidden="true" tabindex="-1"></a><span class="st">==458==    by 0x2EF4D5D6: copy__&lt;Rcpp::Vector&lt;14, Rcpp::PreserveStorage&gt; &gt; (PreserveStorage.h:66)</span></span>
-<span id="cb11-31"><a href="#cb11-31" aria-hidden="true" tabindex="-1"></a><span class="st">==458==    by 0x2EF4D5D6: Vector (Vector.h:64)</span></span>
-<span id="cb11-32"><a href="#cb11-32" aria-hidden="true" tabindex="-1"></a><span class="st">==458==    by 0x2EF4D5D6: faulty_program(int) (rcpp-debugging-not-mapped.cpp:11)</span></span>
-<span id="cb11-33"><a href="#cb11-33" aria-hidden="true" tabindex="-1"></a><span class="st">==458==    by 0x2EF4D758: sourceCpp_1_faulty_program (rcpp-debugging-not-mapped.cpp:33)</span></span>
-<span id="cb11-34"><a href="#cb11-34" aria-hidden="true" tabindex="-1"></a><span class="st">==458==    by 0x495D56D: R_doDotCall (dotcode.c:754)</span></span>
-<span id="cb11-35"><a href="#cb11-35" aria-hidden="true" tabindex="-1"></a><span class="st">==458==    by 0x495DAE6: do_dotcall (dotcode.c:1437)</span></span>
-<span id="cb11-36"><a href="#cb11-36" aria-hidden="true" tabindex="-1"></a><span class="st">==458==    by 0x49AC44C: Rf_eval (eval.c:1260)</span></span>
-<span id="cb11-37"><a href="#cb11-37" aria-hidden="true" tabindex="-1"></a><span class="st">==458==    by 0x49AE06D: R_execClosure (eval.c:2393)</span></span>
-<span id="cb11-38"><a href="#cb11-38" aria-hidden="true" tabindex="-1"></a><span class="st">==458==    by 0x49AEDC6: applyClosure_core (eval.c:2306)</span></span>
-<span id="cb11-39"><a href="#cb11-39" aria-hidden="true" tabindex="-1"></a><span class="st">==458==    by 0x49ABF65: Rf_applyClosure (eval.c:2328)</span></span>
-<span id="cb11-40"><a href="#cb11-40" aria-hidden="true" tabindex="-1"></a><span class="st">==458==    by 0x49ABF65: Rf_eval (eval.c:1280)</span></span>
-<span id="cb11-41"><a href="#cb11-41" aria-hidden="true" tabindex="-1"></a><span class="st">==458==    by 0x49B2AD3: do_eval (eval.c:3959)</span></span>
-<span id="cb11-42"><a href="#cb11-42" aria-hidden="true" tabindex="-1"></a><span class="st">==458==    by 0x499EDD4: bcEval_loop (eval.c:8118)</span></span>
-<span id="cb11-43"><a href="#cb11-43" aria-hidden="true" tabindex="-1"></a><span class="st">==458==    by 0x49ABA59: bcEval (eval.c:7501)</span></span>
-<span id="cb11-44"><a href="#cb11-44" aria-hidden="true" tabindex="-1"></a><span class="st">==458==    by 0x49ABA59: bcEval (eval.c:7486)</span></span>
-<span id="cb11-45"><a href="#cb11-45" aria-hidden="true" tabindex="-1"></a><span class="st">==458==    by 0x49ABE2A: Rf_eval (eval.c:1167)</span></span>
-<span id="cb11-46"><a href="#cb11-46" aria-hidden="true" tabindex="-1"></a><span class="st">==458==  Address 0x0 is not stack'</span><span class="ex">d,</span> malloc<span class="st">'d or (recently) free'</span>d</span>
-<span id="cb11-47"><a href="#cb11-47" aria-hidden="true" tabindex="-1"></a><span class="ex">==458==</span> </span>
+<span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a><span class="st">==1889== Invalid read of size 8</span></span>
+<span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a><span class="st">==1889==    at 0x2EF4D5D6: get__ (PreserveStorage.h:52)</span></span>
+<span id="cb11-30"><a href="#cb11-30" aria-hidden="true" tabindex="-1"></a><span class="st">==1889==    by 0x2EF4D5D6: copy__&lt;Rcpp::Vector&lt;14, Rcpp::PreserveStorage&gt; &gt; (PreserveStorage.h:66)</span></span>
+<span id="cb11-31"><a href="#cb11-31" aria-hidden="true" tabindex="-1"></a><span class="st">==1889==    by 0x2EF4D5D6: Vector (Vector.h:64)</span></span>
+<span id="cb11-32"><a href="#cb11-32" aria-hidden="true" tabindex="-1"></a><span class="st">==1889==    by 0x2EF4D5D6: faulty_program(int) (rcpp-debugging-not-mapped.cpp:11)</span></span>
+<span id="cb11-33"><a href="#cb11-33" aria-hidden="true" tabindex="-1"></a><span class="st">==1889==    by 0x2EF4D758: sourceCpp_1_faulty_program (rcpp-debugging-not-mapped.cpp:33)</span></span>
+<span id="cb11-34"><a href="#cb11-34" aria-hidden="true" tabindex="-1"></a><span class="st">==1889==    by 0x495D56D: R_doDotCall (dotcode.c:754)</span></span>
+<span id="cb11-35"><a href="#cb11-35" aria-hidden="true" tabindex="-1"></a><span class="st">==1889==    by 0x495DAE6: do_dotcall (dotcode.c:1437)</span></span>
+<span id="cb11-36"><a href="#cb11-36" aria-hidden="true" tabindex="-1"></a><span class="st">==1889==    by 0x49AC44C: Rf_eval (eval.c:1260)</span></span>
+<span id="cb11-37"><a href="#cb11-37" aria-hidden="true" tabindex="-1"></a><span class="st">==1889==    by 0x49AE06D: R_execClosure (eval.c:2393)</span></span>
+<span id="cb11-38"><a href="#cb11-38" aria-hidden="true" tabindex="-1"></a><span class="st">==1889==    by 0x49AEDC6: applyClosure_core (eval.c:2306)</span></span>
+<span id="cb11-39"><a href="#cb11-39" aria-hidden="true" tabindex="-1"></a><span class="st">==1889==    by 0x49ABF65: Rf_applyClosure (eval.c:2328)</span></span>
+<span id="cb11-40"><a href="#cb11-40" aria-hidden="true" tabindex="-1"></a><span class="st">==1889==    by 0x49ABF65: Rf_eval (eval.c:1280)</span></span>
+<span id="cb11-41"><a href="#cb11-41" aria-hidden="true" tabindex="-1"></a><span class="st">==1889==    by 0x49B2AD3: do_eval (eval.c:3959)</span></span>
+<span id="cb11-42"><a href="#cb11-42" aria-hidden="true" tabindex="-1"></a><span class="st">==1889==    by 0x499EDD4: bcEval_loop (eval.c:8118)</span></span>
+<span id="cb11-43"><a href="#cb11-43" aria-hidden="true" tabindex="-1"></a><span class="st">==1889==    by 0x49ABA59: bcEval (eval.c:7501)</span></span>
+<span id="cb11-44"><a href="#cb11-44" aria-hidden="true" tabindex="-1"></a><span class="st">==1889==    by 0x49ABA59: bcEval (eval.c:7486)</span></span>
+<span id="cb11-45"><a href="#cb11-45" aria-hidden="true" tabindex="-1"></a><span class="st">==1889==    by 0x49ABE2A: Rf_eval (eval.c:1167)</span></span>
+<span id="cb11-46"><a href="#cb11-46" aria-hidden="true" tabindex="-1"></a><span class="st">==1889==  Address 0x0 is not stack'</span><span class="ex">d,</span> malloc<span class="st">'d or (recently) free'</span>d</span>
+<span id="cb11-47"><a href="#cb11-47" aria-hidden="true" tabindex="-1"></a><span class="ex">==1889==</span> </span>
 <span id="cb11-48"><a href="#cb11-48" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb11-49"><a href="#cb11-49" aria-hidden="true" tabindex="-1"></a> <span class="ex">***</span> caught segfault <span class="pp">***</span></span>
 <span id="cb11-50"><a href="#cb11-50" aria-hidden="true" tabindex="-1"></a><span class="ex">address</span> <span class="er">(</span><span class="ex">nil</span><span class="kw">)</span><span class="ex">,</span> cause <span class="st">'memory not mapped'</span></span>
@@ -613,33 +613,33 @@ Type 'q()' to quit R.
 <span id="cb11-58"><a href="#cb11-58" aria-hidden="true" tabindex="-1"></a> <span class="ex">6:</span> source<span class="er">(</span><span class="fu">file</span> = srcConn, local = env, echo = echo<span class="kw">)</span></span>
 <span id="cb11-59"><a href="#cb11-59" aria-hidden="true" tabindex="-1"></a> <span class="ex">7:</span> Rcpp::sourceCpp<span class="er">(</span><span class="st">"rcpp-debugging-not-mapped.cpp"</span><span class="kw">)</span></span>
 <span id="cb11-60"><a href="#cb11-60" aria-hidden="true" tabindex="-1"></a><span class="ex">An</span> irrecoverable exception occurred. R is aborting now ...</span>
-<span id="cb11-61"><a href="#cb11-61" aria-hidden="true" tabindex="-1"></a><span class="ex">==458==</span> </span>
-<span id="cb11-62"><a href="#cb11-62" aria-hidden="true" tabindex="-1"></a><span class="ex">==458==</span> Process terminating with default action of signal 11 <span class="er">(</span><span class="ex">SIGSEGV</span><span class="kw">)</span><span class="bu">:</span> dumping core</span>
-<span id="cb11-63"><a href="#cb11-63" aria-hidden="true" tabindex="-1"></a><span class="ex">==458==</span>    at 0x4D6AB2C: __pthread_kill_implementation <span class="er">(</span><span class="ex">pthread_kill.c:44</span><span class="kw">)</span></span>
-<span id="cb11-64"><a href="#cb11-64" aria-hidden="true" tabindex="-1"></a><span class="ex">==458==</span>    by 0x4D6AB2C: __pthread_kill_internal <span class="er">(</span><span class="ex">pthread_kill.c:78</span><span class="kw">)</span></span>
-<span id="cb11-65"><a href="#cb11-65" aria-hidden="true" tabindex="-1"></a><span class="ex">==458==</span>    by 0x4D6AB2C: pthread_kill@@GLIBC_2.34 <span class="er">(</span><span class="ex">pthread_kill.c:89</span><span class="kw">)</span></span>
-<span id="cb11-66"><a href="#cb11-66" aria-hidden="true" tabindex="-1"></a><span class="ex">==458==</span>    by 0x4D1127D: raise <span class="er">(</span><span class="ex">raise.c:26</span><span class="kw">)</span></span>
-<span id="cb11-67"><a href="#cb11-67" aria-hidden="true" tabindex="-1"></a><span class="ex">==458==</span>    by 0x4D1132F: <span class="pp">???</span> <span class="er">(in</span> <span class="ex">/usr/lib/x86_64-linux-gnu/libc.so.6</span><span class="kw">)</span></span>
-<span id="cb11-68"><a href="#cb11-68" aria-hidden="true" tabindex="-1"></a><span class="ex">==458==</span>    by 0x2EF4D5D5: copy__<span class="op">&lt;</span>Rcpp::Vector<span class="op">&lt;</span>14, Rcpp::PreserveStorage<span class="op">&gt;</span> <span class="op">&gt;</span> <span class="er">(</span><span class="ex">PreserveStorage.h:65</span><span class="kw">)</span></span>
-<span id="cb11-69"><a href="#cb11-69" aria-hidden="true" tabindex="-1"></a><span class="ex">==458==</span>    by 0x2EF4D5D5: Vector <span class="er">(</span><span class="ex">Vector.h:64</span><span class="kw">)</span></span>
-<span id="cb11-70"><a href="#cb11-70" aria-hidden="true" tabindex="-1"></a><span class="ex">==458==</span>    by 0x2EF4D5D5: faulty_program<span class="er">(</span><span class="ex">int</span><span class="kw">)</span> <span class="kw">(</span><span class="ex">rcpp-debugging-not-mapped.cpp:11</span><span class="kw">)</span></span>
-<span id="cb11-71"><a href="#cb11-71" aria-hidden="true" tabindex="-1"></a><span class="ex">==458==</span> </span>
-<span id="cb11-72"><a href="#cb11-72" aria-hidden="true" tabindex="-1"></a><span class="ex">==458==</span> HEAP SUMMARY:</span>
-<span id="cb11-73"><a href="#cb11-73" aria-hidden="true" tabindex="-1"></a><span class="ex">==458==</span>     in use at exit: 60,747,100 bytes in 11,700 blocks</span>
-<span id="cb11-74"><a href="#cb11-74" aria-hidden="true" tabindex="-1"></a><span class="ex">==458==</span>   total heap usage: 31,654 allocs, 19,954 frees, 93,748,004 bytes allocated</span>
-<span id="cb11-75"><a href="#cb11-75" aria-hidden="true" tabindex="-1"></a><span class="ex">==458==</span> </span>
-<span id="cb11-76"><a href="#cb11-76" aria-hidden="true" tabindex="-1"></a><span class="ex">==458==</span> LEAK SUMMARY:</span>
-<span id="cb11-77"><a href="#cb11-77" aria-hidden="true" tabindex="-1"></a><span class="ex">==458==</span>    definitely lost: 0 bytes in 0 blocks</span>
-<span id="cb11-78"><a href="#cb11-78" aria-hidden="true" tabindex="-1"></a><span class="ex">==458==</span>    indirectly lost: 0 bytes in 0 blocks</span>
-<span id="cb11-79"><a href="#cb11-79" aria-hidden="true" tabindex="-1"></a><span class="ex">==458==</span>      possibly lost: 5,987 bytes in 19 blocks</span>
-<span id="cb11-80"><a href="#cb11-80" aria-hidden="true" tabindex="-1"></a><span class="ex">==458==</span>    still reachable: 60,741,113 bytes in 11,681 blocks</span>
-<span id="cb11-81"><a href="#cb11-81" aria-hidden="true" tabindex="-1"></a><span class="ex">==458==</span>                       of which reachable via heuristic:</span>
-<span id="cb11-82"><a href="#cb11-82" aria-hidden="true" tabindex="-1"></a><span class="ex">==458==</span>                         newarray           : 4,264 bytes in 1 blocks</span>
-<span id="cb11-83"><a href="#cb11-83" aria-hidden="true" tabindex="-1"></a><span class="ex">==458==</span>         suppressed: 0 bytes in 0 blocks</span>
-<span id="cb11-84"><a href="#cb11-84" aria-hidden="true" tabindex="-1"></a><span class="ex">==458==</span> Rerun with <span class="at">--leak-check</span><span class="op">=</span>full to see details of leaked memory</span>
-<span id="cb11-85"><a href="#cb11-85" aria-hidden="true" tabindex="-1"></a><span class="ex">==458==</span> </span>
-<span id="cb11-86"><a href="#cb11-86" aria-hidden="true" tabindex="-1"></a><span class="ex">==458==</span> For lists of detected and suppressed errors, rerun with: <span class="at">-s</span></span>
-<span id="cb11-87"><a href="#cb11-87" aria-hidden="true" tabindex="-1"></a><span class="ex">==458==</span> ERROR SUMMARY: 1 errors from 1 contexts <span class="er">(</span><span class="ex">suppressed:</span> 0 from 0<span class="kw">)</span></span>
+<span id="cb11-61"><a href="#cb11-61" aria-hidden="true" tabindex="-1"></a><span class="ex">==1889==</span> </span>
+<span id="cb11-62"><a href="#cb11-62" aria-hidden="true" tabindex="-1"></a><span class="ex">==1889==</span> Process terminating with default action of signal 11 <span class="er">(</span><span class="ex">SIGSEGV</span><span class="kw">)</span><span class="bu">:</span> dumping core</span>
+<span id="cb11-63"><a href="#cb11-63" aria-hidden="true" tabindex="-1"></a><span class="ex">==1889==</span>    at 0x4D6AB2C: __pthread_kill_implementation <span class="er">(</span><span class="ex">pthread_kill.c:44</span><span class="kw">)</span></span>
+<span id="cb11-64"><a href="#cb11-64" aria-hidden="true" tabindex="-1"></a><span class="ex">==1889==</span>    by 0x4D6AB2C: __pthread_kill_internal <span class="er">(</span><span class="ex">pthread_kill.c:78</span><span class="kw">)</span></span>
+<span id="cb11-65"><a href="#cb11-65" aria-hidden="true" tabindex="-1"></a><span class="ex">==1889==</span>    by 0x4D6AB2C: pthread_kill@@GLIBC_2.34 <span class="er">(</span><span class="ex">pthread_kill.c:89</span><span class="kw">)</span></span>
+<span id="cb11-66"><a href="#cb11-66" aria-hidden="true" tabindex="-1"></a><span class="ex">==1889==</span>    by 0x4D1127D: raise <span class="er">(</span><span class="ex">raise.c:26</span><span class="kw">)</span></span>
+<span id="cb11-67"><a href="#cb11-67" aria-hidden="true" tabindex="-1"></a><span class="ex">==1889==</span>    by 0x4D1132F: <span class="pp">???</span> <span class="er">(in</span> <span class="ex">/usr/lib/x86_64-linux-gnu/libc.so.6</span><span class="kw">)</span></span>
+<span id="cb11-68"><a href="#cb11-68" aria-hidden="true" tabindex="-1"></a><span class="ex">==1889==</span>    by 0x2EF4D5D5: copy__<span class="op">&lt;</span>Rcpp::Vector<span class="op">&lt;</span>14, Rcpp::PreserveStorage<span class="op">&gt;</span> <span class="op">&gt;</span> <span class="er">(</span><span class="ex">PreserveStorage.h:65</span><span class="kw">)</span></span>
+<span id="cb11-69"><a href="#cb11-69" aria-hidden="true" tabindex="-1"></a><span class="ex">==1889==</span>    by 0x2EF4D5D5: Vector <span class="er">(</span><span class="ex">Vector.h:64</span><span class="kw">)</span></span>
+<span id="cb11-70"><a href="#cb11-70" aria-hidden="true" tabindex="-1"></a><span class="ex">==1889==</span>    by 0x2EF4D5D5: faulty_program<span class="er">(</span><span class="ex">int</span><span class="kw">)</span> <span class="kw">(</span><span class="ex">rcpp-debugging-not-mapped.cpp:11</span><span class="kw">)</span></span>
+<span id="cb11-71"><a href="#cb11-71" aria-hidden="true" tabindex="-1"></a><span class="ex">==1889==</span> </span>
+<span id="cb11-72"><a href="#cb11-72" aria-hidden="true" tabindex="-1"></a><span class="ex">==1889==</span> HEAP SUMMARY:</span>
+<span id="cb11-73"><a href="#cb11-73" aria-hidden="true" tabindex="-1"></a><span class="ex">==1889==</span>     in use at exit: 60,747,100 bytes in 11,700 blocks</span>
+<span id="cb11-74"><a href="#cb11-74" aria-hidden="true" tabindex="-1"></a><span class="ex">==1889==</span>   total heap usage: 31,654 allocs, 19,954 frees, 93,748,004 bytes allocated</span>
+<span id="cb11-75"><a href="#cb11-75" aria-hidden="true" tabindex="-1"></a><span class="ex">==1889==</span> </span>
+<span id="cb11-76"><a href="#cb11-76" aria-hidden="true" tabindex="-1"></a><span class="ex">==1889==</span> LEAK SUMMARY:</span>
+<span id="cb11-77"><a href="#cb11-77" aria-hidden="true" tabindex="-1"></a><span class="ex">==1889==</span>    definitely lost: 0 bytes in 0 blocks</span>
+<span id="cb11-78"><a href="#cb11-78" aria-hidden="true" tabindex="-1"></a><span class="ex">==1889==</span>    indirectly lost: 0 bytes in 0 blocks</span>
+<span id="cb11-79"><a href="#cb11-79" aria-hidden="true" tabindex="-1"></a><span class="ex">==1889==</span>      possibly lost: 5,987 bytes in 19 blocks</span>
+<span id="cb11-80"><a href="#cb11-80" aria-hidden="true" tabindex="-1"></a><span class="ex">==1889==</span>    still reachable: 60,741,113 bytes in 11,681 blocks</span>
+<span id="cb11-81"><a href="#cb11-81" aria-hidden="true" tabindex="-1"></a><span class="ex">==1889==</span>                       of which reachable via heuristic:</span>
+<span id="cb11-82"><a href="#cb11-82" aria-hidden="true" tabindex="-1"></a><span class="ex">==1889==</span>                         newarray           : 4,264 bytes in 1 blocks</span>
+<span id="cb11-83"><a href="#cb11-83" aria-hidden="true" tabindex="-1"></a><span class="ex">==1889==</span>         suppressed: 0 bytes in 0 blocks</span>
+<span id="cb11-84"><a href="#cb11-84" aria-hidden="true" tabindex="-1"></a><span class="ex">==1889==</span> Rerun with <span class="at">--leak-check</span><span class="op">=</span>full to see details of leaked memory</span>
+<span id="cb11-85"><a href="#cb11-85" aria-hidden="true" tabindex="-1"></a><span class="ex">==1889==</span> </span>
+<span id="cb11-86"><a href="#cb11-86" aria-hidden="true" tabindex="-1"></a><span class="ex">==1889==</span> For lists of detected and suppressed errors, rerun with: <span class="at">-s</span></span>
+<span id="cb11-87"><a href="#cb11-87" aria-hidden="true" tabindex="-1"></a><span class="ex">==1889==</span> ERROR SUMMARY: 1 errors from 1 contexts <span class="er">(</span><span class="ex">suppressed:</span> 0 from 0<span class="kw">)</span></span>
 <span id="cb11-88"><a href="#cb11-88" aria-hidden="true" tabindex="-1"></a><span class="ex">Segmentation</span> fault <span class="er">(</span><span class="ex">core</span> dumped<span class="kw">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Para inspeccionar un error con GDB, tenemos que seguir estos pasos:</p>
 <ol type="1">
@@ -1131,8 +1131,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./rcpp-part1.html" class="pagination-link" aria-label="Rcpp Parte 1">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">Rcpp Parte 1</span></span>
+      <a href="./rcpp-part1.html" class="pagination-link" aria-label="Rcpp">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">Rcpp</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">

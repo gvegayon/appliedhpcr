@@ -6,10 +6,8 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="George G. Vega Yon, Ph.D.">
-<meta name="dcterms.date" content="2025-08-14">
 
-<title>El Paquete parallel – HPC Aplicado con R</title>
+<title>Nota de Traducción – HPC Aplicado con R</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -115,7 +113,7 @@ gtag('config', 'G-9D75EFV0TE', { 'anonymize_ip': true});
 </script>
 
 
-<meta name="twitter:title" content="El Paquete parallel – HPC Aplicado con R">
+<meta name="twitter:title" content="Nota de Traducción – HPC Aplicado con R">
 <meta name="twitter:description" content="Este libro es una colección de charlas y conferencias sobre cómo acelerar tu código R usando computación paralela y otros recursos como C++.">
 <meta name="twitter:image" content="https://book.ggvy.cl/../fig/cover.png">
 <meta name="twitter:creator" content="@gvegayon">
@@ -164,7 +162,7 @@ gtag('config', 'G-9D75EFV0TE', { 'anonymize_ip': true});
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./intro.html">Computación paralela</a></li><li class="breadcrumb-item"><a href="./parallel-pkg.html"><span class="chapter-title">El Paquete parallel</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./intro.html">Computación paralela</a></li><li class="breadcrumb-item"><a href="./parallel-pkg.html"><span class="chapter-title">Nota de Traducción</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -219,7 +217,7 @@ gtag('config', 'G-9D75EFV0TE', { 'anonymize_ip': true});
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./parallel-pkg.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">El Paquete parallel</span></a>
+  <a href="./parallel-pkg.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">Nota de Traducción</span></a>
   </div>
 </li>
       </ul>
@@ -256,7 +254,7 @@ gtag('config', 'G-9D75EFV0TE', { 'anonymize_ip': true});
       <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./rcpp-part1.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Rcpp Parte 1</span></a>
+  <a href="./rcpp-part1.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Rcpp</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -302,37 +300,41 @@ gtag('config', 'G-9D75EFV0TE', { 'anonymize_ip': true});
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#el-paquete-parallel-en-r" id="toc-el-paquete-parallel-en-r" class="nav-link active" data-scroll-target="#el-paquete-parallel-en-r">El Paquete <code>parallel</code> en R</a></li>
-  <li><a href="#funciones-principales" id="toc-funciones-principales" class="nav-link" data-scroll-target="#funciones-principales">Funciones Principales</a></li>
+  <li><a href="#flujo-de-trabajo-paralelo" id="toc-flujo-de-trabajo-paralelo" class="nav-link active" data-scroll-target="#flujo-de-trabajo-paralelo">Flujo de trabajo paralelo</a></li>
+  <li><a href="#tipos-de-clusters-psock" id="toc-tipos-de-clusters-psock" class="nav-link" data-scroll-target="#tipos-de-clusters-psock">Tipos de clusters: PSOCK</a></li>
+  <li><a href="#tipos-de-clusters-fork" id="toc-tipos-de-clusters-fork" class="nav-link" data-scroll-target="#tipos-de-clusters-fork">Tipos de clusters: Fork</a></li>
+  <li><a href="#un-programa-plantilla" id="toc-un-programa-plantilla" class="nav-link" data-scroll-target="#un-programa-plantilla">Un programa plantilla</a></li>
+  <li><a href="#ejemplo-ejecutar-una-regresión-lineal-a-través-de-múltiples-columnas" id="toc-ejemplo-ejecutar-una-regresión-lineal-a-través-de-múltiples-columnas" class="nav-link" data-scroll-target="#ejemplo-ejecutar-una-regresión-lineal-a-través-de-múltiples-columnas">Ejemplo: Ejecutar una regresión lineal a través de múltiples columnas</a></li>
+  <li><a href="#más-ejemplos" id="toc-más-ejemplos" class="nav-link" data-scroll-target="#más-ejemplos">Más ejemplos</a>
+  <ul class="collapse">
+  <li><a href="#ej-1-rng-paralelo-con-makepsockcluster" id="toc-ej-1-rng-paralelo-con-makepsockcluster" class="nav-link" data-scroll-target="#ej-1-rng-paralelo-con-makepsockcluster">Ej 1: RNG Paralelo con <code>makePSOCKCluster</code></a></li>
+  <li><a href="#ej-2-rng-paralelo-con-makeforkcluster" id="toc-ej-2-rng-paralelo-con-makeforkcluster" class="nav-link" data-scroll-target="#ej-2-rng-paralelo-con-makeforkcluster">Ej 2: RNG Paralelo con <code>makeForkCluster</code></a></li>
+  <li><a href="#ej-3-rng-paralelo-con-mclapply-forking-sobre-la-marcha" id="toc-ej-3-rng-paralelo-con-mclapply-forking-sobre-la-marcha" class="nav-link" data-scroll-target="#ej-3-rng-paralelo-con-mclapply-forking-sobre-la-marcha">Ej 3: RNG Paralelo con <code>mclapply</code> (Forking sobre la marcha)</a></li>
+  </ul></li>
+  <li><a href="#ejercicio-costos-de-sobrecarga" id="toc-ejercicio-costos-de-sobrecarga" class="nav-link" data-scroll-target="#ejercicio-costos-de-sobrecarga">Ejercicio: Costos de sobrecarga</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/gvegayon/appliedhpcr/edit/master/es/parallel-pkg.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/gvegayon/appliedhpcr/blob/master/es/parallel-pkg.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li><li><a href="https://github.com/gvegayon/appliedhpcr/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./intro.html">Computación paralela</a></li><li class="breadcrumb-item"><a href="./parallel-pkg.html"><span class="chapter-title">El Paquete parallel</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./intro.html">Computación paralela</a></li><li class="breadcrumb-item"><a href="./parallel-pkg.html"><span class="chapter-title">Nota de Traducción</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-title">El Paquete parallel</span></h1>
+<h1 class="title"><span class="chapter-title">Nota de Traducción</span></h1>
 </div>
 
 
 
 <div class="quarto-title-meta">
 
-    <div>
-    <div class="quarto-title-meta-heading">Author</div>
-    <div class="quarto-title-meta-contents">
-             <p>George G. Vega Yon, Ph.D. </p>
-          </div>
-  </div>
     
+  
     <div>
-    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-heading">Modified</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">August 14, 2025</p>
+      <p class="date-modified">August 21, 2025</p>
     </div>
   </div>
-  
     
   </div>
   
@@ -341,47 +343,466 @@ gtag('config', 'G-9D75EFV0TE', { 'anonymize_ip': true});
 </header>
 
 
-<p><em>[El contenido completo de este capítulo será traducido al español. Por ahora, esta es una versión preliminar.]</em></p>
-<section id="el-paquete-parallel-en-r" class="level2">
-<h2 class="anchored" data-anchor-id="el-paquete-parallel-en-r">El Paquete <code>parallel</code> en R</h2>
-<p>El paquete <code>parallel</code> es la herramienta estándar para computación paralela en R. Proporciona funciones para:</p>
-<ul>
-<li><code>mclapply()</code>: Versión paralela de <code>lapply()</code> (solo Unix/Linux)</li>
-<li><code>parLapply()</code>: Versión paralela multiplataforma</li>
-<li><code>makeCluster()</code>: Crear clusters de trabajadores</li>
-<li><code>clusterApply()</code>: Aplicar funciones en clusters</li>
-</ul>
-</section>
-<section id="funciones-principales" class="level2">
-<h2 class="anchored" data-anchor-id="funciones-principales">Funciones Principales</h2>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(parallel)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Detectar número de núcleos</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>num_cores <span class="ot">&lt;-</span> <span class="fu">detectCores</span>()</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Ejemplo con mclapply (Unix/Linux/Mac)</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>result <span class="ot">&lt;-</span> <span class="fu">mclapply</span>(data, <span class="cf">function</span>(x) {</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Tu función aquí</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>}, <span class="at">mc.cores =</span> num_cores)</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Ejemplo con clusters (Multiplataforma)</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>cl <span class="ot">&lt;-</span> <span class="fu">makeCluster</span>(num_cores)</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>result <span class="ot">&lt;-</span> <span class="fu">parLapply</span>(cl, data, <span class="cf">function</span>(x) {</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Tu función aquí</span></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>})</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="fu">stopCluster</span>(cl)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Trabajo en Progreso
+Warning
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Esta traducción está en desarrollo. El contenido completo incluirá ejemplos detallados, comparaciones de rendimiento y mejores prácticas para usar el paquete parallel.</p>
+<p>Esta versión del capítulo fue traducida de manera automática utilizando IA. El capítulo aún no ha sido revisado por un humano.</p>
 </div>
+</div>
+<p>Aunque R no fue construido para computación paralela, existen múltiples formas de paralelizar tu código R. Una de estas es el paquete <code>parallel</code>. Este paquete de R, incluido con R base, proporciona varias funciones para paralelizar código R usando <a href="https://en.wikipedia.org/w/index.php?title=Embarrassingly_parallel&amp;oldid=1136401514" target="_blank">computación embarazosamente paralela</a>, es decir, una estrategia de tipo divide-y-vencerás. La idea básica es iniciar múltiples sesiones de R (usualmente llamadas procesos hijos), conectar la sesión principal con estas, y enviarles instrucciones. Esta sección cubre un flujo de trabajo común para trabajar con el parallel de R.</p>
+<section id="flujo-de-trabajo-paralelo" class="level2">
+<h2 class="anchored" data-anchor-id="flujo-de-trabajo-paralelo">Flujo de trabajo paralelo</h2>
+<p>(Usualmente) Hacemos lo siguiente:</p>
+<ol type="1">
+<li><p>Crear un cluster <code>PSOCK/FORK</code> (u otro) usando <code>makePSOCKCluster</code>/<code>makeForkCluster</code> (o <code>makeCluster</code>). Cuántos procesos hijos dependeŕa de cuántos núcleos tiene tu computadora. Una regla general es usar <code>parallel::detectCores() - 1</code> núcleos (para dejar uno libre para el resto de tu computadora).</p></li>
+<li><p>Copiar/preparar cada sesión de R (si estás usando un cluster <code>PSOCK</code>):</p>
+<ol type="a">
+<li><p>Copiar objetos con <code>clusterExport</code>. Estos serían todos los objetos que necesitas en las sesiones hijas.</p></li>
+<li><p>Pasar expresiones con <code>clusterEvalQ</code>. Esto incluiría cargar paquetes de R y otro código en las otras sesiones.</p></li>
+<li><p>Establecer una semilla (si estás haciendo algo que involucra aleatoriedad)</p></li>
+</ol></li>
+<li><p>Hacer tu llamada: <code>parApply</code>, <code>parLapply</code>, etc.</p></li>
+<li><p>Detener el cluster con <code>clusterStop</code></p></li>
+</ol>
+<p>Como mencionamos más adelante, el paso 2 dependerá del tipo de cluster que estés usando. Si estás usando una conexión Socket (<code>PSOCK</code> cluster), entonces las sesiones de R generadas serán completamente nuevas (sin datos o paquetes de R precargados); mientras que usar una conexión Fork (<code>FORK</code> cluster) copiará la sesión actual de R, incluyendo todos los objetos y paquetes cargados.</p>
+</section>
+<section id="tipos-de-clusters-psock" class="level2">
+<h2 class="anchored" data-anchor-id="tipos-de-clusters-psock">Tipos de clusters: PSOCK</h2>
+<ul>
+<li><p>Se puede crear con <code>makePSOCKCluster</code></p></li>
+<li><p>Crea sesiones de R completamente nuevas (por lo que nada se hereda del maestro), ej.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Esto crea un cluster con 4 sesiones de R</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>cl <span class="ot">&lt;-</span> <span class="fu">makePSOCKCluster</span>(<span class="dv">4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+<li><p>Las sesiones hijas están conectadas a la sesión maestra a través de conexiones Socket</p></li>
+<li><p>Se puede crear fuera de la computadora actual, <strong>es decir</strong>, ¡entre múltiples computadoras!</p></li>
+</ul>
+</section>
+<section id="tipos-de-clusters-fork" class="level2">
+<h2 class="anchored" data-anchor-id="tipos-de-clusters-fork">Tipos de clusters: Fork</h2>
+<ul>
+<li><p>Fork Cluster <code>makeForkCluster</code>:</p></li>
+<li><p>Usa <a href="https://en.wikipedia.org/wiki/Fork_(system_call)">Forking</a> del SO,</p></li>
+<li><p>Copia la sesión actual de R localmente (por lo que todo se hereda del maestro hasta ese punto).</p></li>
+<li><p>Los datos solo se duplican si se alteran (¡necesito verificar cuándo sucede esto!)</p></li>
+<li><p>No disponible en Windows.</p></li>
+</ul>
+<p>Otros tipos están disponibles a través de la función <code>makeCluster</code> del paquete de R <a href="https://cran.r-project.org/package=snow"><strong>snow</strong></a> (Simple Network of Workstations). Estos incluyen clusters MPI (Message Passing Interface) y clusters Slurm (Socket).</p>
+</section>
+<section id="un-programa-plantilla" class="level2">
+<h2 class="anchored" data-anchor-id="un-programa-plantilla">Un programa plantilla</h2>
+<p>El siguiente bloque de código muestra una plantilla para usar el paquete <code>parallel</code> en R. Puedes copiar esto y comentar las partes que no necesites:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(parallel)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. CREAR UN CLUSTER ----------------</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>nnodes <span class="ot">&lt;-</span> <span class="dv">4</span>L <span class="co"># ¡Podría ser menos o más!</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>cl <span class="ot">&lt;-</span> <span class="fu">makePSOCKcluster</span>(nnodes)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. PREPARAR EL CLUSTER -------------</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Principalmente si se usa PSOCK</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="fu">clusterEvalQ</span>(cl, {</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">library</span>(...) <span class="co"># Cargar los paquetes necesarios</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">source</span>(...) <span class="co"># Cargar scripts adicionales</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Siempre si estás generando números aleatorios</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="fu">clusterSetRNGStream</span>(cl, <span class="dv">123</span>)</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. HACER TU LLAMADA ----------------------</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>ans <span class="ot">&lt;-</span> <span class="fu">parLapply</span>(</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>  cl,</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>  ... lista larga para iterar ...,</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>  <span class="cf">function</span>(x) {</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>    ...</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>  },</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>  ... argumentos adicionales ...</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. DETENER EL CLUSTER</span></span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a><span class="fu">stopCluster</span>(cl)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Generalmente, la <code>... lista larga para iterar ...</code> será un vector u otra lista que contenga datos (ej., conjuntos de datos individuales), una secuencia de números (ej., del 1 al 1000), una lista de rutas de archivos (si estuvieras procesando archivos individualmente), o directamente una secuencia corta con números del 1 al número de nodos (aplicación menos común).</p>
+<p>Cuando llamas <code>parLapply</code> o <code>parSapply</code> (las versiones paralelas de <code>lapply</code> y <code>sapply</code> respectivamente), la llamada a la función dividirá automáticamente las iteraciones entre nodos usando la función <code>splitIndices</code>. Aquí hay un ejemplo de lo que sucede bajo el capó:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Distribuyendo 9 iteraciones entre dos núcleos</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>(n_iterations <span class="ot">&lt;-</span> parallel<span class="sc">::</span><span class="fu">splitIndices</span>(<span class="at">nx =</span> <span class="dv">9</span>, <span class="at">ncl =</span> <span class="dv">2</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[[1]]
+[1] 1 2 3 4
+
+[[2]]
+[1] 5 6 7 8 9</code></pre>
+</div>
+</div>
+<p>Lo que significa que la primera sesión de R obtendrá 4 trabajos, mientras que la segunda sesión de R obtendrá 5 trabajos. De esta manera, cada sesión de R generada (sesión hija) obtiene un número similar de iteraciones.</p>
+</section>
+<section id="ejemplo-ejecutar-una-regresión-lineal-a-través-de-múltiples-columnas" class="level2">
+<h2 class="anchored" data-anchor-id="ejemplo-ejecutar-una-regresión-lineal-a-través-de-múltiples-columnas">Ejemplo: Ejecutar una regresión lineal a través de múltiples columnas</h2>
+<p>En genómica, es común analizar datos genómicos a nivel de genes comparando niveles de expresión contra algún fenotipo/enfermedad. Un análisis simple consiste en ejecutar una regresión lineal a través de múltiples columnas (genes) de un data frame. El siguiente bloque de código genera algunos datos artificiales que podemos usar para este ejemplo:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">331</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>n_genes <span class="ot">&lt;-</span> <span class="dv">10000</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>n_obs <span class="ot">&lt;-</span> <span class="dv">1000</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Una matriz aleatoria de ómicas</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>X_genes <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n_obs <span class="sc">*</span> n_genes) <span class="sc">|&gt;</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">matrix</span>(<span class="at">nrow =</span> n_obs)</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Un fenotipo aleatorio (completamente no relacionado para este ejemplo)</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>Y <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n_obs) <span class="sc">|&gt;</span> <span class="fu">cbind</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Envolveremos el análisis en una función para poder hacer benchmarking. Usaremos la función <code>lapply</code> para iterar sobre las columnas de <code>X_genes</code></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>ols_serial <span class="ot">&lt;-</span> <span class="cf">function</span>(X, Y) {</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">lapply</span>(</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">X =</span> <span class="fu">seq_len</span>(n_genes),</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">FUN =</span> \(i) {<span class="fu">lm.fit</span>(X[, i, <span class="at">drop =</span> <span class="cn">FALSE</span>], Y) <span class="sc">|&gt;</span> <span class="fu">coef</span>()}</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> <span class="fu">do.call</span>(<span class="at">what =</span> rbind)</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Llamando la función y viendo las primeras filas</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="fu">ols_serial</span>(X_genes, Y) <span class="sc">|&gt;</span> <span class="fu">head</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>               x1
+[1,]  0.029403088
+[2,]  0.008907854
+[3,] -0.027246099
+[4,] -0.031280262
+[5,] -0.001309752
+[6,]  0.066971469</code></pre>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Como hicimos en la sección de programación eficiente, en lugar de usar <code>lm()</code> o <code>glm()</code>, podemos usar <code>lm.fit()</code> para mejor rendimiento. La función <code>lm.fit()</code> hace menos que la función <code>lm()</code> al omitir el cálculo de residuos y otras sobrecargas, haciéndola más rápida para conjuntos de datos grandes.</p>
+</div>
+</div>
+<p>Usando computación paralela (y siguiendo la plantilla que presentamos anteriormente), esto podría hacerse de la siguiente manera con el paquete parallel:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(parallel)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>ols_parallel <span class="ot">&lt;-</span> <span class="cf">function</span>(X, Y, ncores) {</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 1. CREAR UN CLUSTER ----------------</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  cl <span class="ot">&lt;-</span> <span class="fu">makePSOCKcluster</span>(ncores)</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Esto será llamado al salir de la función</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">on.exit</span>(<span class="fu">stopCluster</span>(cl)) </span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 2. PREPARAR EL CLUSTER -------------</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Copiamos los datos</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">clusterExport</span>(cl, <span class="fu">c</span>(<span class="st">"X"</span>, <span class="st">"Y"</span>), <span class="at">envir =</span> <span class="fu">environment</span>())</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 3. HACER TU LLAMADA ----------------------</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">parLapply</span>(</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>    cl,</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">seq_len</span>(n_genes),</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>    <span class="cf">function</span>(i) {</span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>      <span class="fu">lm.fit</span>(X[, i, <span class="at">drop =</span> <span class="cn">FALSE</span>], Y) <span class="sc">|&gt;</span> <span class="fu">coef</span>()</span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> <span class="fu">do.call</span>(<span class="at">what =</span> rbind)</span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Verificando que funciona</span></span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a><span class="fu">ols_parallel</span>(X_genes, Y, <span class="at">ncores =</span> <span class="dv">4</span>L) <span class="sc">|&gt;</span> <span class="fu">head</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>               x1
+[1,]  0.029403088
+[2,]  0.008907854
+[3,] -0.027246099
+[4,] -0.031280262
+[5,] -0.001309752
+[6,]  0.066971469</code></pre>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Al igual que <code>return()</code>, <code>on.exit()</code> solo puede usarse dentro de una llamada a función. Podríamos haber usado <code>stopCluster(cl)</code> al final como hacemos en nuestro ejemplo de plantilla, pero el beneficio de usar <code>on.exit()</code> es que será llamado automáticamente cuando la función termine, incluso si ocurre un error. Esto ayuda a asegurar que el cluster siempre se detenga apropiadamente.</p>
+</div>
+</div>
+<p>Ahora que tenemos la función implementada, podemos proceder a (1) comparar resultados y (2) medir rendimiento.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(microbenchmark)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="fu">microbenchmark</span>(</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">serial =</span> <span class="fu">ols_serial</span>(X_genes, Y),</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">parallel =</span> <span class="fu">ols_parallel</span>(X_genes, Y, <span class="at">ncores =</span> <span class="dv">4</span>L),</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">times =</span> <span class="dv">10</span>L,</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">check =</span> <span class="st">"identical"</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Unit: milliseconds
+     expr      min        lq      mean    median        uq       max neval
+   serial  594.389  629.1877  669.5245  637.8105  750.6774  763.6478    10
+ parallel 1858.562 1873.0968 1887.2736 1883.5123 1901.8574 1929.0603    10</code></pre>
+</div>
+</div>
+<p>De la comparación, podemos ver que la versión paralela es significativamente más lenta que la versión serial. Dos cosas a notar aquí son (a) la tarea que estamos ejecutando ya es rápida (alrededor de 0.3 segundos en promedio para la ejecución serial) y (b) hay un costo de sobrecarga asociado con crear, preparar y detener el cluster. Como mencionamos anteriormente, las optimizaciones paralelas solo tienen sentido si tu código ya está tomando una cantidad significativa de tiempo, haciendo que el costo de sobrecarga asociado con la configuración sea relativamente pequeño. La siguiente implementación de la función debería hacerla significativamente más rápida:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>ols_parallel2 <span class="ot">&lt;-</span> <span class="cf">function</span>(cl) {</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 1. CREAR UN CLUSTER ----------------</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 2. PREPARAR EL CLUSTER -------------</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Ya no es necesario ya que estamos manejando el núcleo fuera</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 3. HACER TU LLAMADA ----------------------</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">parLapply</span>(</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    cl,</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">seq_len</span>(n_genes),</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">function</span>(i) {</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>      <span class="fu">lm.fit</span>(X_genes[, i, <span class="at">drop =</span> <span class="cn">FALSE</span>], Y) <span class="sc">|&gt;</span> <span class="fu">coef</span>()</span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> <span class="fu">do.call</span>(<span class="at">what =</span> rbind)</span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Verificando que funciona</span></span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>cl <span class="ot">&lt;-</span> <span class="fu">makePSOCKcluster</span>(<span class="dv">4</span>)</span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a><span class="fu">clusterExport</span>(cl, <span class="fu">c</span>(<span class="st">"X_genes"</span>, <span class="st">"Y"</span>))</span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a><span class="fu">ols_parallel2</span>(cl) <span class="sc">|&gt;</span> <span class="fu">head</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>               x1
+[1,]  0.029403088
+[2,]  0.008907854
+[3,] -0.027246099
+[4,] -0.031280262
+[5,] -0.001309752
+[6,]  0.066971469</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. DETENER EL CLUSTER</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">stopCluster</span>(cl)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Las principales diferencias de la versión anterior de la función son:</p>
+<ol type="1">
+<li><p>Estamos creando el cluster fuera de la función y pasándolo como argumento.</p></li>
+<li><p>Estamos exportando las variables <code>X_genes</code> y <code>Y</code> al cluster solo una vez, lo cual también debería reducir significativamente la sobrecarga.</p></li>
+<li><p>Debido al paso anterior, ahora estamos llamando <code>X_genes</code> directamente en la función principal.</p></li>
+<li><p>El cluster se detiene fuera de la llamada a la función (ya que la función ya no maneja el objeto cluster).</p></li>
+</ol>
+<p>Midamos el rendimiento para ver qué tan más rápida es la versión paralela.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(microbenchmark)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Necesitamos preparar el cluster de antemano</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>cl <span class="ot">&lt;-</span> <span class="fu">makePSOCKcluster</span>(<span class="dv">4</span>)</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="fu">clusterExport</span>(cl, <span class="fu">c</span>(<span class="st">"X_genes"</span>, <span class="st">"Y"</span>))</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="fu">microbenchmark</span>(</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">serial =</span> <span class="fu">ols_serial</span>(X_genes, Y),</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">parallel =</span> <span class="fu">ols_parallel2</span>(cl),</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">times =</span> <span class="dv">10</span>L,</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">check =</span> <span class="st">"identical"</span></span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Unit: milliseconds
+     expr      min       lq     mean   median       uq      max neval
+   serial 582.5979 588.4809 656.9841 654.8177 673.4060 796.8439    10
+ parallel 289.8490 320.6189 326.6270 329.7927 336.4084 345.3652    10</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Necesitamos detener el cluster</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="fu">stopCluster</span>(cl)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Ahora, la versión paralela es significativamente más rápida que la versión serial. Solo usar el paquete parallel (o cualquier otro paquete que se pueda usar para computación paralela) no garantiza un rendimiento mejorado.</p>
+</section>
+<section id="más-ejemplos" class="level2">
+<h2 class="anchored" data-anchor-id="más-ejemplos">Más ejemplos</h2>
+<p>Los siguientes tres ejemplos son una aplicación simple del paquete en la cual estamos ejecutando explícitamente tantas réplicas como hilos tiene el cluster. Generalmente, el número de réplicas será una función de los datos.</p>
+<section id="ej-1-rng-paralelo-con-makepsockcluster" class="level3">
+<h3 class="anchored" data-anchor-id="ej-1-rng-paralelo-con-makepsockcluster">Ej 1: RNG Paralelo con <code>makePSOCKCluster</code></h3>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Caution
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Usar más hilos que núcleos disponibles en tu computadora nunca es una buena idea. Como regla general, los clusters deberían crearse usando <code>parallel::detectCores() - 1</code> núcleos (para dejar uno libre para el resto de tu computadora.)</p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. CREAR UN CLUSTER</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(parallel)</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>nnodes <span class="ot">&lt;-</span> <span class="dv">4</span>L</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>cl     <span class="ot">&lt;-</span> <span class="fu">makePSOCKcluster</span>(nnodes)    </span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. PREPARAR EL CLUSTER</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a><span class="fu">clusterSetRNGStream</span>(cl, <span class="dv">123</span>) <span class="co"># Equivalente a `set.seed(123)`</span></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. HACER TU LLAMADA</span></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>ans <span class="ot">&lt;-</span> <span class="fu">parSapply</span>(cl, <span class="dv">1</span><span class="sc">:</span>nnodes, <span class="cf">function</span>(x) <span class="fu">runif</span>(<span class="fl">1e3</span>))</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>(ans0 <span class="ot">&lt;-</span> <span class="fu">var</span>(ans))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>              [,1]          [,2]          [,3]          [,4]
+[1,]  0.0861888293 -0.0001633431  5.939143e-04 -3.672845e-04
+[2,] -0.0001633431  0.0853841838  2.390790e-03 -1.462154e-04
+[3,]  0.0005939143  0.0023907904  8.114219e-02 -4.714618e-06
+[4,] -0.0003672845 -0.0001462154 -4.714618e-06  8.467722e-02</code></pre>
+</div>
+</div>
+<p>Asegurándonos de que es reproducible</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ¡Quiero obtener lo mismo!</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="fu">clusterSetRNGStream</span>(cl, <span class="dv">123</span>)</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>ans1 <span class="ot">&lt;-</span> <span class="fu">var</span>(<span class="fu">parSapply</span>(cl, <span class="dv">1</span><span class="sc">:</span>nnodes, <span class="cf">function</span>(x) <span class="fu">runif</span>(<span class="fl">1e3</span>)))</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. DETENER EL CLUSTER</span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="fu">stopCluster</span>(cl)</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a><span class="fu">all.equal</span>(ans0, ans1) <span class="co"># ¡Todo igual!</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] TRUE</code></pre>
+</div>
+</div>
+</section>
+<section id="ej-2-rng-paralelo-con-makeforkcluster" class="level3">
+<h3 class="anchored" data-anchor-id="ej-2-rng-paralelo-con-makeforkcluster">Ej 2: RNG Paralelo con <code>makeForkCluster</code></h3>
+<p>En el caso de <code>makeForkCluster</code></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. CREAR UN CLUSTER</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(parallel)</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="co"># El fork cluster copiará el objeto -nsims-</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>nsims  <span class="ot">&lt;-</span> <span class="fl">1e3</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>nnodes <span class="ot">&lt;-</span> <span class="dv">4</span>L</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>cl     <span class="ot">&lt;-</span> <span class="fu">makeForkCluster</span>(nnodes)    </span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. PREPARAR EL CLUSTER</span></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a><span class="fu">clusterSetRNGStream</span>(cl, <span class="dv">123</span>)</span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. HACER TU LLAMADA</span></span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>ans <span class="ot">&lt;-</span> <span class="fu">do.call</span>(cbind, <span class="fu">parLapply</span>(cl, <span class="dv">1</span><span class="sc">:</span>nnodes, <span class="cf">function</span>(x) {</span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">runif</span>(nsims) <span class="co"># ¡Mira! usamos el objeto nsims!</span></span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>               <span class="co"># Esto habría fallado en makePSOCKCluster</span></span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>               <span class="co"># si no copiamos -nsims- primero.</span></span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a>  }))</span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a>(ans0 <span class="ot">&lt;-</span> <span class="fu">var</span>(ans))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>              [,1]          [,2]          [,3]          [,4]
+[1,]  0.0861888293 -0.0001633431  5.939143e-04 -3.672845e-04
+[2,] -0.0001633431  0.0853841838  2.390790e-03 -1.462154e-04
+[3,]  0.0005939143  0.0023907904  8.114219e-02 -4.714618e-06
+[4,] -0.0003672845 -0.0001462154 -4.714618e-06  8.467722e-02</code></pre>
+</div>
+</div>
+<p>Nuevamente, queremos asegurarnos de que esto es reproducible</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Misma secuencia con misma semilla</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="fu">clusterSetRNGStream</span>(cl, <span class="dv">123</span>)</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>ans1 <span class="ot">&lt;-</span> <span class="fu">var</span>(<span class="fu">do.call</span>(cbind, <span class="fu">parLapply</span>(cl, <span class="dv">1</span><span class="sc">:</span>nnodes, <span class="cf">function</span>(x) <span class="fu">runif</span>(nsims))))</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>ans0 <span class="sc">-</span> ans1 <span class="co"># Una matriz de ceros</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     [,1] [,2] [,3] [,4]
+[1,]    0    0    0    0
+[2,]    0    0    0    0
+[3,]    0    0    0    0
+[4,]    0    0    0    0</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. DETENER EL CLUSTER</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="fu">stopCluster</span>(cl)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><text style="color:white;">Bueno, si eres usuario de Mac-OS/Linux, hay una forma más directa de hacer esto…</text></p>
+</section>
+<section id="ej-3-rng-paralelo-con-mclapply-forking-sobre-la-marcha" class="level3">
+<h3 class="anchored" data-anchor-id="ej-3-rng-paralelo-con-mclapply-forking-sobre-la-marcha">Ej 3: RNG Paralelo con <code>mclapply</code> (Forking sobre la marcha)</h3>
+<p>En el caso de <code>mclapply</code>, ¡el forking (creación del cluster) se hace sobre la marcha!</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. CREAR UN CLUSTER</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(parallel)</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="co"># El fork cluster copiará el objeto -nsims-</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>nsims  <span class="ot">&lt;-</span> <span class="fl">1e3</span></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>nnodes <span class="ot">&lt;-</span> <span class="dv">4</span>L</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a><span class="co"># cl     &lt;- makeForkCluster(nnodes) # mclapply lo hace sobre la marcha</span></span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. PREPARAR EL CLUSTER</span></span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>) </span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. HACER TU LLAMADA</span></span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>ans <span class="ot">&lt;-</span> <span class="fu">do.call</span>(cbind, <span class="fu">mclapply</span>(<span class="dv">1</span><span class="sc">:</span>nnodes, <span class="cf">function</span>(x) <span class="fu">runif</span>(nsims)))</span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>(ans0 <span class="ot">&lt;-</span> <span class="fu">var</span>(ans))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>              [,1]         [,2]         [,3]         [,4]
+[1,]  0.0870900385 0.0002537173 -0.003055160 0.0009702861
+[2,]  0.0002537173 0.0844270547  0.004334607 0.0014181913
+[3,] -0.0030551602 0.0043346066  0.085830993 0.0016659801
+[4,]  0.0009702861 0.0014181913  0.001665980 0.0818570884</code></pre>
+</div>
+</div>
+<p>Una vez más, queremos asegurarnos de que esto es reproducible</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Misma secuencia con misma semilla</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>) </span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>ans1 <span class="ot">&lt;-</span> <span class="fu">var</span>(<span class="fu">do.call</span>(cbind, <span class="fu">mclapply</span>(<span class="dv">1</span><span class="sc">:</span>nnodes, <span class="cf">function</span>(x) <span class="fu">runif</span>(nsims))))</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>ans0 <span class="sc">-</span> ans1 <span class="co"># Una matriz de ceros</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>              [,1]         [,2]         [,3]         [,4]
+[1,]  0.0003204294 -0.005760469 -0.001376344 -0.004149709
+[2,] -0.0057604693  0.003534657  0.009103474  0.005219555
+[3,] -0.0013763435  0.009103474  0.005502544  0.005645297
+[4,] -0.0041497091  0.005219555  0.005645297 -0.001272618</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. DETENER EL CLUSTER</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="co"># stopCluster(cl) ya no es necesario hacer esto</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="ejercicio-costos-de-sobrecarga" class="level2">
+<h2 class="anchored" data-anchor-id="ejercicio-costos-de-sobrecarga">Ejercicio: Costos de sobrecarga</h2>
+<p>Compara el tiempo de tomar la suma de 100 números cuando está paralelizado versus no. Para la versión no paralelizada (serializada), usa lo siguiente:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">runif</span>(<span class="at">n=</span><span class="dv">100</span>)</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>serial_sum <span class="ot">&lt;-</span> <span class="cf">function</span>(x){</span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>  x_sum <span class="ot">&lt;-</span> <span class="fu">sum</span>(x)</span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(x_sum)</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Para la versión paralelizada, sigue este esquema</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(parallel)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">runif</span>(<span class="at">n=</span><span class="dv">100</span>)</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>parallel_sum <span class="ot">&lt;-</span> <span class="cf">function</span>(){</span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Establecer número de núcleos a usar</span></span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># hacer cluster y exportar al cluster la variable x</span></span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Usar "función de división para dividir x en tantos trozos como el número de núcleos</span></span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Calcular sumas parciales haciendo algo como:</span></span>
+<span id="cb34-12"><a href="#cb34-12" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb34-13"><a href="#cb34-13" aria-hidden="true" tabindex="-1"></a>  partial_sums <span class="ot">&lt;-</span> parallel<span class="sc">::</span><span class="fu">parSapply</span>(cl, x_split, sum)</span>
+<span id="cb34-14"><a href="#cb34-14" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb34-15"><a href="#cb34-15" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Detener el cluster</span></span>
+<span id="cb34-16"><a href="#cb34-16" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb34-17"><a href="#cb34-17" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Sumar y devolver las sumas parciales</span></span>
+<span id="cb34-18"><a href="#cb34-18" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb34-19"><a href="#cb34-19" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Compara el tiempo de los dos enfoques:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>microbenchmark<span class="sc">::</span><span class="fu">microbenchmark</span>(</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">serial   =</span> <span class="fu">serial_sum</span>(x),</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">parallel =</span> <span class="fu">parallel_sum</span>(x),</span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">times    =</span> <span class="dv">10</span>,</span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">unit     =</span> <span class="st">"relative"</span></span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 
 
