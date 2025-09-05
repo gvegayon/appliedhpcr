@@ -162,7 +162,7 @@ jobs:
         cp -r pdf-es/* _book/es
 
     - name: Upload artifact
-      uses: actions/upload-pages-artifact@v4
+      uses: actions/upload-artifact@v4
       # uses: actions/upload-artifact@v3
       with:
         name: github-pages
@@ -197,5 +197,5 @@ jobs:
           git add -f _book/es/* || echo "Nothing to add"
           git add -f _book/es/*_files || echo "Nothing to add"
           git add -f _book/es/*_libs || echo "Nothing to add"
-          git commit -m "Add coda installation summary" || echo "Nothing to commit"
+          git commit -m "Updating the book" || echo "Nothing to commit"
           git push || echo "Nothing to push"
