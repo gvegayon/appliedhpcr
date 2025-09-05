@@ -11,8 +11,6 @@ permissions:
   pages: write
   id-token: write
 
-env:
-  CONTAINER: gvegayon/appliedhpcr:latest
 
 jobs:
 
@@ -20,7 +18,7 @@ jobs:
     runs-on: ubuntu-22.04
 
     container:
-      image: ${CONTAINER}
+      image: gvegayon/appliedhpcr:latest
 
     steps:
     - uses: actions/checkout@v4
@@ -40,7 +38,7 @@ jobs:
     runs-on: ubuntu-22.04
 
     container:
-      image: ${CONTAINER}
+      image: gvegayon/appliedhpcr:latest
 
     steps:
     - uses: actions/checkout@v4
@@ -60,7 +58,7 @@ jobs:
     runs-on: ubuntu-22.04
 
     container:
-      image: ${CONTAINER}
+      image: gvegayon/appliedhpcr:latest
 
     steps:
     - uses: actions/checkout@v4
@@ -96,7 +94,7 @@ jobs:
     runs-on: ubuntu-22.04
 
     container:
-      image: ${CONTAINER}
+      image: gvegayon/appliedhpcr:latest
 
     steps:
     - uses: actions/checkout@v4
