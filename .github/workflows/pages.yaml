@@ -7,7 +7,7 @@ on:
     branches: [master, main]
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -189,8 +189,8 @@ jobs:
           git add -f _book/* || echo "Nothing to add"
           git add -f _book/*_files || echo "Nothing to add"
           git add -f _book/*_libs || echo "Nothing to add"
-          git add -f _book/_es/* || echo "Nothing to add"
-          git add -f _book/_es/*_files || echo "Nothing to add"
-          git add -f _book/_es/*_libs || echo "Nothing to add"
+          git add -f _book/es/* || echo "Nothing to add"
+          git add -f _book/es/*_files || echo "Nothing to add"
+          git add -f _book/es/*_libs || echo "Nothing to add"
           git commit -m "Add coda installation summary" || echo "Nothing to commit"
           git push || echo "Nothing to push"
