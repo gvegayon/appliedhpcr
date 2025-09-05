@@ -2,46 +2,50 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://book.ggvy.cl/index.html</loc>
-    <lastmod>2025-09-05T16:39:26.398Z</lastmod>
+    <lastmod>2025-09-05T17:00:27.901Z</lastmod>
   </url>
   <url>
     <loc>https://book.ggvy.cl/profiling.html</loc>
-    <lastmod>2025-09-05T16:39:26.398Z</lastmod>
+    <lastmod>2025-09-05T17:00:27.902Z</lastmod>
   </url>
   <url>
     <loc>https://book.ggvy.cl/efficiency.html</loc>
-    <lastmod>2025-09-05T16:39:26.398Z</lastmod>
+    <lastmod>2025-09-05T17:00:27.901Z</lastmod>
   </url>
   <url>
     <loc>https://book.ggvy.cl/intro.html</loc>
-    <lastmod>2025-09-05T16:39:26.398Z</lastmod>
+    <lastmod>2025-09-05T17:00:27.901Z</lastmod>
   </url>
   <url>
     <loc>https://book.ggvy.cl/parallel-pkg.html</loc>
-    <lastmod>2025-09-05T16:39:26.398Z</lastmod>
+    <lastmod>2025-09-05T17:00:27.902Z</lastmod>
   </url>
   <url>
     <loc>https://book.ggvy.cl/slurm-fundamentals.html</loc>
-    <lastmod>2025-09-05T16:39:26.398Z</lastmod>
+    <lastmod>2025-09-05T17:00:27.902Z</lastmod>
   </url>
   <url>
     <loc>https://book.ggvy.cl/slurm-simpi.html</loc>
-    <lastmod>2025-09-05T16:39:26.398Z</lastmod>
+    <lastmod>2025-09-05T17:00:27.902Z</lastmod>
   </url>
   <url>
     <loc>https://book.ggvy.cl/rcpp-part1.html</loc>
-    <lastmod>2025-09-05T16:39:26.398Z</lastmod>
+    <lastmod>2025-09-05T17:00:27.902Z</lastmod>
   </url>
   <url>
     <loc>https://book.ggvy.cl/rcpp-debugging.html</loc>
-    <lastmod>2025-09-05T16:39:26.398Z</lastmod>
+    <lastmod>2025-09-05T17:00:27.902Z</lastmod>
   </url>
   <url>
     <loc>https://book.ggvy.cl/misc.html</loc>
-    <lastmod>2025-09-05T16:39:26.398Z</lastmod>
+    <lastmod>2025-09-05T17:00:27.902Z</lastmod>
   </url>
   <url>
     <loc>https://book.ggvy.cl/references.html</loc>
-    <lastmod>2025-09-05T16:39:26.398Z</lastmod>
+    <lastmod>2025-09-05T17:00:27.902Z</lastmod>
+  </url>
+  <url>
+    <loc>https://book.ggvy.cl/news.html</loc>
+    <lastmod>2025-09-05T17:00:27.902Z</lastmod>
   </url>
 </urlset>
