@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-22.04
 
     container:
-      image: ${{ env.CONTAINER }}
+      image: ${CONTAINER}
 
     steps:
     - uses: actions/checkout@v4
@@ -40,7 +40,7 @@ jobs:
     runs-on: ubuntu-22.04
 
     container:
-      image: ${{ env.CONTAINER }}
+      image: ${CONTAINER}
 
     steps:
     - uses: actions/checkout@v4
@@ -60,7 +60,7 @@ jobs:
     runs-on: ubuntu-22.04
 
     container:
-      image: ${{ env.CONTAINER }}
+      image: ${CONTAINER}
 
     steps:
     - uses: actions/checkout@v4
@@ -96,7 +96,7 @@ jobs:
     runs-on: ubuntu-22.04
 
     container:
-      image: ${{ env.CONTAINER }}
+      image: ${CONTAINER}
 
     steps:
     - uses: actions/checkout@v4
