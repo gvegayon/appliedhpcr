@@ -6,6 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="description" content="This book is a collection of talks and lectures on how to speed up your R code using parallel computing and other resources like C++.">
 
 <title>7&nbsp; Rcpp – Applied HPC with R</title>
 <style>
@@ -191,23 +192,7 @@ window.Quarto = {
       <a href="./">Applied HPC with R</a> 
         <div class="sidebar-tools-main">
     <a href="https://github.com/gvegayon/appliedhpcr" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
-    <div class="dropdown">
-      <a href="" title="Download" id="quarto-navigation-tool-dropdown-0" class="quarto-navigation-tool dropdown-toggle px-1" data-bs-toggle="dropdown" aria-expanded="false" role="link" aria-label="Download"><i class="bi bi-download"></i></a>
-      <ul class="dropdown-menu" aria-labelledby="quarto-navigation-tool-dropdown-0">
-          <li>
-            <a class="dropdown-item sidebar-tools-main-item" href="./Applied-HPC-with-R.epub">
-              <i class="bi bi-journal pe-1"></i>
-            Download ePub
-            </a>
-          </li>
-          <li>
-            <a class="dropdown-item sidebar-tools-main-item" href="./Applied-HPC-with-R.pdf">
-              <i class="bi bi-file-pdf pe-1"></i>
-            Download PDF
-            </a>
-          </li>
-      </ul>
-    </div>
+    <a href="./Applied-HPC-with-R.pdf" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
 </div>
     </div>
       </div>
@@ -326,6 +311,12 @@ window.Quarto = {
   <div class="sidebar-item-container"> 
   <a href="./references.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">References</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./news.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">News</span></span></a>
   </div>
 </li>
     </ul>
@@ -499,9 +490,9 @@ window.Quarto = {
 <span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>microbenchmark<span class="sc">::</span><span class="fu">microbenchmark</span>(<span class="fu">add1R</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">1000</span>), <span class="fu">add1Cpp</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">1000</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Unit: microseconds
-            expr    min      lq     mean  median      uq      max neval
-   add1R(1:1000) 58.769 59.8315 81.87475 60.1975 62.6215 2096.021   100
- add1Cpp(1:1000)  2.805  3.1615 13.83710  3.4865  8.5010  861.608   100</code></pre>
+            expr    min     lq     mean median     uq      max neval
+   add1R(1:1000) 58.609 59.266 81.85258 59.836 62.276 2143.649   100
+ add1Cpp(1:1000)  2.835  3.121 13.61632  3.351  4.408  858.942   100</code></pre>
 </div>
 </div>
 </section>
@@ -646,9 +637,9 @@ F(n - 1) + F(n - 2), &amp; \mbox{otherwise}
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>microbenchmark<span class="sc">::</span><span class="fu">microbenchmark</span>(<span class="fu">fibR</span>(<span class="dv">20</span>), <span class="fu">fibCpp</span>(<span class="dv">20</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Unit: microseconds
-       expr      min       lq       mean    median       uq      max neval
-   fibR(20) 6017.968 6079.668 6289.57117 6130.4120 6186.702 8086.577   100
- fibCpp(20)   15.779   16.025   26.17955   16.6605   17.638  889.310   100</code></pre>
+       expr      min       lq       mean    median        uq      max neval
+   fibR(20) 6034.004 6091.492 6250.16961 6112.0655 6154.2795 7638.087   100
+ fibCpp(20)   15.740   16.090   25.90788   17.0015   17.5975  854.785   100</code></pre>
 </div>
 </div>
 </section>
@@ -755,15 +746,15 @@ F(n - 1) + F(n - 2), &amp; \mbox{otherwise}
 <div class="cell-output cell-output-stdout">
 <pre><code>Unit: milliseconds
                    expr       min        lq      mean    median        uq
-                dist(x) 1167.3707 1167.3707 1167.3707 1167.3707 1167.3707
- dist_par(x, cores = 1)  925.6302  925.6302  925.6302  925.6302  925.6302
- dist_par(x, cores = 2)  632.4712  632.4712  632.4712  632.4712  632.4712
- dist_par(x, cores = 4)  507.2407  507.2407  507.2407  507.2407  507.2407
+                dist(x) 1174.3438 1174.3438 1174.3438 1174.3438 1174.3438
+ dist_par(x, cores = 1)  935.5391  935.5391  935.5391  935.5391  935.5391
+ dist_par(x, cores = 2)  626.1713  626.1713  626.1713  626.1713  626.1713
+ dist_par(x, cores = 4)  535.4296  535.4296  535.4296  535.4296  535.4296
        max neval
- 1167.3707     1
-  925.6302     1
-  632.4712     1
-  507.2407     1</code></pre>
+ 1174.3438     1
+  935.5391     1
+  626.1713     1
+  535.4296     1</code></pre>
 </div>
 </div>
 </section>
@@ -787,7 +778,7 @@ F(n - 1) + F(n - 2), &amp; \mbox{otherwise}
 <span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>  x2 <span class="sc">%&lt;-%</span> {<span class="fu">Sys.sleep</span>(<span class="dv">3</span>);a<span class="sc">^</span><span class="dv">3</span>}</span>
 <span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>})</span>
 <span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a><span class="do">##    user  system elapsed </span></span>
-<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a><span class="do">##   0.030   0.015   0.044</span></span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a><span class="do">##   0.026   0.022   0.047</span></span>
 <span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Let's just wait 5 seconds to make sure all the cores have returned</span></span>
 <span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a><span class="fu">Sys.sleep</span>(<span class="dv">3</span>)</span>
 <span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a><span class="fu">system.time</span>({</span>
@@ -797,7 +788,7 @@ F(n - 1) + F(n - 2), &amp; \mbox{otherwise}
 <span id="cb30-18"><a href="#cb30-18" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 4</span></span>
 <span id="cb30-19"><a href="#cb30-19" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 8</span></span>
 <span id="cb30-20"><a href="#cb30-20" aria-hidden="true" tabindex="-1"></a><span class="do">##    user  system elapsed </span></span>
-<span id="cb30-21"><a href="#cb30-21" aria-hidden="true" tabindex="-1"></a><span class="do">##   0.003   0.001   0.004</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb30-21"><a href="#cb30-21" aria-hidden="true" tabindex="-1"></a><span class="do">##   0.004   0.000   0.004</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="bonus-track-1-simulating-pi" class="level3" data-number="7.12.4">
@@ -849,8 +840,8 @@ F(n - 1) + F(n - 2), &amp; \mbox{otherwise}
 <div class="cell-output cell-output-stdout">
 <pre><code>Unit: milliseconds
      expr      min       lq     mean   median       uq      max neval
- parallel 282.9817 282.9817 282.9817 282.9817 282.9817 282.9817     1
-   serial 376.3761 376.3761 376.3761 376.3761 376.3761 376.3761     1</code></pre>
+ parallel 284.0574 284.0574 284.0574 284.0574 284.0574 284.0574     1
+   serial 376.3555 376.3555 376.3555 376.3555 376.3555 376.3555     1</code></pre>
 </div>
 </div>
 <hr>
