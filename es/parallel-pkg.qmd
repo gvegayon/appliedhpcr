@@ -1,43 +1,437 @@
 ---
-title: El Paquete parallel
-author: George G. Vega Yon, Ph.D.
-date: 2025-08-14
+date-modified: 2025-08-21
 ---
 
-*[El contenido completo de este capítulo será traducido al español. Por ahora, esta es una versión preliminar.]*
+Aunque R no fue construido para computación paralela, existen múltiples formas de paralelizar tu código R. Una de estas es el paquete `parallel`. Este paquete de R, incluido con R base, proporciona varias funciones para paralelizar código R usando [computación embarazosamente paralela](https://en.wikipedia.org/w/index.php?title=Embarrassingly_parallel&oldid=1136401514){target="_blank"}, es decir, una estrategia de tipo divide-y-vencerás. La idea básica es iniciar múltiples sesiones de R (usualmente llamadas procesos hijos), conectar la sesión principal con estas, y enviarles instrucciones. Esta sección cubre un flujo de trabajo común para trabajar con el parallel de R.
 
-## El Paquete `parallel` en R
+## Flujo de trabajo paralelo
 
-El paquete `parallel` es la herramienta estándar para computación paralela en R. Proporciona funciones para:
+(Usualmente) Hacemos lo siguiente:
 
-- `mclapply()`: Versión paralela de `lapply()` (solo Unix/Linux)
-- `parLapply()`: Versión paralela multiplataforma
-- `makeCluster()`: Crear clusters de trabajadores
-- `clusterApply()`: Aplicar funciones en clusters
+1.  Crear un cluster `PSOCK/FORK` (u otro) usando `makePSOCKCluster`/`makeForkCluster` (o `makeCluster`). Cuántos procesos hijos dependeŕa de cuántos núcleos tiene tu computadora. Una regla general es usar `parallel::detectCores() - 1` núcleos (para dejar uno libre para el resto de tu computadora).
 
-## Funciones Principales
+2.  Copiar/preparar cada sesión de R (si estás usando un cluster `PSOCK`):
+
+    a.  Copiar objetos con `clusterExport`. Estos serían todos los objetos que necesitas en las sesiones hijas.
+
+    b.  Pasar expresiones con `clusterEvalQ`. Esto incluiría cargar paquetes de R y otro código en las otras sesiones.
+
+    c.  Establecer una semilla (si estás haciendo algo que involucra aleatoriedad)
+
+3.  Hacer tu llamada: `parApply`, `parLapply`, etc. 
+
+4.  Detener el cluster con `clusterStop`
+
+Como mencionamos más adelante, el paso 2 dependerá del tipo de cluster que estés usando. Si estás usando una conexión Socket (`PSOCK` cluster), entonces las sesiones de R generadas serán completamente nuevas (sin datos o paquetes de R precargados); mientras que usar una conexión Fork (`FORK` cluster) copiará la sesión actual de R, incluyendo todos los objetos y paquetes cargados.
+
+## Tipos de clusters: PSOCK
+
+-   Se puede crear con `makePSOCKCluster`
+
+-   Crea sesiones de R completamente nuevas (por lo que nada se hereda del maestro), ej.
+    
+    ```r
+    # Esto crea un cluster con 4 sesiones de R
+    cl <- makePSOCKCluster(4)
+    ```
+
+-   Las sesiones hijas están conectadas a la sesión maestra a través de conexiones Socket
+
+-   Se puede crear fuera de la computadora actual, **es decir**, ¡entre múltiples computadoras!
+
+## Tipos de clusters: Fork
+
+-   Fork Cluster `makeForkCluster`:
+
+-   Usa [Forking](https://en.wikipedia.org/wiki/Fork_(system_call)) del SO,
+
+-   Copia la sesión actual de R localmente (por lo que todo se hereda del
+    maestro hasta ese punto).
+    
+-   Los datos solo se duplican si se alteran (¡necesito verificar cuándo sucede esto!)
+
+-   No disponible en Windows.
+
+Otros tipos están disponibles a través de la función `makeCluster` del paquete de R [**snow**](https://cran.r-project.org/package=snow)
+(Simple Network of Workstations). Estos incluyen clusters MPI (Message Passing Interface) y clusters Slurm (Socket).
+
+
+## Un programa plantilla
+
+El siguiente bloque de código muestra una plantilla para usar el paquete `parallel` en R. Puedes copiar esto y comentar las partes que no necesites:
 
 ```r
 library(parallel)
 
-# Detectar número de núcleos
-num_cores <- detectCores()
+# 1. CREAR UN CLUSTER ----------------
+nnodes <- 4L # ¡Podría ser menos o más!
+cl <- makePSOCKcluster(nnodes)
 
-# Ejemplo con mclapply (Unix/Linux/Mac)
-result <- mclapply(data, function(x) {
-  # Tu función aquí
-}, mc.cores = num_cores)
+# 2. PREPARAR EL CLUSTER -------------
 
-# Ejemplo con clusters (Multiplataforma)
-cl <- makeCluster(num_cores)
-result <- parLapply(cl, data, function(x) {
-  # Tu función aquí
+# Principalmente si se usa PSOCK
+clusterEvalQ(cl, {
+  library(...) # Cargar los paquetes necesarios
+  source(...) # Cargar scripts adicionales
 })
+
+# Siempre si estás generando números aleatorios
+clusterSetRNGStream(cl, 123)
+
+# 3. HACER TU LLAMADA ----------------------
+ans <- parLapply(
+  cl,
+  ... lista larga para iterar ...,
+  function(x) {
+    ...
+  },
+  ... argumentos adicionales ...
+  )
+
+# 4. DETENER EL CLUSTER
 stopCluster(cl)
 ```
 
-::: {.callout-note}
-## Trabajo en Progreso
+Generalmente, la `... lista larga para iterar ...` será un vector u otra lista que contenga datos (ej., conjuntos de datos individuales), una secuencia de números (ej., del 1 al 1000), una lista de rutas de archivos (si estuvieras procesando archivos individualmente), o directamente una secuencia corta con números del 1 al número de nodos (aplicación menos común).
 
-Esta traducción está en desarrollo. El contenido completo incluirá ejemplos detallados, comparaciones de rendimiento y mejores prácticas para usar el paquete parallel.
+Cuando llamas `parLapply` o `parSapply` (las versiones paralelas de `lapply` y `sapply` respectivamente), la llamada a la función dividirá automáticamente las iteraciones entre nodos usando la función `splitIndices`. Aquí hay un ejemplo de lo que sucede bajo el capó:
+
+```{r}
+#| label: cluster-split
+# Distribuyendo 9 iteraciones entre dos núcleos
+(n_iterations <- parallel::splitIndices(nx = 9, ncl = 2))
+```
+
+Lo que significa que la primera sesión de R obtendrá `r length(n_iterations[[1]])` trabajos, mientras que la segunda sesión de R obtendrá `r length(n_iterations[[2]])` trabajos. De esta manera, cada sesión de R generada (sesión hija) obtiene un número similar de iteraciones.
+
+## Ejemplo: Ejecutar una regresión lineal a través de múltiples columnas
+
+En genómica, es común analizar datos genómicos a nivel de genes comparando niveles de expresión contra algún fenotipo/enfermedad. Un análisis simple consiste en ejecutar una regresión lineal a través de múltiples columnas (genes) de un data frame. El siguiente bloque de código genera algunos datos artificiales que podemos usar para este ejemplo:
+
+```{r}
+#| label: omics-data
+set.seed(331)
+n_genes <- 10000
+n_obs <- 1000
+
+# Una matriz aleatoria de ómicas
+X_genes <- rnorm(n_obs * n_genes) |>
+  matrix(nrow = n_obs)
+
+# Un fenotipo aleatorio (completamente no relacionado para este ejemplo)
+Y <- rnorm(n_obs) |> cbind()
+```
+
+Envolveremos el análisis en una función para poder hacer benchmarking. Usaremos la función `lapply` para iterar sobre las columnas de `X_genes`
+
+```{r}
+#| label: omics-lapply
+ols_serial <- function(X, Y) {
+  lapply(
+    X = seq_len(n_genes),
+    FUN = \(i) {lm.fit(X[, i, drop = FALSE], Y) |> coef()}
+  ) |> do.call(what = rbind)
+}
+
+# Llamando la función y viendo las primeras filas
+ols_serial(X_genes, Y) |> head()
+```
+
+::: {.callout-tip}
+Como hicimos en la sección de programación eficiente, en lugar de usar `lm()` o `glm()`, podemos usar `lm.fit()` para mejor rendimiento. La función `lm.fit()` hace menos que la función `lm()` al omitir el cálculo de residuos y otras sobrecargas, haciéndola más rápida para conjuntos de datos grandes.
 :::
+
+Usando computación paralela (y siguiendo la plantilla que presentamos anteriormente), esto podría hacerse de la siguiente manera con el paquete parallel:
+
+```{r}
+#| label: omics-parlapply
+library(parallel)
+
+ols_parallel <- function(X, Y, ncores) {
+  # 1. CREAR UN CLUSTER ----------------
+  cl <- makePSOCKcluster(ncores)
+  
+  # Esto será llamado al salir de la función
+  on.exit(stopCluster(cl)) 
+
+  # 2. PREPARAR EL CLUSTER -------------
+  # Copiamos los datos
+  clusterExport(cl, c("X", "Y"), envir = environment())
+
+  # 3. HACER TU LLAMADA ----------------------
+  parLapply(
+    cl,
+    seq_len(n_genes),
+    function(i) {
+      lm.fit(X[, i, drop = FALSE], Y) |> coef()
+    }
+  ) |> do.call(what = rbind)
+}
+
+# Verificando que funciona
+ols_parallel(X_genes, Y, ncores = 4L) |> head()
+```
+
+::: {.callout-tip}
+Al igual que `return()`, `on.exit()` solo puede usarse dentro de una llamada a función. Podríamos haber usado `stopCluster(cl)` al final como hacemos en nuestro ejemplo de plantilla, pero el beneficio de usar `on.exit()` es que será llamado automáticamente cuando la función termine, incluso si ocurre un error. Esto ayuda a asegurar que el cluster siempre se detenga apropiadamente.
+:::
+
+Ahora que tenemos la función implementada, podemos proceder a (1) comparar resultados y (2) medir rendimiento.
+
+```{r}
+#| label: omics-bench1
+#| cache: true
+library(microbenchmark)
+
+microbenchmark(
+  serial = ols_serial(X_genes, Y),
+  parallel = ols_parallel(X_genes, Y, ncores = 4L),
+  times = 10L,
+  check = "identical"
+)
+```
+
+De la comparación, podemos ver que la versión paralela es significativamente más lenta que la versión serial. Dos cosas a notar aquí son (a) la tarea que estamos ejecutando ya es rápida (alrededor de 0.3 segundos en promedio para la ejecución serial) y (b) hay un costo de sobrecarga asociado con crear, preparar y detener el cluster. Como mencionamos anteriormente, las optimizaciones paralelas solo tienen sentido si tu código ya está tomando una cantidad significativa de tiempo, haciendo que el costo de sobrecarga asociado con la configuración sea relativamente pequeño. La siguiente implementación de la función debería hacerla significativamente más rápida:
+
+```{r}
+#| label: omics-parlapply2
+ols_parallel2 <- function(cl) {
+  # 1. CREAR UN CLUSTER ----------------
+  # 2. PREPARAR EL CLUSTER -------------
+  # Ya no es necesario ya que estamos manejando el núcleo fuera
+
+  # 3. HACER TU LLAMADA ----------------------
+  parLapply(
+    cl,
+    seq_len(n_genes),
+    function(i) {
+      lm.fit(X_genes[, i, drop = FALSE], Y) |> coef()
+    }
+  ) |> do.call(what = rbind)
+}
+
+# Verificando que funciona
+cl <- makePSOCKcluster(4)
+clusterExport(cl, c("X_genes", "Y"))
+ols_parallel2(cl) |> head()
+
+# 4. DETENER EL CLUSTER
+stopCluster(cl)
+```
+
+Las principales diferencias de la versión anterior de la función son:
+
+1. Estamos creando el cluster fuera de la función y pasándolo como argumento.
+
+2. Estamos exportando las variables `X_genes` y `Y` al cluster solo una vez, lo cual también debería reducir significativamente la sobrecarga.
+
+3. Debido al paso anterior, ahora estamos llamando `X_genes` directamente en la función principal.
+
+4. El cluster se detiene fuera de la llamada a la función (ya que la función ya no maneja el objeto cluster).
+
+
+Midamos el rendimiento para ver qué tan más rápida es la versión paralela.
+
+```{r}
+#| label: omics-bench2
+#| cache: true
+library(microbenchmark)
+
+# Necesitamos preparar el cluster de antemano
+cl <- makePSOCKcluster(4)
+clusterExport(cl, c("X_genes", "Y"))
+
+microbenchmark(
+  serial = ols_serial(X_genes, Y),
+  parallel = ols_parallel2(cl),
+  times = 10L,
+  check = "identical"
+)
+
+# Necesitamos detener el cluster
+stopCluster(cl)
+```
+
+Ahora, la versión paralela es significativamente más rápida que la versión serial. Solo usar el paquete parallel (o cualquier otro paquete que se pueda usar para computación paralela) no garantiza un rendimiento mejorado.
+
+## Más ejemplos
+
+Los siguientes tres ejemplos son una aplicación simple del paquete en la cual estamos ejecutando explícitamente tantas réplicas como hilos tiene el cluster. Generalmente, el número de réplicas será una función de los datos.
+
+### Ej 1: RNG Paralelo con `makePSOCKCluster`
+
+::: {.callout-caution}
+Usar más hilos que núcleos disponibles en tu computadora nunca es una buena idea. Como regla general, los clusters deberían crearse usando `parallel::detectCores() - 1` núcleos (para dejar uno libre para el resto de tu computadora.)
+:::
+
+```{r parallel-ex-psock, echo=TRUE}
+# 1. CREAR UN CLUSTER
+library(parallel)
+nnodes <- 4L
+cl     <- makePSOCKcluster(nnodes)    
+# 2. PREPARAR EL CLUSTER
+clusterSetRNGStream(cl, 123) # Equivalente a `set.seed(123)`
+# 3. HACER TU LLAMADA
+ans <- parSapply(cl, 1:nnodes, function(x) runif(1e3))
+(ans0 <- var(ans))
+```
+
+Asegurándonos de que es reproducible
+
+```{r parallel-ex-psock-cont, echo=TRUE}
+# ¡Quiero obtener lo mismo!
+clusterSetRNGStream(cl, 123)
+ans1 <- var(parSapply(cl, 1:nnodes, function(x) runif(1e3)))
+# 4. DETENER EL CLUSTER
+stopCluster(cl)
+all.equal(ans0, ans1) # ¡Todo igual!
+```
+
+### Ej 2: RNG Paralelo con `makeForkCluster`
+
+En el caso de `makeForkCluster`
+
+```{r parallel-ex-fork, echo=TRUE, eval = TRUE}
+# 1. CREAR UN CLUSTER
+library(parallel)
+# El fork cluster copiará el objeto -nsims-
+nsims  <- 1e3
+nnodes <- 4L
+cl     <- makeForkCluster(nnodes)    
+# 2. PREPARAR EL CLUSTER
+clusterSetRNGStream(cl, 123)
+# 3. HACER TU LLAMADA
+ans <- do.call(cbind, parLapply(cl, 1:nnodes, function(x) {
+  runif(nsims) # ¡Mira! usamos el objeto nsims!
+               # Esto habría fallado en makePSOCKCluster
+               # si no copiamos -nsims- primero.
+  }))
+(ans0 <- var(ans))
+```
+
+Nuevamente, queremos asegurarnos de que esto es reproducible
+
+```{r parallel-ex-fork-cont, echo=TRUE}
+# Misma secuencia con misma semilla
+clusterSetRNGStream(cl, 123)
+ans1 <- var(do.call(cbind, parLapply(cl, 1:nnodes, function(x) runif(nsims))))
+ans0 - ans1 # Una matriz de ceros
+# 4. DETENER EL CLUSTER
+stopCluster(cl)
+```
+
+<text style="color:white;">Bueno, si eres usuario de Mac-OS/Linux, hay una forma más directa de hacer esto...</text>
+
+
+### Ej 3: RNG Paralelo con `mclapply` (Forking sobre la marcha)
+
+En el caso de `mclapply`, ¡el forking (creación del cluster) se hace sobre la marcha!
+
+```{r parallel-ex-mclapply, echo=TRUE, eval = TRUE}
+# 1. CREAR UN CLUSTER
+library(parallel)
+# El fork cluster copiará el objeto -nsims-
+nsims  <- 1e3
+nnodes <- 4L
+# cl     <- makeForkCluster(nnodes) # mclapply lo hace sobre la marcha
+# 2. PREPARAR EL CLUSTER
+set.seed(123) 
+# 3. HACER TU LLAMADA
+ans <- do.call(cbind, mclapply(1:nnodes, function(x) runif(nsims)))
+(ans0 <- var(ans))
+```
+
+Una vez más, queremos asegurarnos de que esto es reproducible
+
+```{r parallel-ex-mclapply-cont, echo=TRUE}
+# Misma secuencia con misma semilla
+set.seed(123) 
+ans1 <- var(do.call(cbind, mclapply(1:nnodes, function(x) runif(nsims))))
+ans0 - ans1 # Una matriz de ceros
+# 4. DETENER EL CLUSTER
+# stopCluster(cl) ya no es necesario hacer esto
+```
+
+## Ejercicio: Costos de sobrecarga
+
+Compara el tiempo de tomar la suma de 100 números cuando está paralelizado versus no.  Para la versión no paralelizada (serializada), usa lo siguiente:
+
+```{r}
+set.seed(123)
+x <- runif(n=100)
+
+serial_sum <- function(x){
+  x_sum <- sum(x)
+  return(x_sum)
+}
+```
+
+
+Para la versión paralelizada, sigue este esquema
+
+```{r}
+library(parallel)
+```
+
+```{r, eval=FALSE}
+
+set.seed(123)
+x <- runif(n=100)
+
+parallel_sum <- function(){
+  
+  
+  # Establecer número de núcleos a usar
+  # hacer cluster y exportar al cluster la variable x
+  # Usar "función de división para dividir x en tantos trozos como el número de núcleos
+  
+  # Calcular sumas parciales haciendo algo como:
+  
+  partial_sums <- parallel::parSapply(cl, x_split, sum)
+  
+  # Detener el cluster
+  
+  # Sumar y devolver las sumas parciales
+  
+}
+
+```
+
+
+```{r, echo=FALSE, eval=TRUE, results=FALSE}
+
+set.seed(123)
+x <- runif(n=100)
+
+parallel_sum <- function(x){
+  
+  
+  num_cores <- 4L
+  cl <- makeCluster(num_cores)
+  clusterExport(cl,"x")
+  
+  x_split <- suppressWarnings(split(x, 1:num_cores))
+  
+  partial_sums <- parallel::parSapply(cl, x_split, sum)
+  
+  stopCluster(cl)
+  
+  x_sum <- sum(partial_sums)
+  
+  return(x_sum)
+  
+}
+```
+
+Compara el tiempo de los dos enfoques:
+
+```{r}
+#| label: overhead
+#| eval: false
+microbenchmark::microbenchmark(
+  serial   = serial_sum(x),
+  parallel = parallel_sum(x),
+  times    = 10,
+  unit     = "relative"
+)
+```

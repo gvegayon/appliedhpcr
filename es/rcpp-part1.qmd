@@ -1,44 +1,572 @@
----
-title: Rcpp Parte 1
-author: George G. Vega Yon, Ph.D.
-date: 2025-08-14
----
+# Rcpp
 
-*[El contenido completo de este capítulo será traducido al español. Por ahora, esta es una versión preliminar.]*
+Cuando la computación paralela no es suficiente, puedes acelerar tu código R usando un lenguaje de programación de más bajo nivel[^lowwhat] como C++, C, o Fortran. Con R mismo escrito en C, proporciona puntos de acceso (APIs) para conectar funciones de C++/C/Fortran a R. Aunque no es imposible, usar lenguajes de bajo nivel para mejorar R puede ser engorroso; Rcpp [@Eddelbuettel2011; @RcppBook; @Rcpp] puede hacer las cosas **muy** fáciles. Este capítulo te muestra cómo usar Rcpp--la forma más popular de conectar C++ con R--para acelerar tu código R.
 
-## Introducción a Rcpp
+[^lowwhat]: En general, un lenguaje de programación de bajo nivel es "*un lenguaje de programación que proporciona poca o ninguna abstracción del conjunto de arquitectura de una computadora \[...\]*" ([wiki](https://en.wikipedia.org/w/index.php?title=Low-level_programming_language&oldid=1147973157)), sin embargo, aquí usamos ese término para referirnos a lenguajes de programación que están más cerca del código máquina de lo que está R.
 
-Rcpp es un paquete de R que facilita la integración de código C++ con R. Permite:
+## Antes de empezar
 
-- Escribir funciones C++ que pueden ser llamadas desde R
-- Acceso eficiente a objetos de R desde C++
-- Mejoras significativas de rendimiento para cálculos intensivos
+<div style="text-align: center; margin: auto;">
+<a href="https://imgflip.com/i/38ji3q"><img src="https://i.imgflip.com/38ji3q.jpg" title="made at imgflip.com" width="30%"/></a>
+<a href="https://imgflip.com/i/38jiku"><img src="https://i.imgflip.com/38jiku.jpg" title="made at imgflip.com" width="30%"/></a>
+</div>
 
-## ¿Por qué usar C++ con R?
+1.  Necesitas tener Rcpp instalado en tu sistema:
+        
+    ```r
+    install.packages("Rcpp")
+    ```
+        
+2.  Necesitas tener un compilador
+        
+    -  Windows: Puedes descargar Rtools [desde aquí](https://cran.r-project.org/bin/windows/Rtools/).
+    
+    -  MacOS: Es un poco complicado... Aquí hay algunas opciones:
+        
+        *  Manual de CRAN para obtener los compiladores clang, clang++, y gfortran
+        [aquí](https://cran.r-project.org/doc/manuals/r-release/R-admin.html#macOS).
+        
+        *  Una excelente guía del profesor coatless
+        [aquí](https://thecoatlessprofessor.com/programming/r-compiler-tools-for-rcpp-on-macos/)
+            
 
-1. **Velocidad**: C++ es considerablemente más rápido para bucles y cálculos intensivos
-2. **Control de memoria**: Mejor gestión de memoria para datos grandes
-3. **Librerías existentes**: Acceso a librerías C++ optimizadas
-4. **Algoritmos personalizados**: Implementación de algoritmos especializados
+¡Y eso es todo!
 
-## Primer Ejemplo
+## R es genial, pero...
+
+*  El problema:
+    
+    *  Como vimos, R es muy rápido... una vez vectorizado
+    
+    *  ¿Qué hacer si tu modelo no puede ser vectorizado?
+    
+*  La solución: **¡Usa C/C++/Fortran! ¡Funciona con R!**
+    
+*  El problema de la solución: **¿Qué usuario de R conoce alguno de esos?**
+    
+*  R ha tenido una API (interfaz de programación de aplicaciones) para integrar
+   código C/C++ con R durante mucho tiempo.
+   
+*  Desafortunadamente, no es muy directo
+
+## Entra Rcpp
+
+- Uno de los **paquetes de R más importantes en CRAN**.
+
+- Al 22 de enero de 2023, aproximadamente [50% de los paquetes de CRAN dependen de él](http://dirk.eddelbuettel.com/blog/2023/01/22/#rcpp_1.0.10) (directa o indirectamente).
+
+- De la descripción del paquete:
+
+>  El paquete 'Rcpp' proporciona funciones de R así como clases de C++ que ofrecen una integración perfecta de R y C++
+
+## ¿Por qué molestarse?
+
+*   Para extraer diez números de una distribución normal con sd = 100.0 usando la API de C de R:
+    
+    ```c
+    SEXP stats = PROTECT(R_FindNamespace(mkString("stats")));
+    SEXP rnorm = PROTECT(findVarInFrame(stats, install("rnorm")));
+    SEXP call = PROTECT(
+      LCONS( rnorm, CONS(ScalarInteger(10), CONS(ScalarReal(100.0),
+      R_NilValue))));
+    SET_TAG(CDDR(call),install("sd"));
+    SEXP res = PROTECT(eval(call, R_GlobalEnv));
+    UNPROTECT(4);
+    return res;
+    ```
+
+-   Usando Rcpp:
+    
+    ```c
+    Environment stats("package:stats");
+    Function rnorm = stats["rnorm"];
+    return rnorm(10, Named("sd", 100.0));
+    ```
+
+## Ejemplo 1: Iterando sobre un vector
+
+```{Rcpp}
+#| cache: true
+#| label: "rcpp-add1"
+#| echo: true
+#include<Rcpp.h>
+using namespace Rcpp;
+// [[Rcpp::export]]
+NumericVector add1(NumericVector x) {
+  NumericVector ans(x.size());
+  for (int i = 0; i < x.size(); ++i)
+    ans[i] = x[i] + 1;
+  return ans;
+}
+```
+
+```{r}
+#| echo: true
+add1(1:10)
+```
+
+Hazlo más dulce agregando algo de "azúcar" (del tipo Rcpp)
+
+```{Rcpp}
+#| cache: true
+#| echo: true
+#include<Rcpp.h>
+using namespace Rcpp;
+// [[Rcpp::export]]
+NumericVector add1Cpp(NumericVector x) {
+  return x + 1;
+}
+```
+
+```{r}
+#| echo: true
+add1Cpp(1:10)
+```
+
+## ¿Qué tan rápido?
+
+Comparado con esto:
+
+```{r}
+#| echo: true
+add1R <- function(x) {
+  for (i in 1:length(x))
+    x[i] <- x[i] + 1
+  x
+}
+microbenchmark::microbenchmark(add1R(1:1000), add1Cpp(1:1000))
+```
+
+## Principales diferencias entre R y C++
+
+1.  Uno es compilado, y el otro interpretado
+
+2.  Indexando objetos: En C++ los índices van de 0 a `(n - 1)`, mientras que en
+    R es de 1 a `n`.
+    
+3.  Todas las expresiones terminan con `;` (opcional en R).
+
+4.  En C++ los objetos necesitan ser declarados, en R no ([dinámico](https://en.wikipedia.org/wiki/Dynamic_programming_language)).
+
+
+## Fundamentos de C++/Rcpp: Tipos
+
+Además de tipos de datos tipo C (`double`, `int`, `char`, y `bool`), podemos usar
+los siguientes tipos de objetos con Rcpp:
+
+- Matrices: `NumericMatrix`, `IntegerMatrix`, `LogicalMatrix`, `CharacterMatrix`
+
+- Vectores: `NumericVector`, `IntegerVector`, `LogicalVector`, `CharacterVector`
+
+- ¡Y más!: `DataFrame`, `List`, `Function`, `Environment`
+
+
+## Partes de "un programa Rcpp"
+
+
+```cpp
+#include<Rcpp.h>
+using namespace Rcpp
+// [[Rcpp::export]]
+NumericVector add1(NumericVector x) {
+  NumericVector ans(x.size());
+  for (int i = 0; i < x.size(); ++i)
+    ans[i] = x[i] + 1;
+  return ans;
+}
+```
+
+```{r}
+#| label: "code-bolder"
+#| echo: false
+#| code-line-numbers: true
+bold_code <- function(x) {
+  sprintf('<text style="color:white;font-family:monospace;background-color: darkgray;">%s</text>', x)
+}
+```
+
+Línea por línea, vemos lo siguiente:
+
+1.  El `r bold_code("#include<Rcpp.h>")` es similar a `library(...)` en R, trae todo lo que
+    necesitamos para escribir código C++ para Rcpp.
+
+2.  `r bold_code("using namespace Rcpp")` es algo similar a `detach(...)`. Esto
+    simplifica la sintaxis. Si no incluimos esto, todas las llamadas a miembros de Rcpp necesitan ser
+    explícitas, **ej.**, en lugar de escribir `NumericVector`, necesitaríamos escribir
+    `Rcpp::NumericVector`
+   
+3.  El `//` comienza un comentario en C++, en este caso, el `r bold_code("// [[Rcpp::export]]")`
+    comentario es una bandera que Rcpp usa para "exportar" esta función C++ a R.
+    
+4.  Es la primera parte de la definición de función. Estamos creando una función que
+    devuelve un `r bold_code("NumericVector")`, se llama `r bold_code("add1")`,
+    tiene un solo elemento de entrada llamado  `r bold_code("x")` que también es un
+    `r bold_code("NumericVector")`.
+
+5.  Aquí, estamos declarando un objeto llamado `r bold_code("ans")`, que es un
+    `r bold_code("NumericVector")` con un tamaño inicial igual al tamaño de
+    `r bold_code("x")`. Nota que `r bold_code(".size()")` se llama una
+    "función miembro" del objeto `x`, que es de clase `NumericVector`.
+    
+6.  Estamos declarando un for-loop (tres partes):
+    
+    a.  `r bold_code("int i = 0")` Declaramos la variable `i`, un entero, y la inicializamos en 0.
+    
+    b.  `r bold_code("i < x.size()")` Este bucle terminará cuando el valor de `i` esté en o por encima de la longitud de `x`.
+    
+    c.  `r bold_code("++i")` En cada iteración, `i` se incrementará en una unidad.
+
+7.  `r bold_code("ans[i] = x[i] + 1")` establece el i-ésimo elemento de `ans` igual al
+    i-ésimo elemento de `x` más 1.
+    
+8.  `r bold_code("return ans")` sale de la función devolviendo el vector `ans`.
+
+
+Ahora, ¿dónde ejecutar/correr esto?
+
+- Puedes usar la función `sourceCpp` del paquete `Rcpp` para ejecutar scripts .cpp (esto es lo que hago la mayoría del tiempo).
+- También está `cppFunction`, que permite compilar una sola función.
+- Escribir un paquete de R que funcione con Rcpp.
+
+Por ahora, usemos la primera opción.
+
+## Ejemplo ejecutando archivo .cpp
+
+Imagina que tenemos el siguiente archivo llamado `norm.cpp`
 
 ```cpp
 #include <Rcpp.h>
 using namespace Rcpp;
-
 // [[Rcpp::export]]
-double suma_cpp(NumericVector x) {
-  double resultado = 0;
-  for(int i = 0; i < x.size(); i++) {
-    resultado += x[i];
-  }
-  return resultado;
+double normRcpp(NumericVector x) {
+  
+  return sqrt(sum(pow(x, 2.0)));
+  
 }
 ```
 
-::: {.callout-note}
-## Trabajo en Progreso
+Podemos compilar y obtener esta función usando esta línea `Rcpp::sourceCpp("norm.cpp")`.
+Una vez compilada, una función llamada `normRcpp` estará disponible en la
+sesión actual de R.
 
-Esta traducción está en desarrollo. El contenido completo incluirá ejemplos prácticos, tipos de datos, y mejores prácticas para programación con Rcpp.
-:::
+## Tu turno
+
+### Problema 1: Sumar vectores {.smaller}
+
+1.  Usando lo que acabas de aprender sobre Rcpp, escribe una función para sumar dos vectores de la misma longitud. Usa la siguiente plantilla
+        
+```cpp
+#include <Rcpp.h>
+using namespace Rcpp;
+// [[Rcpp::export]]
+NumericVector add_vectors([declarar vector 1], [declarar vector 2]) {
+  
+  ... magia ...
+  
+  return [algo];
+}
+```
+        
+    
+2.  Ahora, tenemos que verificar las longitudes. Usa la función `stop` para asegurarte de que las longitudes coincidan. Agrega las siguientes líneas en tu código
+        
+```cpp
+if ([alguna condición])
+  stop("un mensaje de error arbitrario :)");
+```
+
+### Problema 2: Serie de Fibonacci {.smaller}
+
+![](fig/640px-Fibonacci_Spiral.svg.png){width="50%" fig-alt="Espiral de Fibonacci" fig-align="center"}
+
+Cada elemento de la secuencia está determinado por lo siguiente:
+
+$$
+F(n) = \left\{\begin{array}{ll}
+n, & \mbox{ si }n \leq 1\\
+F(n - 1) + F(n - 2), & \mbox{de otro modo}
+\end{array}\right.
+$$
+
+Usando recursiones, podemos implementar este algoritmo en R de la siguiente manera:
+    
+```{r}
+#| echo: true
+fibR <- function(n) {
+  if (n <= 1)
+    return(n)
+  fibR(n - 1) + fibR(n - 2)
+}
+# ¿Está funcionando?
+c(
+  fibR(0), fibR(1), fibR(2),
+  fibR(3), fibR(4), fibR(5),
+  fibR(6)
+)
+```
+
+Ahora, ¡traduzcamos este código a Rcpp y veamos cuánto aumento de velocidad obtenemos!
+
+### Problema 2: Serie de Fibonacci (solución)
+
+```{Rcpp}
+#| label: fib
+#| cache: true
+#| code-fold: true
+#include <Rcpp.h>
+// [[Rcpp::export]]
+int fibCpp(int n) {
+  if (n <= 1)
+    return n;
+  
+  return fibCpp(n - 1) + fibCpp(n - 2);
+  
+}
+```
+
+```{r}
+#| echo: true
+#| cache: true
+microbenchmark::microbenchmark(fibR(20), fibCpp(20))
+```
+
+
+## RcppArmadillo y OpenMP
+
+*   Más amigable que [**RcppParallel**](http://rcppcore.github.io/RcppParallel/)...
+    al menos para usuarios 'Uso-Rcpp-pero-realmente-no-sé-mucho-sobre-C++' (¡como yo!).
+
+*   Debe ejecutar solo llamadas 'Thread-safe', así que llamar R dentro de bloques paralelos puede causar
+    problemas (casi todo el tiempo).
+    
+*   Usa objetos `arma`, ej. `arma::mat`, `arma::vec`, etc. O, si estás acostumbrado a ellos
+    objetos `std::vector` ya que estos son thread-safe.
+
+*   La Generación de Números Pseudo Aleatorios no es muy directa... Pero C++11 tiene
+    un [buen conjunto de funciones](http://en.cppreference.com/w/cpp/numeric/random) que pueden usarse junto con OpenMP
+
+*   Necesitas pensar sobre cómo funcionan los procesadores, memoria caché, etc. De otro modo, podrías
+    meterte en problemas... si tu código es más lento cuando se ejecuta en paralelo, entonces probablemente
+    estés enfrentando [false sharing](https://software.intel.com/en-us/articles/avoiding-and-identifying-false-sharing-among-threads)
+    
+*   Si R se cuelga... intenta ejecutar R con un debugger (ver
+    [Sección 4.3 en Writing R extensions](https://cran.r-project.org/doc/manuals/r-release/R-exts.html#Checking-memory-access)):
+    
+    ```shell
+    ~$ R --debugger=valgrind
+    ```
+
+### Flujo de trabajo de RcppArmadillo y OpenMP
+
+1.  Dile a Rcpp que necesitas incluir eso en el compilador:
+    
+    ```cpp
+    #include <omp.h>
+    // [[Rcpp::plugins(openmp)]]
+    ```
+
+2.  Dentro de tu función, establece el número de núcleos, ej.
+
+    ```cpp
+    // Estableciendo los núcleos
+    omp_set_num_threads(cores);
+    ```
+
+3.  Dile al compilador que ejecutarás un bloque en paralelo con OpenMP
+    
+    ```cpp
+    #pragma omp [directivas] [opciones]
+    {
+      ...tu código paralelo elegante...
+    }
+    ```
+    
+    Necesitarás especificar cómo OMP debe manejar los datos:
+    
+    *   `shared`: Por defecto, todos los hilos acceden a la misma copia.
+    *   `private`: Cada hilo tiene su propia copia, no inicializada.
+    *   `firstprivate` Cada hilo tiene su propia copia, inicializada.
+    *   `lastprivate` Cada hilo tiene su propia copia. El último valor usado se devuelve.
+    
+    
+    Establecer `default(none)` es una buena práctica.
+    
+3.  ¡Compila!
+
+
+### Ej 5: RcppArmadillo + OpenMP
+
+Nuestra propia versión de la función `dist`... ¡pero en paralelo!
+
+```{Rcpp dist-code, cache=TRUE, echo=TRUE}
+#include <omp.h>
+#include <RcppArmadillo.h>
+// [[Rcpp::depends(RcppArmadillo)]]
+// [[Rcpp::plugins(openmp)]]
+using namespace Rcpp;
+// [[Rcpp::export]]
+arma::mat dist_par(const arma::mat & X, int cores = 1) {
+  
+  // Algunas constantes
+  int N = (int) X.n_rows;
+  int K = (int) X.n_cols;
+  
+  // Salida
+  arma::mat D(N,N);
+  D.zeros(); // Rellenando con ceros
+  
+  // Estableciendo los núcleos
+  omp_set_num_threads(cores);
+  
+#pragma omp parallel for shared(D, N, K, X) default(none)
+  for (int i=0; i<N; ++i)
+    for (int j=0; j<i; ++j) {
+      for (int k=0; k<K; k++) 
+        D.at(i,j) += pow(X.at(i,k) - X.at(j,k), 2.0);
+      
+      // Calculando raíz cuadrada
+      D.at(i,j) = sqrt(D.at(i,j));
+      D.at(j,i) = D.at(i,j);
+    }
+      
+  
+  // Mi bonita matriz de distancia
+  return D;
+}
+```
+
+```{r}
+#| label: dist-dat
+#| echo: true
+#| cache: true
+# Simulando datos
+set.seed(1231)
+K <- 5000
+n <- 500
+x <- matrix(rnorm(n*K), ncol=K)
+# ¿Estamos obteniendo lo mismo?
+table(as.matrix(dist(x)) - dist_par(x, 4)) # Solo ceros
+```
+
+```{r dist-benchmark, echo=TRUE, cache=TRUE}
+# ¡Benchmarking!
+microbenchmark::microbenchmark(
+  dist(x),                # stats::dist
+  dist_par(x, cores = 1), # 1 núcleo
+  dist_par(x, cores = 2), # 2 núcleos
+  dist_par(x, cores = 4), # 4 núcleos
+  times = 1, 
+  unit = "ms"
+)
+```
+
+### Ej 6: El futuro
+
+*   [**future**](https://cran.r-project.org/package=future) es un paquete de R que
+    fue diseñado "para proporcionar una forma muy simple y uniforme de evaluar
+    expresiones de R de forma asíncrona usando varios recursos disponibles para el usuario."
+    
+*   Los objetos de clase `future` están resueltos o no resueltos.
+
+*   Si se consultan, los valores **Resueltos** se devuelven inmediatamente, y los valores **No resueltos**
+    bloquearán el proceso (es decir, esperarán) hasta que se resuelvan.
+    
+*   Los futures pueden ser paralelos/seriales, en una sola computadora (local o remota), o
+    un cluster de ellas.
+    
+Veamos un breve ejemplo
+
+
+```{r future, echo=TRUE, collapse=TRUE, cache=TRUE}
+library(future)
+plan(multicore)
+# Estamos creando una variable global
+a <- 2
+# Crear los futures solo tiene el tiempo de sobrecarga (configuración)
+system.time({
+  x1 %<-% {Sys.sleep(3);a^2}
+  x2 %<-% {Sys.sleep(3);a^3}
+})
+# Esperemos solo 5 segundos para asegurarnos de que todos los núcleos hayan regresado
+Sys.sleep(3)
+system.time({
+  print(x1)
+  print(x2)
+})
+```
+
+### Pista bonus 1: Simulando $\pi$
+
+
+*   Sabemos que $\pi = \frac{A}{r^2}$. Lo aproximamos agregando aleatoriamente
+    puntos $x$ a un cuadrado de tamaño 2 centrado en el origen.
+
+*   Entonces, aproximamos $\pi$ como $\Pr\{\|x\| \leq 1\}\times 2^2$
+
+```{r, echo=FALSE, dev='jpeg', dev.args=list(quality=100), fig.width=6, fig.height=6, out.width='300px', out.height='300px'}
+set.seed(1231)
+p    <- matrix(runif(5e3*2, -1, 1), ncol=2)
+pcol <- ifelse(sqrt(rowSums(p^2)) <= 1, adjustcolor("blue", .7), adjustcolor("gray", .7))
+plot(p, col=pcol, pch=18)
+```
+
+El código R para hacer esto
+
+```{r simpi, echo=TRUE}
+pisim <- function(i, nsim) {  # Nota que no usamos la -i-
+  # Puntos aleatorios
+  ans  <- matrix(runif(nsim*2), ncol=2)
+  
+  # Distancia al origen
+  ans  <- sqrt(rowSums(ans^2))
+  
+  # Pi estimado
+  (sum(ans <= 1)*4)/nsim
+}
+```
+
+
+
+```{r parallel-ex2, echo=TRUE, cache=TRUE}
+library(parallel)
+# Configuración
+cl <- makePSOCKcluster(4L)
+clusterSetRNGStream(cl, 123)
+# Número de simulaciones que queremos que cada una ejecute
+nsim <- 1e5
+# Necesitamos hacer que -nsim- y -pisim- estén disponibles para el
+# cluster
+clusterExport(cl, c("nsim", "pisim"))
+# Benchmarking: parSapply y sapply ejecutarán esta simulación
+# cien veces cada una, así que al final tenemos 1e5*100 puntos
+# para aproximar pi
+microbenchmark::microbenchmark(
+  parallel = parSapply(cl, 1:100, pisim, nsim=nsim),
+  serial   = sapply(1:100, pisim, nsim=nsim),
+  times    = 1
+)
+```
+
+---
+
+```{r printing-and-stop, cache=TRUE}
+ans_par <- parSapply(cl, 1:100, pisim, nsim=nsim)
+ans_ser <- sapply(1:100, pisim, nsim=nsim)
+stopCluster(cl)
+```
+
+```{r, echo=FALSE}
+c(par = mean(ans_par), ser = mean(ans_ser), R = pi)
+```
+
+## Ver también
+
+*   [Package parallel](https://stat.ethz.ch/R-manual/R-devel/library/parallel/doc/parallel.pdf) 
+*   [Using the iterators package](https://cran.r-project.org/web/packages/iterators/vignettes/iterators.pdf)
+*   [Using the foreach package](https://cran.r-project.org/web/packages/foreach/vignettes/foreach.pdf)
+*   [32 OpenMP traps for C++ developers](https://software.intel.com/en-us/articles/32-openmp-traps-for-c-developers)
+*   [The OpenMP API specification for parallel programming](http://www.openmp.org/)
+*   ['openmp' tag in Rcpp gallery](gallery.rcpp.org/tags/openmp/)
+*   [OpenMP tutorials and articles](http://www.openmp.org/resources/tutorials-articles/)
+
+Para más, revisa el [CRAN Task View on HPC](https://cran.r-project.org/web/views/HighPerformanceComputing.html){target="_blank"}
