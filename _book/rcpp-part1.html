@@ -301,24 +301,35 @@ window.Quarto = {
 </li>
       </ul>
   </li>
-        <li class="sidebar-item">
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
+ <span class="menu-text">Appendices</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./misc.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Misc</span></span></a>
+ <span class="menu-text"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Misc</span></span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./references.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">References</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./news.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">News</span></span></a>
+ <span class="menu-text"><span class="chapter-number">B</span>&nbsp; <span class="chapter-title">News</span></span></a>
   </div>
 </li>
+      </ul>
+  </li>
     </ul>
     </div>
 </nav>
@@ -490,9 +501,9 @@ window.Quarto = {
 <span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>microbenchmark<span class="sc">::</span><span class="fu">microbenchmark</span>(<span class="fu">add1R</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">1000</span>), <span class="fu">add1Cpp</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">1000</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Unit: microseconds
-            expr    min     lq     mean median     uq      max neval
-   add1R(1:1000) 58.609 59.266 81.85258 59.836 62.276 2143.649   100
- add1Cpp(1:1000)  2.835  3.121 13.61632  3.351  4.408  858.942   100</code></pre>
+            expr    min      lq     mean median      uq      max neval
+   add1R(1:1000) 58.870 61.2495 86.47148 61.756 65.1615 2383.901   100
+ add1Cpp(1:1000)  2.685  3.0355 11.60377  3.276  4.2735  694.036   100</code></pre>
 </div>
 </div>
 </section>
@@ -637,9 +648,9 @@ F(n - 1) + F(n - 2), &amp; \mbox{otherwise}
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>microbenchmark<span class="sc">::</span><span class="fu">microbenchmark</span>(<span class="fu">fibR</span>(<span class="dv">20</span>), <span class="fu">fibCpp</span>(<span class="dv">20</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Unit: microseconds
-       expr      min       lq       mean    median        uq      max neval
-   fibR(20) 6034.004 6091.492 6250.16961 6112.0655 6154.2795 7638.087   100
- fibCpp(20)   15.740   16.090   25.90788   17.0015   17.5975  854.785   100</code></pre>
+       expr      min        lq       mean   median       uq      max neval
+   fibR(20) 6094.759 6149.3210 6385.17455 6178.144 6287.829 8215.297   100
+ fibCpp(20)   15.829   16.1005   27.94292   18.044   19.842  962.628   100</code></pre>
 </div>
 </div>
 </section>
@@ -746,15 +757,15 @@ F(n - 1) + F(n - 2), &amp; \mbox{otherwise}
 <div class="cell-output cell-output-stdout">
 <pre><code>Unit: milliseconds
                    expr       min        lq      mean    median        uq
-                dist(x) 1174.3438 1174.3438 1174.3438 1174.3438 1174.3438
- dist_par(x, cores = 1)  935.5391  935.5391  935.5391  935.5391  935.5391
- dist_par(x, cores = 2)  626.1713  626.1713  626.1713  626.1713  626.1713
- dist_par(x, cores = 4)  535.4296  535.4296  535.4296  535.4296  535.4296
+                dist(x) 1241.6257 1241.6257 1241.6257 1241.6257 1241.6257
+ dist_par(x, cores = 1)  990.4261  990.4261  990.4261  990.4261  990.4261
+ dist_par(x, cores = 2)  817.9101  817.9101  817.9101  817.9101  817.9101
+ dist_par(x, cores = 4)  759.4051  759.4051  759.4051  759.4051  759.4051
        max neval
- 1174.3438     1
-  935.5391     1
-  626.1713     1
-  535.4296     1</code></pre>
+ 1241.6257     1
+  990.4261     1
+  817.9101     1
+  759.4051     1</code></pre>
 </div>
 </div>
 </section>
@@ -778,7 +789,7 @@ F(n - 1) + F(n - 2), &amp; \mbox{otherwise}
 <span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>  x2 <span class="sc">%&lt;-%</span> {<span class="fu">Sys.sleep</span>(<span class="dv">3</span>);a<span class="sc">^</span><span class="dv">3</span>}</span>
 <span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>})</span>
 <span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a><span class="do">##    user  system elapsed </span></span>
-<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a><span class="do">##   0.026   0.022   0.047</span></span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a><span class="do">##   0.031   0.018   0.049</span></span>
 <span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Let's just wait 5 seconds to make sure all the cores have returned</span></span>
 <span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a><span class="fu">Sys.sleep</span>(<span class="dv">3</span>)</span>
 <span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a><span class="fu">system.time</span>({</span>
@@ -788,7 +799,7 @@ F(n - 1) + F(n - 2), &amp; \mbox{otherwise}
 <span id="cb30-18"><a href="#cb30-18" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 4</span></span>
 <span id="cb30-19"><a href="#cb30-19" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 8</span></span>
 <span id="cb30-20"><a href="#cb30-20" aria-hidden="true" tabindex="-1"></a><span class="do">##    user  system elapsed </span></span>
-<span id="cb30-21"><a href="#cb30-21" aria-hidden="true" tabindex="-1"></a><span class="do">##   0.004   0.000   0.004</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb30-21"><a href="#cb30-21" aria-hidden="true" tabindex="-1"></a><span class="do">##   0.003   0.001   0.004</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="bonus-track-1-simulating-pi" class="level3" data-number="7.12.4">
@@ -840,8 +851,8 @@ F(n - 1) + F(n - 2), &amp; \mbox{otherwise}
 <div class="cell-output cell-output-stdout">
 <pre><code>Unit: milliseconds
      expr      min       lq     mean   median       uq      max neval
- parallel 284.0574 284.0574 284.0574 284.0574 284.0574 284.0574     1
-   serial 376.3555 376.3555 376.3555 376.3555 376.3555 376.3555     1</code></pre>
+ parallel 287.6368 287.6368 287.6368 287.6368 287.6368 287.6368     1
+   serial 378.8681 378.8681 378.8681 378.8681 378.8681 378.8681     1</code></pre>
 </div>
 </div>
 <hr>

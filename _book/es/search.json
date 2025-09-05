@@ -119,7 +119,7 @@
     "href": "efficiency.html",
     "title": "Escribiendo Código Eficiente",
     "section": "",
-    "text": "Operaciones Vectorizadas\nLa vectorización puede significar muchas cosas en programación, pero en R, la vectorización se refiere a usar funciones sobre vectores. Por ejemplo, en lugar de usar un bucle para sumar dos vectores juntos, puedes usar el operador + directamente en los vectores:\n# Using a loop\nset.seed(331)\na &lt;- runif(1e3)\nb &lt;- runif(1e3)\nresult &lt;- numeric(length(a))\nfor (i in seq_along(a)) {\n  result[i] &lt;- a[i] + b[i]\n}\n\n# Using vectorized operation\nresult &lt;- a + b\nIncluso podemos hacer benchmark del rendimiento de estos dos enfoques:\nlibrary(microbenchmark)\nmicrobenchmark(\n  loop = {\n    result &lt;- numeric(length(a))\n    for (i in seq_along(a)) {\n      result[i] &lt;- a[i] + b[i]\n    }\n  },\n  vectorized = {\n    result &lt;- a + b\n  },\n  unit = \"relative\"\n)\n\nUnit: relative\n       expr      min       lq     mean   median       uq     max neval\n       loop 2082.728 1509.235 779.5951 857.0657 649.7528 498.639   100\n vectorized    1.000    1.000   1.0000   1.0000   1.0000   1.000   100",
+    "text": "Operaciones Vectorizadas\nLa vectorización puede significar muchas cosas en programación, pero en R, la vectorización se refiere a usar funciones sobre vectores. Por ejemplo, en lugar de usar un bucle para sumar dos vectores juntos, puedes usar el operador + directamente en los vectores:\n# Using a loop\nset.seed(331)\na &lt;- runif(1e3)\nb &lt;- runif(1e3)\nresult &lt;- numeric(length(a))\nfor (i in seq_along(a)) {\n  result[i] &lt;- a[i] + b[i]\n}\n\n# Using vectorized operation\nresult &lt;- a + b\nIncluso podemos hacer benchmark del rendimiento de estos dos enfoques:\nlibrary(microbenchmark)\nmicrobenchmark(\n  loop = {\n    result &lt;- numeric(length(a))\n    for (i in seq_along(a)) {\n      result[i] &lt;- a[i] + b[i]\n    }\n  },\n  vectorized = {\n    result &lt;- a + b\n  },\n  unit = \"relative\"\n)\n\nUnit: relative\n       expr      min       lq     mean   median       uq      max neval\n       loop 2256.037 1432.567 751.8075 854.7193 582.7724 505.5291   100\n vectorized    1.000    1.000   1.0000   1.0000   1.0000   1.0000   100",
     "crumbs": [
       "Fundamentos",
       "<span class='chapter-number'>2</span>  <span class='chapter-title'>Escribiendo Código Eficiente</span>"
@@ -141,7 +141,7 @@
     "href": "efficiency.html#cacheando-cálculos",
     "title": "Escribiendo Código Eficiente",
     "section": "Cacheando cálculos",
-    "text": "Cacheando cálculos\nMuchas veces, es útil cachear cálculos que son costosos de computar. Por ejemplo, si tienes una función que toma mucho tiempo para ejecutarse, puedes almacenar el resultado en una variable y reutilizarlo más tarde en lugar de recalcularlo.\nAquí hay un mal ejemplo usando la secuencia de Fibonacci:\n\nfibonacci &lt;- function(n) {\n  if (n &lt;= 1) {\n    return(n)\n  }\n  return(fibonacci(n - 1) + fibonacci(n - 2))\n}\n\nfibonacci_cached &lt;- function(n) {\n  prev &lt;- numeric(n + 1)\n  for (i in seq_len(n)) {\n    if (i &lt;= 1) {\n      prev[i + 1] &lt;- i\n    } else {\n      prev[i + 1] &lt;- prev[i] + prev[i - 1]\n    }\n  }\n\n  return(prev[n + 1])\n}\n\nAmbas funciones deberían devolver el mismo resultado, pero la segunda es significativamente más rápida ya que evita llamar la función recursivamente:\n\nmicrobenchmark(\n  fibonacci(10),\n  fibonacci_cached(10),\n  times = 10,\n  unit = \"relative\",\n  check = \"equal\"\n)\n\nUnit: relative\n                 expr      min       lq     mean   median       uq      max\n        fibonacci(10) 23.47539 22.59173 17.07941 22.35041 22.59055 6.742043\n fibonacci_cached(10)  1.00000  1.00000  1.00000  1.00000  1.00000 1.000000\n neval\n    10\n    10",
+    "text": "Cacheando cálculos\nMuchas veces, es útil cachear cálculos que son costosos de computar. Por ejemplo, si tienes una función que toma mucho tiempo para ejecutarse, puedes almacenar el resultado en una variable y reutilizarlo más tarde en lugar de recalcularlo.\nAquí hay un mal ejemplo usando la secuencia de Fibonacci:\n\nfibonacci &lt;- function(n) {\n  if (n &lt;= 1) {\n    return(n)\n  }\n  return(fibonacci(n - 1) + fibonacci(n - 2))\n}\n\nfibonacci_cached &lt;- function(n) {\n  prev &lt;- numeric(n + 1)\n  for (i in seq_len(n)) {\n    if (i &lt;= 1) {\n      prev[i + 1] &lt;- i\n    } else {\n      prev[i + 1] &lt;- prev[i] + prev[i - 1]\n    }\n  }\n\n  return(prev[n + 1])\n}\n\nAmbas funciones deberían devolver el mismo resultado, pero la segunda es significativamente más rápida ya que evita llamar la función recursivamente:\n\nmicrobenchmark(\n  fibonacci(10),\n  fibonacci_cached(10),\n  times = 10,\n  unit = \"relative\",\n  check = \"equal\"\n)\n\nUnit: relative\n                 expr      min       lq   mean   median       uq      max neval\n        fibonacci(10) 23.69293 22.94501 16.549 22.49033 21.04617 6.173282    10\n fibonacci_cached(10)  1.00000  1.00000  1.000  1.00000  1.00000 1.000000    10",
     "crumbs": [
       "Fundamentos",
       "<span class='chapter-number'>2</span>  <span class='chapter-title'>Escribiendo Código Eficiente</span>"
@@ -174,7 +174,7 @@
     "href": "efficiency.html#evitando-pasos-innecesarios",
     "title": "Escribiendo Código Eficiente",
     "section": "Evitando pasos innecesarios",
-    "text": "Evitando pasos innecesarios\nMuchas veces, podemos encontrar atajos para reducir la cantidad de procesamiento de datos que necesitamos hacer. Un gran ejemplo está en la función de regresión lineal lm(). La función lm() irá más allá de encontrar los coeficientes en un modelo lineal, también calculará residuos, valores ajustados, y más. En su lugar, podemos usar la función lm.fit() que solo calcula los coeficientes:\n\nset.seed(331)\nx &lt;- rnorm(2e3)\ny &lt;- 2 + 3 * x + rnorm(2e3)\n\n# Comparing\nmicrobenchmark(\n  lm = coef(lm(y ~ x)),\n  lm_fit = coef(lm.fit(cbind(1, x), y)),\n  times = 10,\n  unit = \"relative\"\n)\n\nUnit: relative\n   expr      min       lq     mean  median       uq      max neval\n     lm 5.949251 6.072759 6.996456 5.85706 5.692937 15.52873    10\n lm_fit 1.000000 1.000000 1.000000 1.00000 1.000000  1.00000    10",
+    "text": "Evitando pasos innecesarios\nMuchas veces, podemos encontrar atajos para reducir la cantidad de procesamiento de datos que necesitamos hacer. Un gran ejemplo está en la función de regresión lineal lm(). La función lm() irá más allá de encontrar los coeficientes en un modelo lineal, también calculará residuos, valores ajustados, y más. En su lugar, podemos usar la función lm.fit() que solo calcula los coeficientes:\n\nset.seed(331)\nx &lt;- rnorm(2e3)\ny &lt;- 2 + 3 * x + rnorm(2e3)\n\n# Comparing\nmicrobenchmark(\n  lm = coef(lm(y ~ x)),\n  lm_fit = coef(lm.fit(cbind(1, x), y)),\n  times = 10,\n  unit = \"relative\"\n)\n\nUnit: relative\n   expr      min       lq     mean   median      uq      max neval\n     lm 6.264186 6.150937 6.810196 5.809431 6.16617 12.67999    10\n lm_fit 1.000000 1.000000 1.000000 1.000000 1.00000  1.00000    10",
     "crumbs": [
       "Fundamentos",
       "<span class='chapter-number'>2</span>  <span class='chapter-title'>Escribiendo Código Eficiente</span>"
@@ -185,7 +185,7 @@
     "href": "efficiency.html#reduciendo-operaciones-de-copia",
     "title": "Escribiendo Código Eficiente",
     "section": "Reduciendo operaciones de copia",
-    "text": "Reduciendo operaciones de copia\nComo en cualquier lenguaje de programación, las operaciones de copia en R pueden ser costosas. Más allá de aumentar la cantidad de memoria utilizada, las operaciones de copia requieren tiempo para asignar memoria y luego copiar los datos. R moderno minimiza estas usando copy-on-modify. Esto significa que R no copiará un objeto hasta que sea modificado. Por ejemplo, el siguiente código hace múltiples copias de X, pero es hasta la última línea que R realmente hace una copia de X:\n\nset.seed(331)\nX &lt;- runif(1e4)\nY &lt;- X\nZ &lt;- X\n\n# Checking the address of the objects\nlibrary(lobstr)\nobj_addr(X)\n## [1] \"0x55d41fba7dd0\"\nobj_addr(Y)\n## [1] \"0x55d41fba7dd0\"\nobj_addr(Z)\n## [1] \"0x55d41fba7dd0\"\n\nModificar X disparará una operación de copia, y las direcciones de Y y Z permanecerán iguales, mientras que X tendrá una nueva dirección:\n\n# Modifying X\nX[1] &lt;- 100  # This is when R makes a copy of X\nobj_addr(X)\n## [1] \"0x55d42048e510\"\nobj_addr(Y)\n## [1] \"0x55d41fba7dd0\"\nobj_addr(Z)\n## [1] \"0x55d41fba7dd0\"",
+    "text": "Reduciendo operaciones de copia\nComo en cualquier lenguaje de programación, las operaciones de copia en R pueden ser costosas. Más allá de aumentar la cantidad de memoria utilizada, las operaciones de copia requieren tiempo para asignar memoria y luego copiar los datos. R moderno minimiza estas usando copy-on-modify. Esto significa que R no copiará un objeto hasta que sea modificado. Por ejemplo, el siguiente código hace múltiples copias de X, pero es hasta la última línea que R realmente hace una copia de X:\n\nset.seed(331)\nX &lt;- runif(1e4)\nY &lt;- X\nZ &lt;- X\n\n# Checking the address of the objects\nlibrary(lobstr)\nobj_addr(X)\n## [1] \"0x55abd2028540\"\nobj_addr(Y)\n## [1] \"0x55abd2028540\"\nobj_addr(Z)\n## [1] \"0x55abd2028540\"\n\nModificar X disparará una operación de copia, y las direcciones de Y y Z permanecerán iguales, mientras que X tendrá una nueva dirección:\n\n# Modifying X\nX[1] &lt;- 100  # This is when R makes a copy of X\nobj_addr(X)\n## [1] \"0x55abd27936c0\"\nobj_addr(Y)\n## [1] \"0x55abd2028540\"\nobj_addr(Z)\n## [1] \"0x55abd2028540\"",
     "crumbs": [
       "Fundamentos",
       "<span class='chapter-number'>2</span>  <span class='chapter-title'>Escribiendo Código Eficiente</span>"
@@ -502,111 +502,122 @@
   {
     "objectID": "misc.html",
     "href": "misc.html",
-    "title": "Misceláneos",
+    "title": "Appendix A — Misceláneos",
     "section": "",
     "text": "Recursos generales\nEl Centro de Computación de Investigación Avanzada (anteriormente HPCC) tiene toneladas de recursos en línea. Aquí hay un par de enlaces útiles:",
     "crumbs": [
-      "<span class='chapter-number'>9</span>  <span class='chapter-title'>Misceláneos</span>"
+      "Appendices",
+      "<span class='chapter-number'>A</span>  <span class='chapter-title'>Misceláneos</span>"
     ]
   },
   {
     "objectID": "misc.html#recursos-generales",
     "href": "misc.html#recursos-generales",
-    "title": "Misceláneos",
+    "title": "Appendix A — Misceláneos",
     "section": "",
     "text": "Sitio web del Centro de Computación de Investigación Avanzada https://carc.usc.edu\nForo de usuarios (¡muy útil!) https://hpc-discourse.usc.edu/categories\nMonitorea tu cuenta https://hpcaccount.usc.edu/\nPlantillas de trabajos Slurm https://carc.usc.edu/user-information/user-guides/high-performance-computing/slurm-templates\nUsando R https://carc.usc.edu/user-information/user-guides/software-and-programming/r",
     "crumbs": [
-      "<span class='chapter-number'>9</span>  <span class='chapter-title'>Misceláneos</span>"
+      "Appendices",
+      "<span class='chapter-number'>A</span>  <span class='chapter-title'>Misceláneos</span>"
     ]
   },
   {
     "objectID": "misc.html#punteros-de-datos",
     "href": "misc.html#punteros-de-datos",
-    "title": "Misceláneos",
+    "title": "Appendix A — Misceláneos",
     "section": "Punteros de datos",
     "text": "Punteros de datos\nEn mi humilde opinión, estas son las cosas más importantes que debes saber sobre la gestión de datos en el HPC de USC:\n\nHaz tu transferencia de datos usando los nodos de transferencia (es más rápido).\nNunca uses tu directorio home como espacio de almacenamiento (usa en su lugar el espacio asignado de tu proyecto).\nUsa el sistema de archivos scratch solo para datos temporales, es decir, nunca guardes archivos importantes en scratch.\nFinalmente, además del Protocolo de copia segura (scp), si eres como yo, trata de configurar un cliente GUI para mover tus datos (ver esto).",
     "crumbs": [
-      "<span class='chapter-number'>9</span>  <span class='chapter-title'>Misceláneos</span>"
+      "Appendices",
+      "<span class='chapter-number'>A</span>  <span class='chapter-title'>Misceláneos</span>"
     ]
   },
   {
     "objectID": "misc.html#las-opciones-de-slurm-que-se-olvidaron-de-contarte",
     "href": "misc.html#las-opciones-de-slurm-que-se-olvidaron-de-contarte",
-    "title": "Misceláneos",
+    "title": "Appendix A — Misceláneos",
     "section": "Las opciones de Slurm que se olvidaron de contarte…",
     "text": "Las opciones de Slurm que se olvidaron de contarte…\nPrimero que nada, tienes que estar consciente de que lo único que hace Slurm es asignar recursos. Si tu aplicación usa computación paralela o no, esa es otra historia.\nAquí algunas opciones de las que necesitas estar consciente:\n\nntasks (predeterminado 1) Esto le dice a Slurm cuántos procesos tendrás ejecutándose. Ten en cuenta que los procesos no necesitan estar en el mismo nodo (así que Slurm puede reservar espacio en múltiples nodos)\ncpus-per-task (predeterminado 1) Esto es cuántos CPUs cada tarea estará usando. Esto es lo que necesitas usar si estás usando OpenMP (o un paquete que use eso), o cualquier cosa que necesites mantener dentro del mismo nodo.\nnodes el número de nodos que quieres usar en tu trabajo. Esto es útil principalmente si te importa el número máximo (yo diría) de nodos que quieres que use tu trabajo. Entonces, por ejemplo, si quieres usar 8 núcleos para una sola tarea y forzarla a estar en el mismo nodo, agregarías la opción --nodes=1/1.\nmem-per-cpu (predeterminado 1GB) Esta es la cantidad MÍNIMA de memoria que quieres que Slurm asigne para la tarea. No es una barrera rígida, así que tu proceso puede ir por encima de eso.\ntime (predeterminado 30min) Este también es un límite rígido, así que si tu trabajo toma más que el tiempo especificado, Slurm lo matará.\npartition (predeterminado ““) y account (predeterminado”“) estas dos opciones van juntas, esto le dice a Slurm qué recursos usar. Además de los recursos privados tenemos los siguientes:\n\npartición quick: Cualquier trabajo que sea lo suficientemente pequeño (en términos de tiempo y memoria) irá por este camino. Este es usualmente el predeterminado si no especificas ninguna opción de memoria o tiempo.\npartición main: Los trabajos que requieren más recursos irán en esta línea.\npartición scavenge: Si necesitas un número masivo de recursos, y tienes un trabajo que no debería, en principio, tomar demasiado tiempo para finalizar (menos de un par de horas), y estás de acuerdo con que alguien lo mate, entonces esta cola es para ti. La partición Scavenge usa todos los recursos inactivos de las particiones privadas, así que si cualquiera de los propietarios solicita los recursos, Slurm cancelará tu trabajo, es decir, no tienes prioridad (ver más).\npartición largemem: Si necesitas mucha memoria, tenemos 4 nodos de 1TB para eso.\n\nMás información sobre las particiones aquí",
     "crumbs": [
-      "<span class='chapter-number'>9</span>  <span class='chapter-title'>Misceláneos</span>"
+      "Appendices",
+      "<span class='chapter-number'>A</span>  <span class='chapter-title'>Misceláneos</span>"
     ]
   },
   {
     "objectID": "misc.html#buenas-prácticas-recomendaciones",
     "href": "misc.html#buenas-prácticas-recomendaciones",
-    "title": "Misceláneos",
+    "title": "Appendix A — Misceláneos",
     "section": "Buenas prácticas (recomendaciones)",
     "text": "Buenas prácticas (recomendaciones)\nEsto es lo que deberías usar como mínimo:\n#SBATCH --output=simulation.out\n#SBATCH --job-name=simulation\n#SBATCH --time=04:00:00\n#SBATCH --mail-user=[tu]@usc.edu\n#SBATCH --mail-type=END,FAIL\n\noutput es el nombre del archivo de registro al que Slurm escribirá.\njob-name es eso, el nombre del trabajo. Puedes usar esto para matar o al menos ser capaz de identificar qué es lo que estás ejecutando cuando usas myqueue\ntime Trata siempre de establecer una estimación de tiempo (más un poco más) para tu trabajo.\nmail-user, mail-type para que Slurm te notifique cuando las cosas sucedan\n\nTambién, en tu código R\n\nCualquier I/O debería hacerse a Scratch (/scratch/[tu id de red usc]) o Tmp Sys.getenv(\"TMPDIR\").",
     "crumbs": [
-      "<span class='chapter-number'>9</span>  <span class='chapter-title'>Misceláneos</span>"
+      "Appendices",
+      "<span class='chapter-number'>A</span>  <span class='chapter-title'>Misceláneos</span>"
     ]
   },
   {
     "objectID": "misc.html#ejecutando-r-interactivamente",
     "href": "misc.html#ejecutando-r-interactivamente",
-    "title": "Misceláneos",
+    "title": "Appendix A — Misceláneos",
     "section": "Ejecutando R interactivamente",
     "text": "Ejecutando R interactivamente\n\nEl HPC tiene varias piezas de software preinstaladas. R es una de esas.\nPara acceder al software preinstalado, usamos el sistema de módulos Lmod (más información aquí)\nTiene múltiples versiones de R instaladas. Usa tu favorita ejecutando\nmodule load R/4.2.2/[número de versión]\nDonde [número de versión] puede ser 3.5.6 y hasta 4.0.3 (la última actualización). El módulo usc automáticamente carga gcc/8.3.0, openblas/0.3.8, openmpi/4.0.2, y pmix/3.1.3.\nNunca es una buena idea usar tu directorio home para instalar paquetes R, por eso deberías tratar de usar un enlace simbólico en su lugar, así\ncd ~\nmkdir -p /ruta/a/un/proyecto/con/mucho/espacio/R\nln -s /ruta/a/un/proyecto/con/mucho/espacio/R R\nDe esta manera, cada vez que instales tus paquetes R, R tendrá como predeterminado esa ubicación\nPuedes ejecutar sesiones interactivas en HPC, pero esto se recomienda hacerlo usando la función salloc en Slurm, en otras palabras, ¡NUNCA USES R (O CUALQUIER SOFTWARE) PARA HACER ANÁLISIS DE DATOS EN LOS NODOS CABEZA! Las opciones pasadas a salloc son las mismas opciones que pueden pasarse a sbatch (ver la siguiente sección). Por ejemplo, si necesito hacer algunos análisis en la partición thomas (que es privada y tengo acceso a ella), escribiría algo como\nsalloc --account=lc_pdt --partition=thomas --time=02:00:00 --mem-per-cpu=2G\nEsto me pondría en un solo nodo asignando 2 gigs de memoria por un máximo de 2 horas.",
     "crumbs": [
-      "<span class='chapter-number'>9</span>  <span class='chapter-title'>Misceláneos</span>"
+      "Appendices",
+      "<span class='chapter-number'>A</span>  <span class='chapter-title'>Misceláneos</span>"
     ]
   },
   {
     "objectID": "misc.html#nonos-cuando-uses-r",
     "href": "misc.html#nonos-cuando-uses-r",
-    "title": "Misceláneos",
+    "title": "Appendix A — Misceláneos",
     "section": "NoNos cuando uses R",
     "text": "NoNos cuando uses R\n\nHacer cómputo en el nodo cabeza (compilar cosas está bien)\nSolicitar un número de nodos (a menos que sepas lo que estás haciendo)\nUsar tu directorio home para I/O\nGuardar información importante en Staging/Scratch",
     "crumbs": [
-      "<span class='chapter-number'>9</span>  <span class='chapter-title'>Misceláneos</span>"
+      "Appendices",
+      "<span class='chapter-number'>A</span>  <span class='chapter-title'>Misceláneos</span>"
     ]
   },
   {
     "objectID": "references.html",
     "href": "references.html",
-    "title": "Referencias",
+    "title": "Appendix B — Referencias",
     "section": "",
     "text": "Referencias",
     "crumbs": [
-      "<span class='chapter-number'>10</span>  <span class='chapter-title'>Referencias</span>"
+      "Appendices",
+      "<span class='chapter-number'>B</span>  <span class='chapter-title'>Referencias</span>"
     ]
   },
   {
     "objectID": "references.html#recursos-adicionales",
     "href": "references.html#recursos-adicionales",
-    "title": "Referencias",
+    "title": "Appendix B — Referencias",
     "section": "Recursos Adicionales",
     "text": "Recursos Adicionales\n\nLibros Recomendados\n\nAdvanced R por Hadley Wickham\nEfficient R Programming por Colin Gillespie y Robin Lovelace\nParallel R por Q. Ethan McCallum y Stephen Weston\nSeamless R and C++ Integration with Rcpp por Dirk Eddelbuettel\n\n\n\nSitios Web y Documentación\n\nCRAN Task View: High-Performance Computing\nRcpp Documentation\nSLURM Documentation\nR Parallel Computing\n\n\n\nPaquetes Relevantes\n\nparallel: Computación paralela básica\nforeach: Bucles paralelos\nfuture: Framework unificado para computación paralela\nRcpp: Integración R/C++\ndata.table: Procesamiento eficiente de datos\nbench: Benchmarking de código",
     "crumbs": [
-      "<span class='chapter-number'>10</span>  <span class='chapter-title'>Referencias</span>"
+      "Appendices",
+      "<span class='chapter-number'>B</span>  <span class='chapter-title'>Referencias</span>"
     ]
   },
   {
     "objectID": "news.html",
     "href": "news.html",
-    "title": "Novedades",
+    "title": "Appendix C — Novedades",
     "section": "",
-    "text": "Versión 0.1.0 (2025-09-03)",
+    "text": "Versión 2025.09.03",
     "crumbs": [
-      "<span class='chapter-number'>11</span>  <span class='chapter-title'>Novedades</span>"
+      "Appendices",
+      "<span class='chapter-number'>C</span>  <span class='chapter-title'>Novedades</span>"
     ]
   },
   {
-    "objectID": "news.html#versión-0.1.0-2025-09-03",
-    "href": "news.html#versión-0.1.0-2025-09-03",
-    "title": "Novedades",
+    "objectID": "news.html#versión-2025.09.03",
+    "href": "news.html#versión-2025.09.03",
+    "title": "Appendix C — Novedades",
     "section": "",
     "text": "Desde ahora, el libro cuenta con una sección de novedades. Intentaré mantener esta al día incluyendo los cambios realizados entre versiones. Versiones anteriores se encontrarán disponibles en GitHub como “releases”.",
     "crumbs": [
-      "<span class='chapter-number'>11</span>  <span class='chapter-title'>Novedades</span>"
+      "Appendices",
+      "<span class='chapter-number'>C</span>  <span class='chapter-title'>Novedades</span>"
     ]
   }
 ]

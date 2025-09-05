@@ -283,24 +283,35 @@ window.Quarto = {
 </li>
       </ul>
   </li>
-        <li class="sidebar-item">
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
+ <span class="menu-text">Appendices</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./misc.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Misc</span></span></a>
+ <span class="menu-text"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Misc</span></span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./references.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">References</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./news.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">News</span></span></a>
+ <span class="menu-text"><span class="chapter-number">B</span>&nbsp; <span class="chapter-title">News</span></span></a>
   </div>
 </li>
+      </ul>
+  </li>
     </ul>
     </div>
 </nav>
@@ -398,7 +409,7 @@ window.Quarto = {
 <div class="cell-output cell-output-stdout">
 <pre><code>Unit: relative
        expr      min       lq     mean   median       uq      max neval
-       loop 2086.262 1363.334 742.4009 803.6641 583.8685 434.9909   100
+       loop 1859.124 1286.576 707.9206 777.1858 610.8693 398.8995   100
  vectorized    1.000    1.000   1.0000   1.0000   1.0000   1.0000   100</code></pre>
 </div>
 </div>
@@ -452,9 +463,9 @@ Tip
 <span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Unit: relative
-                 expr      min       lq    mean   median      uq      max neval
-        fibonacci(10) 24.28924 24.04873 16.9687 22.75948 20.4591 6.235209    10
- fibonacci_cached(10)  1.00000  1.00000  1.0000  1.00000  1.0000 1.000000    10</code></pre>
+                 expr      min       lq     mean   median     uq      max neval
+        fibonacci(10) 23.30038 22.85961 16.37147 22.44286 19.026 6.255769    10
+ fibonacci_cached(10)  1.00000  1.00000  1.00000  1.00000  1.000 1.000000    10</code></pre>
 </div>
 </div>
 </section>
@@ -633,7 +644,7 @@ Tip
 <div class="cell-output cell-output-stdout">
 <pre><code>Unit: relative
    expr      min       lq     mean   median       uq      max neval
-     lm 5.882665 5.885404 6.784355 5.703837 5.948111 13.80422    10
+     lm 6.077431 6.174359 7.087147 6.007405 5.874279 14.86559    10
  lm_fit 1.000000 1.000000 1.000000 1.000000 1.000000  1.00000    10</code></pre>
 </div>
 </div>
@@ -650,22 +661,22 @@ Tip
 <span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Checking the address of the objects</span></span>
 <span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lobstr)</span>
 <span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="fu">obj_addr</span>(X)</span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] "0x55c66d8433c0"</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] "0x55f545efca00"</span></span>
 <span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a><span class="fu">obj_addr</span>(Y)</span>
-<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] "0x55c66d8433c0"</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] "0x55f545efca00"</span></span>
 <span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a><span class="fu">obj_addr</span>(Z)</span>
-<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] "0x55c66d8433c0"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] "0x55f545efca00"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Modifying <code>X</code> will trigger a copy operation, and the addresses of <code>Y</code> and <code>Z</code> will remain the same, while <code>X</code> will have a new address:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Modifying X</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>X[<span class="dv">1</span>] <span class="ot">&lt;-</span> <span class="dv">100</span>  <span class="co"># This is when R makes a copy of X</span></span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="fu">obj_addr</span>(X)</span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] "0x55c66cd952c0"</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] "0x55f544efab30"</span></span>
 <span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="fu">obj_addr</span>(Y)</span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] "0x55c66d8433c0"</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] "0x55f545efca00"</span></span>
 <span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="fu">obj_addr</span>(Z)</span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] "0x55c66d8433c0"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] "0x55f545efca00"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 
 

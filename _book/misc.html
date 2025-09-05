@@ -8,7 +8,7 @@
 
 <meta name="description" content="This book is a collection of talks and lectures on how to speed up your R code using parallel computing and other resources like C++.">
 
-<title>9&nbsp; Misc – Applied HPC with R</title>
+<title>Appendix A — Misc – Applied HPC with R</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -154,7 +154,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./misc.html"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Misc</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./misc.html">Appendices</a></li><li class="breadcrumb-item"><a href="./misc.html"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Misc</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -281,24 +281,35 @@ window.Quarto = {
 </li>
       </ul>
   </li>
-        <li class="sidebar-item">
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
+ <span class="menu-text">Appendices</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./misc.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Misc</span></span></a>
+ <span class="menu-text"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Misc</span></span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./references.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">References</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./news.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">News</span></span></a>
+ <span class="menu-text"><span class="chapter-number">B</span>&nbsp; <span class="chapter-title">News</span></span></a>
   </div>
 </li>
+      </ul>
+  </li>
     </ul>
     </div>
 </nav>
@@ -309,21 +320,21 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#general-resources" id="toc-general-resources" class="nav-link active" data-scroll-target="#general-resources"><span class="header-section-number">9.1</span> General resources</a></li>
-  <li><a href="#data-pointers" id="toc-data-pointers" class="nav-link" data-scroll-target="#data-pointers"><span class="header-section-number">9.2</span> Data Pointers</a></li>
-  <li><a href="#the-slurm-options-they-forgot-to-tell-you-about" id="toc-the-slurm-options-they-forgot-to-tell-you-about" class="nav-link" data-scroll-target="#the-slurm-options-they-forgot-to-tell-you-about"><span class="header-section-number">9.3</span> The Slurm options they forgot to tell you about…</a></li>
-  <li><a href="#good-practices-recomendations" id="toc-good-practices-recomendations" class="nav-link" data-scroll-target="#good-practices-recomendations"><span class="header-section-number">9.4</span> Good practices (recomendations)</a></li>
-  <li><a href="#running-r-interactively" id="toc-running-r-interactively" class="nav-link" data-scroll-target="#running-r-interactively"><span class="header-section-number">9.5</span> Running R interactively</a></li>
-  <li><a href="#nonos-when-using-r" id="toc-nonos-when-using-r" class="nav-link" data-scroll-target="#nonos-when-using-r"><span class="header-section-number">9.6</span> NoNos when using R</a></li>
+  <li><a href="#general-resources" id="toc-general-resources" class="nav-link active" data-scroll-target="#general-resources"><span class="header-section-number">A.1</span> General resources</a></li>
+  <li><a href="#data-pointers" id="toc-data-pointers" class="nav-link" data-scroll-target="#data-pointers"><span class="header-section-number">A.2</span> Data Pointers</a></li>
+  <li><a href="#the-slurm-options-they-forgot-to-tell-you-about" id="toc-the-slurm-options-they-forgot-to-tell-you-about" class="nav-link" data-scroll-target="#the-slurm-options-they-forgot-to-tell-you-about"><span class="header-section-number">A.3</span> The Slurm options they forgot to tell you about…</a></li>
+  <li><a href="#good-practices-recomendations" id="toc-good-practices-recomendations" class="nav-link" data-scroll-target="#good-practices-recomendations"><span class="header-section-number">A.4</span> Good practices (recomendations)</a></li>
+  <li><a href="#running-r-interactively" id="toc-running-r-interactively" class="nav-link" data-scroll-target="#running-r-interactively"><span class="header-section-number">A.5</span> Running R interactively</a></li>
+  <li><a href="#nonos-when-using-r" id="toc-nonos-when-using-r" class="nav-link" data-scroll-target="#nonos-when-using-r"><span class="header-section-number">A.6</span> NoNos when using R</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/gvegayon/appliedhpcr/edit/master/misc.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/gvegayon/appliedhpcr/blob/master/misc.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li><li><a href="https://github.com/gvegayon/appliedhpcr/issues" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default">
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./misc.html">Appendices</a></li><li class="breadcrumb-item"><a href="./misc.html"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Misc</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Misc</span></h1>
+<h1 class="title">Appendix A — Misc</h1>
 </div>
 
 
@@ -340,8 +351,8 @@ window.Quarto = {
 </header>
 
 
-<section id="general-resources" class="level2" data-number="9.1">
-<h2 data-number="9.1" class="anchored" data-anchor-id="general-resources"><span class="header-section-number">9.1</span> General resources</h2>
+<section id="general-resources" class="level2" data-number="A.1">
+<h2 data-number="A.1" class="anchored" data-anchor-id="general-resources"><span class="header-section-number">A.1</span> General resources</h2>
 <p>The Center for Advanced Research Computing (formerly HPCC) has tons of resources online. Here are a couple of useful links:</p>
 <ul>
 <li><p><strong>Center for Advanced Research Computing Website</strong> https://carc.usc.edu</p></li>
@@ -351,8 +362,8 @@ window.Quarto = {
 <li><p><strong>Using R</strong> https://carc.usc.edu/user-information/user-guides/software-and-programming/r</p></li>
 </ul>
 </section>
-<section id="data-pointers" class="level2" data-number="9.2">
-<h2 data-number="9.2" class="anchored" data-anchor-id="data-pointers"><span class="header-section-number">9.2</span> Data Pointers</h2>
+<section id="data-pointers" class="level2" data-number="A.2">
+<h2 data-number="A.2" class="anchored" data-anchor-id="data-pointers"><span class="header-section-number">A.2</span> Data Pointers</h2>
 <p>IMHO, these are the most important things to know about data management at USC’s HPC:</p>
 <ol type="1">
 <li><p>Do your data transfer using the transfer nodes (it is faster).</p></li>
@@ -361,8 +372,8 @@ window.Quarto = {
 <li><p>Finally, besides of <strong>Secure copy protocol (scp)</strong>, if you are like me, try setting up a GUI client for moving your data (see <a href="https://carc.usc.edu/user-information/user-guides/data-management/transferring-files-gui">this</a>).</p></li>
 </ol>
 </section>
-<section id="the-slurm-options-they-forgot-to-tell-you-about" class="level2" data-number="9.3">
-<h2 data-number="9.3" class="anchored" data-anchor-id="the-slurm-options-they-forgot-to-tell-you-about"><span class="header-section-number">9.3</span> The Slurm options they forgot to tell you about…</h2>
+<section id="the-slurm-options-they-forgot-to-tell-you-about" class="level2" data-number="A.3">
+<h2 data-number="A.3" class="anchored" data-anchor-id="the-slurm-options-they-forgot-to-tell-you-about"><span class="header-section-number">A.3</span> The Slurm options they forgot to tell you about…</h2>
 <p>First of all, you have to be aware that the only thing Slurm does is allocate resources. If your application uses parallel computing or not, that’s another story.</p>
 <p>Here some options that you need to be aware of:</p>
 <ul>
@@ -381,8 +392,8 @@ window.Quarto = {
 <p>More information about the partitions <a href="https://hpcc.usc.edu/support/infrastructure/node-allocation/" target="_blank">here</a></p></li>
 </ul>
 </section>
-<section id="good-practices-recomendations" class="level2" data-number="9.4">
-<h2 data-number="9.4" class="anchored" data-anchor-id="good-practices-recomendations"><span class="header-section-number">9.4</span> Good practices (recomendations)</h2>
+<section id="good-practices-recomendations" class="level2" data-number="A.4">
+<h2 data-number="A.4" class="anchored" data-anchor-id="good-practices-recomendations"><span class="header-section-number">A.4</span> Good practices (recomendations)</h2>
 <p>This is what you should use as a minimum:</p>
 <pre><code>#SBATCH --output=simulation.out
 #SBATCH --job-name=simulation
@@ -400,8 +411,8 @@ window.Quarto = {
 <li>Any I/O should be done to either Scratch (<code>/scratch/[your usc net id]</code>) or Tmp <code>Sys.getenv("TMPDIR")</code>.</li>
 </ul>
 </section>
-<section id="running-r-interactively" class="level2" data-number="9.5">
-<h2 data-number="9.5" class="anchored" data-anchor-id="running-r-interactively"><span class="header-section-number">9.5</span> Running R interactively</h2>
+<section id="running-r-interactively" class="level2" data-number="A.5">
+<h2 data-number="A.5" class="anchored" data-anchor-id="running-r-interactively"><span class="header-section-number">A.5</span> Running R interactively</h2>
 <ol type="1">
 <li><p>The HPC has several pre-installed pieces of software. R is one of those.</p></li>
 <li><p>To access the pre-installed software, we use the <a href="https://lmod.readthedocs.io/en/latest/"><strong>Lmod module system</strong></a> (more information <a href="https://carc.usc.edu/user-information/user-guides/software-and-programming/lmod"><strong>here</strong></a>)</p></li>
@@ -418,8 +429,8 @@ window.Quarto = {
 <p>This would put me in a single node allocating 2 gigs of memory for a maximum of 2 hours.</p></li>
 </ol>
 </section>
-<section id="nonos-when-using-r" class="level2" data-number="9.6">
-<h2 data-number="9.6" class="anchored" data-anchor-id="nonos-when-using-r"><span class="header-section-number">9.6</span> NoNos when using R</h2>
+<section id="nonos-when-using-r" class="level2" data-number="A.6">
+<h2 data-number="A.6" class="anchored" data-anchor-id="nonos-when-using-r"><span class="header-section-number">A.6</span> NoNos when using R</h2>
 <ul>
 <li><p>Do computation on the head node (compile stuff is OK)</p></li>
 <li><p>Request a number of nodes (unless you know what you are doing)</p></li>
