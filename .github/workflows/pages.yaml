@@ -166,7 +166,8 @@ jobs:
       # uses: actions/upload-artifact@v3
       with:
         name: github-pages
-        path: _book
+        path: |
+          _book/*
 
   deploy:
     runs-on: ubuntu-latest
@@ -176,16 +177,18 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Clean existing files
+        run: |
+          rm -rf _book || echo "No _book directory to remove"
+
       - name: Download artifacts
         uses: actions/download-artifact@v5.0.0
         with:
           name: github-pages
-          path: _pages
+          path: _book
 
       - name: Commit changes
         run: |
-          mv _pages/* _book
-
           git config --global user.email "action@github.com"
           git config --global user.name "GitHub Action"
           git add -f _book/* || echo "Nothing to add"
