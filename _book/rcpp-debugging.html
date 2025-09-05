@@ -94,7 +94,7 @@ div.csl-indent {
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-8da5b4427184b79ecddefad3d342027e.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-7952878189a4edd75b6424a77b1de74e.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -431,11 +431,11 @@ Note
 <span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="co">*/</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>We can use the <code>-e</code> flag in the <code>R</code> command to compile the <code>Rcpp</code> script using <code>sourceCpp</code>:</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">R</span> <span class="at">--debugger</span><span class="op">=</span>valgrind <span class="at">-e</span> <span class="st">'Rcpp::sourceCpp("rcpp-debugging-faulty.cpp")'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<pre><code>==3276== Memcheck, a memory error detector
-==3276== Copyright (C) 2002-2022, and GNU GPL'd, by Julian Seward et al.
-==3276== Using Valgrind-3.22.0 and LibVEX; rerun with -h for copyright info
-==3276== Command: /usr/local/lib/R/bin/exec/R -e Rcpp::sourceCpp("rcpp-debugging-faulty.cpp")
-==3276== 
+<pre><code>==1773== Memcheck, a memory error detector
+==1773== Copyright (C) 2002-2022, and GNU GPL'd, by Julian Seward et al.
+==1773== Using Valgrind-3.22.0 and LibVEX; rerun with -h for copyright info
+==1773== Command: /usr/local/lib/R/bin/exec/R -e Rcpp::sourceCpp("rcpp-debugging-faulty.cpp")
+==1773== 
 
 R version 4.5.1 (2025-06-13) -- "Great Square Root"
 Copyright (C) 2025 The R Foundation for Statistical Computing
@@ -460,23 +460,23 @@ Type 'q()' to quit R.
 &gt; faulty_program(10)
  [1] 0 0 0 0 0 0 0 0 0 0
 &gt; 
-==3276== 
-==3276== HEAP SUMMARY:
-==3276==     in use at exit: 60,654,762 bytes in 11,486 blocks
-==3276==   total heap usage: 31,698 allocs, 20,212 frees, 93,771,414 bytes allocated
-==3276== 
-==3276== LEAK SUMMARY:
-==3276==    definitely lost: 32 bytes in 1 blocks
-==3276==    indirectly lost: 0 bytes in 0 blocks
-==3276==      possibly lost: 0 bytes in 0 blocks
-==3276==    still reachable: 60,654,730 bytes in 11,485 blocks
-==3276==                       of which reachable via heuristic:
-==3276==                         newarray           : 4,264 bytes in 1 blocks
-==3276==         suppressed: 0 bytes in 0 blocks
-==3276== Rerun with --leak-check=full to see details of leaked memory
-==3276== 
-==3276== For lists of detected and suppressed errors, rerun with: -s
-==3276== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+==1773== 
+==1773== HEAP SUMMARY:
+==1773==     in use at exit: 60,654,766 bytes in 11,486 blocks
+==1773==   total heap usage: 31,685 allocs, 20,199 frees, 93,770,742 bytes allocated
+==1773== 
+==1773== LEAK SUMMARY:
+==1773==    definitely lost: 32 bytes in 1 blocks
+==1773==    indirectly lost: 0 bytes in 0 blocks
+==1773==      possibly lost: 0 bytes in 0 blocks
+==1773==    still reachable: 60,654,734 bytes in 11,485 blocks
+==1773==                       of which reachable via heuristic:
+==1773==                         newarray           : 4,264 bytes in 1 blocks
+==1773==         suppressed: 0 bytes in 0 blocks
+==1773== Rerun with --leak-check=full to see details of leaked memory
+==1773== 
+==1773== For lists of detected and suppressed errors, rerun with: -s
+==1773== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
 </code></pre>
 <p>By the end of the output, in the <code>LEAK SUMMARY</code> section, we see <code>definitely lost: 24 bytes in 1 block</code>, <em>i.e.</em>, a memory leak. If we change the program by deleting the pointer before returning, the leak will be solved:</p>
 <div class="columns">
@@ -498,22 +498,22 @@ Type 'q()' to quit R.
 </div>
 <p>Re-running R with Valgrind returns the following (only the last few lines):</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="ex">R</span> <span class="at">--debugger</span><span class="op">=</span>valgrind <span class="at">-e</span> <span class="st">'Rcpp::sourceCpp("rcpp-debugging-faulty-fixed.cpp")'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="sourceCode" id="cb9"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="ex">==3429==</span> HEAP SUMMARY:</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="ex">==3429==</span>     in use at exit: 60,655,403 bytes in 11,485 blocks</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="ex">==3429==</span>   total heap usage: 31,735 allocs, 20,250 frees, 93,791,884 bytes allocated</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="ex">==3429==</span> </span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="ex">==3429==</span> LEAK SUMMARY:</span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="ex">==3429==</span>    definitely lost: 0 bytes in 0 blocks</span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="ex">==3429==</span>    indirectly lost: 0 bytes in 0 blocks</span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="ex">==3429==</span>      possibly lost: 0 bytes in 0 blocks</span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="ex">==3429==</span>    still reachable: 60,655,403 bytes in 11,485 blocks</span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="ex">==3429==</span>                       of which reachable via heuristic:</span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="ex">==3429==</span>                         newarray           : 4,264 bytes in 1 blocks</span>
-<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="ex">==3429==</span>         suppressed: 0 bytes in 0 blocks</span>
-<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a><span class="ex">==3429==</span> Rerun with <span class="at">--leak-check</span><span class="op">=</span>full to see details of leaked memory</span>
-<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a><span class="ex">==3429==</span> </span>
-<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a><span class="ex">==3429==</span> For lists of detected and suppressed errors, rerun with: <span class="at">-s</span></span>
-<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a><span class="ex">==3429==</span> ERROR SUMMARY: 0 errors from 0 contexts <span class="er">(</span><span class="ex">suppressed:</span> 0 from 0<span class="kw">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="ex">==1830==</span> HEAP SUMMARY:</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="ex">==1830==</span>     in use at exit: 60,655,408 bytes in 11,485 blocks</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="ex">==1830==</span>   total heap usage: 31,722 allocs, 20,237 frees, 93,791,152 bytes allocated</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="ex">==1830==</span> </span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="ex">==1830==</span> LEAK SUMMARY:</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="ex">==1830==</span>    definitely lost: 0 bytes in 0 blocks</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="ex">==1830==</span>    indirectly lost: 0 bytes in 0 blocks</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="ex">==1830==</span>      possibly lost: 0 bytes in 0 blocks</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="ex">==1830==</span>    still reachable: 60,655,408 bytes in 11,485 blocks</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="ex">==1830==</span>                       of which reachable via heuristic:</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="ex">==1830==</span>                         newarray           : 4,264 bytes in 1 blocks</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="ex">==1830==</span>         suppressed: 0 bytes in 0 blocks</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a><span class="ex">==1830==</span> Rerun with <span class="at">--leak-check</span><span class="op">=</span>full to see details of leaked memory</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a><span class="ex">==1830==</span> </span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a><span class="ex">==1830==</span> For lists of detected and suppressed errors, rerun with: <span class="at">-s</span></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a><span class="ex">==1830==</span> ERROR SUMMARY: 0 errors from 0 contexts <span class="er">(</span><span class="ex">suppressed:</span> 0 from 0<span class="kw">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>No more memory leaks.</p>
 </section>
 <section id="using-gdb" class="level2" data-number="8.2">
@@ -539,11 +539,11 @@ Type 'q()' to quit R.
 <span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a><span class="co">faulty_program(10)</span></span>
 <span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a><span class="co">*/</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>In it, we try to access a location in the memory that hasn’t been allocated yet, namely, a <code>NumericVector</code> declared as a pointer but never assigned. Using <code>R --debugger=valgrind</code> generates the following code:</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span> Memcheck, a memory error detector</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span> Copyright <span class="er">(</span><span class="ex">C</span><span class="kw">)</span> <span class="ex">2002-2022,</span> and GNU GPL<span class="st">'d, by Julian Seward et al.</span></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="st">==3574== Using Valgrind-3.22.0 and LibVEX; rerun with -h for copyright info</span></span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="st">==3574== Command: /usr/local/lib/R/bin/exec/R -e Rcpp::sourceCpp("rcpp-debugging-not-mapped.cpp")</span></span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="st">==3574== </span></span>
+<div class="sourceCode" id="cb11"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ex">==1887==</span> Memcheck, a memory error detector</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="ex">==1887==</span> Copyright <span class="er">(</span><span class="ex">C</span><span class="kw">)</span> <span class="ex">2002-2022,</span> and GNU GPL<span class="st">'d, by Julian Seward et al.</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="st">==1887== Using Valgrind-3.22.0 and LibVEX; rerun with -h for copyright info</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="st">==1887== Command: /usr/local/lib/R/bin/exec/R -e Rcpp::sourceCpp("rcpp-debugging-not-mapped.cpp")</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="st">==1887== </span></span>
 <span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="st">R version 4.5.1 (2025-06-13) -- "Great Square Root"</span></span>
 <span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="st">Copyright (C) 2025 The R Foundation for Statistical Computing</span></span>
@@ -566,32 +566,32 @@ Type 'q()' to quit R.
 <span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a><span class="st">&gt; Rcpp::sourceCpp("rcpp-debugging-not-mapped.cpp")</span></span>
 <span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a><span class="st">&gt; faulty_program(10)</span></span>
-<span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a><span class="st">==3574== Invalid read of size 8</span></span>
-<span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a><span class="st">==3574==    at 0x57FC85D6: get__ (PreserveStorage.h:52)</span></span>
-<span id="cb11-30"><a href="#cb11-30" aria-hidden="true" tabindex="-1"></a><span class="st">==3574==    by 0x57FC85D6: copy__&lt;Rcpp::Vector&lt;14, Rcpp::PreserveStorage&gt; &gt; (PreserveStorage.h:66)</span></span>
-<span id="cb11-31"><a href="#cb11-31" aria-hidden="true" tabindex="-1"></a><span class="st">==3574==    by 0x57FC85D6: Vector (Vector.h:64)</span></span>
-<span id="cb11-32"><a href="#cb11-32" aria-hidden="true" tabindex="-1"></a><span class="st">==3574==    by 0x57FC85D6: faulty_program(int) (rcpp-debugging-not-mapped.cpp:11)</span></span>
-<span id="cb11-33"><a href="#cb11-33" aria-hidden="true" tabindex="-1"></a><span class="st">==3574==    by 0x57FC8758: sourceCpp_1_faulty_program (rcpp-debugging-not-mapped.cpp:33)</span></span>
-<span id="cb11-34"><a href="#cb11-34" aria-hidden="true" tabindex="-1"></a><span class="st">==3574==    by 0x495D56D: R_doDotCall (dotcode.c:754)</span></span>
-<span id="cb11-35"><a href="#cb11-35" aria-hidden="true" tabindex="-1"></a><span class="st">==3574==    by 0x495DAE6: do_dotcall (dotcode.c:1437)</span></span>
-<span id="cb11-36"><a href="#cb11-36" aria-hidden="true" tabindex="-1"></a><span class="st">==3574==    by 0x49AC44C: Rf_eval (eval.c:1260)</span></span>
-<span id="cb11-37"><a href="#cb11-37" aria-hidden="true" tabindex="-1"></a><span class="st">==3574==    by 0x49AE06D: R_execClosure (eval.c:2393)</span></span>
-<span id="cb11-38"><a href="#cb11-38" aria-hidden="true" tabindex="-1"></a><span class="st">==3574==    by 0x49AEDC6: applyClosure_core (eval.c:2306)</span></span>
-<span id="cb11-39"><a href="#cb11-39" aria-hidden="true" tabindex="-1"></a><span class="st">==3574==    by 0x49ABF65: Rf_applyClosure (eval.c:2328)</span></span>
-<span id="cb11-40"><a href="#cb11-40" aria-hidden="true" tabindex="-1"></a><span class="st">==3574==    by 0x49ABF65: Rf_eval (eval.c:1280)</span></span>
-<span id="cb11-41"><a href="#cb11-41" aria-hidden="true" tabindex="-1"></a><span class="st">==3574==    by 0x49B2AD3: do_eval (eval.c:3959)</span></span>
-<span id="cb11-42"><a href="#cb11-42" aria-hidden="true" tabindex="-1"></a><span class="st">==3574==    by 0x499EDD4: bcEval_loop (eval.c:8118)</span></span>
-<span id="cb11-43"><a href="#cb11-43" aria-hidden="true" tabindex="-1"></a><span class="st">==3574==    by 0x49ABA59: bcEval (eval.c:7501)</span></span>
-<span id="cb11-44"><a href="#cb11-44" aria-hidden="true" tabindex="-1"></a><span class="st">==3574==    by 0x49ABA59: bcEval (eval.c:7486)</span></span>
-<span id="cb11-45"><a href="#cb11-45" aria-hidden="true" tabindex="-1"></a><span class="st">==3574==    by 0x49ABE2A: Rf_eval (eval.c:1167)</span></span>
-<span id="cb11-46"><a href="#cb11-46" aria-hidden="true" tabindex="-1"></a><span class="st">==3574==  Address 0x0 is not stack'</span><span class="ex">d,</span> malloc<span class="st">'d or (recently) free'</span>d</span>
-<span id="cb11-47"><a href="#cb11-47" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span> </span>
+<span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a><span class="st">==1887== Invalid read of size 8</span></span>
+<span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a><span class="st">==1887==    at 0x2EF4D5D6: get__ (PreserveStorage.h:52)</span></span>
+<span id="cb11-30"><a href="#cb11-30" aria-hidden="true" tabindex="-1"></a><span class="st">==1887==    by 0x2EF4D5D6: copy__&lt;Rcpp::Vector&lt;14, Rcpp::PreserveStorage&gt; &gt; (PreserveStorage.h:66)</span></span>
+<span id="cb11-31"><a href="#cb11-31" aria-hidden="true" tabindex="-1"></a><span class="st">==1887==    by 0x2EF4D5D6: Vector (Vector.h:64)</span></span>
+<span id="cb11-32"><a href="#cb11-32" aria-hidden="true" tabindex="-1"></a><span class="st">==1887==    by 0x2EF4D5D6: faulty_program(int) (rcpp-debugging-not-mapped.cpp:11)</span></span>
+<span id="cb11-33"><a href="#cb11-33" aria-hidden="true" tabindex="-1"></a><span class="st">==1887==    by 0x2EF4D758: sourceCpp_1_faulty_program (rcpp-debugging-not-mapped.cpp:33)</span></span>
+<span id="cb11-34"><a href="#cb11-34" aria-hidden="true" tabindex="-1"></a><span class="st">==1887==    by 0x495D56D: R_doDotCall (dotcode.c:754)</span></span>
+<span id="cb11-35"><a href="#cb11-35" aria-hidden="true" tabindex="-1"></a><span class="st">==1887==    by 0x495DAE6: do_dotcall (dotcode.c:1437)</span></span>
+<span id="cb11-36"><a href="#cb11-36" aria-hidden="true" tabindex="-1"></a><span class="st">==1887==    by 0x49AC44C: Rf_eval (eval.c:1260)</span></span>
+<span id="cb11-37"><a href="#cb11-37" aria-hidden="true" tabindex="-1"></a><span class="st">==1887==    by 0x49AE06D: R_execClosure (eval.c:2393)</span></span>
+<span id="cb11-38"><a href="#cb11-38" aria-hidden="true" tabindex="-1"></a><span class="st">==1887==    by 0x49AEDC6: applyClosure_core (eval.c:2306)</span></span>
+<span id="cb11-39"><a href="#cb11-39" aria-hidden="true" tabindex="-1"></a><span class="st">==1887==    by 0x49ABF65: Rf_applyClosure (eval.c:2328)</span></span>
+<span id="cb11-40"><a href="#cb11-40" aria-hidden="true" tabindex="-1"></a><span class="st">==1887==    by 0x49ABF65: Rf_eval (eval.c:1280)</span></span>
+<span id="cb11-41"><a href="#cb11-41" aria-hidden="true" tabindex="-1"></a><span class="st">==1887==    by 0x49B2AD3: do_eval (eval.c:3959)</span></span>
+<span id="cb11-42"><a href="#cb11-42" aria-hidden="true" tabindex="-1"></a><span class="st">==1887==    by 0x499EDD4: bcEval_loop (eval.c:8118)</span></span>
+<span id="cb11-43"><a href="#cb11-43" aria-hidden="true" tabindex="-1"></a><span class="st">==1887==    by 0x49ABA59: bcEval (eval.c:7501)</span></span>
+<span id="cb11-44"><a href="#cb11-44" aria-hidden="true" tabindex="-1"></a><span class="st">==1887==    by 0x49ABA59: bcEval (eval.c:7486)</span></span>
+<span id="cb11-45"><a href="#cb11-45" aria-hidden="true" tabindex="-1"></a><span class="st">==1887==    by 0x49ABE2A: Rf_eval (eval.c:1167)</span></span>
+<span id="cb11-46"><a href="#cb11-46" aria-hidden="true" tabindex="-1"></a><span class="st">==1887==  Address 0x0 is not stack'</span><span class="ex">d,</span> malloc<span class="st">'d or (recently) free'</span>d</span>
+<span id="cb11-47"><a href="#cb11-47" aria-hidden="true" tabindex="-1"></a><span class="ex">==1887==</span> </span>
 <span id="cb11-48"><a href="#cb11-48" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb11-49"><a href="#cb11-49" aria-hidden="true" tabindex="-1"></a> <span class="ex">***</span> caught segfault <span class="pp">***</span></span>
 <span id="cb11-50"><a href="#cb11-50" aria-hidden="true" tabindex="-1"></a><span class="ex">address</span> <span class="er">(</span><span class="ex">nil</span><span class="kw">)</span><span class="ex">,</span> cause <span class="st">'memory not mapped'</span></span>
 <span id="cb11-51"><a href="#cb11-51" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb11-52"><a href="#cb11-52" aria-hidden="true" tabindex="-1"></a><span class="ex">Traceback:</span></span>
-<span id="cb11-53"><a href="#cb11-53" aria-hidden="true" tabindex="-1"></a> <span class="ex">1:</span> .Call<span class="er">(</span><span class="op">&lt;</span>pointer: <span class="ex">0x57fc86e0</span><span class="op">&gt;</span>, n<span class="kw">)</span></span>
+<span id="cb11-53"><a href="#cb11-53" aria-hidden="true" tabindex="-1"></a> <span class="ex">1:</span> .Call<span class="er">(</span><span class="op">&lt;</span>pointer: <span class="ex">0x2ef4d6e0</span><span class="op">&gt;</span>, n<span class="kw">)</span></span>
 <span id="cb11-54"><a href="#cb11-54" aria-hidden="true" tabindex="-1"></a> <span class="ex">2:</span> faulty_program<span class="er">(</span><span class="ex">10</span><span class="kw">)</span></span>
 <span id="cb11-55"><a href="#cb11-55" aria-hidden="true" tabindex="-1"></a> <span class="ex">3:</span> eval<span class="er">(</span><span class="ex">ei,</span> envir<span class="kw">)</span></span>
 <span id="cb11-56"><a href="#cb11-56" aria-hidden="true" tabindex="-1"></a> <span class="ex">4:</span> eval<span class="er">(</span><span class="ex">ei,</span> envir<span class="kw">)</span></span>
@@ -599,154 +599,34 @@ Type 'q()' to quit R.
 <span id="cb11-58"><a href="#cb11-58" aria-hidden="true" tabindex="-1"></a> <span class="ex">6:</span> source<span class="er">(</span><span class="fu">file</span> = srcConn, local = env, echo = echo<span class="kw">)</span></span>
 <span id="cb11-59"><a href="#cb11-59" aria-hidden="true" tabindex="-1"></a> <span class="ex">7:</span> Rcpp::sourceCpp<span class="er">(</span><span class="st">"rcpp-debugging-not-mapped.cpp"</span><span class="kw">)</span></span>
 <span id="cb11-60"><a href="#cb11-60" aria-hidden="true" tabindex="-1"></a><span class="ex">An</span> irrecoverable exception occurred. R is aborting now ...</span>
-<span id="cb11-61"><a href="#cb11-61" aria-hidden="true" tabindex="-1"></a><span class="ex">--3574--</span> VALGRIND INTERNAL ERROR: Valgrind received a signal 11 <span class="er">(</span><span class="ex">SIGSEGV</span><span class="kw">)</span> <span class="ex">-</span> exiting</span>
-<span id="cb11-62"><a href="#cb11-62" aria-hidden="true" tabindex="-1"></a><span class="ex">--3574--</span> si_code=1<span class="kw">;</span>  <span class="ex">Faulting</span> address: 0x0<span class="kw">;</span>  <span class="ex">sp:</span> 0x1002da9cb0</span>
-<span id="cb11-63"><a href="#cb11-63" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-64"><a href="#cb11-64" aria-hidden="true" tabindex="-1"></a><span class="ex">valgrind:</span> the <span class="st">'impossible'</span> happened:</span>
-<span id="cb11-65"><a href="#cb11-65" aria-hidden="true" tabindex="-1"></a>   <span class="ex">Killed</span> by fatal signal</span>
-<span id="cb11-66"><a href="#cb11-66" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-67"><a href="#cb11-67" aria-hidden="true" tabindex="-1"></a><span class="ex">host</span> stacktrace:</span>
-<span id="cb11-68"><a href="#cb11-68" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    at 0x580EAEDB: <span class="pp">???</span> <span class="er">(in</span> <span class="ex">/usr/libexec/valgrind/memcheck-amd64-linux</span><span class="kw">)</span></span>
-<span id="cb11-69"><a href="#cb11-69" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x5809FEE2: <span class="pp">???</span> <span class="er">(in</span> <span class="ex">/usr/libexec/valgrind/memcheck-amd64-linux</span><span class="kw">)</span></span>
-<span id="cb11-70"><a href="#cb11-70" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x5809B6E2: <span class="pp">???</span> <span class="er">(in</span> <span class="ex">/usr/libexec/valgrind/memcheck-amd64-linux</span><span class="kw">)</span></span>
-<span id="cb11-71"><a href="#cb11-71" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x5809D7F8: <span class="pp">???</span> <span class="er">(in</span> <span class="ex">/usr/libexec/valgrind/memcheck-amd64-linux</span><span class="kw">)</span></span>
-<span id="cb11-72"><a href="#cb11-72" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x580EB087: <span class="pp">???</span> <span class="er">(in</span> <span class="ex">/usr/libexec/valgrind/memcheck-amd64-linux</span><span class="kw">)</span></span>
-<span id="cb11-73"><a href="#cb11-73" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-74"><a href="#cb11-74" aria-hidden="true" tabindex="-1"></a><span class="ex">sched</span> status:</span>
-<span id="cb11-75"><a href="#cb11-75" aria-hidden="true" tabindex="-1"></a>  <span class="va">running_tid</span><span class="op">=</span>0</span>
-<span id="cb11-76"><a href="#cb11-76" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-77"><a href="#cb11-77" aria-hidden="true" tabindex="-1"></a><span class="ex">Thread</span> 1: status = VgTs_WaitSys syscall 234 <span class="er">(</span><span class="ex">lwpid</span> 3574<span class="kw">)</span></span>
-<span id="cb11-78"><a href="#cb11-78" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    at 0x4D6AB2C: __pthread_kill_implementation <span class="er">(</span><span class="ex">pthread_kill.c:44</span><span class="kw">)</span></span>
-<span id="cb11-79"><a href="#cb11-79" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D6AB2C: __pthread_kill_internal <span class="er">(</span><span class="ex">pthread_kill.c:78</span><span class="kw">)</span></span>
-<span id="cb11-80"><a href="#cb11-80" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D6AB2C: pthread_kill@@GLIBC_2.34 <span class="er">(</span><span class="ex">pthread_kill.c:89</span><span class="kw">)</span></span>
-<span id="cb11-81"><a href="#cb11-81" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D1127D: raise <span class="er">(</span><span class="ex">raise.c:26</span><span class="kw">)</span></span>
-<span id="cb11-82"><a href="#cb11-82" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D1132F: <span class="pp">???</span> <span class="er">(in</span> <span class="ex">/usr/lib/x86_64-linux-gnu/libc.so.6</span><span class="kw">)</span></span>
-<span id="cb11-83"><a href="#cb11-83" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x57FC85D5: copy__<span class="op">&lt;</span>Rcpp::Vector<span class="op">&lt;</span>14, Rcpp::PreserveStorage<span class="op">&gt;</span> <span class="op">&gt;</span> <span class="er">(</span><span class="ex">PreserveStorage.h:65</span><span class="kw">)</span></span>
-<span id="cb11-84"><a href="#cb11-84" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x57FC85D5: Vector <span class="er">(</span><span class="ex">Vector.h:64</span><span class="kw">)</span></span>
-<span id="cb11-85"><a href="#cb11-85" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x57FC85D5: faulty_program<span class="er">(</span><span class="ex">int</span><span class="kw">)</span> <span class="kw">(</span><span class="ex">rcpp-debugging-not-mapped.cpp:11</span><span class="kw">)</span></span>
-<span id="cb11-86"><a href="#cb11-86" aria-hidden="true" tabindex="-1"></a><span class="ex">client</span> stack range: <span class="pp">???????</span> client SP: 0xA1251C0</span>
-<span id="cb11-87"><a href="#cb11-87" aria-hidden="true" tabindex="-1"></a><span class="fu">valgrind</span> stack range: [0x1002CAA000 0x1002DA9FFF] top usage: 18232 of 1048576</span>
-<span id="cb11-88"><a href="#cb11-88" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-89"><a href="#cb11-89" aria-hidden="true" tabindex="-1"></a><span class="ex">Thread</span> 2: status = VgTs_WaitSys syscall 202 <span class="er">(</span><span class="ex">lwpid</span> 3604<span class="kw">)</span></span>
-<span id="cb11-90"><a href="#cb11-90" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    at 0x4D64D71: __futex_abstimed_wait_common64 <span class="er">(</span><span class="ex">futex-internal.c:57</span><span class="kw">)</span></span>
-<span id="cb11-91"><a href="#cb11-91" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D64D71: __futex_abstimed_wait_common <span class="er">(</span><span class="ex">futex-internal.c:87</span><span class="kw">)</span></span>
-<span id="cb11-92"><a href="#cb11-92" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D64D71: __futex_abstimed_wait_cancelable64 <span class="er">(</span><span class="ex">futex-internal.c:139</span><span class="kw">)</span></span>
-<span id="cb11-93"><a href="#cb11-93" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D677EC: __pthread_cond_wait_common <span class="er">(</span><span class="ex">pthread_cond_wait.c:503</span><span class="kw">)</span></span>
-<span id="cb11-94"><a href="#cb11-94" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D677EC: pthread_cond_wait@@GLIBC_2.3.2 <span class="er">(</span><span class="ex">pthread_cond_wait.c:627</span><span class="kw">)</span></span>
-<span id="cb11-95"><a href="#cb11-95" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x5BA4AFA: <span class="pp">???</span> <span class="er">(in</span> <span class="ex">/usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.26.so</span><span class="kw">)</span></span>
-<span id="cb11-96"><a href="#cb11-96" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D68AA3: start_thread <span class="er">(</span><span class="ex">pthread_create.c:447</span><span class="kw">)</span></span>
-<span id="cb11-97"><a href="#cb11-97" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4DF5A33: clone <span class="er">(</span><span class="ex">clone.S:100</span><span class="kw">)</span></span>
-<span id="cb11-98"><a href="#cb11-98" aria-hidden="true" tabindex="-1"></a><span class="ex">client</span> stack range: [0xA35B000 0xAB4AFFF] client SP: 0xAB4ACE0</span>
-<span id="cb11-99"><a href="#cb11-99" aria-hidden="true" tabindex="-1"></a><span class="fu">valgrind</span> stack range: [0x1006760000 0x100685FFFF] top usage: 5624 of 1048576</span>
-<span id="cb11-100"><a href="#cb11-100" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-101"><a href="#cb11-101" aria-hidden="true" tabindex="-1"></a><span class="ex">Thread</span> 3: status = VgTs_WaitSys syscall 202 <span class="er">(</span><span class="ex">lwpid</span> 3605<span class="kw">)</span></span>
-<span id="cb11-102"><a href="#cb11-102" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    at 0x4D64D71: __futex_abstimed_wait_common64 <span class="er">(</span><span class="ex">futex-internal.c:57</span><span class="kw">)</span></span>
-<span id="cb11-103"><a href="#cb11-103" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D64D71: __futex_abstimed_wait_common <span class="er">(</span><span class="ex">futex-internal.c:87</span><span class="kw">)</span></span>
-<span id="cb11-104"><a href="#cb11-104" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D64D71: __futex_abstimed_wait_cancelable64 <span class="er">(</span><span class="ex">futex-internal.c:139</span><span class="kw">)</span></span>
-<span id="cb11-105"><a href="#cb11-105" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D677EC: __pthread_cond_wait_common <span class="er">(</span><span class="ex">pthread_cond_wait.c:503</span><span class="kw">)</span></span>
-<span id="cb11-106"><a href="#cb11-106" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D677EC: pthread_cond_wait@@GLIBC_2.3.2 <span class="er">(</span><span class="ex">pthread_cond_wait.c:627</span><span class="kw">)</span></span>
-<span id="cb11-107"><a href="#cb11-107" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x5BA4AFA: <span class="pp">???</span> <span class="er">(in</span> <span class="ex">/usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.26.so</span><span class="kw">)</span></span>
-<span id="cb11-108"><a href="#cb11-108" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D68AA3: start_thread <span class="er">(</span><span class="ex">pthread_create.c:447</span><span class="kw">)</span></span>
-<span id="cb11-109"><a href="#cb11-109" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4DF5A33: clone <span class="er">(</span><span class="ex">clone.S:100</span><span class="kw">)</span></span>
-<span id="cb11-110"><a href="#cb11-110" aria-hidden="true" tabindex="-1"></a><span class="ex">client</span> stack range: [0xAB5C000 0xB34BFFF] client SP: 0xB34BCE0</span>
-<span id="cb11-111"><a href="#cb11-111" aria-hidden="true" tabindex="-1"></a><span class="fu">valgrind</span> stack range: [0x10068E8000 0x10069E7FFF] top usage: 5624 of 1048576</span>
-<span id="cb11-112"><a href="#cb11-112" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-113"><a href="#cb11-113" aria-hidden="true" tabindex="-1"></a><span class="ex">Thread</span> 4: status = VgTs_WaitSys syscall 202 <span class="er">(</span><span class="ex">lwpid</span> 3607<span class="kw">)</span></span>
-<span id="cb11-114"><a href="#cb11-114" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    at 0x4D64D71: __futex_abstimed_wait_common64 <span class="er">(</span><span class="ex">futex-internal.c:57</span><span class="kw">)</span></span>
-<span id="cb11-115"><a href="#cb11-115" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D64D71: __futex_abstimed_wait_common <span class="er">(</span><span class="ex">futex-internal.c:87</span><span class="kw">)</span></span>
-<span id="cb11-116"><a href="#cb11-116" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D64D71: __futex_abstimed_wait_cancelable64 <span class="er">(</span><span class="ex">futex-internal.c:139</span><span class="kw">)</span></span>
-<span id="cb11-117"><a href="#cb11-117" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D677EC: __pthread_cond_wait_common <span class="er">(</span><span class="ex">pthread_cond_wait.c:503</span><span class="kw">)</span></span>
-<span id="cb11-118"><a href="#cb11-118" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D677EC: pthread_cond_wait@@GLIBC_2.3.2 <span class="er">(</span><span class="ex">pthread_cond_wait.c:627</span><span class="kw">)</span></span>
-<span id="cb11-119"><a href="#cb11-119" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x5BA4AFA: <span class="pp">???</span> <span class="er">(in</span> <span class="ex">/usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.26.so</span><span class="kw">)</span></span>
-<span id="cb11-120"><a href="#cb11-120" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D68AA3: start_thread <span class="er">(</span><span class="ex">pthread_create.c:447</span><span class="kw">)</span></span>
-<span id="cb11-121"><a href="#cb11-121" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4DF5A33: clone <span class="er">(</span><span class="ex">clone.S:100</span><span class="kw">)</span></span>
-<span id="cb11-122"><a href="#cb11-122" aria-hidden="true" tabindex="-1"></a><span class="ex">client</span> stack range: [0xB35D000 0xBB4CFFF] client SP: 0xBB4CCE0</span>
-<span id="cb11-123"><a href="#cb11-123" aria-hidden="true" tabindex="-1"></a><span class="fu">valgrind</span> stack range: [0x1006BEC000 0x1006CEBFFF] top usage: 5624 of 1048576</span>
-<span id="cb11-124"><a href="#cb11-124" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-125"><a href="#cb11-125" aria-hidden="true" tabindex="-1"></a><span class="ex">Thread</span> 5: status = VgTs_WaitSys syscall 202 <span class="er">(</span><span class="ex">lwpid</span> 3610<span class="kw">)</span></span>
-<span id="cb11-126"><a href="#cb11-126" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    at 0x4D64D71: __futex_abstimed_wait_common64 <span class="er">(</span><span class="ex">futex-internal.c:57</span><span class="kw">)</span></span>
-<span id="cb11-127"><a href="#cb11-127" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D64D71: __futex_abstimed_wait_common <span class="er">(</span><span class="ex">futex-internal.c:87</span><span class="kw">)</span></span>
-<span id="cb11-128"><a href="#cb11-128" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D64D71: __futex_abstimed_wait_cancelable64 <span class="er">(</span><span class="ex">futex-internal.c:139</span><span class="kw">)</span></span>
-<span id="cb11-129"><a href="#cb11-129" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D677EC: __pthread_cond_wait_common <span class="er">(</span><span class="ex">pthread_cond_wait.c:503</span><span class="kw">)</span></span>
-<span id="cb11-130"><a href="#cb11-130" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D677EC: pthread_cond_wait@@GLIBC_2.3.2 <span class="er">(</span><span class="ex">pthread_cond_wait.c:627</span><span class="kw">)</span></span>
-<span id="cb11-131"><a href="#cb11-131" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x5BA4AFA: <span class="pp">???</span> <span class="er">(in</span> <span class="ex">/usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.26.so</span><span class="kw">)</span></span>
-<span id="cb11-132"><a href="#cb11-132" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D68AA3: start_thread <span class="er">(</span><span class="ex">pthread_create.c:447</span><span class="kw">)</span></span>
-<span id="cb11-133"><a href="#cb11-133" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4DF5A33: clone <span class="er">(</span><span class="ex">clone.S:100</span><span class="kw">)</span></span>
-<span id="cb11-134"><a href="#cb11-134" aria-hidden="true" tabindex="-1"></a><span class="ex">client</span> stack range: [0xBB5E000 0xC34DFFF] client SP: 0xC34DCE0</span>
-<span id="cb11-135"><a href="#cb11-135" aria-hidden="true" tabindex="-1"></a><span class="fu">valgrind</span> stack range: [0x1006EF0000 0x1006FEFFFF] top usage: 5624 of 1048576</span>
-<span id="cb11-136"><a href="#cb11-136" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-137"><a href="#cb11-137" aria-hidden="true" tabindex="-1"></a><span class="ex">Thread</span> 6: status = VgTs_WaitSys syscall 202 <span class="er">(</span><span class="ex">lwpid</span> 3612<span class="kw">)</span></span>
-<span id="cb11-138"><a href="#cb11-138" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    at 0x4D64D71: __futex_abstimed_wait_common64 <span class="er">(</span><span class="ex">futex-internal.c:57</span><span class="kw">)</span></span>
-<span id="cb11-139"><a href="#cb11-139" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D64D71: __futex_abstimed_wait_common <span class="er">(</span><span class="ex">futex-internal.c:87</span><span class="kw">)</span></span>
-<span id="cb11-140"><a href="#cb11-140" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D64D71: __futex_abstimed_wait_cancelable64 <span class="er">(</span><span class="ex">futex-internal.c:139</span><span class="kw">)</span></span>
-<span id="cb11-141"><a href="#cb11-141" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D677EC: __pthread_cond_wait_common <span class="er">(</span><span class="ex">pthread_cond_wait.c:503</span><span class="kw">)</span></span>
-<span id="cb11-142"><a href="#cb11-142" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D677EC: pthread_cond_wait@@GLIBC_2.3.2 <span class="er">(</span><span class="ex">pthread_cond_wait.c:627</span><span class="kw">)</span></span>
-<span id="cb11-143"><a href="#cb11-143" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x5BA4AFA: <span class="pp">???</span> <span class="er">(in</span> <span class="ex">/usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.26.so</span><span class="kw">)</span></span>
-<span id="cb11-144"><a href="#cb11-144" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D68AA3: start_thread <span class="er">(</span><span class="ex">pthread_create.c:447</span><span class="kw">)</span></span>
-<span id="cb11-145"><a href="#cb11-145" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4DF5A33: clone <span class="er">(</span><span class="ex">clone.S:100</span><span class="kw">)</span></span>
-<span id="cb11-146"><a href="#cb11-146" aria-hidden="true" tabindex="-1"></a><span class="ex">client</span> stack range: [0xC35F000 0xCB4EFFF] client SP: 0xCB4ECE0</span>
-<span id="cb11-147"><a href="#cb11-147" aria-hidden="true" tabindex="-1"></a><span class="fu">valgrind</span> stack range: [0x10071F4000 0x10072F3FFF] top usage: 5624 of 1048576</span>
-<span id="cb11-148"><a href="#cb11-148" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-149"><a href="#cb11-149" aria-hidden="true" tabindex="-1"></a><span class="ex">Thread</span> 7: status = VgTs_WaitSys syscall 202 <span class="er">(</span><span class="ex">lwpid</span> 3613<span class="kw">)</span></span>
-<span id="cb11-150"><a href="#cb11-150" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    at 0x4D64D71: __futex_abstimed_wait_common64 <span class="er">(</span><span class="ex">futex-internal.c:57</span><span class="kw">)</span></span>
-<span id="cb11-151"><a href="#cb11-151" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D64D71: __futex_abstimed_wait_common <span class="er">(</span><span class="ex">futex-internal.c:87</span><span class="kw">)</span></span>
-<span id="cb11-152"><a href="#cb11-152" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D64D71: __futex_abstimed_wait_cancelable64 <span class="er">(</span><span class="ex">futex-internal.c:139</span><span class="kw">)</span></span>
-<span id="cb11-153"><a href="#cb11-153" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D677EC: __pthread_cond_wait_common <span class="er">(</span><span class="ex">pthread_cond_wait.c:503</span><span class="kw">)</span></span>
-<span id="cb11-154"><a href="#cb11-154" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D677EC: pthread_cond_wait@@GLIBC_2.3.2 <span class="er">(</span><span class="ex">pthread_cond_wait.c:627</span><span class="kw">)</span></span>
-<span id="cb11-155"><a href="#cb11-155" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x5BA4AFA: <span class="pp">???</span> <span class="er">(in</span> <span class="ex">/usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.26.so</span><span class="kw">)</span></span>
-<span id="cb11-156"><a href="#cb11-156" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D68AA3: start_thread <span class="er">(</span><span class="ex">pthread_create.c:447</span><span class="kw">)</span></span>
-<span id="cb11-157"><a href="#cb11-157" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4DF5A33: clone <span class="er">(</span><span class="ex">clone.S:100</span><span class="kw">)</span></span>
-<span id="cb11-158"><a href="#cb11-158" aria-hidden="true" tabindex="-1"></a><span class="ex">client</span> stack range: [0xCB60000 0xD34FFFF] client SP: 0xD34FCE0</span>
-<span id="cb11-159"><a href="#cb11-159" aria-hidden="true" tabindex="-1"></a><span class="fu">valgrind</span> stack range: [0x10074F8000 0x10075F7FFF] top usage: 5624 of 1048576</span>
-<span id="cb11-160"><a href="#cb11-160" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-161"><a href="#cb11-161" aria-hidden="true" tabindex="-1"></a><span class="ex">Thread</span> 8: status = VgTs_WaitSys syscall 202 <span class="er">(</span><span class="ex">lwpid</span> 3614<span class="kw">)</span></span>
-<span id="cb11-162"><a href="#cb11-162" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    at 0x4D64D71: __futex_abstimed_wait_common64 <span class="er">(</span><span class="ex">futex-internal.c:57</span><span class="kw">)</span></span>
-<span id="cb11-163"><a href="#cb11-163" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D64D71: __futex_abstimed_wait_common <span class="er">(</span><span class="ex">futex-internal.c:87</span><span class="kw">)</span></span>
-<span id="cb11-164"><a href="#cb11-164" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D64D71: __futex_abstimed_wait_cancelable64 <span class="er">(</span><span class="ex">futex-internal.c:139</span><span class="kw">)</span></span>
-<span id="cb11-165"><a href="#cb11-165" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D677EC: __pthread_cond_wait_common <span class="er">(</span><span class="ex">pthread_cond_wait.c:503</span><span class="kw">)</span></span>
-<span id="cb11-166"><a href="#cb11-166" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D677EC: pthread_cond_wait@@GLIBC_2.3.2 <span class="er">(</span><span class="ex">pthread_cond_wait.c:627</span><span class="kw">)</span></span>
-<span id="cb11-167"><a href="#cb11-167" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x5BA4AFA: <span class="pp">???</span> <span class="er">(in</span> <span class="ex">/usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.26.so</span><span class="kw">)</span></span>
-<span id="cb11-168"><a href="#cb11-168" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D68AA3: start_thread <span class="er">(</span><span class="ex">pthread_create.c:447</span><span class="kw">)</span></span>
-<span id="cb11-169"><a href="#cb11-169" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4DF5A33: clone <span class="er">(</span><span class="ex">clone.S:100</span><span class="kw">)</span></span>
-<span id="cb11-170"><a href="#cb11-170" aria-hidden="true" tabindex="-1"></a><span class="ex">client</span> stack range: [0xD361000 0xDB50FFF] client SP: 0xDB50CE0</span>
-<span id="cb11-171"><a href="#cb11-171" aria-hidden="true" tabindex="-1"></a><span class="fu">valgrind</span> stack range: [0x1007800000 0x10078FFFFF] top usage: 5624 of 1048576</span>
-<span id="cb11-172"><a href="#cb11-172" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-173"><a href="#cb11-173" aria-hidden="true" tabindex="-1"></a><span class="ex">Thread</span> 9: status = VgTs_WaitSys syscall 202 <span class="er">(</span><span class="ex">lwpid</span> 3615<span class="kw">)</span></span>
-<span id="cb11-174"><a href="#cb11-174" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    at 0x4D64D71: __futex_abstimed_wait_common64 <span class="er">(</span><span class="ex">futex-internal.c:57</span><span class="kw">)</span></span>
-<span id="cb11-175"><a href="#cb11-175" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D64D71: __futex_abstimed_wait_common <span class="er">(</span><span class="ex">futex-internal.c:87</span><span class="kw">)</span></span>
-<span id="cb11-176"><a href="#cb11-176" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D64D71: __futex_abstimed_wait_cancelable64 <span class="er">(</span><span class="ex">futex-internal.c:139</span><span class="kw">)</span></span>
-<span id="cb11-177"><a href="#cb11-177" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D677EC: __pthread_cond_wait_common <span class="er">(</span><span class="ex">pthread_cond_wait.c:503</span><span class="kw">)</span></span>
-<span id="cb11-178"><a href="#cb11-178" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D677EC: pthread_cond_wait@@GLIBC_2.3.2 <span class="er">(</span><span class="ex">pthread_cond_wait.c:627</span><span class="kw">)</span></span>
-<span id="cb11-179"><a href="#cb11-179" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x5BA4AFA: <span class="pp">???</span> <span class="er">(in</span> <span class="ex">/usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.26.so</span><span class="kw">)</span></span>
-<span id="cb11-180"><a href="#cb11-180" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D68AA3: start_thread <span class="er">(</span><span class="ex">pthread_create.c:447</span><span class="kw">)</span></span>
-<span id="cb11-181"><a href="#cb11-181" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4DF5A33: clone <span class="er">(</span><span class="ex">clone.S:100</span><span class="kw">)</span></span>
-<span id="cb11-182"><a href="#cb11-182" aria-hidden="true" tabindex="-1"></a><span class="ex">client</span> stack range: [0xDB62000 0xE351FFF] client SP: 0xE351CE0</span>
-<span id="cb11-183"><a href="#cb11-183" aria-hidden="true" tabindex="-1"></a><span class="fu">valgrind</span> stack range: [0x1007B04000 0x1007C03FFF] top usage: 5624 of 1048576</span>
-<span id="cb11-184"><a href="#cb11-184" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-185"><a href="#cb11-185" aria-hidden="true" tabindex="-1"></a><span class="ex">Thread</span> 10: status = VgTs_WaitSys syscall 202 <span class="er">(</span><span class="ex">lwpid</span> 3616<span class="kw">)</span></span>
-<span id="cb11-186"><a href="#cb11-186" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    at 0x4D64D71: __futex_abstimed_wait_common64 <span class="er">(</span><span class="ex">futex-internal.c:57</span><span class="kw">)</span></span>
-<span id="cb11-187"><a href="#cb11-187" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D64D71: __futex_abstimed_wait_common <span class="er">(</span><span class="ex">futex-internal.c:87</span><span class="kw">)</span></span>
-<span id="cb11-188"><a href="#cb11-188" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D64D71: __futex_abstimed_wait_cancelable64 <span class="er">(</span><span class="ex">futex-internal.c:139</span><span class="kw">)</span></span>
-<span id="cb11-189"><a href="#cb11-189" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D677EC: __pthread_cond_wait_common <span class="er">(</span><span class="ex">pthread_cond_wait.c:503</span><span class="kw">)</span></span>
-<span id="cb11-190"><a href="#cb11-190" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D677EC: pthread_cond_wait@@GLIBC_2.3.2 <span class="er">(</span><span class="ex">pthread_cond_wait.c:627</span><span class="kw">)</span></span>
-<span id="cb11-191"><a href="#cb11-191" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x5BA4AFA: <span class="pp">???</span> <span class="er">(in</span> <span class="ex">/usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.26.so</span><span class="kw">)</span></span>
-<span id="cb11-192"><a href="#cb11-192" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4D68AA3: start_thread <span class="er">(</span><span class="ex">pthread_create.c:447</span><span class="kw">)</span></span>
-<span id="cb11-193"><a href="#cb11-193" aria-hidden="true" tabindex="-1"></a><span class="ex">==3574==</span>    by 0x4DF5A33: clone <span class="er">(</span><span class="ex">clone.S:100</span><span class="kw">)</span></span>
-<span id="cb11-194"><a href="#cb11-194" aria-hidden="true" tabindex="-1"></a><span class="ex">client</span> stack range: [0xE363000 0xEB52FFF] client SP: 0xEB52CE0</span>
-<span id="cb11-195"><a href="#cb11-195" aria-hidden="true" tabindex="-1"></a><span class="fu">valgrind</span> stack range: [0x1007E08000 0x1007F07FFF] top usage: 5624 of 1048576</span>
-<span id="cb11-196"><a href="#cb11-196" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-197"><a href="#cb11-197" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-198"><a href="#cb11-198" aria-hidden="true" tabindex="-1"></a><span class="ex">Note:</span> see also the FAQ in the source distribution.</span>
-<span id="cb11-199"><a href="#cb11-199" aria-hidden="true" tabindex="-1"></a><span class="ex">It</span> contains workarounds to several common problems.</span>
-<span id="cb11-200"><a href="#cb11-200" aria-hidden="true" tabindex="-1"></a><span class="ex">In</span> particular, if Valgrind aborted or crashed after</span>
-<span id="cb11-201"><a href="#cb11-201" aria-hidden="true" tabindex="-1"></a><span class="ex">identifying</span> problems in your program, there<span class="st">'s a good chance</span></span>
-<span id="cb11-202"><a href="#cb11-202" aria-hidden="true" tabindex="-1"></a><span class="st">that fixing those problems will prevent Valgrind aborting or</span></span>
-<span id="cb11-203"><a href="#cb11-203" aria-hidden="true" tabindex="-1"></a><span class="st">crashing, especially if it happened in m_mallocfree.c.</span></span>
-<span id="cb11-204"><a href="#cb11-204" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-205"><a href="#cb11-205" aria-hidden="true" tabindex="-1"></a><span class="st">If that doesn'</span>t help, please report this bug to: www.valgrind.org</span>
-<span id="cb11-206"><a href="#cb11-206" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-207"><a href="#cb11-207" aria-hidden="true" tabindex="-1"></a><span class="ex">In</span> the bug report, send all the above text, the valgrind</span>
-<span id="cb11-208"><a href="#cb11-208" aria-hidden="true" tabindex="-1"></a><span class="ex">version,</span> and what OS and version you are using.  Thanks.</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb11-61"><a href="#cb11-61" aria-hidden="true" tabindex="-1"></a><span class="ex">==1887==</span> </span>
+<span id="cb11-62"><a href="#cb11-62" aria-hidden="true" tabindex="-1"></a><span class="ex">==1887==</span> Process terminating with default action of signal 11 <span class="er">(</span><span class="ex">SIGSEGV</span><span class="kw">)</span><span class="bu">:</span> dumping core</span>
+<span id="cb11-63"><a href="#cb11-63" aria-hidden="true" tabindex="-1"></a><span class="ex">==1887==</span>    at 0x4D6AB2C: __pthread_kill_implementation <span class="er">(</span><span class="ex">pthread_kill.c:44</span><span class="kw">)</span></span>
+<span id="cb11-64"><a href="#cb11-64" aria-hidden="true" tabindex="-1"></a><span class="ex">==1887==</span>    by 0x4D6AB2C: __pthread_kill_internal <span class="er">(</span><span class="ex">pthread_kill.c:78</span><span class="kw">)</span></span>
+<span id="cb11-65"><a href="#cb11-65" aria-hidden="true" tabindex="-1"></a><span class="ex">==1887==</span>    by 0x4D6AB2C: pthread_kill@@GLIBC_2.34 <span class="er">(</span><span class="ex">pthread_kill.c:89</span><span class="kw">)</span></span>
+<span id="cb11-66"><a href="#cb11-66" aria-hidden="true" tabindex="-1"></a><span class="ex">==1887==</span>    by 0x4D1127D: raise <span class="er">(</span><span class="ex">raise.c:26</span><span class="kw">)</span></span>
+<span id="cb11-67"><a href="#cb11-67" aria-hidden="true" tabindex="-1"></a><span class="ex">==1887==</span>    by 0x4D1132F: <span class="pp">???</span> <span class="er">(in</span> <span class="ex">/usr/lib/x86_64-linux-gnu/libc.so.6</span><span class="kw">)</span></span>
+<span id="cb11-68"><a href="#cb11-68" aria-hidden="true" tabindex="-1"></a><span class="ex">==1887==</span>    by 0x2EF4D5D5: copy__<span class="op">&lt;</span>Rcpp::Vector<span class="op">&lt;</span>14, Rcpp::PreserveStorage<span class="op">&gt;</span> <span class="op">&gt;</span> <span class="er">(</span><span class="ex">PreserveStorage.h:65</span><span class="kw">)</span></span>
+<span id="cb11-69"><a href="#cb11-69" aria-hidden="true" tabindex="-1"></a><span class="ex">==1887==</span>    by 0x2EF4D5D5: Vector <span class="er">(</span><span class="ex">Vector.h:64</span><span class="kw">)</span></span>
+<span id="cb11-70"><a href="#cb11-70" aria-hidden="true" tabindex="-1"></a><span class="ex">==1887==</span>    by 0x2EF4D5D5: faulty_program<span class="er">(</span><span class="ex">int</span><span class="kw">)</span> <span class="kw">(</span><span class="ex">rcpp-debugging-not-mapped.cpp:11</span><span class="kw">)</span></span>
+<span id="cb11-71"><a href="#cb11-71" aria-hidden="true" tabindex="-1"></a><span class="ex">==1887==</span> </span>
+<span id="cb11-72"><a href="#cb11-72" aria-hidden="true" tabindex="-1"></a><span class="ex">==1887==</span> HEAP SUMMARY:</span>
+<span id="cb11-73"><a href="#cb11-73" aria-hidden="true" tabindex="-1"></a><span class="ex">==1887==</span>     in use at exit: 60,747,090 bytes in 11,700 blocks</span>
+<span id="cb11-74"><a href="#cb11-74" aria-hidden="true" tabindex="-1"></a><span class="ex">==1887==</span>   total heap usage: 31,654 allocs, 19,954 frees, 93,747,845 bytes allocated</span>
+<span id="cb11-75"><a href="#cb11-75" aria-hidden="true" tabindex="-1"></a><span class="ex">==1887==</span> </span>
+<span id="cb11-76"><a href="#cb11-76" aria-hidden="true" tabindex="-1"></a><span class="ex">==1887==</span> LEAK SUMMARY:</span>
+<span id="cb11-77"><a href="#cb11-77" aria-hidden="true" tabindex="-1"></a><span class="ex">==1887==</span>    definitely lost: 0 bytes in 0 blocks</span>
+<span id="cb11-78"><a href="#cb11-78" aria-hidden="true" tabindex="-1"></a><span class="ex">==1887==</span>    indirectly lost: 0 bytes in 0 blocks</span>
+<span id="cb11-79"><a href="#cb11-79" aria-hidden="true" tabindex="-1"></a><span class="ex">==1887==</span>      possibly lost: 5,987 bytes in 19 blocks</span>
+<span id="cb11-80"><a href="#cb11-80" aria-hidden="true" tabindex="-1"></a><span class="ex">==1887==</span>    still reachable: 60,741,103 bytes in 11,681 blocks</span>
+<span id="cb11-81"><a href="#cb11-81" aria-hidden="true" tabindex="-1"></a><span class="ex">==1887==</span>                       of which reachable via heuristic:</span>
+<span id="cb11-82"><a href="#cb11-82" aria-hidden="true" tabindex="-1"></a><span class="ex">==1887==</span>                         newarray           : 4,264 bytes in 1 blocks</span>
+<span id="cb11-83"><a href="#cb11-83" aria-hidden="true" tabindex="-1"></a><span class="ex">==1887==</span>         suppressed: 0 bytes in 0 blocks</span>
+<span id="cb11-84"><a href="#cb11-84" aria-hidden="true" tabindex="-1"></a><span class="ex">==1887==</span> Rerun with <span class="at">--leak-check</span><span class="op">=</span>full to see details of leaked memory</span>
+<span id="cb11-85"><a href="#cb11-85" aria-hidden="true" tabindex="-1"></a><span class="ex">==1887==</span> </span>
+<span id="cb11-86"><a href="#cb11-86" aria-hidden="true" tabindex="-1"></a><span class="ex">==1887==</span> For lists of detected and suppressed errors, rerun with: <span class="at">-s</span></span>
+<span id="cb11-87"><a href="#cb11-87" aria-hidden="true" tabindex="-1"></a><span class="ex">==1887==</span> ERROR SUMMARY: 1 errors from 1 contexts <span class="er">(</span><span class="ex">suppressed:</span> 0 from 0<span class="kw">)</span></span>
+<span id="cb11-88"><a href="#cb11-88" aria-hidden="true" tabindex="-1"></a><span class="ex">Segmentation</span> fault <span class="er">(</span><span class="ex">core</span> dumped<span class="kw">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>To inspect an error with GDB, we have to follow these steps:</p>
 <ol type="1">
 <li><p>Run R with gdb as debugger: <code>R --debugger=gdb</code>. R won’t start immediately, so we have time to add breakpoints.</p>
