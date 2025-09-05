@@ -1,29 +1,308 @@
 ---
-title: Eficiencia
+title: Escribiendo Código Eficiente
 author: George G. Vega Yon, Ph.D.
 date: 2025-08-14
 ---
 
-*[El contenido completo de este capítulo será traducido al español. Por ahora, esta es una versión preliminar.]*
-
-## Escribiendo Código Eficiente en R
-
-La eficiencia en R implica tanto la velocidad de ejecución como el uso eficiente de memoria. Este capítulo cubre:
-
-- Vectorización en R
-- Evitar bucles innecesarios
-- Uso eficiente de estructuras de datos
-- Optimización de memoria
-
-## Principios Básicos
-
-1. **Vectoriza cuando sea posible**: R está optimizado para operaciones vectoriales
-2. **Pre-asigna memoria**: Evita hacer crecer objetos dinámicamente
-3. **Usa las funciones correctas**: Algunas funciones están más optimizadas que otras
-4. **Considera el tipo de datos**: Los tipos apropiados pueden mejorar significativamente el rendimiento
-
-::: {.callout-note}
-## Trabajo en Progreso
-
-Esta traducción está en desarrollo. El contenido completo incluirá ejemplos prácticos, comparaciones de rendimiento y mejores prácticas para escribir código R eficiente.
+::: {.callout-warning}
+## Nota de Traducción
+Esta versión del capítulo fue traducida de manera automática utilizando IA. El capítulo aún no ha sido revisado por un humano.
 :::
+
+- El código R puede ser muy eficiente para tareas típicas, pero, a medida que el código comienza a aumentar en complejidad, es fácil que se vuelva ineficiente.
+
+- Algunos consejos rápidos de R para código de computación eficiente:
+
+  - Usa operaciones vectorizadas en lugar de bucles.
+  - Trata de usar caché para evitar cálculos repetidos. ¡El caché también se puede hacer fuera de la memoria!
+  - Evita pasos/procesamiento de datos innecesarios.
+  - Reduce el número de operaciones de copia.
+
+## Operaciones Vectorizadas
+
+La vectorización puede significar muchas cosas en programación, pero en R, la vectorización se refiere a usar funciones sobre vectores. Por ejemplo, en lugar de usar un bucle para sumar dos vectores juntos, puedes usar el operador `+` directamente en los vectores:
+
+```{r}
+# Using a loop
+set.seed(331)
+a <- runif(1e3)
+b <- runif(1e3)
+result <- numeric(length(a))
+for (i in seq_along(a)) {
+  result[i] <- a[i] + b[i]
+}
+
+# Using vectorized operation
+result <- a + b
+```
+
+Incluso podemos hacer benchmark del rendimiento de estos dos enfoques:
+
+```{r}
+#| label: benchmark-vectorization
+#| warning: false
+library(microbenchmark)
+microbenchmark(
+  loop = {
+    result <- numeric(length(a))
+    for (i in seq_along(a)) {
+      result[i] <- a[i] + b[i]
+    }
+  },
+  vectorized = {
+    result <- a + b
+  },
+  unit = "relative"
+)
+```
+
+::: {.callout-tip}
+Los bucles for no siempre son malos. El problema principal está con el código dentro del bucle for. Si el código ya está vectorizado, entonces no hay necesidad de eliminar el bucle for (a menos que puedas vectorizar el bucle for mismo).
+:::
+
+## Cacheando cálculos
+
+Muchas veces, es útil cachear cálculos que son costosos de computar. Por ejemplo, si tienes una función que toma mucho tiempo para ejecutarse, puedes almacenar el resultado en una variable y reutilizarlo más tarde en lugar de recalcularlo.
+
+Aquí hay un mal ejemplo usando la secuencia de Fibonacci:
+
+```{r}
+#| label: fibonacci-bad
+#| warning: false
+fibonacci <- function(n) {
+  if (n <= 1) {
+    return(n)
+  }
+  return(fibonacci(n - 1) + fibonacci(n - 2))
+}
+
+fibonacci_cached <- function(n) {
+  prev <- numeric(n + 1)
+  for (i in seq_len(n)) {
+    if (i <= 1) {
+      prev[i + 1] <- i
+    } else {
+      prev[i + 1] <- prev[i] + prev[i - 1]
+    }
+  }
+
+  return(prev[n + 1])
+}
+```
+
+Ambas funciones deberían devolver el mismo resultado, pero la segunda es significativamente más rápida ya que evita llamar la función recursivamente:
+
+```{r}
+#| label: fibonacci-benchmark
+#| warning: false
+microbenchmark(
+  fibonacci(10),
+  fibonacci_cached(10),
+  times = 10,
+  unit = "relative",
+  check = "equal"
+)
+```
+
+## Cacheando cálculos (bis)
+
+En el caso de cálculos grandes, también podemos guardar resultados en el disco. Por ejemplo, si estamos ejecutando una simulación/cálculo, uno por ciudad/escenario, podemos guardar los resultados en un archivo y leerlos más tarde. Aquí está cómo hacerlo:
+
+Para cada valor de `i`, haz lo siguiente:
+
+1. Verifica si el archivo `result_i.rds` existe.
+2. Si no existe, ejecuta el cálculo y guarda el resultado en `result_i.rds`.
+3. Si existe, lee el resultado de `result_i.rds`.
+
+¡Así de simple! Aquí hay un ejemplo usando código R:
+
+```{r}
+#| label: simulation-example
+#| warning: false
+# A complicated simulation function
+simulate <- function(i, seed) {
+  set.seed(seed)
+  rnorm(1e5)
+}
+
+# Generating seeds for each iteration
+set.seed(331)
+nsims <- 100
+seeds <- sample.int(.Machine$integer.max, nsims)
+
+# Just for this example, we will use a tempfile
+res_0 <- vector("list", length = nsims)
+for (i in seq_len(nsims)) {
+  
+  # Creating the filename
+  fn <- file.path(tempdir(), paste0(i, ".rds"))
+
+  # Does the result already exist?
+  if (file.exists(fn))
+    res_0[[i]] <- readRDS(fn)
+  else {
+    # If not, run the simulation and save the result
+    res_0[[i]] <- simulate(i, seed = i)
+    saveRDS(res_0[[i]], fn)
+  }
+
+}
+```
+
+::: {.callout-tip}
+Cuando ejecutes simulaciones, es una buena práctica establecer semillas individuales para cada simulación (si estas son individualmente complejas). De esa manera, si el código falla, puedes volver a ejecutar solo las simulaciones fallidas sin tener que rehacer todas.
+:::
+
+Además, es una buena idea envolver tu código en una llamada `tryCatch()` para manejar errores con gracia. De esta manera, si una simulación falla, puedes registrar el error y continuar con la siguiente simulación sin detener todo el proceso.
+
+```{r}
+#| label: simulation-with-trycatch
+#| warning: false
+# Just for this example, we will use a tempfile
+res_0 <- vector("list", length = nsims)
+for (i in seq_len(nsims)) {
+  
+  # Creating the filename
+  fn <- file.path(tempdir(), paste0(i, ".rds"))
+
+  # Does the result already exist?
+  res <- tryCatch({
+    if (file.exists(fn))
+      readRDS(fn)
+    else {
+      # If not, run the simulation and save the result
+      ans_i <- simulate(i, seed = i)
+      saveRDS(ans_i, fn)
+      ans_i
+    }
+  }, error = function(e) e)
+
+  if (inherits(res, "error")) {
+    message("Simulation ", i, " failed: ", res$message)
+    next  # Skip to the next iteration
+  }
+
+  # We still store it, even if it failed
+  res_0[[i]] <- res
+
+}
+```
+
+::: {.callout-tip}
+La función `saveRDS` en R usa el argumento `compress = TRUE` como predeterminado. Comprimir los datos para ahorrar espacio es generalmente una buena idea, pero no si necesitas leer datos rápidamente. Entonces, si el espacio no es una restricción, puedes establecer `compress = FALSE` cuando guardes el archivo RDS para acelerar el proceso de lectura.
+:::
+
+## Cacheando cálculos en una ShinyApp
+
+Abajo hay un ejemplo de una figura de plotly que está pre-grabada para una aplicación shiny. La idea es que, si la figura no necesita ser reactiva, siempre puedes pre-computar los resultados y almacenarlos en un archivo, en este caso, como un archivo HTML:
+
+```r
+library(shiny)
+library(bslib)
+library(plotly)
+ 
+# Like we did with the simulations, we have a default filename
+fn <- "plotly.html"
+ 
+# Notice I'm adding the www because, outside of the
+# server call, this writes directly to the top level.
+# Once reading, it will read from www.
+if (!file.exists(file.path("www", fn))) {
+ 
+  message("Creating the file...")
+ 
+  # if it doesn't exist, then it creates it and saves it
+  p <- plot_ly(x = 1:10, y = 1:10) %>% add_lines()
+  htmlwidgets::saveWidget(
+    p,
+    file = "www/plotly.html",
+    selfcontained = TRUE
+    )
+} else {
+  message("The file already exists!")
+}
+ 
+ 
+# Define UI for app that draws a histogram ----
+ui <- page_sidebar(
+  # App title ----
+  title = "Hello Shiny!",
+  # Sidebar panel for inputs ----
+  sidebar = sidebar(
+    # Input: Slider for the number of bins ----
+    sliderInput(
+      inputId = "bins",
+      label = "Number of bins:",
+      min = 1,
+      max = 50,
+      value = 30
+    )
+  ),
+  htmlOutput(outputId = "plotlyOutput")
+)
+ 
+server <- function(input, output) {
+ 
+  output$plotlyOutput <- renderUI({
+    tags$iframe(
+      src = "plotly.html"
+    )
+  })
+ 
+}
+ 
+shinyApp(ui = ui, server = server)
+```
+
+## Evitando pasos innecesarios
+
+Muchas veces, podemos encontrar atajos para reducir la cantidad de procesamiento de datos que necesitamos hacer. Un gran ejemplo está en la función de regresión lineal `lm()`. La función `lm()` irá más allá de encontrar los coeficientes en un modelo lineal, también calculará residuos, valores ajustados, y más. En su lugar, podemos usar la función `lm.fit()` que solo calcula los coeficientes:
+
+```{r}
+#| label: lm-fit-example
+#| warning: false
+set.seed(331)
+x <- rnorm(2e3)
+y <- 2 + 3 * x + rnorm(2e3)
+
+# Comparing
+microbenchmark(
+  lm = coef(lm(y ~ x)),
+  lm_fit = coef(lm.fit(cbind(1, x), y)),
+  times = 10,
+  unit = "relative"
+)
+```
+
+## Reduciendo operaciones de copia
+
+Como en cualquier lenguaje de programación, las operaciones de copia en R pueden ser costosas. Más allá de aumentar la cantidad de memoria utilizada, las operaciones de copia requieren tiempo para asignar memoria y luego copiar los datos. R moderno minimiza estas usando copy-on-modify. Esto significa que R no copiará un objeto hasta que sea modificado. Por ejemplo, el siguiente código hace múltiples copias de `X`, pero es hasta la última línea que R realmente hace una copia de `X`:
+
+```{r}
+#| label: copy-on-modify-example
+#| warning: false
+#| collapse: true
+set.seed(331)
+X <- runif(1e4)
+Y <- X
+Z <- X
+
+# Checking the address of the objects
+library(lobstr)
+obj_addr(X)
+obj_addr(Y)
+obj_addr(Z)
+```
+
+Modificar `X` disparará una operación de copia, y las direcciones de `Y` y `Z` permanecerán iguales, mientras que `X` tendrá una nueva dirección:
+
+```{r}
+#| label: copy-on-modify-modification
+#| warning: false
+#| collapse: true
+# Modifying X
+X[1] <- 100  # This is when R makes a copy of X
+obj_addr(X)
+obj_addr(Y)
+obj_addr(Z)
+```

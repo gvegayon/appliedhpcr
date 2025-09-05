@@ -4,30 +4,115 @@ author: George G. Vega Yon, Ph.D.
 date: 2025-08-14
 ---
 
-*[El contenido completo de este capítulo será traducido al español. Por ahora, esta es una versión preliminar.]*
-
-## ¿Qué es la Computación Paralela?
-
-La computación paralela es una técnica de programación donde múltiples procesadores trabajan simultáneamente para resolver un problema computacional. En el contexto de R, esto puede significar:
-
-- Usar múltiples núcleos de CPU
-- Distribuir cálculos entre múltiples máquinas
-- Aprovechar GPU para cálculos específicos
-
-## Tipos de Paralelización
-
-1. **Paralelización de Datos**: Dividir los datos entre procesadores
-2. **Paralelización de Tareas**: Dividir diferentes tareas entre procesadores
-3. **Paralelización Pipeline**: Procesar datos en etapas paralelas
-
-## Cuándo Usar Computación Paralela
-
-- Cuando tienes tareas independientes que pueden ejecutarse simultáneamente
-- Cuando el overhead de comunicación es menor que la ganancia de velocidad
-- Cuando tienes suficientes recursos computacionales disponibles
-
-::: {.callout-note}
-## Trabajo en Progreso
-
-Esta traducción está en desarrollo. El contenido completo incluirá ejemplos prácticos usando paquetes como `parallel`, `foreach`, y `future`.
+::: {.callout-warning}
+## Nota de Traducción
+Esta versión del capítulo fue traducida de manera automática utilizando IA. El capítulo aún no ha sido revisado por un humano.
 :::
+
+# Introducción
+
+Aunque la mayoría de la gente ve R como un lenguaje de programación lento, tiene características poderosas que aceleran dramáticamente tu código [^exampledatatable]. Aunque R no fue necesariamente construido para la velocidad, hay algunas herramientas y formas en las que podemos acelerar R. Este capítulo introduce lo que entenderemos como computación de alto rendimiento en R.
+
+[^exampledatatable]: No obstante, esta afirmación se puede decir sobre casi cualquier lenguaje de programación; hay ejemplos notables como el paquete R [`data.table`](https://cran.r-project.org){target="_blank"} [@datatable] que ha sido demostrado que [supera a la mayoría de herramientas de manipulación de datos](https://h2oai.github.io/db-benchmark/){target="_blank"}.
+
+# Computación de Alto Rendimiento: Una visión general
+
+Desde la perspectiva de R, podemos pensar en HPC en términos de dos o tres cosas:[^crantask] Big data, computación paralela, y código compilado.
+
+[^crantask]: Asegúrate de revisar [CRAN Task View on HPC](https://CRAN.R-project.org/view=HighPerformanceComputing){target="_blank"}.
+
+## Big Data
+
+Cuando hablamos de big data, nos referimos a casos donde tu computadora lucha para manejar un conjunto de datos. Un ejemplo típico de esto último es cuando el número de observaciones (filas) en tu marco de datos es [demasiado para ajustar un modelo de regresión lineal](https://stackoverflow.com/q/10326853/2097171){target="_blank"}. En lugar de comprar una computadora más grande, hay muchas buenas soluciones para resolver problemas relacionados con la memoria:
+
+*   **Almacenamiento fuera de memoria**. La idea es simple, en lugar de usar tu RAM para cargar los datos, usa otros métodos para cargar los datos. Dos alternativas notables son los paquetes R [bigmemory](https://CRAN.R-project.org/package=bigmemory){target="_blank"} e [implyr](https://cran.r-project.org/package=implyr). El paquete `bigmemory` proporciona métodos para usar matrices "*respaldadas por archivo*". Por otro lado, `implyr` implementa un envoltorio para acceder a Apache Impala, un [motor de consultas SQL para un clúster ejecutando Apache Hadoop](https://en.wikipedia.org/w/index.php?title=Apache_Impala&oldid=1116544272){target="_blank"}.
+
+*   **Algoritmos eficientes para big data**: Para evitar quedarte sin memoria con tu análisis de regresión, los paquetes R [biglm](https://cran.r-project.org/package=biglm){target="_blank"} y [biglasso](https://cran.r-project.org/package=biglasso){target="_blank"} entregan alternativas altamente eficientes a `glm` y `glmnet`, respectivamente. Ahora, si tus datos caben en tu RAM, pero aún luchas con la manipulación de datos, el paquete [data.table](https://CRAN.R-project.org/package=data.table) es la solución.
+
+*   **Almacénalo más eficientemente**: Finalmente, cuando se trata de álgebra lineal, el paquete R [Matrix](https://CRAN.R-project.org/package=Matrix){target="_blank"} brilla con sus clases formales y métodos para manejar Matrices Dispersas, *es decir*, matrices grandes cuyas entradas son principalmente ceros; por ejemplo, los objetos `dgCMatrix`. Además, `Matrix` viene incluido con R, lo que lo hace aún más atractivo.
+
+## Computación paralela
+
+```{r, echo=FALSE, fig.cap="Taxonomía Clásica de Flynn ([Blaise Barney, **Introduction to Parallel Computing**, Lawrence Livermore National Laboratory](https://computing.llnl.gov/tutorials/parallel_comp/))", fig.align='center'}
+knitr::include_graphics("fig/flynnsTaxonomy.png")
+```
+
+Nos enfocaremos en el **S**ingle **I**nstruction stream **M**ultiple **D**ata stream (Flujo de Instrucción Única Flujo de Datos Múltiple).
+
+En términos generales, un programa de computación paralela es uno en el cual usamos dos o más *hilos computacionales* simultáneamente. Aunque hilo computacional usualmente significa núcleo, hay múltiples niveles en los que un programa de computadora puede ser paralelizado. Para entender esto, primero necesitamos ver qué compone una computadora moderna:
+
+![Fuente: Figura original de la documentación del consorcio LUMI [@lumi2023]](fig/socket-core-threads.png){style="text-align: center"}
+
+Extensiones SIMD de Flujo \[[SSE](https://en.wikipedia.org/w/index.php?title=Streaming_SIMD_Extensions&oldid=1149173008){target="_blank"}\] y Extensiones de Vector Avanzado \[[AVX](https://en.wikipedia.org/w/index.php?title=Advanced_Vector_Extensions&oldid=1148504462){target="_blank"}\]
+
+### Serial vs. Paralelo
+
+::: {.columns layout-align="center"} 
+
+::: {.column width="45%"}
+![](fig/serialProblem.png){width="100%"}
+:::
+
+::: {.column width="45%"}
+![](fig/parallelProblem.png){width="100%"}
+:::
+
+Fuente: [Blaise Barney, **Introduction to Parallel Computing**, Lawrence Livermore National Laboratory](https://computing.llnl.gov/tutorials/parallel_comp/){target="_blank"}
+:::
+
+![fuente: [Blaise Barney, **Introduction to Parallel Computing**, Lawrence Livermore National Laboratory](https://computing.llnl.gov/tutorials/parallel_comp/)](fig/nodesNetwork.png){fig-align="center" width="60%"}
+
+## Computación de alto rendimiento en R
+
+### Algo de vocabulario para HPC
+
+En términos crudos
+
+*   Supercomputadora: Una **sola** máquina grande con miles de núcleos/GPGPUs.
+
+*   Computación de Alto Rendimiento (HPC): **Múltiples** máquinas dentro de una **sola** red.
+
+*   Computación de Alto Rendimiento (HTC): **Múltiples** máquinas a través de **múltiples** redes.
+
+Puede que no tengas acceso a una supercomputadora, pero ciertamente, los clústeres HPC/HTC son más accesibles hoy en día, *p. ej.*, AWS proporciona un servicio para crear clústeres HPC a bajo costo (supuestamente, ya que nadie entiende cómo funciona la tarificación)
+
+## GPU vs. CPU
+
+```{r gpu-cpu, echo=FALSE, fig.cap="[NVIDIA Blog](http://www.nvidia.com/object/what-is-gpu-computing.html)", fig.align='center'}
+knitr::include_graphics("fig/cpuvsgpu.jpg")
+nnodes <- 4L
+```
+
+*   ¿Por qué usar OpenMP si GPU está _adecuado para operaciones intensivas en cómputo_? Bueno, principalmente porque OpenMP es **MUY** fácil de implementar (más fácil que CUDA, que es la forma más fácil de usar GPU).[^kokkos]
+
+[^kokkos]: [Laboratorios Nacionales Sandia](https://www.sandia.gov/ccr/software/kokkos/){target="_blank"} comenzó el [proyecto Kokkos](https://kokkos.org/){target="_blank"}, que proporciona una biblioteca C++ que se ajusta a todo para programación paralela. Más información en el [sitio wiki de Kokkos](https://kokkos.github.io/kokkos-core-wiki/){target="_blank"}.
+
+## ¿Cuándo es una buena idea?
+
+```{r good-idea, echo=FALSE, fig.cap="¡Hazte estas preguntas antes de saltar a HPC!", fig.align='center', out.width="85%"}
+knitr::include_graphics("fig/when_to_parallel.png")
+```
+
+## Computación paralela en R
+
+Mientras hay varias alternativas (solo echa un vistazo a la [Vista de Tareas de Computación de Alto Rendimiento](https://cran.r-project.org/web/views/HighPerformanceComputing.html)), nos enfocaremos en los siguientes paquetes R para **paralelismo explícito**:
+
+*   [**parallel**](https://cran.r-project.org/package=parallel): Paquete R que proporciona '[s]oporte para computación paralela, incluyendo generación de números aleatorios'.
+
+*   [**future**](https://cran.r-project.org/package=future): '[U]na API Future ligera y unificada para procesamiento secuencial y paralelo de expresiones R via futures.'
+
+*   [**Rcpp**](https://cran.r-project.org/package=Rcpp) + [OpenMP](https://www.openmp.org): [Rcpp](https://cran.r-project.org/package=Rcpp) es un paquete R para integrar R con C++ y OpenMP es una biblioteca para paralelismo de alto nivel para C/C++ y FORTRAN.
+
+Otros pero no usados aquí
+
+*   [**foreach**](https://cran.r-project.org/package=foreach) para iterar a través de listas en paralelo.
+
+*   [**Rmpi**](https://cran.r-project.org/package=Rmpi) para crear clústeres MPI.
+
+Y herramientas para paralelismo implícito (herramientas listas para usar que permiten al programador no preocuparse por la paralelización):
+
+*   [**gpuR**](https://cran.r-project.org/package=gpuR) para manipulación de Matrices usando GPU
+
+*   [**tensorflow**](https://cran.r-project.org/package=tensorflow) una interfaz R a [TensorFlow](https://www.tensorflow.org/).
+
+Una tonelada de otros tipos de recursos, notablemente las herramientas para trabajar con programadores de lotes como [Slurm](http://slurm.schedmd.com), y [HTCondor](https://research.cs.wisc.edu/htcondor/).

@@ -4,6 +4,11 @@ author: George G. Vega Yon, Ph.D.
 date: 2025-08-14
 ---
 
+::: {.callout-warning}
+## Nota de Traducción
+Esta versión del capítulo fue traducida de manera automática utilizando IA. El capítulo aún no ha sido revisado por un humano.
+:::
+
 El perfilado de código es una herramienta fundamental para programadores. Con el perfilado, es posible **identificar posibles cuellos de botella en tu código**, así como uso excesivo de memoria. Algunas cosas importantes a considerar al perfilar tu código:
 
 - **Tiene un componente estocástico**: Independientemente de la complejidad computacional, un programa puede exhibir diferentes características de rendimiento en diferentes ejecuciones. Esto significa que siempre debes perfilar tu código múltiples veces y tomar el rendimiento promedio como resultado final.
@@ -18,32 +23,100 @@ El perfilado de código es una herramienta fundamental para programadores. Con e
 
 - **La IA puede darte buenos consejos**: En mi experiencia personal, la IA puede ser útil para hacer perfilado de código también. Esto funciona mejor si estás usando una [IA agéntica](https://en.wikipedia.org/w/index.php?title=Agentic_AI&oldid=1305674453){target="_blank"}, ya que es más probable obtener buena retroalimentación de ella (probará el código por ti).
 
-*[El contenido completo de este capítulo será traducido al español. Por ahora, esta es una versión preliminar.]*
+Aquí hay un flujo de trabajo propuesto para perfilar y optimizar tu código en general
 
-## Herramientas de Perfilado en R
+## Un flujo de trabajo propuesto
 
-R proporciona varias herramientas para el perfilado de código:
+Aquí hay una fórmula a seguir cuando hagas perfilado/optimización de código:
 
-- **`Rprof()`**: La herramienta de perfilado básica incluida en R base
-- **`profvis`**: Un paquete que proporciona una interfaz visual para los resultados de perfilado
-- **`microbenchmark`**: Para comparar el rendimiento de pequeños fragmentos de código
-- **`bench`**: Una alternativa moderna a microbenchmark
+1. Hazte estas preguntas antes de saltar al perfilado:
 
-## Ejemplo Básico
+<!-- https://mermaid.live/edit#pako:eNpNUNFO4zAQ_BVrXy6RQkTatGmjEydoywnpQCfgBZQXt942vou9leOoF5L--9ktBN52PDM7s-5gQwIhh21Fh03JjWW_HgvN2HUQPFkHw_Di4uqmu6uZtN_X5qp2uh9Hr7hxRP-Cdb_org2ylpoT3xj8wj-QZQZ5VbXR-4I_TW1ZTY0WNdsQVXEc98sgWGkRht628LZ73q7RM6vumf_Fmiky6N225JolSmqfMch9i9vPjgcytnTzucdqUAzogfrl2X57hhG7-6aGdmsXJjzyqneNWxAx1bJKbk9FBO7Rn0DaBfU_g-C3oQ2iYAdpSy-gvZVKvnErSYchRLAzUkBuTYMRKDSKewidTyjAlqiwgNyNAre8qWwBhT46257rVyL14TTU7ErIt7yqHWr2gltcSr4zXA2vxjVDs3B_bCEfTU47IO_gH-TJPIuTNBml09E0uRxnkzSCFvLxPE7HWZrNp7PxZJ5NZ8cI3k6pl_Esmxz_A2q8spU -->
+![](fig/when_to_profile.png){fig-alt="Figura que muestra un diagrama simple sobre cuándo perfilar. Generalmente, solo quieres hacer eso si está tomando más de unos pocos segundos."}
+
+2. Si tienes éxito, entonces asegúrate de que el perfilado se haga en un tiempo finito, esto es, usa un subconjunto de los datos para evitar esperas largas. **Ejecutar el perfilador agregará tiempo de cómputo adicional, así que trata de mantenerlo corto (p. ej., 1 minuto)**.
+
+3. Puede haber muchas cosas que podrían ser optimizadas, enfócate en lo que entregaría el mayor impacto. Podría ser una función que solo se llama una vez pero toma mucho tiempo para ejecutarse, o una función que se llama múltiples veces pero es relativamente rápida.
+
+4. Antes de hacer cualquier cambio, asegúrate de tener una copia de seguridad de tu código original, así como una copia de los resultados actuales del perfilado. **También debes asegurar guardar (si es posible) el resultado del código.**
+
+5. Vuelve a ejecutar el perfilador y compara el rendimiento. Si no se observan cambios, entonces regresa al paso 2. **Asegúrate de que la nueva versión del código mantenga la misma funcionalidad que el original (verifica los resultados).**
+
+## Perfilado de código en R
+
+En el lenguaje de programación R, la herramienta de perfilado más utilizada viene con el [paquete `profvis`](https://cran.r-project.org/package=profvis). El paquete proporciona un envoltorio de la función `Rprof`, que es una función incorporada de R para perfilar código. El paquete `profvis` hace más fácil visualizar los resultados del perfilado en una interfaz web.
+
+Para usar `profvis`, primero necesitas instalarlo desde CRAN:
 
 ```r
-# Ejemplo básico de perfilado
+install.packages("profvis")
+```
+
+Luego, puedes usarlo para perfilar tu código R de esta manera:
+
+```R
 library(profvis)
 
 profvis({
-  # Tu código aquí
-  x <- rnorm(1000000)
-  y <- mean(x)
+  # Tu código R aquí
 })
 ```
 
-::: {.callout-note}
-## Trabajo en Progreso
+Esto ejecutará el código y generará una visualización de los resultados del perfilado en una nueva ventana del navegador. También puedes guardar la salida usando el paquete `htmlwidgets`:
 
-Esta traducción está en desarrollo. El contenido completo del capítulo original incluye ejemplos detallados, mejores prácticas y estudios de caso que serán traducidos próximamente.
+```r
+pv <- profvis({
+  # Tu código R aquí
+})
+
+htmlwidgets::saveWidget(pv, "profvis.html")
+```
+
+Una vez abierto, verás dos visualizaciones: el gráfico de llama y los datos. El gráfico de llama es una de las visualizaciones más útiles. Mapea directamente el tiempo y la memoria utilizados por cada línea de código
+
+![](fig/profvis_flame_graph.png)
+
+La visualización de datos muestra la distribución del tiempo gastado en cada función. Usando una estructura de árbol, que permite profundizar en la pila de llamadas.
+
+![](fig/profvis_data.png)
+
+::: {.callout-tip}
+Cuando desarrolles paquetes de R, es una buena idea emparejar tu llamada `profvis::profvis` con `devtools::load_all()` para asegurar que todo el código fuente esté disponible para el perfilador. De lo contrario, el gráfico de llama no mostrará tu código (dirá "no disponible").
 :::
+
+## Ejercicio: Identificando el cuello de botella[^bottleneck]
+
+[^bottleneck]: Código copiado literalmente del paquete R `profvis` [aquí](https://profvis.r-lib.org/articles/examples.html#example-2){target="_blank"}.
+
+```{r}
+#| label: slow-code
+#| cache: true
+# Generate data
+times <- 4e5
+cols <- 150
+data <- as.data.frame(x = matrix(rnorm(times * cols, mean = 5), ncol = cols))
+data <- cbind(id = paste0("g", seq_len(times)), data)
+
+pv <- profvis::profvis({
+  data1 <- data   # Store in another variable for this run
+
+  # Get column means
+  means <- apply(data1[, names(data1) != "id"], 2, mean)
+
+  # Subtract mean from each column
+  for (i in seq_along(means)) {
+    data1[, names(data1) != "id"][, i] <- data1[, names(data1) != "id"][, i] - means[i]
+  }
+})
+
+htmlwidgets::saveWidget(pv, "profvis-slow-code.html")
+
+# In interactive mode, we can directly view the profiling results
+if (interactive())
+  print(pv)
+```
+
+
+<iframe src="profvis-slow-code.html" width="100%" height="600px"></iframe>
+
+¿Puedes identificar dónde está el cuello de botella en el código? ¿Qué harías para acelerarlo?
