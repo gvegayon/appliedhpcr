@@ -3,7 +3,7 @@ project:
 
 engine: knitr
 book:
-  version: 0.1.0
+  version: 2025.09.03
   google-analytics: "G-9D75EFV0TE"
   title: "HPC Aplicado con R"
   author: "George G. Vega Yon"
