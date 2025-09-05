@@ -9,6 +9,7 @@
 *.tex
 *.log
 *_files
+!*_book/*_files
 *_cache
 *.toc
 *_libs/

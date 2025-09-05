@@ -14,6 +14,10 @@ I obtained my Ph.D. in Biostatistics under the supervision of <a href="https://s
 
 If you'd like to learn more about me, please visit my website at <a href="https://ggvy.cl" target="_blank">https://ggvy.cl</a>.
 
+## Spanish Version Available
+
+A Spanish translation of this book is available at [es/](es/index.html). The Spanish version was created using AI translation and may require human review for technical accuracy.
+
 ## AI Disclosure
 
 Starting in mid-2023, I have been using AI to help me write this book. Mainly, I use a combination of [GitHub co-pilot](https://github.com/features/copilot){target="_blank"}, which aids with code and text. AI's role has been to help me write faster and more accurately, but it has not been involved in the book's conceptualization or the development of the methods presented here.
