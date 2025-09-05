@@ -2,6 +2,11 @@
 date-modified: 2025-08-21
 ---
 
+::: {.callout-warning}
+## Nota de Traducción
+Esta versión del capítulo fue traducida de manera automática utilizando IA. El capítulo aún no ha sido revisado por un humano.
+:::
+
 Aunque R no fue construido para computación paralela, existen múltiples formas de paralelizar tu código R. Una de estas es el paquete `parallel`. Este paquete de R, incluido con R base, proporciona varias funciones para paralelizar código R usando [computación embarazosamente paralela](https://en.wikipedia.org/w/index.php?title=Embarrassingly_parallel&oldid=1136401514){target="_blank"}, es decir, una estrategia de tipo divide-y-vencerás. La idea básica es iniciar múltiples sesiones de R (usualmente llamadas procesos hijos), conectar la sesión principal con estas, y enviarles instrucciones. Esta sección cubre un flujo de trabajo común para trabajar con el parallel de R.
 
 ## Flujo de trabajo paralelo
