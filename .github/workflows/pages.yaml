@@ -180,10 +180,12 @@ jobs:
         uses: actions/download-artifact@v5.0.0
         with:
           name: github-pages
-          path: _book
+          path: _pages
 
       - name: Commit changes
         run: |
+          mv _pages/* _book
+
           git config --global user.email "action@github.com"
           git config --global user.name "GitHub Action"
           git add -f _book/* || echo "Nothing to add"
