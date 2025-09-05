@@ -4,12 +4,7 @@ El lenguaje de programación R [@R] puede ser fantástico para la mayoría de la
 
 [^thanksto]: Con muchos a quienes agradecer, incluyendo [Paul Marjoram](https://keck.usc.edu/faculty-search/paul-marjoram/), [Zhi Yang](https://zhiyang.netlify.app/){target="_blank"}, [Emil Hvitfeldt](https://www.emilhvitfeldt.com/){target="_blank"}, [Malcolm Barrett](https://malco.io/){target="_blank"}, [Garrett Weaver](https://www.linkedin.com/in/gmwusc/){target="_blank"}, [el grupo de investigación IMAGE P01 de USC](https://p01.uscbiostatistics.org/){target="_target"}, y mis estudiantes tanto en USC como en UoU.
 
-```{r}
-#| echo: false
-gh <- fontawesome::fa("github") 
-```
-
-El libro fue escrito usando [quarto](https://quarto.org){target="_blank"} y está alojado en [GitHub `r gh`](https://github.com/gvegayon/appliedhpcr){target="_blank"}, donde puedes acceder a todo el código fuente.
+El libro fue escrito usando [quarto](https://quarto.org){target="_blank"} y está alojado en [GitHub](https://github.com/gvegayon/appliedhpcr){target="_blank"}, donde puedes acceder a todo el código fuente.
 
 ## Sobre el Autor
 
