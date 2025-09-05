@@ -1,0 +1,194 @@
+name: Build and Deploy
+
+on:
+  pull_request:
+    branches: [master, main]
+  push:
+    branches: [master, main]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+env:
+  CONTAINER: gvegayon/appliedhpcr:latest
+
+jobs:
+
+  build-html:
+    runs-on: ubuntu-22.04
+
+    container:
+      image: ${{ env.CONTAINER }}
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Render English version
+      run: |
+        quarto render --to html
+
+    - name: Upload artifact
+      # uses: actions/upload-pages-artifact@v3
+      uses: actions/upload-artifact@v4
+      with:
+        path: _docs
+        name: gh-page-html
+
+  build-html-es:
+    runs-on: ubuntu-22.04
+
+    container:
+      image: ${{ env.CONTAINER }}
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Render Spanish version
+      run: |
+        cd es && quarto render --to html
+
+    - name: Upload artifact
+      # uses: actions/upload-pages-artifact@v3
+      uses: actions/upload-artifact@v4
+      with:
+        path: es/_docs
+        name: gh-page-html-es
+
+  build-pdf:
+    runs-on: ubuntu-22.04
+
+    container:
+      image: ${{ env.CONTAINER }}
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Render English PDF
+      run: |
+        quarto render --to pdf
+
+    - name: Combine docs
+      run: |
+        mkdir -p _docs/es
+        cp -r es/_docs/* _docs/es/ 2>/dev/null || true
+
+    - name: Upload artifact
+      # uses: actions/upload-pages-artifact@v3
+      uses: actions/upload-artifact@v4
+      with:
+        path: _docs
+        name: gh-page-pdf
+
+    - name: Upload LaTeX file
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        path: |
+          _docs/*.tex
+          *.tex
+          *.log
+          _docs/*log
+        name: gh-page-latex-logs
+
+  build-pdf-es:
+    runs-on: ubuntu-22.04
+
+    container:
+      image: ${{ env.CONTAINER }}
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Render Spanish PDF
+      run: |
+        cd es && quarto render --to pdf
+
+    - name: Combine docs
+      run: |
+        mkdir -p _docs/es
+        cp -r es/_docs/* _docs/es/ 2>/dev/null || true
+
+    - name: Upload artifact
+      # uses: actions/upload-pages-artifact@v3
+      uses: actions/upload-artifact@v4
+      with:
+        path: es/_docs
+        name: gh-page-pdf-es
+
+    - name: Upload LaTeX file
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        path: |
+          es/_docs/*.tex
+          es/*.tex
+          es/*.log
+          es/_docs/*log
+        name: gh-page-latex-logs-es
+
+  combine:
+    runs-on: ubuntu-22.04
+
+    needs: [build-html, build-html-es, build-pdf, build-pdf-es]
+
+    steps:
+
+    - name: Download artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: gh-page-html
+        path: _docs
+
+    - name: Download artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: gh-page-html-es
+        path: _docs/es
+
+    - name: Download artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: gh-page-pdf
+        path: pdf
+
+    - name: Download artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: gh-page-pdf-es
+        path: pdf-es
+
+    - name: Combine
+      run: |
+        cp -r pdf/* _docs
+        cp -r pdf-es/* _docs/es
+
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v4
+      # uses: actions/upload-artifact@v3
+      with:
+        name: github-pages
+        path: _docs
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: combine
+    if: ${{ github.event_name != 'pull_request' || github.event.pull_request.merged == true }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v5.0.0
+        with:
+          name: github-pages
+          path: _docs
+
+      - name: Commit changes
+        run: |
+          git config --global user.email "action@github.com"
+          git config --global user.name "GitHub Action"
+          git add _docs/* || echo "Nothing to add"
+          git commit -m "Add coda installation summary" || echo "Nothing to commit"
+          git push || echo "Nothing to push"

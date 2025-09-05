@@ -1,0 +1,148 @@
+---
+title: Fundamentos de SLURM
+author: George G. Vega Yon, Ph.D.
+date: 2025-08-14
+---
+
+::: {.callout-warning}
+## Nota de Traducción
+Esta versión del capítulo fue traducida de manera automática utilizando IA. El capítulo aún no ha sido revisado por un humano.
+:::
+
+```{r}
+#| label: setup
+#| include: false
+knitr::opts_chunk$set(echo = FALSE, results = 'asis', warning = FALSE, comment = "")
+cat2 <- function(..., lang = 'r') {
+  cat("```", lang, "\n", sep = "")
+  cat(...)
+  cat("```\n")
+}
+```
+
+# ¿Qué es Slurm?
+
+::: {.callout-note}
+La mayor parte de esta sección fue extraída de la viñeta del paquete R `slurmR` ["Working with Slurm."](https://uscbiostats.github.io/slurmR/articles/working-with-slurm.html){target="_blank"}
+:::
+
+Hoy en día, los clústeres de computación de alto rendimiento (HPC) son herramientas comúnmente disponibles tanto en configuraciones en la nube como fuera de ella.
+[Slurm Work Manager](https://slurm.schedmd.com/){target="_blank"} (anteriormente *Simple Linux Utility for Resource Manager*) es un programa escrito en C que se usa para gestionar eficientemente recursos en clústeres HPC. El paquete R slurmR--que estaremos usando en este libro--proporciona herramientas para usar R en configuraciones HPC que funcionan con Slurm. Proporciona envoltorios y funciones que permiten al usuario integrar sin problemas su pipeline de análisis con clústeres HPC, enfatizando en proporcionar al usuario una familia de funciones similares a las que proporciona el paquete R parallel.
+
+## Definiciones
+
+Primero, algunos puntos de discusión importantes dentro del contexto de Slurm+R que los usuarios, en general, encontrarán útiles. La mayoría de los puntos tienen que ver con opciones disponibles para Slurm, y en particular, con el comando `sbatch` que se usa para enviar trabajos en lote a Slurm. Los usuarios que han usado Slurm en el pasado pueden desear omitir esto y continuar leyendo la siguiente sección.
+
+
+*   **Nodo** Una sola computadora en el HPC: Muchas veces los trabajos se enviarán a un solo nodo. La forma más simple de usar R+Slurm es enviar un solo trabajo y solicitar múltiples CPUs para usar, por ejemplo, `parallel::parLapply` o `parallel::mclapply`. Usualmente, los usuarios no necesitan solicitar un número específico de nodos para ser usados ya que Slurm asignará los recursos según sea necesario.
+    
+    Un error común de los usuarios de R es especificar el número de nodos y esperar que su script sea paralelizado. Esto no sucederá a menos que el usuario escriba explícitamente un script de computación paralela.
+    
+    La bandera relevante para `sbatch` es `--nodes`.
+    
+*   **Partición** Un grupo de nodos en HPC. Generalmente los nodos grandes pueden tener múltiples particiones, lo que significa que los nodos pueden ser agrupados de varias maneras. Por ejemplo, los nodos pertenecientes a un solo grupo de usuarios pueden estar en una sola partición, y los nodos dedicados a trabajar con datos grandes pueden estar en otra partición. Usualmente, las particiones están asociadas con privilegios de cuenta, así que los usuarios pueden necesitar especificar qué cuenta están usando cuando le dicen a Slurm qué partición planean usar.
+    
+    La bandera relevante para `sbatch` es `--partition`.
+
+*   **Cuenta** Las cuentas pueden estar asociadas con particiones. Las cuentas pueden tener privilegios para usar una partición o conjunto de nodos. A menudo, los usuarios necesitan especificar la cuenta cuando envían trabajos a una partición particular.
+    
+    La bandera relevante para `sbatch` es `--account`.
+
+*   **Tarea** Un paso dentro de un trabajo. Un trabajo particular puede tener múltiples tareas. Las tareas pueden abarcar múltiples nodos, así que si el usuario quiere enviar un trabajo multinúcleo, esta opción puede no ser la correcta.
+
+    La bandera relevante para `sbatch` es `--ntasks`
+
+*   **CPU** generalmente esto se refiere a núcleo o hilo (que puede ser diferente en sistemas que soportan núcleos multihilo). Los usuarios pueden querer especificar cuántos CPUs quieren usar para una tarea. Y esta es la opción relevante cuando se usan cosas como OpenMP o funciones que permiten crear objetos de clúster en R (p. ej.  `makePSOCKcluster`, `makeForkCluster`).
+    
+    La opción relevante en `sbatch` es `--cpus-per-task`. Más información sobre CPUs en Slurm se puede encontrar [aquí](https://slurm.schedmd.com/cpu_management.html){target="_blank"}. Información sobre cómo Slurm cuenta CPUs/núcleos/hilos se puede encontrar [aquí](https://slurm.schedmd.com/faq.html#cpu_count){target="_blank"}.
+    
+*   **Array de Trabajos** Slurm soporta arrays de trabajos. Un array de trabajos es en términos simples un trabajo que es repetido múltiples veces por Slurm, esto es, replica un solo trabajo según lo solicitado por el usuario. En el caso de R, cuando se usa esta opción, un solo script R se extiende en múltiples trabajos, así que el usuario puede tomar ventaja de esto y paralelizar trabajos a través de múltiples nodos. Además del hecho de que los trabajos dentro de un Array de Trabajos pueden extenderse a través de múltiples nodos, cada trabajo en ese array tiene un ID único que está disponible para el usuario vía variables de entorno, en particular `SLURM_ARRAY_TASK_ID`.
+    
+    Dentro de R, y por tanto el Rscript enviado a Slurm, los usuarios pueden acceder a esta variable de entorno con `Sys.getenv("SLURM_ARRAY_TASK_ID")`. Algunas de las funcionalidades de `slurmR` dependen de Arrays de Trabajos.
+    
+    Más información sobre Arrays de Trabajos se puede encontrar [aquí](https://slurm.schedmd.com/job_array.html).
+    La opción relevante para esto en `sbatch` es `--array`.
+    
+Más información sobre Slurm se puede encontrar en su sitio web oficial [aquí](https://slurm.schedmd.com/). Un tutorial sobre cómo usar Slurm con R se puede encontrar [aquí](https://uscbiostats.github.io/slurmr-workshop/).
+
+# Una introducción breve a Slurm
+
+Para una introducción rápida y sucia a Slurm [@Yoo_Jette_Grondona_2003], comenzaremos con un simple "Hola mundo" usando Slurm + R. Para esto, necesitamos pasar por los siguientes pasos:
+
+1.  Copiar un script de Slurm a HPC,
+
+2.  Iniciar sesión en HPC, y
+
+3.  Enviar el trabajo usando `sbatch`.
+
+
+## Paso 1: Copiar el script de Slurm a HPC
+
+Necesitamos copiar el siguiente script de Slurm a HPC ([00-hello-world.slurm](00-hello-world.slurm){target="_blank"}):
+
+```{r}
+#| label: helloworld
+cat2(readLines("00-hello-world.slurm"), sep = "\n", lang = "bash")
+```
+
+Que tiene cuatro líneas:
+
+1.  `#!/bin/sh`: El **shebang** ([**¿she qué?**](https://stackoverflow.com/questions/7366775/what-does-the-line-bin-sh-mean-in-a-unix-shell-script))
+
+2.  `#SBATCH --output=00-hello-world.out`: Una opción para ser pasada a `sbatch`, en este caso, el nombre del archivo de salida al cual irán [**stdout y stderr**](https://en.wikipedia.org/wiki/Standard_streams).
+    
+3.  `module load R/4.2.2`: Usa [**Lmod**](https://lmod.readthedocs.io/en/latest/) para cargar el módulo `R`.
+    
+4.  `Rscript ...`: Una llamada a R para evaluar la expresión `paste(...)`. Esto obtendrá la variable de entorno `SLURMD_NODENAME` (que `sbatch` crea) y la imprimirá en un mensaje.
+
+
+Para hacer esto, usaremos **Protocolo de copia segura (scp)**, que nos permite copiar datos hacia y desde computadoras. En este caso, deberíamos hacer algo como lo siguiente
+
+```bash
+scp 00-hello-world.slurm [userid]@notchpeak.chpc.utah.edu:/ruta/a/un/lugar/que/puedas/acceder
+```
+
+En palabras, "Usando el nombre de usuario `[userid]`, conectar a `notchpeak.chpc.utah.edu`, tomar el archivo `00-hello-world.slurm` y copiarlo a `/ruta/a/un/lugar/que/puedas/acceder`. Con el archivo ahora disponible en el clúster, podemos enviar este trabajo usando Slurm.
+
+
+## Paso 2: Iniciar sesión en HPC
+
+1.  Iniciar sesión usando ssh. En el caso de usuarios de Windows, descargar el cliente [**Putty**](https://www.chiark.greenend.org.uk/~sgtatham/putty/).
+
+2.  Para iniciar sesión, necesitarás usar tu ID de organización. Usualmente, si tu email es algo como `miusuarioemail@escuela.edu`, tu ID es `miusuarioemail`. Entonces:
+    
+    ``` {.bash}
+    ssh miusuarioemail@notchpeak.chpc.utah.edu
+    ```
+
+
+## Paso 3: Enviando el trabajo
+
+En general, hay dos formas de usar los nodos de cómputo: interactivamente (`salloc`) y en modo por lotes (`sbatch`). En este caso, ya que tenemos un script de Slurm, usaremos este último.
+
+Para enviar el trabajo, podemos escribir lo siguiente:
+
+```bash
+sbatch 00-hello-world.slurm
+```
+
+¡Y eso es todo! Dicho eso, a menudo se requiere especificar la cuenta y partición que el usuario estará enviando el trabajo. Por ejemplo, si tienes la cuenta `mi-cuenta` y partición `mi-partición` asociadas con tu usuario, puedes incorporar esa información como sigue:
+
+```bash
+sbatch 00-hello-world.slurm --acount=mi-cuenta --partition=mi-partición
+```
+
+En el caso de sesiones interactivas, puedes iniciar una usando el comando `salloc`. Por ejemplo, si quisieras ejecutar R con 8 núcleos, usando 16 Gigs de memoria en total, necesitarías hacer lo siguiente:
+    
+```bash
+salloc -n1 --cpus-per-task=8 --mem-per-cpu=2G --time=01:00:00
+```
+
+Una vez que tu solicitud es enviada, obtendrás acceso a un nodo de cómputo. Dentro de él, puedes cargar los módulos requeridos e iniciar R:
+
+```bash
+module load R/4.2.2
+R
+```
+
+Las sesiones interactivas no se recomiendan para trabajos largos. En su lugar, usa este recurso si necesitas inspeccionar algún conjunto de datos grande, depurar tu código, etc.

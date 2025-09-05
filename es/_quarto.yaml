@@ -1,0 +1,74 @@
+project:
+  type: book
+  output-dir: _docs
+
+execute: 
+  cache: false
+
+book:
+  version: 0.1.0
+  google-analytics: "G-9D75EFV0TE"
+  title: "HPC Aplicado con R"
+  author: "George G. Vega Yon"
+  original-date: 2023-04-09
+  date: "2024-09-04"
+  cover-image: ../fig/cover.png
+  cover-image-alt: 'Imagen de portada para HPC Aplicado con R'
+  page-footer: HPC Aplicado con R - [https://ggvy.cl](https://ggvy.cl){target="_blank"}
+  repo-url: https://github.com/gvegayon/appliedhpcr
+  repo-branch: master
+  repo-subdir: 'es'
+  repo-actions: [edit, source, issue]
+  image: ../fig/cover.png
+  twitter-card:
+    description: 'Este libro es una colección de charlas y conferencias sobre cómo acelerar tu código R usando computación paralela y otros recursos como C++.'
+    creator: "@gvegayon"
+  site-url: https://book.ggvy.cl
+  sharing: [twitter, linkedin]
+  navbar:
+    search: true
+
+  chapters:
+    - index.qmd
+    - part: "Fundamentos"
+      chapters:
+      - profiling.qmd
+      - efficiency.qmd
+    - part: "Computación paralela"
+      chapters:
+      - intro.qmd
+      - parallel-pkg.qmd
+    - part: "Trabajando con un Cluster"
+      chapters:
+        - slurm-fundamentals.qmd
+        - slurm-simpi.qmd
+    - part: "Usando C++"
+      chapters:
+        - rcpp-part1.qmd
+        - rcpp-debugging.qmd
+    - misc.qmd
+    - references.qmd
+  downloads:
+    - epub
+    - pdf
+
+bibliography: ../references.bib
+
+biblio-style: apalike
+
+format:
+  html:
+    html-math-method: katex
+    toc: true
+    number-sections: false
+    theme: cosmo
+  pdf:
+    geometry: 
+      - top=1in
+      - bottom=1in
+      - left=1in
+      - right=1in
+    fontsize: 12pt
+    fontenc: T1
+    documentclass: scrreprt
+    keep-tex: true

@@ -1,0 +1,252 @@
+---
+title: Depuración de R con código C++/C
+author: George G. Vega Yon, Ph.D.
+date: 2025-08-14
+---
+
+::: {.callout-warning}
+## Nota de Traducción
+Esta versión del capítulo fue traducida de manera automática utilizando IA. El capítulo aún no ha sido revisado por un humano.
+:::
+
+# Depuración de R con código C++/C
+
+Aunque depurar código R es fácil, lo mismo no aplica para código compilado en R[^debug-vscode]. Este capítulo muestra algunas formas de depurar tu código R + C++. Necesitarás el [GNU Debugger (GDB)](https://en.wikipedia.org/w/index.php?title=GNU_Debugger&oldid=1146565095){target="_blank"} y [Valgrind](https://en.wikipedia.org/w/index.php?title=Valgrind&oldid=1135729346){target="_blank"}.
+
+Antes de comenzar, recuerda que no vamos a lidiar con el buen enfoque de toda la vida `Rprint("Tu código está funcionando hasta aquí")`. Imprimir mensajes mientras tu programa se ejecuta puede ser muy informativo, pero usar Valgrind y GDB es, en mi humilde opinión, más rápido ya que, la mayoría del tiempo, esos te gritarán, indicando la ubicación de tu problema.
+
+::: {.callout-note}
+El manual Writing R Extensions [@R] tiene una cantidad considerable de información sobre depurar código compilado en R [aquí](https://cran.r-project.org/doc/manuals/R-exts.html#Debugging-compiled-code){target="_blank"}. [Dirk Eddelbuettel](https://dirk.eddelbuettel.com/){target="_blank"} (autor principal de Rcpp) tiene un [excelente post en Stackoverflow](https://stackoverflow.com/a/11363085/2097171) y recomienda [un tutorial alojado en BioConductor](https://contributions.bioconductor.org/debugging-cc-code.html) [@rue-albrechtWelcomeBioconductorPackages].
+:::
+
+[^debug-vscode]: Depurar **solo** código C++/C es fácil, sin embargo. Si ya trabajas con código compilado, debes estar consciente de [VS Code](https://code.visualstudio.com/){target="_blank"} y las muchas otras herramientas por ahí para depurar código C++/C.
+
+## Depuración con Valgrind
+
+Como punto de partida, usaremos Valgrind. Valgrind proporciona un marco de trabajo maduro para depuración y perfilado de memoria. Debemos lanzar el programa a través de la línea de comandos para usar un depurador dentro de R. Para lanzar R con Valgrind, usamos lo siguiente:
+
+```bash
+$ R --debugger=valgrind
+```
+
+Lo cual resultará en algo como lo siguiente:
+
+```bash
+==31245== Memcheck, a memory error detector
+==31245== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==31245== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
+==31245== Command: /usr/lib/R/bin/exec/R
+==31245== 
+
+R version 4.2.3 (2023-03-15) -- "Shortstop Beagle"
+Copyright (C) 2023 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> 
+```
+
+Una vez que R se ejecuta con Valgrind, el depurador capturará cualquier fuga de memoria generada por tu código C++/C. Lo siguiente es un programa defectuoso de Rcpp que crea un puntero usando `new` y "olvida" eliminarlo.
+
+```c++
+#include <Rcpp.h>
+
+using namespace Rcpp;
+
+// [[Rcpp::export]]
+NumericVector faulty_program(int n) {
+
+    // Aquí está la línea defectuosa
+    NumericVector * x_ptr = new NumericVector(n);
+
+    return *x_ptr;
+
+}
+
+/***R
+# Calling the faulty program
+faulty_program(10)
+*/
+```
+
+Podemos usar la bandera `-e` en el comando `R` para compilar el script `Rcpp` usando `sourceCpp`:
+
+```bash
+R --debugger=valgrind -e 'Rcpp::sourceCpp("rcpp-debugging-faulty.cpp")'
+```
+
+```{r}
+#| echo: false
+#| cache: true
+#| output: asis
+#| label: rcpp-debug-memleak
+res <- system2(
+    "R",
+    "--debugger=valgrind -e 'Rcpp::sourceCpp(\"rcpp-debugging-faulty.cpp\")'",
+    stdout = TRUE, stderr = TRUE
+)
+
+cat("```\n")
+cat(res, sep = "\n")
+cat("\n```\n")
+```
+
+Al final de la salida, en la sección `LEAK SUMMARY`, vemos `definitely lost: 24 bytes in 1 block`, *es decir*, una fuga de memoria. Si cambiamos el programa eliminando el puntero antes de retornar, la fuga se resolverá:
+
+::: {.columns}
+
+::: {.column width="40%" layout-align="center"}
+Nuevo programa:
+```cpp
+    NumericVector res = *x_ptr;
+    delete x_ptr;
+    
+    return res;
+```
+:::
+
+::: {.column width="10%"}
+
+:::
+
+::: {.column width="40%" layout-align="center"}
+Programa anterior
+
+```cpp    
+    
+    
+    
+    return *x_ptr;
+```
+:::
+
+:::
+
+Re-ejecutando R con Valgrind retorna lo siguiente (solo las últimas pocas líneas):
+
+```bash
+R --debugger=valgrind -e 'Rcpp::sourceCpp("rcpp-debugging-faulty-fixed.cpp")'
+```
+
+```{r}
+#| echo: false
+#| cache: true
+#| output: asis
+#| label: rcpp-debug-memleak-fixed
+res <- system2(
+    "R",
+    "--debugger=valgrind -e 'Rcpp::sourceCpp(\"rcpp-debugging-faulty-fixed.cpp\")'",
+    stdout = TRUE,
+    stderr = TRUE
+    )
+
+lastline <- which(grepl("^==[0-9]+==\\s*HEAP SUMMARY", res))
+cat("```bash\n")
+cat(res[lastline:length(res)], sep = "\n")
+cat("\n```\n")
+```
+
+No más fugas de memoria.
+
+## Usando GDB
+
+A veces, necesitamos ir más allá e inspeccionar qué está pasando **dentro** del programa. GBD es excelente para eso. Con GBD, podemos establecer puntos de interrupción que nos permiten revisar el programa mientras se ejecuta.
+
+El siguiente código Rcpp genera un error de tipo `memory not mapped`:
+
+```cpp
+#include <Rcpp.h>
+
+using namespace Rcpp;
+
+// [[Rcpp::export]]
+NumericVector faulty_program(int n) {
+
+    // Aquí está la línea defectuosa
+    NumericVector * x_ptr;
+        
+    return *x_ptr;
+
+}
+
+/***R
+# Calling the faulty program
+faulty_program(10)
+*/
+```
+
+En él, tratamos de acceder a una ubicación en la memoria que no ha sido asignada aún, es decir, un `NumericVector` declarado como un puntero pero nunca asignado. Usar `R --debugger=valgrind` genera el siguiente código:
+
+```{r}
+#| echo: false
+#| cache: true
+#| output: asis
+#| label: rcpp-debug-not-mapped
+#| warning: false
+res <- suppressWarnings({system2(
+    "R",
+    "--debugger=valgrind -e 'Rcpp::sourceCpp(\"rcpp-debugging-not-mapped.cpp\")'",
+    stdout = TRUE,
+    stderr = TRUE
+    )})
+
+cat("```bash\n")
+cat(res, sep = "\n")
+cat("\n```\n")
+```
+
+Para inspeccionar un error con GDB, tenemos que seguir estos pasos:
+
+1. Ejecutar R con gdb como depurador: `R --debugger=gdb`. R no iniciará inmediatamente, así que tenemos tiempo para agregar puntos de interrupción.
+
+    ![](fig/rcpp/rcpp-start-gdb.png){width="90%" fig-align="center"}
+
+2. Podemos establecer un punto de interrupción en la función dada con `break faulty_program`. GDB lo capturará sobre la marcha, así que elige `yes`. Es muy probable que te advierta que no hay símbolo para esa función.
+
+    ![](fig/rcpp/rcpp-gdb-break.png){width="90%" fig-align="center"}
+
+3. Ejecutar R usando el comando `run` en gdb:
+
+    ![](fig/rcpp/rcpp-gdb-run.png){width="90%" fig-align="center"}
+
+3. Obtener el programa usando `Rcpp::sourceCpp`, y esperar a que `gdb` pause el programa una vez que alcance el punto de interrupción.
+
+    ![](fig/rcpp/rcpp-gdb-sourcecpp.png){width="90%" fig-align="center"}
+
+4. Una vez que el programa se ha pausado, podemos inspeccionar el contexto.
+
+    ![](fig/rcpp/rcpp-gdb-pause-at-break.png){width="90%" fig-align="center"}
+
+    Debido al número de opciones que tiene, usar GBD puede ser abrumador. Aquí está la lista de comandos que uso más:
+
+    ```
+    help        # Obtener ayuda
+    info locals # Listar las variables locales (alcance)
+    info args   # Listar los argumentos pasados a la función
+    list        # Ver las últimas pocas líneas del código fuente
+    continue    # Continuar ejecutando el programa
+    next        # Ejecutar el siguiente paso
+    bt          # Mostrar toda la pila de llamadas (backtrace)
+    up          # Subir un nivel en la pila de llamadas
+    down        # Bajar un nivel en la pila de llamadas
+    print       # Imprimir/mostrar una expresión
+    ```
+
+    Y aquí hay un ejemplo usando `info locals`, `info args`, `list`, y `print`.
+
+    ![](fig/rcpp/rcpp-gdb-info-list-print.png){width="90%" fig-align="center"}
+
+5. Finalmente, para salir del programa, escribe `exit` (similar a `q()` en R.)

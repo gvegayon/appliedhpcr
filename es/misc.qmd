@@ -1,0 +1,138 @@
+---
+title: Misceláneos
+author: George G. Vega Yon, Ph.D.
+date: 2025-08-14
+---
+
+::: {.callout-warning}
+## Nota de Traducción
+Esta versión del capítulo fue traducida de manera automática utilizando IA. El capítulo aún no ha sido revisado por un humano.
+:::
+
+```{r}
+#| label: setup
+#| include: false
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Recursos generales
+
+El Centro de Computación de Investigación Avanzada (anteriormente HPCC) tiene toneladas de recursos en línea. Aquí hay un par de enlaces útiles:
+
+-   **Sitio web del Centro de Computación de Investigación Avanzada** https://carc.usc.edu
+
+-   **Foro de usuarios (¡muy útil!)** https://hpc-discourse.usc.edu/categories
+
+-   **Monitorea tu cuenta** https://hpcaccount.usc.edu/
+
+-   **Plantillas de trabajos Slurm** https://carc.usc.edu/user-information/user-guides/high-performance-computing/slurm-templates
+
+- **Usando R** https://carc.usc.edu/user-information/user-guides/software-and-programming/r
+
+
+## Punteros de datos
+
+En mi humilde opinión, estas son las cosas más importantes que debes saber sobre la gestión de datos en el HPC de USC:
+
+1. Haz tu transferencia de datos usando los nodos de transferencia (es más rápido).
+
+2. Nunca uses tu directorio home como espacio de almacenamiento (usa en su lugar el espacio asignado de tu proyecto).
+
+3. Usa el sistema de archivos scratch solo para datos temporales, es decir, nunca guardes archivos importantes en scratch.
+  
+4. Finalmente, además del **Protocolo de copia segura (scp)**, si eres como yo, trata de configurar un cliente GUI para mover tus datos (ver [esto](https://carc.usc.edu/user-information/user-guides/data-management/transferring-files-gui)).
+
+
+## Las opciones de Slurm que se olvidaron de contarte...
+
+Primero que nada, tienes que estar consciente de que lo único que hace Slurm es asignar recursos. Si tu aplicación usa computación paralela o no, esa es otra historia.
+
+Aquí algunas opciones de las que necesitas estar consciente:
+
+-   `ntasks` (predeterminado 1) Esto le dice a Slurm cuántos procesos tendrás ejecutándose. Ten en cuenta que los procesos no necesitan estar en el mismo nodo (así que Slurm puede reservar espacio en múltiples nodos)
+
+-   `cpus-per-task` (predeterminado 1) Esto es cuántos CPUs cada tarea estará usando. Esto es lo que necesitas usar si estás usando OpenMP (o un paquete que use eso), o cualquier cosa que necesites mantener dentro del mismo nodo.
+
+-   `nodes` el número de nodos que quieres usar en tu trabajo. Esto es útil principalmente si te importa el número máximo (yo diría) de nodos que quieres que use tu trabajo. Entonces, por ejemplo, si quieres usar 8 núcleos para una sola tarea y forzarla a estar en el mismo nodo, agregarías la opción `--nodes=1/1`.
+
+-   `mem-per-cpu` (predeterminado 1GB) Esta es la cantidad MÍNIMA de memoria que quieres que Slurm asigne para la tarea. No es una barrera rígida, así que tu proceso puede ir por encima de eso.
+
+-   `time` (predeterminado 30min) Este también es un límite rígido, así que si tu trabajo toma más que el tiempo especificado, Slurm lo matará.
+
+-   `partition` (predeterminado "") y `account` (predeterminado "") estas dos opciones van juntas, esto le dice a Slurm qué recursos usar. Además de los recursos privados tenemos los siguientes:
+
+    -   **partición quick**: Cualquier trabajo que sea lo suficientemente pequeño (en términos de tiempo y memoria) irá por este camino. Este es usualmente el predeterminado si no especificas ninguna opción de memoria o tiempo.
+
+    -   **partición main**: Los trabajos que requieren más recursos irán en esta línea.
+
+    -   **partición scavenge**: Si necesitas un número masivo de recursos, y tienes un trabajo que no debería, en principio, tomar demasiado tiempo para finalizar (menos de un par de horas), y **estás de acuerdo con que alguien lo mate**, entonces esta cola es para ti. La partición Scavenge usa todos los recursos inactivos de las particiones privadas, así que si cualquiera de los propietarios solicita los recursos, Slurm cancelará tu trabajo, es decir, no tienes prioridad (ver [más](https://hpcc.usc.edu/support/documentation/scavenge/){target="_blank"}).
+
+    -   **partición largemem**: Si necesitas mucha memoria, tenemos 4 nodos de 1TB para eso.
+
+    Más información sobre las particiones [aquí](https://hpcc.usc.edu/support/infrastructure/node-allocation/){target="_blank"}
+
+## Buenas prácticas (recomendaciones)
+
+Esto es lo que deberías usar como mínimo:
+
+    #SBATCH --output=simulation.out
+    #SBATCH --job-name=simulation
+    #SBATCH --time=04:00:00
+    #SBATCH --mail-user=[tu]@usc.edu
+    #SBATCH --mail-type=END,FAIL
+
+-   `output` es el nombre del archivo de registro al que Slurm escribirá.
+
+-   `job-name` es eso, el nombre del trabajo. Puedes usar esto para matar o al menos ser capaz de identificar qué es lo que estás ejecutando cuando usas `myqueue`
+
+-   `time` Trata siempre de establecer una estimación de tiempo (más un poco más) para tu trabajo.
+
+-   `mail-user`, `mail-type` para que Slurm te notifique cuando las cosas sucedan
+
+También, en tu código R
+
+-   Cualquier I/O debería hacerse a Scratch (`/scratch/[tu id de red usc]`) o Tmp `Sys.getenv("TMPDIR")`.
+
+
+## Ejecutando R interactivamente
+
+1.  El HPC tiene varias piezas de software preinstaladas. R es una de esas.
+
+2.  Para acceder al software preinstalado, usamos el [**sistema de módulos Lmod**](https://lmod.readthedocs.io/en/latest/) (más información [**aquí**](https://carc.usc.edu/user-information/user-guides/software-and-programming/lmod))
+    
+3.  Tiene múltiples versiones de R instaladas. Usa tu favorita ejecutando
+
+    ``` {.bash}
+    module load R/4.2.2/[número de versión]
+    ```
+
+    Donde `[número de versión]` puede ser 3.5.6 y hasta 4.0.3 (la última actualización). El módulo `usc` automáticamente carga gcc/8.3.0, openblas/0.3.8, openmpi/4.0.2, y pmix/3.1.3.
+
+3.  Nunca es una buena idea usar tu directorio home para instalar paquetes R, por eso deberías tratar de usar un [**enlace simbólico en su lugar**](https://en.wikipedia.org/wiki/Symbolic_link), así
+
+    ``` {.bash}
+    cd ~
+    mkdir -p /ruta/a/un/proyecto/con/mucho/espacio/R
+    ln -s /ruta/a/un/proyecto/con/mucho/espacio/R R
+    ```
+
+    De esta manera, cada vez que instales tus paquetes R, R tendrá como predeterminado esa ubicación
+
+4.  Puedes ejecutar sesiones interactivas en HPC, pero esto se recomienda hacerlo usando la función `salloc` en Slurm, en otras palabras, ¡NUNCA USES R (O CUALQUIER SOFTWARE) PARA HACER ANÁLISIS DE DATOS EN LOS NODOS CABEZA! Las opciones pasadas a salloc son las mismas opciones que pueden pasarse a `sbatch` (ver la siguiente sección). Por ejemplo, si necesito hacer algunos análisis en la partición `thomas` (que es privada y tengo acceso a ella), escribiría algo como
+
+    ``` {.bash}
+    salloc --account=lc_pdt --partition=thomas --time=02:00:00 --mem-per-cpu=2G
+    ```
+
+    Esto me pondría en un solo nodo asignando 2 gigs de memoria por un máximo de 2 horas.
+
+
+## NoNos cuando uses R
+
+-   Hacer cómputo en el nodo cabeza (compilar cosas está bien)
+
+-   Solicitar un número de nodos (a menos que sepas lo que estás haciendo)
+
+-   Usar tu directorio home para I/O
+
+-   Guardar información importante en Staging/Scratch
