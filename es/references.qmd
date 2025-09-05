@@ -2,6 +2,11 @@
 title: "Referencias"
 ---
 
+::: {.callout-warning}
+## Nota de Traducción
+Esta versión del capítulo fue traducida de manera automática utilizando IA. El capítulo aún no ha sido revisado por un humano.
+:::
+
 # Referencias {.unnumbered}
 
 ::: {#refs}

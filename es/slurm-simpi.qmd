@@ -1,43 +1,204 @@
 ---
-title: SLURM con Parallel Simulado
+title: SLURM con Simulación de π
 author: George G. Vega Yon, Ph.D.
 date: 2025-08-14
 ---
 
-*[El contenido completo de este capítulo será traducido al español. Por ahora, esta es una versión preliminar.]*
+::: {.callout-warning}
+## Nota de Traducción
+Esta versión del capítulo fue traducida de manera automática utilizando IA. El capítulo aún no ha sido revisado por un humano.
+:::
 
-## Simulación con SLURM
+# Simulando $pi$
 
-Este capítulo cubre cómo usar SLURM para ejecutar simulaciones paralelas en R, incluyendo:
-
-- Configuración de trabajos de simulación
-- Gestión de arrays de trabajos
-- Recolección de resultados
-- Mejores prácticas para simulaciones de Monte Carlo
-
-## Array Jobs en SLURM
-
-```bash
-#!/bin/bash
-#SBATCH --job-name=simulacion_array
-#SBATCH --array=1-100
-#SBATCH --time=00:30:00
-#SBATCH --cpus-per-task=1
-#SBATCH --mem=2G
-
-module load R
-
-Rscript simulacion.R $SLURM_ARRAY_TASK_ID
+```{r}
+#| label: setup
+#| include: false
+knitr::opts_chunk$set(echo = FALSE, results = 'asis', warning = FALSE, comment = "")
+cat2 <- function(..., lang = 'r') {
+  cat("```", lang, "\n", sep = "")
+  cat(...)
+  cat("```\n")
+}
 ```
 
-## Gestión de Resultados
+El siguiente es un ejemplo que muchas personas (incluyéndome) han usado para ilustrar computación paralela con R. El ejemplo es directo: queremos aproximar pi haciendo algunas simulaciones de Monte Carlo.
 
-- Organización de archivos de salida
-- Combinación de resultados de múltiples trabajos
-- Verificación de completitud
+Sabemos que el área de un círculo es $A = \pi r^2$, que es equivalente a $\pi = A/r^2$, así que si podemos aproximar el Área de un círculo, entonces podemos aproximar $\pi$. ¿Cómo hacemos esto?
 
-::: {.callout-note}
-## Trabajo en Progreso
+Usando experimentos de Monte Carlo, podemos aproximar la probabilidad de que un punto aleatorio $x$ caiga dentro del círculo unitario usando la siguiente fórmula:
 
-Esta traducción está en desarrollo. El contenido completo incluirá ejemplos completos de simulaciones distribuidas y análisis de resultados.
-:::
+$$
+\hat p = \frac{1}{n}\sum_i \mathbf{1}(x \in \mbox{Círculo})
+$$
+
+Esta aproximación, $\hat p$, multiplicada por el área del cuadrado que contiene al círculo, que tiene un área igual a $(2\times r)^2$, así, finalmente podemos escribir
+
+$$
+\hat \pi = \hat p \times (2\times r)^2 / r^2 = 4 \hat p
+$$
+
+```{r}
+#| label: simplot
+#| echo: false
+#| out-width: '50%'
+#| fig-width: 5
+#| fig-height: 5.5
+#| fig-align: center
+#| fig-cap: 10,000 puntos aleatorios dibujados dentro del círculo unitario.
+set.seed(2312)
+x <- matrix(runif(1e4*2, min = -1, max = 1), ncol=2)
+plot(
+  x, type = "p",
+  col  = adjustcolor(
+    c("steelblue", "tomato")[(sqrt(rowSums(x^2)) < 1) + 1],
+    alpha.f = .5
+    ),
+  xlab = expression(symbol(x)),
+  ylab = expression(symbol(y)),
+  pch  = 19
+  )
+```
+
+## Enviando trabajos a Slurm
+
+Trabajaremos principalmente enviando trabajos usando la función `sbatch`. Esta función toma como su argumento principal un archivo bash con el programa a ejecutar. En el caso de R, un archivo bash regular se ve algo así:
+
+```{r}
+cat2(readLines("01-sapply.slurm"), sep="\n", lang = 'bash')
+```
+
+Este archivo tiene tres componentes:
+
+- **Las banderas de Slurm `#SBATCH`**: Estas entradas parecidas a comentarios pasan opciones de Slurm al trabajo. En este ejemplo, solo especificamos las opciones `job-name` y `time`. Otras opciones comunes incluirían `account` y `partition`.
+
+- **Cargando R `module load R/4.2.2`**: Dependiendo de la configuración de tu sistema, puedes o no necesitar cargar módulos o ejecutar scripts bash antes de poder ejecutar R. En este ejemplo, estamos cargando R versión 4.2.2 usando `LMod` (ver sección anterior).
+
+- **Ejecutando el script R**: Después de especificar opciones de Slurm y cargar lo que necesita ser cargado antes de ejecutar R, estamos usando `RScript` para ejecutar el programa que escribimos.
+
+El envío se hace entonces como sigue:
+
+```bash
+sbatch 01-sapply.slurm
+```
+
+Los siguientes ejemplos tienen dos archivos, un script bash y un script R, para ser llamado por Slurm.
+
+### Caso 1: Trabajo único, trabajo de un solo núcleo
+
+La forma más básica es enviar un trabajo usando el comando `sbatch`. En este caso, debes tener dos archivos: (1) Un script R y (2) un script bash. p. ej.
+
+Los contenidos del script R ([01-sapply.R](01-sapply.R){target="_blank"}) son:
+
+```{r}
+cat2(readLines("01-sapply.R"), sep="\n", lang = 'r')
+```
+
+Los contenidos del archivo bash ([01-sapply.slurm](01-sapply.slurm){target="_blank"}) son:
+
+```{r}
+cat2(readLines("01-sapply.slurm"), sep="\n")
+```
+
+### Caso 2: Trabajo único, trabajo multinúcleo
+
+Imagina que nos gustaría usar más de un procesador para este trabajo, usando la función `parallel::mclapply` del paquete parallel.[^mclapply] Entonces, además de adaptar el código, necesitamos decirle a Slurm que estamos usando más de un núcleo por tarea, como en el siguiente ejemplo:
+
+[^mclapply]: Esta función es una especie de envoltorio de `makeForkcluster`. [Forking](https://en.wikipedia.org/w/index.php?title=Fork_(system_call)&oldid=1145232797){target="_blank"} proporciona una forma de duplicar un proceso en el SO sin replicar la memoria, lo cual es tanto más rápido como eficiente.
+
+Script R ([02-mclapply.R](02-mclapply.R){target="_blank"}):
+
+```{r}
+cat2(readLines("02-mclapply.R"), sep="\n")
+```
+
+Archivo bash ([02-mclapply.slurm](02-mclapply.slurm){target="_blank"}):
+
+```{r}
+cat2(readLines("02-mclapply.slurm"), sep="\n", lang = "bash")
+```
+
+## Trabajos con el paquete slurmR
+
+El paquete R `slurmR` [@slurmRpaper; @slurmRpkg] es un envoltorio ligero de Slurm. Las funciones principales del paquete son la familia `*apply`--principalmente a través de arrays de trabajos Slurm--y `makeSlurmCluster()`--que es un envoltorio de `makePSOCKcluster`.
+
+Esta sección ilustrará cómo enviar trabajos usando la función `makeSlurmCluster()` y `Slurm_sapply`. Además, el último ejemplo demuestra cómo podemos omitir escribir scripts Slurm completamente usando la función `sourceSlurm()` incluida en el paquete.
+
+### Caso 3: Trabajo único, trabajo multinodo
+
+En este caso, no hay una forma simple de enviar un trabajo multinodal a Slurm; a menos que uses el paquete [**slurmR**](https://github.com/USCbiostats/slurmR){target="_blank"}.[^installingslurmr] En este ejemplo, combinaremos `slurmR` con la función `parSapply` del paquete parallel para enviar un trabajo multinodal usando la función `makeSlurmCluster()`. Con ella, `slurmR` enviará un trabajo solicitando `njobs` tareas (procesadores) que podrían abarcar múltiples nodos,[^notexactlymultinode] y crear un clúster Socket de él (como usar `makePSOCKcluster`.) Una cosa a tener en mente es que los clústeres Socket están limitados en el número de conexiones que una sola sesión R puede abarcar. Puedes leer más sobre eso [aquí](https://stat.ethz.ch/pipermail/r-sig-hpc/2012-May/001373.html){target="_blank"} y [aquí](https://github.com/HenrikBengtsson/Wishlist-for-R/issues/28){target="_blank"}.
+
+[^installingslurmr]: Ver instrucciones de instalación [**aquí**](https://github.com/USCbiostats/slurmR#installation){target="_blank"}
+
+[^notexactlymultinode]: Aunque posible, la mayoría de trabajos multinodo serán asignados si no hay suficientes hilos dentro de un solo nodo. Recuerda que Slurm no ejecuta los trabajos sino que reserva recursos computacionales para que los ejecutes.
+
+Script R ([03-parsapply-slurmr.R](03-parsapply-slurmr.R){target="_blank"}):
+
+```{r}
+cat2(readLines("03-parsapply-slurmr.R"), sep="\n")
+```
+
+Archivo bash ([03-parsapply-slurmr.slurm](03-parsapply-slurmr.slurm){target="_blank"}):
+
+```{r}
+cat2(readLines("03-parsapply-slurmr.slurm"), sep="\n", lang = "bash")
+```
+
+### Caso 4: Múltiples trabajos, un solo/múltiples núcleos
+
+Otra forma de enviar trabajos es usando [**arrays de trabajos**](https://slurm.schedmd.com/job_array.html). Un array de trabajos es un trabajo repetido `njobs` veces con la misma configuración. La principal diferencia entre réplicas es lo que haces con la variable de entorno `SLURM_ARRAY_TASK_ID`. Esta variable se define dentro de cada réplica y puede usarse para hacer el "subtrabajo" dependiendo de eso.
+
+Aquí hay un ejemplo rápido usando R
+
+```r
+ID <- Sys.getenv("SLURM_ARRAY_TASK_ID")
+if (ID == 1) {
+  ...[haz esto]...
+} else if (ID == 2) {
+  ...[haz eso]...
+}
+```
+
+El paquete R `slurmR` hace fácil enviar arrays de trabajos. Nuevamente, con la simulación de pi, podemos hacerlo de la siguiente manera:
+
+Script R ([04-slurm_sapply.R](04-slurm_sapply.R){target="_blank"}):
+
+```{r}
+cat2(readLines("04-slurm_sapply.R"), sep="\n")
+```
+
+Archivo bash ([04-slurm_sapply.slurm](04-slurm_sapply.slurm){target="_blank"}):
+
+```{r}
+cat2(readLines("04-slurm_sapply.slurm"), sep="\n", lang = "bash")
+```
+
+Uno de los principales beneficios de usar este enfoque en lugar de la función `makeSlurmCluster` (y así, trabajar con un clúster SOCK) son:
+
+-  El número de trabajos no está limitado aquí (solo por el administrador, pero no por R).
+
+-  Si un trabajo falla, entonces podemos volver a ejecutarlo usando `sbatch` una vez más (ver ejemplo [aquí](https://github.com/USCbiostats/slurmR#example-2-job-resubmission){target="_blank"}).
+
+-  Puedes verificar los logs individuales de cada proceso usando la función `Slurm_lob()`.
+
+-  Puedes enviar el trabajo y salir de la sesión R sin esperar a que finalice. Siempre puedes leer de vuelta el trabajo usando la función `read_slurm_job([ruta-al-temp])`
+
+### Caso 5: Omitiendo el archivo .slurm
+
+El paquete `slurmR` tiene una función llamada `sourceSlurm` que puede usarse para evitar crear el archivo `.slurm`. El usuario puede agregar las opciones SBATCH al principio del script R (incluyendo la línea `#!/bin/sh`) y enviar el trabajo desde R como sigue:
+
+Script R ([05-sapply.R](05-sapply.R){target="_blank"}):
+
+```{r}
+cat2(readLines("05-sapply.R"), sep="\n")
+```
+
+Desde la consola R (está bien si estás en el nodo cabeza)
+
+```r
+slurmR::sourceSlurm("05-sapply.R")
+```
+
+¡Y voilá! Se generará un archivo bash temporal para enviar el script R a la cola. El siguiente video muestra una posible salida en el CHPC de la Universidad de Utah con slurmR versión 0.5-3:
+
+{{< video https://youtu.be/OasEla5EszI >}}
