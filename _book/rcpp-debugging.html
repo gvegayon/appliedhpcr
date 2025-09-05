@@ -501,14 +501,14 @@ Type 'q()' to quit R.
 <p>Re-running R with Valgrind returns the following (only the last few lines):</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="ex">R</span> <span class="at">--debugger</span><span class="op">=</span>valgrind <span class="at">-e</span> <span class="st">'Rcpp::sourceCpp("rcpp-debugging-faulty-fixed.cpp")'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="sourceCode" id="cb9"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="ex">==1830==</span> HEAP SUMMARY:</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="ex">==1830==</span>     in use at exit: 60,655,408 bytes in 11,485 blocks</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="ex">==1830==</span>   total heap usage: 31,722 allocs, 20,237 frees, 93,791,152 bytes allocated</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="ex">==1830==</span>     in use at exit: 60,655,411 bytes in 11,485 blocks</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="ex">==1830==</span>   total heap usage: 31,722 allocs, 20,237 frees, 93,791,185 bytes allocated</span>
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="ex">==1830==</span> </span>
 <span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="ex">==1830==</span> LEAK SUMMARY:</span>
 <span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="ex">==1830==</span>    definitely lost: 0 bytes in 0 blocks</span>
 <span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="ex">==1830==</span>    indirectly lost: 0 bytes in 0 blocks</span>
 <span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="ex">==1830==</span>      possibly lost: 0 bytes in 0 blocks</span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="ex">==1830==</span>    still reachable: 60,655,408 bytes in 11,485 blocks</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="ex">==1830==</span>    still reachable: 60,655,411 bytes in 11,485 blocks</span>
 <span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="ex">==1830==</span>                       of which reachable via heuristic:</span>
 <span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="ex">==1830==</span>                         newarray           : 4,264 bytes in 1 blocks</span>
 <span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="ex">==1830==</span>         suppressed: 0 bytes in 0 blocks</span>
@@ -613,14 +613,14 @@ Type 'q()' to quit R.
 <span id="cb11-70"><a href="#cb11-70" aria-hidden="true" tabindex="-1"></a><span class="ex">==1887==</span>    by 0x2EF4D5D5: faulty_program<span class="er">(</span><span class="ex">int</span><span class="kw">)</span> <span class="kw">(</span><span class="ex">rcpp-debugging-not-mapped.cpp:11</span><span class="kw">)</span></span>
 <span id="cb11-71"><a href="#cb11-71" aria-hidden="true" tabindex="-1"></a><span class="ex">==1887==</span> </span>
 <span id="cb11-72"><a href="#cb11-72" aria-hidden="true" tabindex="-1"></a><span class="ex">==1887==</span> HEAP SUMMARY:</span>
-<span id="cb11-73"><a href="#cb11-73" aria-hidden="true" tabindex="-1"></a><span class="ex">==1887==</span>     in use at exit: 60,747,088 bytes in 11,700 blocks</span>
-<span id="cb11-74"><a href="#cb11-74" aria-hidden="true" tabindex="-1"></a><span class="ex">==1887==</span>   total heap usage: 31,654 allocs, 19,954 frees, 93,747,814 bytes allocated</span>
+<span id="cb11-73"><a href="#cb11-73" aria-hidden="true" tabindex="-1"></a><span class="ex">==1887==</span>     in use at exit: 60,747,092 bytes in 11,700 blocks</span>
+<span id="cb11-74"><a href="#cb11-74" aria-hidden="true" tabindex="-1"></a><span class="ex">==1887==</span>   total heap usage: 31,654 allocs, 19,954 frees, 93,747,849 bytes allocated</span>
 <span id="cb11-75"><a href="#cb11-75" aria-hidden="true" tabindex="-1"></a><span class="ex">==1887==</span> </span>
 <span id="cb11-76"><a href="#cb11-76" aria-hidden="true" tabindex="-1"></a><span class="ex">==1887==</span> LEAK SUMMARY:</span>
 <span id="cb11-77"><a href="#cb11-77" aria-hidden="true" tabindex="-1"></a><span class="ex">==1887==</span>    definitely lost: 0 bytes in 0 blocks</span>
 <span id="cb11-78"><a href="#cb11-78" aria-hidden="true" tabindex="-1"></a><span class="ex">==1887==</span>    indirectly lost: 0 bytes in 0 blocks</span>
 <span id="cb11-79"><a href="#cb11-79" aria-hidden="true" tabindex="-1"></a><span class="ex">==1887==</span>      possibly lost: 5,987 bytes in 19 blocks</span>
-<span id="cb11-80"><a href="#cb11-80" aria-hidden="true" tabindex="-1"></a><span class="ex">==1887==</span>    still reachable: 60,741,101 bytes in 11,681 blocks</span>
+<span id="cb11-80"><a href="#cb11-80" aria-hidden="true" tabindex="-1"></a><span class="ex">==1887==</span>    still reachable: 60,741,105 bytes in 11,681 blocks</span>
 <span id="cb11-81"><a href="#cb11-81" aria-hidden="true" tabindex="-1"></a><span class="ex">==1887==</span>                       of which reachable via heuristic:</span>
 <span id="cb11-82"><a href="#cb11-82" aria-hidden="true" tabindex="-1"></a><span class="ex">==1887==</span>                         newarray           : 4,264 bytes in 1 blocks</span>
 <span id="cb11-83"><a href="#cb11-83" aria-hidden="true" tabindex="-1"></a><span class="ex">==1887==</span>         suppressed: 0 bytes in 0 blocks</span>

@@ -501,9 +501,9 @@ window.Quarto = {
 <span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>microbenchmark<span class="sc">::</span><span class="fu">microbenchmark</span>(<span class="fu">add1R</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">1000</span>), <span class="fu">add1Cpp</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">1000</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Unit: microseconds
-            expr    min     lq     mean  median      uq      max neval
-   add1R(1:1000) 57.617 58.313 82.63895 58.8295 61.4850 2273.530   100
- add1Cpp(1:1000)  2.735  3.131 11.46311  3.3765  4.5735  655.181   100</code></pre>
+            expr    min      lq     mean  median      uq      max neval
+   add1R(1:1000) 57.507 57.9885 80.43857 58.3585 60.5535 2124.504   100
+ add1Cpp(1:1000)  2.865  3.1860 14.13444  3.4470  8.7820  900.510   100</code></pre>
 </div>
 </div>
 </section>
@@ -648,9 +648,9 @@ F(n - 1) + F(n - 2), &amp; \mbox{otherwise}
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>microbenchmark<span class="sc">::</span><span class="fu">microbenchmark</span>(<span class="fu">fibR</span>(<span class="dv">20</span>), <span class="fu">fibCpp</span>(<span class="dv">20</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Unit: microseconds
-       expr      min        lq       mean   median       uq      max neval
-   fibR(20) 6013.242 6233.5380 6387.39269 6257.778 6302.992 7688.946   100
- fibCpp(20)   15.699   16.0105   25.58711   16.987   17.553  850.856   100</code></pre>
+       expr      min       lq       mean   median       uq      max neval
+   fibR(20) 6160.142 6242.056 6501.54652 6271.395 6375.465 8404.680   100
+ fibCpp(20)   15.770   15.995   28.28494   16.631   18.274 1044.358   100</code></pre>
 </div>
 </div>
 </section>
@@ -757,15 +757,15 @@ F(n - 1) + F(n - 2), &amp; \mbox{otherwise}
 <div class="cell-output cell-output-stdout">
 <pre><code>Unit: milliseconds
                    expr       min        lq      mean    median        uq
-                dist(x) 1158.0986 1158.0986 1158.0986 1158.0986 1158.0986
- dist_par(x, cores = 1)  833.9713  833.9713  833.9713  833.9713  833.9713
- dist_par(x, cores = 2)  624.4240  624.4240  624.4240  624.4240  624.4240
- dist_par(x, cores = 4)  524.8925  524.8925  524.8925  524.8925  524.8925
+                dist(x) 1280.8688 1280.8688 1280.8688 1280.8688 1280.8688
+ dist_par(x, cores = 1) 1089.8426 1089.8426 1089.8426 1089.8426 1089.8426
+ dist_par(x, cores = 2)  716.9385  716.9385  716.9385  716.9385  716.9385
+ dist_par(x, cores = 4)  645.0109  645.0109  645.0109  645.0109  645.0109
        max neval
- 1158.0986     1
-  833.9713     1
-  624.4240     1
-  524.8925     1</code></pre>
+ 1280.8688     1
+ 1089.8426     1
+  716.9385     1
+  645.0109     1</code></pre>
 </div>
 </div>
 </section>
@@ -789,7 +789,7 @@ F(n - 1) + F(n - 2), &amp; \mbox{otherwise}
 <span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>  x2 <span class="sc">%&lt;-%</span> {<span class="fu">Sys.sleep</span>(<span class="dv">3</span>);a<span class="sc">^</span><span class="dv">3</span>}</span>
 <span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>})</span>
 <span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a><span class="do">##    user  system elapsed </span></span>
-<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a><span class="do">##   0.026   0.021   0.047</span></span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a><span class="do">##   0.031   0.017   0.049</span></span>
 <span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Let's just wait 5 seconds to make sure all the cores have returned</span></span>
 <span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a><span class="fu">Sys.sleep</span>(<span class="dv">3</span>)</span>
 <span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a><span class="fu">system.time</span>({</span>
@@ -851,8 +851,8 @@ F(n - 1) + F(n - 2), &amp; \mbox{otherwise}
 <div class="cell-output cell-output-stdout">
 <pre><code>Unit: milliseconds
      expr      min       lq     mean   median       uq      max neval
- parallel 281.5420 281.5420 281.5420 281.5420 281.5420 281.5420     1
-   serial 376.7357 376.7357 376.7357 376.7357 376.7357 376.7357     1</code></pre>
+ parallel 284.9262 284.9262 284.9262 284.9262 284.9262 284.9262     1
+   serial 379.6148 379.6148 379.6148 379.6148 379.6148 379.6148     1</code></pre>
 </div>
 </div>
 <hr>

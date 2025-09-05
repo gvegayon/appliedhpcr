@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Nota de Traducción – HPC Aplicado con R</title>
+<title>El Paquete parallel – HPC Aplicado con R</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -113,7 +113,7 @@ gtag('config', 'G-9D75EFV0TE', { 'anonymize_ip': true});
 </script>
 
 
-<meta name="twitter:title" content="Nota de Traducción – HPC Aplicado con R">
+<meta name="twitter:title" content="El Paquete parallel – HPC Aplicado con R">
 <meta name="twitter:description" content="Este libro es una colección de charlas y conferencias sobre cómo acelerar tu código R usando computación paralela y otros recursos como C++.">
 <meta name="twitter:image" content="https://book.ggvy.cl/../fig/cover.png">
 <meta name="twitter:creator" content="@gvegayon">
@@ -162,7 +162,7 @@ gtag('config', 'G-9D75EFV0TE', { 'anonymize_ip': true});
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./intro.html">Computación paralela</a></li><li class="breadcrumb-item"><a href="./parallel-pkg.html"><span class="chapter-title">Nota de Traducción</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./intro.html">Computación paralela</a></li><li class="breadcrumb-item"><a href="./parallel-pkg.html"><span class="chapter-title">El Paquete parallel</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -217,7 +217,7 @@ gtag('config', 'G-9D75EFV0TE', { 'anonymize_ip': true});
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./parallel-pkg.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">Nota de Traducción</span></a>
+  <a href="./parallel-pkg.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">El Paquete parallel</span></a>
   </div>
 </li>
       </ul>
@@ -318,9 +318,9 @@ gtag('config', 'G-9D75EFV0TE', { 'anonymize_ip': true});
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./intro.html">Computación paralela</a></li><li class="breadcrumb-item"><a href="./parallel-pkg.html"><span class="chapter-title">Nota de Traducción</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./intro.html">Computación paralela</a></li><li class="breadcrumb-item"><a href="./parallel-pkg.html"><span class="chapter-title">El Paquete parallel</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-title">Nota de Traducción</span></h1>
+<h1 class="title"><span class="chapter-title">El Paquete parallel</span></h1>
 </div>
 
 
@@ -349,7 +349,7 @@ gtag('config', 'G-9D75EFV0TE', { 'anonymize_ip': true});
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Warning
+Nota de Traducción
 </div>
 </div>
 <div class="callout-body-container callout-body">
@@ -554,8 +554,8 @@ Tip
 <div class="cell-output cell-output-stdout">
 <pre><code>Unit: milliseconds
      expr      min        lq      mean    median        uq       max neval
-   serial  594.389  629.1877  669.5245  637.8105  750.6774  763.6478    10
- parallel 1858.562 1873.0968 1887.2736 1883.5123 1901.8574 1929.0603    10</code></pre>
+   serial  613.259  621.2591  698.7278  672.6508  800.9154  810.4089    10
+ parallel 1858.137 1883.2279 1896.2497 1896.2739 1918.3019 1923.0679    10</code></pre>
 </div>
 </div>
 <p>De la comparación, podemos ver que la versión paralela es significativamente más lenta que la versión serial. Dos cosas a notar aquí son (a) la tarea que estamos ejecutando ya es rápida (alrededor de 0.3 segundos en promedio para la ejecución serial) y (b) hay un costo de sobrecarga asociado con crear, preparar y detener el cluster. Como mencionamos anteriormente, las optimizaciones paralelas solo tienen sentido si tu código ya está tomando una cantidad significativa de tiempo, haciendo que el costo de sobrecarga asociado con la configuración sea relativamente pequeño. La siguiente implementación de la función debería hacerla significativamente más rápida:</p>
@@ -615,8 +615,8 @@ Tip
 <div class="cell-output cell-output-stdout">
 <pre><code>Unit: milliseconds
      expr      min       lq     mean   median       uq      max neval
-   serial 582.5979 588.4809 656.9841 654.8177 673.4060 796.8439    10
- parallel 289.8490 320.6189 326.6270 329.7927 336.4084 345.3652    10</code></pre>
+   serial 610.9778 662.7446 714.9187 710.7074 751.8711 803.3578    10
+ parallel 286.9433 315.9309 324.8226 326.5137 337.4710 359.6482    10</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Necesitamos detener el cluster</span></span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="fu">stopCluster</span>(cl)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -733,11 +733,11 @@ Caution
 <span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>ans <span class="ot">&lt;-</span> <span class="fu">do.call</span>(cbind, <span class="fu">mclapply</span>(<span class="dv">1</span><span class="sc">:</span>nnodes, <span class="cf">function</span>(x) <span class="fu">runif</span>(nsims)))</span>
 <span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>(ans0 <span class="ot">&lt;-</span> <span class="fu">var</span>(ans))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>              [,1]         [,2]         [,3]         [,4]
-[1,]  0.0870900385 0.0002537173 -0.003055160 0.0009702861
-[2,]  0.0002537173 0.0844270547  0.004334607 0.0014181913
-[3,] -0.0030551602 0.0043346066  0.085830993 0.0016659801
-[4,]  0.0009702861 0.0014181913  0.001665980 0.0818570884</code></pre>
+<pre><code>              [,1]          [,2]          [,3]         [,4]
+[1,]  0.0861959114 -0.0025889078 -0.0007872975 -0.001245503
+[2,] -0.0025889078  0.0812214499  0.0008758552 -0.001118472
+[3,] -0.0007872975  0.0008758552  0.0813942117 -0.003424716
+[4,] -0.0012455033 -0.0011184715 -0.0034247156  0.086897219</code></pre>
 </div>
 </div>
 <p>Una vez más, queremos asegurarnos de que esto es reproducible</p>
@@ -747,11 +747,11 @@ Caution
 <span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>ans1 <span class="ot">&lt;-</span> <span class="fu">var</span>(<span class="fu">do.call</span>(cbind, <span class="fu">mclapply</span>(<span class="dv">1</span><span class="sc">:</span>nnodes, <span class="cf">function</span>(x) <span class="fu">runif</span>(nsims))))</span>
 <span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>ans0 <span class="sc">-</span> ans1 <span class="co"># Una matriz de ceros</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>              [,1]         [,2]         [,3]         [,4]
-[1,]  0.0003204294 -0.005760469 -0.001376344 -0.004149709
-[2,] -0.0057604693  0.003534657  0.009103474  0.005219555
-[3,] -0.0013763435  0.009103474  0.005502544  0.005645297
-[4,] -0.0041497091  0.005219555  0.005645297 -0.001272618</code></pre>
+<pre><code>              [,1]          [,2]          [,3]          [,4]
+[1,]  0.0027385407  0.0005808430 -0.0063713673 -0.0001482524
+[2,]  0.0005808430 -0.0005911874 -0.0035229030 -0.0040172652
+[3,] -0.0063713673 -0.0035229030 -0.0018292107 -0.0005724951
+[4,] -0.0001482524 -0.0040172652 -0.0005724951  0.0011034690</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. DETENER EL CLUSTER</span></span>
 <span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="co"># stopCluster(cl) ya no es necesario hacer esto</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
