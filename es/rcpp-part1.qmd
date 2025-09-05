@@ -1,5 +1,10 @@
 # Rcpp
 
+::: {.callout-warning}
+## Nota de Traducción
+Esta versión del capítulo fue traducida de manera automática utilizando IA. El capítulo aún no ha sido revisado por un humano.
+:::
+
 Cuando la computación paralela no es suficiente, puedes acelerar tu código R usando un lenguaje de programación de más bajo nivel[^lowwhat] como C++, C, o Fortran. Con R mismo escrito en C, proporciona puntos de acceso (APIs) para conectar funciones de C++/C/Fortran a R. Aunque no es imposible, usar lenguajes de bajo nivel para mejorar R puede ser engorroso; Rcpp [@Eddelbuettel2011; @RcppBook; @Rcpp] puede hacer las cosas **muy** fáciles. Este capítulo te muestra cómo usar Rcpp--la forma más popular de conectar C++ con R--para acelerar tu código R.
 
 [^lowwhat]: En general, un lenguaje de programación de bajo nivel es "*un lenguaje de programación que proporciona poca o ninguna abstracción del conjunto de arquitectura de una computadora \[...\]*" ([wiki](https://en.wikipedia.org/w/index.php?title=Low-level_programming_language&oldid=1147973157)), sin embargo, aquí usamos ese término para referirnos a lenguajes de programación que están más cerca del código máquina de lo que está R.
