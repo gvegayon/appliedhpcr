@@ -31,7 +31,7 @@ jobs:
       # uses: actions/upload-pages-artifact@v3
       uses: actions/upload-artifact@v4
       with:
-        path: _docs
+        path: _book
         name: gh-page-html
 
   build-html-es:
@@ -51,7 +51,7 @@ jobs:
       # uses: actions/upload-pages-artifact@v3
       uses: actions/upload-artifact@v4
       with:
-        path: es/_docs
+        path: es/_book
         name: gh-page-html-es
 
   build-pdf:
@@ -69,14 +69,14 @@ jobs:
 
     - name: Combine docs
       run: |
-        mkdir -p _docs/es
-        cp -r es/_docs/* _docs/es/ 2>/dev/null || true
+        mkdir -p _book/es
+        cp -r es/_book/* _book/es/ 2>/dev/null || true
 
     - name: Upload artifact
       # uses: actions/upload-pages-artifact@v3
       uses: actions/upload-artifact@v4
       with:
-        path: _docs
+        path: _book
         name: gh-page-pdf
 
     - name: Upload LaTeX file
@@ -84,10 +84,10 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         path: |
-          _docs/*.tex
+          _book/*.tex
           *.tex
           *.log
-          _docs/*log
+          _book/*log
         name: gh-page-latex-logs
 
   build-pdf-es:
@@ -105,14 +105,14 @@ jobs:
 
     - name: Combine docs
       run: |
-        mkdir -p _docs/es
-        cp -r es/_docs/* _docs/es/ 2>/dev/null || true
+        mkdir -p _book/es
+        cp -r es/_book/* _book/es/ 2>/dev/null || true
 
     - name: Upload artifact
       # uses: actions/upload-pages-artifact@v3
       uses: actions/upload-artifact@v4
       with:
-        path: es/_docs
+        path: es/_book
         name: gh-page-pdf-es
 
     - name: Upload LaTeX file
@@ -120,10 +120,10 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         path: |
-          es/_docs/*.tex
+          es/_book/*.tex
           es/*.tex
           es/*.log
-          es/_docs/*log
+          es/_book/*log
         name: gh-page-latex-logs-es
 
   combine:
@@ -137,13 +137,13 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: gh-page-html
-        path: _docs
+        path: _book
 
     - name: Download artifacts
       uses: actions/download-artifact@v4
       with:
         name: gh-page-html-es
-        path: _docs/es
+        path: _book/es
 
     - name: Download artifacts
       uses: actions/download-artifact@v4
@@ -159,15 +159,15 @@ jobs:
 
     - name: Combine
       run: |
-        cp -r pdf/* _docs
-        cp -r pdf-es/* _docs/es
+        cp -r pdf/* _book
+        cp -r pdf-es/* _book/es
 
     - name: Upload artifact
       uses: actions/upload-pages-artifact@v4
       # uses: actions/upload-artifact@v3
       with:
         name: github-pages
-        path: _docs
+        path: _book
 
   deploy:
     runs-on: ubuntu-latest
@@ -181,12 +181,12 @@ jobs:
         uses: actions/download-artifact@v5.0.0
         with:
           name: github-pages
-          path: _docs
+          path: _book
 
       - name: Commit changes
         run: |
           git config --global user.email "action@github.com"
           git config --global user.name "GitHub Action"
-          git add _docs/* || echo "Nothing to add"
+          git add _book/* || echo "Nothing to add"
           git commit -m "Add coda installation summary" || echo "Nothing to commit"
           git push || echo "Nothing to push"
