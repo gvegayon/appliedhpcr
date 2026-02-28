@@ -1,4 +1,4 @@
-FROM rocker/tidyverse:4.5.1
+FROM ghcr.io/rocker-org/devcontainer/tidyverse:4.5
 
 # Installing quarto
 RUN quarto install tool tinytex --log-level warning
@@ -14,5 +14,8 @@ RUN install2.r --error microbenchmark slurmR future Rcpp RcppArmadillo \
 
 RUN apt-get update && \
     apt-get install vim valgrind -y --no-install-recommends
+
+# Installing jupyter
+RUN python3 -m pip install jupyter --break-system-packages
 
 CMD ["bash"]

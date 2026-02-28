@@ -1,0 +1,162 @@
+# Notes about scoping in C++
+
+This chapter will present a more advanced but important topic in C++: RAII and scoping. RAII stands for Resource Acquisition Is Initialization, and it is a programming idiom that ensures that resources are properly released when they are no longer needed. From the perspective of an R user, this provides a nice opportunity for scoping in C++. Let's take a look with a simple example (which is also available in [scoping-cpp.hpp](./scoping-cpp.hpp)):
+
+```{Rcpp}
+#| label: scoping-cpp
+#| cache: true
+class Agent {
+public:
+    int fun();
+};
+
+// Declaration of the Model class
+class Model {
+private:
+    Agent agent_;
+    int x_;
+
+public:
+    inline static Model * instance_ = nullptr;
+    virtual int run();
+    Model(int x) : agent_(Agent()), x_(x) {};
+    static Model & get();
+    int get_x();
+};
+
+// Implementation of the Model methods
+inline int Model::run() {
+    Model::instance_ = this;
+    return agent_.fun();
+};
+
+inline Model & Model::get() {return *instance_;};
+inline int Model::get_x() {return x_;};
+
+// Implementation of the Agent method
+inline int Agent::fun() {return Model::get().get_x();};
+
+// [[Rcpp::export]]
+int test_scoping_cpp() {
+
+    // Create an instance of Model
+    Model Model(42);
+
+    // Run the Model
+    return Model.run();
+}
+
+// [[Rcpp::export]]
+bool is_it_on() {
+    return Model::instance_ != nullptr;
+}
+```
+
+Checking whether it works or not:
+
+```{r}
+#| label: checking-test-scoping
+test_scoping_cpp()
+```
+
+It does! Let's split this into pieces. First of all, the `Agent` class does not have explicit access to the `Model` class; in no place of its definition has it as a member. The key lies in the `static` function `Model::get()`, which can be call by any function within the call stack without having to access to `Model`.
+
+```{r}
+is_it_on()
+```
+
+Now, this is not entirely safe, as the variable `instance_` would still be available even after calling the `Model::run()` function. To address this, we can use an auxiliary class that resets the `instance_` to `nullptr`:
+
+```{Rcpp}
+#| label: scoping-cpp-scope
+#| cache: true
+#include <Rcpp.h>
+class Agent {
+public:
+    int fun();
+};
+
+class Scope;
+
+// Declaration of the Model class
+class Model_s {
+    friend Scope;
+private:
+    Agent agent_;
+    int x_;
+
+public:
+    inline static Model_s * instance_ = nullptr;
+    virtual int run();
+    Model_s(int x) : agent_(Agent()), x_(x) {};
+    static Model_s & get();
+    int get_x();
+};
+
+// Declaration & Implementation of the Scope method
+class Scope {
+private:
+    Model_s * prev_;
+public:
+    explicit Scope(Model_s * model) : prev_(Model_s::instance_) {
+        Model_s::instance_ = model;
+    };
+    ~Scope() {
+        Model_s::instance_ = prev_;
+    };
+};
+
+// Implementation of the Model_s methods
+inline int Model_s::run() {
+    Scope scope(this);
+    return agent_.fun();
+};
+
+inline Model_s & Model_s::get() {return *instance_;};
+inline int Model_s::get_x() {return x_;};
+
+// Implementation of the Agent method
+inline int Agent::fun() {return Model_s::get().get_x();};
+
+// [[Rcpp::export]]
+int test_scoping_cpp2() {
+
+    // Create an instance of Model
+    Model_s Model(42);
+
+    // Run the Model
+    return Model.run();
+}
+
+// [[Rcpp::export]]
+bool is_it_on2() {
+    return Model_s::instance_ != nullptr;
+}
+```
+
+The simple class `Scope` provides a nice way of controlling the duration of this static variable:
+
+```cpp
+class Scope {
+private:
+    Model_s * prev_;
+public:
+    explicit Scope(Model_s * model) : prev_(Model_s::instance_) {
+        Model_s::instance_ = model;
+    };
+    ~Scope() {
+        Model_s::instance_ = prev_;
+    };
+};
+```
+
+Once it is invoked, it sets the value for the static member of `Model_s` for the duration of `Scope`. Once `Model_s::run()` exists, the destructor of `Scope` resets the value of `Model_s::instance_` to its previous value, `nullptr`, in this case. Nonetheless, this provides a way to allow nested calls setting the proper value of `instance_` as the callstack grows. Here is the result of the new implementation
+
+```{r}
+test_scoping_cpp2() # Checking it works
+is_it_on2()         # And that it is turned off
+```
+
+::: {.callout-tip}
+While implementing this, I was using `Model` for both code chunks in C++. Although it still allows to me compile, the symbol `Model` is shared by both implementations, which broke my code (the `is_it_on2()` function was returning `TRUE` when it was supposed to return `FALSE`).
+:::
