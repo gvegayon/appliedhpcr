@@ -1,6 +1,9 @@
 project:
   type: book
 
+extensions:
+  - quarto-ext/orange-book
+
 engine: knitr
 book:
   version: 2025.09.03
@@ -36,6 +39,7 @@ book:
         - rcpp-part1.qmd
         - rcpp-debugging.qmd
   appendices: 
+    - scoping-cpp.qmd
     - misc.qmd
     - references.qmd
     - news.qmd
@@ -46,9 +50,11 @@ bibliography: references.bib
 
 format:
   html:
+    html-math-method: katex
+    toc: true
+    number-sections: false
     theme: cosmo
-  pdf:
-    documentclass: scrreprt
+  orange-book-typst: default
 
 
 

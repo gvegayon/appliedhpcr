@@ -1,12 +1,20 @@
-FROM rocker/tidyverse:4.5.1
+FROM ghcr.io/rocker-org/devcontainer/r-ver:4.5
 
-# Installing quarto
-RUN quarto install tool tinytex --log-level warning
+# Architecture-specific variable (built in Docker BuildKit)
+ARG TARGETARCH
 
-ENV PATH="/root/.TinyTeX/bin/x86_64-linux:${PATH}"
+# Install quarto-cli and the orange-book extension
+RUN wget https://github.com/quarto-dev/quarto-cli/releases/download/v1.9.35/quarto-1.9.35-linux-${TARGETARCH}.deb && \
+    dpkg -i quarto-1.9.35-linux-${TARGETARCH}.deb && \
+    rm quarto-1.9.35-linux-${TARGETARCH}.deb && \
+    quarto add --no-prompt quarto-ext/orange-book && \
+    if [ "${TARGETARCH}" = "arm64" ]; then \
+        quarto install chromium; \
+    else \
+        quarto install chrome-headless-shell; \
+    fi
 
-RUN install2.r --error languageserver && \
-    installGithub.r nx10/httpgd
+
 
 # Installing needed packages
 RUN install2.r --error microbenchmark slurmR future Rcpp RcppArmadillo \
@@ -14,5 +22,8 @@ RUN install2.r --error microbenchmark slurmR future Rcpp RcppArmadillo \
 
 RUN apt-get update && \
     apt-get install vim valgrind -y --no-install-recommends
+
+# Installing jupyter
+RUN python3 -m pip install jupyter --break-system-packages
 
 CMD ["bash"]

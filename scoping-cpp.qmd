@@ -1,0 +1,199 @@
+# Notes about scoping in C++
+
+This chapter will present a more advanced but important topic in C++: RAII and scoping. RAII stands for Resource Acquisition Is Initialization, and it is a programming idiom that ensures that resources are properly released when they are no longer needed. From the perspective of an R user, this provides a nice opportunity for scoping in C++. Let's take a look with an example:
+
+```{Rcpp}
+//| label: scoping-cpp
+//| cache: true
+class Agent {
+public:
+    int fun();
+};
+
+// Declaration of the Model class
+class Model {
+private:
+    Agent agent_;
+    int x_;
+
+public:
+    inline static Model * instance_ = nullptr;
+    virtual int run();
+    Model(int x) : agent_(Agent()), x_(x) {};
+
+    // Key function that allows access to `Model`
+    // by calls within the call stack.
+    static Model & get();
+
+    int get_x();
+};
+
+// Implementation of the Model methods
+inline int Model::run() {
+    Model::instance_ = this;
+    return agent_.fun();
+};
+
+inline Model & Model::get() {return *instance_;};
+inline int Model::get_x() {return x_;};
+
+// Implementation of the Agent method
+inline int Agent::fun() {return Model::get().get_x();};
+
+// [[Rcpp::export]]
+int test_scoping_cpp() {
+
+    // Create an instance of Model
+    Model Model(42);
+
+    // Run the Model
+    return Model.run();
+}
+
+// [[Rcpp::export]]
+bool is_it_on() {
+    return Model::instance_ != nullptr;
+}
+```
+
+Checking whether it works or not:
+
+```{r}
+#| label: checking-test-scoping
+test_scoping_cpp()
+```
+
+It does! Let's split this into pieces. First of all, the `Agent` class does not have explicit access to the `Model` class; in no place of its definition has it as a member. The key lies in the `static` function `Model::get()`, which can be call by any function within the call stack without having to access to `Model`:
+
+```
+Model::run() -> Agent::fun() -> Model::get() -> Model::get_x()
+```
+
+And the `Agent` function access the model through the static member. Furthermore, we can see that after we exited `Model::run()`, the variable `Model::instance_` is still not null:
+
+```{r}
+is_it_on()
+```
+
+Now, this is not entirely safe, as the variable `instance_` would still be available even after calling the `Model::run()` function. To address this, we can use an auxiliary class that resets the `instance_` to `nullptr`:
+
+```{Rcpp}
+//| label: scoping-cpp-scope
+//| cache: true
+#include <Rcpp.h>
+class Agent {
+public:
+    int fun();
+};
+
+class Scope;
+
+// Declaration of the Model class
+class Model_s {
+    friend Scope;
+private:
+    Agent agent_;
+    int x_;
+
+public:
+    inline static Model_s * instance_ = nullptr;
+    virtual int run();
+    Model_s(int x) : agent_(Agent()), x_(x) {};
+    static Model_s & get();
+    int get_x();
+};
+
+// Declaration & Implementation of the Scope method
+class Scope {
+private:
+    Model_s * prev_;
+public:
+    explicit Scope(Model_s * model) : prev_(Model_s::instance_) {
+        Model_s::instance_ = model;
+    };
+    ~Scope() {
+        Model_s::instance_ = prev_;
+    };
+};
+
+// Implementation of the Model_s methods
+inline int Model_s::run() {
+    
+    // Here is the important point. The constructor
+    // of `Scope` sets the value of `instance_` to
+    // be the current instance of `Model`, but then
+    // once we exit the call, the destructor re-assigns
+    // `instance_` to `nullptr`.
+    Scope scope(this);
+    
+    return agent_.fun();
+};
+
+inline Model_s & Model_s::get() {return *instance_;};
+inline int Model_s::get_x() {return x_;};
+
+// Implementation of the Agent method
+inline int Agent::fun() {return Model_s::get().get_x();};
+
+// [[Rcpp::export]]
+int test_scoping_cpp2() {
+
+    // Create an instance of Model
+    Model_s Model(42);
+
+    // Run the Model
+    return Model.run();
+}
+
+// [[Rcpp::export]]
+bool is_it_on2() {
+    return Model_s::instance_ != nullptr;
+}
+```
+
+The simple class `Scope` provides a nice way of controlling the duration of this static variable:
+
+```cpp
+class Scope {
+private:
+    Model_s * prev_;
+public:
+    explicit Scope(Model_s * model) : prev_(Model_s::instance_) {
+        Model_s::instance_ = model;
+    };
+    ~Scope() {
+        Model_s::instance_ = prev_;
+    };
+};
+```
+
+Once it is invoked, it sets the value for the static member of `Model_s` for the duration of `Scope`. Once `Model_s::run()` exists, the destructor of `Scope` resets the value of `Model_s::instance_` to its previous value, `nullptr`, in this case. Nonetheless, this provides a way to allow nested calls setting the proper value of `instance_` as the callstack grows. Here is the result of the new implementation
+
+```{r}
+test_scoping_cpp2() # Checking it works
+is_it_on2()         # And that it is turned off
+```
+
+::: {.callout-warning}
+While implementing this, I was using `Model` for both code chunks in C++. Although it still allows to me compile, the symbol `Model` is shared by both implementations, which broke my code (the `is_it_on2()` function was returning `TRUE` when it was supposed to return `FALSE`).
+:::
+
+## Multi-thread versions
+
+If you are using parallel computing via OpenMP and similar, it is important to play it safe. By default, copies of `Model` will share the value of `_instance`, which may be undesirable. Instead, it is recommended to use the `thread_local` keyword:
+
+```cpp
+class Model {
+    static thread_local instance_;
+}
+
+// Needs to be initialized outside of the class
+thread_local Model::instance_ = nullptr;
+```
+
+This will ensure that, if you are creating copies of the `Model`, each thread has individual access to their own copy.
+
+
+## Working with multiple compiled versions
+
+Another caveate that I have experienced is when having two different C++ library objects (what Rcpp creates as `.so`, `.o`, or `.dll`, depending on the OS), problems can happen. Particularly, I observed this during the development of the `epiworldR` and `measles` R packages. Both of them had compiled libraries depending on the `epiworld` C++ template library, so when I load them together, using the static member access was not working as expected; in those cases, it is better to be more explicit and simply pass `Model` as another argument; in other words, don't be "smart" about it and stick to something more reliable.
