@@ -54,7 +54,7 @@ book:
   downloads:
     - pdf
 
-bibliography: ../references.bib
+bibliography: references.bib
 
 biblio-style: apalike
 
