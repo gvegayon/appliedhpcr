@@ -91,9 +91,9 @@ Cuando la computación paralela no es suficiente, puedes acelerar tu código R u
 ## Ejemplo 1: Iterando sobre un vector
 
 ```{Rcpp}
-#| cache: true
-#| label: "rcpp-add1"
-#| echo: true
+//| cache: true
+//| label: "rcpp-add1"
+//| echo: true
 #include<Rcpp.h>
 using namespace Rcpp;
 // [[Rcpp::export]]
@@ -113,8 +113,8 @@ add1(1:10)
 Hazlo más dulce agregando algo de "azúcar" (del tipo Rcpp)
 
 ```{Rcpp}
-#| cache: true
-#| echo: true
+//| cache: true
+//| echo: true
 #include<Rcpp.h>
 using namespace Rcpp;
 // [[Rcpp::export]]
@@ -315,9 +315,9 @@ Ahora, ¡traduzcamos este código a Rcpp y veamos cuánto aumento de velocidad o
 ### Problema 2: Serie de Fibonacci (solución)
 
 ```{Rcpp}
-#| label: fib
-#| cache: true
-#| code-fold: true
+//| label: fib
+//| cache: true
+//| code-fold: true
 #include <Rcpp.h>
 // [[Rcpp::export]]
 int fibCpp(int n) {
