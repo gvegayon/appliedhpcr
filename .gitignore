@@ -14,3 +14,4 @@
 *_cache
 *.toc
 *_libs/
+**/*.quarto_ipynb

@@ -18,10 +18,10 @@ jobs:
     runs-on: ubuntu-22.04
 
     container:
-      image: gvegayon/appliedhpcr:latest
+      image: ghcr.io/gvegayon/appliedhpcr:latest
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
 
     - name: Render English version
       run: |
@@ -29,7 +29,7 @@ jobs:
 
     - name: Upload artifact
       # uses: actions/upload-pages-artifact@v3
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         path: _book
         name: gh-page-html
@@ -38,10 +38,10 @@ jobs:
     runs-on: ubuntu-22.04
 
     container:
-      image: gvegayon/appliedhpcr:latest
+      image: ghcr.io/gvegayon/appliedhpcr:latest
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
 
     - name: Render Spanish version
       run: |
@@ -49,7 +49,7 @@ jobs:
 
     - name: Upload artifact
       # uses: actions/upload-pages-artifact@v3
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         path: es/_book
         name: gh-page-html-es
@@ -58,14 +58,14 @@ jobs:
     runs-on: ubuntu-22.04
 
     container:
-      image: gvegayon/appliedhpcr:latest
+      image: ghcr.io/gvegayon/appliedhpcr:latest
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
 
     - name: Render English PDF
       run: |
-        quarto render --to pdf
+        quarto render --to orange-book-typst
 
     - name: Combine docs
       run: |
@@ -74,14 +74,14 @@ jobs:
 
     - name: Upload artifact
       # uses: actions/upload-pages-artifact@v3
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         path: _book
         name: gh-page-pdf
 
     - name: Upload LaTeX file
       if: always()
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         path: |
           _book/*.tex
@@ -94,14 +94,14 @@ jobs:
     runs-on: ubuntu-22.04
 
     container:
-      image: gvegayon/appliedhpcr:latest
+      image: ghcr.io/gvegayon/appliedhpcr:latest
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
 
     - name: Render Spanish PDF
       run: |
-        cd es && quarto render --to pdf
+        cd es && quarto render --to orange-book-typst
 
     - name: Combine docs
       run: |
@@ -110,14 +110,14 @@ jobs:
 
     - name: Upload artifact
       # uses: actions/upload-pages-artifact@v3
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         path: es/_book
         name: gh-page-pdf-es
 
     - name: Upload LaTeX file
       if: always()
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         path: |
           es/_book/*.tex
@@ -134,25 +134,25 @@ jobs:
     steps:
 
     - name: Download artifacts
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       with:
         name: gh-page-html
         path: _book
 
     - name: Download artifacts
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       with:
         name: gh-page-html-es
         path: _book/es
 
     - name: Download artifacts
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       with:
         name: gh-page-pdf
         path: pdf
 
     - name: Download artifacts
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       with:
         name: gh-page-pdf-es
         path: pdf-es
@@ -163,7 +163,7 @@ jobs:
         cp -r pdf-es/* _book/es
 
     - name: Upload artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       # uses: actions/upload-artifact@v3
       with:
         name: github-pages
@@ -176,14 +176,14 @@ jobs:
     if: ${{ github.event_name != 'pull_request' || github.event.pull_request.merged == true }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Clean existing files
         run: |
           rm -rf _book || echo "No _book directory to remove"
 
       - name: Download artifacts
-        uses: actions/download-artifact@v5.0.0
+        uses: actions/download-artifact@v8
         with:
           name: github-pages
           path: _book

@@ -1,6 +1,9 @@
 project:
   type: book
 
+extensions:
+  - quarto-ext/orange-book
+
 engine: knitr
 book:
   version: 2025.09.03
@@ -61,13 +64,4 @@ format:
     toc: true
     number-sections: false
     theme: cosmo
-  pdf:
-    geometry: 
-      - top=1in
-      - bottom=1in
-      - left=1in
-      - right=1in
-    fontsize: 12pt
-    fontenc: T1
-    documentclass: scrreprt
-    keep-tex: true
+  orange-book-typst: default

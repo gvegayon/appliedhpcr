@@ -1,6 +1,9 @@
 project:
   type: book
 
+extensions:
+  - quarto-ext/orange-book
+
 engine: knitr
 book:
   version: 2025.09.03
@@ -47,9 +50,11 @@ bibliography: references.bib
 
 format:
   html:
+    html-math-method: katex
+    toc: true
+    number-sections: false
     theme: cosmo
-  pdf:
-    documentclass: scrreprt
+  orange-book-typst: default
 
 
 

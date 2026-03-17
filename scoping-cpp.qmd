@@ -3,8 +3,8 @@
 This chapter will present a more advanced but important topic in C++: RAII and scoping. RAII stands for Resource Acquisition Is Initialization, and it is a programming idiom that ensures that resources are properly released when they are no longer needed. From the perspective of an R user, this provides a nice opportunity for scoping in C++. Let's take a look with an example:
 
 ```{Rcpp}
-#| label: scoping-cpp
-#| cache: true
+//| label: scoping-cpp
+//| cache: true
 class Agent {
 public:
     int fun();
@@ -65,11 +65,8 @@ test_scoping_cpp()
 
 It does! Let's split this into pieces. First of all, the `Agent` class does not have explicit access to the `Model` class; in no place of its definition has it as a member. The key lies in the `static` function `Model::get()`, which can be call by any function within the call stack without having to access to `Model`:
 
-```{mermaid}
-flowchart LR
-    A["Model::run()"] -->|calls| B["Agent::fun()"]
-    B -->|calls| C["Model::get()"]
-    C -->|calls| D["Model::get_x()"]
+```
+Model::run() -> Agent::fun() -> Model::get() -> Model::get_x()
 ```
 
 And the `Agent` function access the model through the static member. Furthermore, we can see that after we exited `Model::run()`, the variable `Model::instance_` is still not null:
@@ -81,8 +78,8 @@ is_it_on()
 Now, this is not entirely safe, as the variable `instance_` would still be available even after calling the `Model::run()` function. To address this, we can use an auxiliary class that resets the `instance_` to `nullptr`:
 
 ```{Rcpp}
-#| label: scoping-cpp-scope
-#| cache: true
+//| label: scoping-cpp-scope
+//| cache: true
 #include <Rcpp.h>
 class Agent {
 public:
