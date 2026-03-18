@@ -48,6 +48,7 @@ book:
         - rcpp-part1.qmd
         - rcpp-debugging.qmd
   appendices:
+    - scoping-cpp.qmd
     - misc.qmd
     - references.qmd
     - news.qmd
