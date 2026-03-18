@@ -422,9 +422,9 @@ window.Quarto = {
 <span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Unit: relative
-       expr     min       lq    mean  median       uq      max neval
-       loop 2007.24 1373.095 714.473 820.581 638.8998 536.4168   100
- vectorized    1.00    1.000   1.000   1.000   1.0000   1.0000   100</code></pre>
+       expr      min       lq     mean   median       uq      max neval
+       loop 1857.238 1182.702 675.4467 704.4848 580.6604 488.2907   100
+ vectorized    1.000    1.000   1.0000   1.0000   1.0000   1.0000   100</code></pre>
 </div>
 </div>
 <div class="callout callout-style-default callout-tip callout-titled">
@@ -477,9 +477,9 @@ Tip
 <span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Unit: relative
-                 expr      min       lq     mean   median       uq      max
-        fibonacci(10) 22.38909 22.59062 16.21477 21.87913 17.80682 6.310587
- fibonacci_cached(10)  1.00000  1.00000  1.00000  1.00000  1.00000 1.000000
+                 expr      min       lq     mean   median      uq      max
+        fibonacci(10) 22.41984 22.41088 18.28775 21.79601 22.0411 7.892801
+ fibonacci_cached(10)  1.00000  1.00000  1.00000  1.00000  1.0000 1.000000
  neval
     10
     10</code></pre>
@@ -660,9 +660,9 @@ Tip
 <span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Unit: relative
-   expr      min      lq    mean   median       uq      max neval
-     lm 6.288958 6.46122 7.40894 6.187294 6.301302 15.96317    10
- lm_fit 1.000000 1.00000 1.00000 1.000000 1.000000  1.00000    10</code></pre>
+   expr    min      lq     mean  median      uq      max neval
+     lm 6.5694 6.64497 7.334977 6.19666 6.23908 14.28761    10
+ lm_fit 1.0000 1.00000 1.000000 1.00000 1.00000  1.00000    10</code></pre>
 </div>
 </div>
 </section>
@@ -678,22 +678,22 @@ Tip
 <span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Checking the address of the objects</span></span>
 <span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lobstr)</span>
 <span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="fu">obj_addr</span>(X)</span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] "0x55e3cef9f040"</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] "0x55f33eccd900"</span></span>
 <span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a><span class="fu">obj_addr</span>(Y)</span>
-<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] "0x55e3cef9f040"</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] "0x55f33eccd900"</span></span>
 <span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a><span class="fu">obj_addr</span>(Z)</span>
-<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] "0x55e3cef9f040"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] "0x55f33eccd900"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Modifying <code>X</code> will trigger a copy operation, and the addresses of <code>Y</code> and <code>Z</code> will remain the same, while <code>X</code> will have a new address:</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Modifying X</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>X[<span class="dv">1</span>] <span class="ot">&lt;-</span> <span class="dv">100</span>  <span class="co"># This is when R makes a copy of X</span></span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="fu">obj_addr</span>(X)</span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] "0x55e3cf0501c0"</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] "0x55f33ed7ea80"</span></span>
 <span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="fu">obj_addr</span>(Y)</span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] "0x55e3cef9f040"</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] "0x55f33eccd900"</span></span>
 <span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="fu">obj_addr</span>(Z)</span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] "0x55e3cef9f040"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] "0x55f33eccd900"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 
 

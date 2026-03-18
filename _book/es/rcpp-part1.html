@@ -343,6 +343,11 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="./scoping-cpp.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Notas sobre alcance en C++</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="./misc.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Misceláneos</span></a>
   </div>
 </li>
@@ -542,9 +547,9 @@ window.Quarto = {
 <span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>microbenchmark<span class="sc">::</span><span class="fu">microbenchmark</span>(<span class="fu">add1R</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">1000</span>), <span class="fu">add1Cpp</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">1000</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Unit: microseconds
-            expr    min     lq     mean median      uq      max neval
-   add1R(1:1000) 57.146 57.788 79.95588 58.209 60.9885 2074.885   100
- add1Cpp(1:1000)  2.875  3.046 13.24220  3.231  6.0910  847.593   100</code></pre>
+            expr    min      lq     mean  median      uq      max neval
+   add1R(1:1000) 51.793 53.1340 76.87384 53.4380 55.8030 2228.526   100
+ add1Cpp(1:1000)  3.076  3.7715 12.28685  4.6125  7.4795  682.811   100</code></pre>
 </div>
 </div>
 </section>
@@ -689,9 +694,9 @@ F(n - 1) + F(n - 2), &amp; \mbox{de otro modo}
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>microbenchmark<span class="sc">::</span><span class="fu">microbenchmark</span>(<span class="fu">fibR</span>(<span class="dv">20</span>), <span class="fu">fibCpp</span>(<span class="dv">20</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Unit: microseconds
-       expr      min       lq       mean   median       uq      max neval
-   fibR(20) 6116.694 6175.864 6411.83703 6208.611 6321.041 8442.298   100
- fibCpp(20)   15.759   15.965   26.32479   16.886   17.949  891.244   100</code></pre>
+       expr      min       lq      mean   median        uq      max neval
+   fibR(20) 5609.450 5662.147 5987.1950 5688.247 5893.8660 8474.925   100
+ fibCpp(20)   14.133   14.378   27.7668   19.084   21.6515  931.549   100</code></pre>
 </div>
 </div>
 </section>
@@ -798,15 +803,15 @@ F(n - 1) + F(n - 2), &amp; \mbox{de otro modo}
 <div class="cell-output cell-output-stdout">
 <pre><code>Unit: milliseconds
                    expr       min        lq      mean    median        uq
-                dist(x) 1191.9249 1191.9249 1191.9249 1191.9249 1191.9249
- dist_par(x, cores = 1)  855.2674  855.2674  855.2674  855.2674  855.2674
- dist_par(x, cores = 2)  642.4268  642.4268  642.4268  642.4268  642.4268
- dist_par(x, cores = 4)  507.5070  507.5070  507.5070  507.5070  507.5070
+                dist(x) 1286.3352 1286.3352 1286.3352 1286.3352 1286.3352
+ dist_par(x, cores = 1) 1037.6427 1037.6427 1037.6427 1037.6427 1037.6427
+ dist_par(x, cores = 2)  783.6094  783.6094  783.6094  783.6094  783.6094
+ dist_par(x, cores = 4)  659.4235  659.4235  659.4235  659.4235  659.4235
        max neval
- 1191.9249     1
-  855.2674     1
-  642.4268     1
-  507.5070     1</code></pre>
+ 1286.3352     1
+ 1037.6427     1
+  783.6094     1
+  659.4235     1</code></pre>
 </div>
 </div>
 </section>
@@ -830,7 +835,7 @@ F(n - 1) + F(n - 2), &amp; \mbox{de otro modo}
 <span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>  x2 <span class="sc">%&lt;-%</span> {<span class="fu">Sys.sleep</span>(<span class="dv">3</span>);a<span class="sc">^</span><span class="dv">3</span>}</span>
 <span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>})</span>
 <span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a><span class="do">##    user  system elapsed </span></span>
-<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a><span class="do">##   0.026   0.018   0.044</span></span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a><span class="do">##   0.024   0.014   0.038</span></span>
 <span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Esperemos solo 5 segundos para asegurarnos de que todos los núcleos hayan regresado</span></span>
 <span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a><span class="fu">Sys.sleep</span>(<span class="dv">3</span>)</span>
 <span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a><span class="fu">system.time</span>({</span>
@@ -840,7 +845,7 @@ F(n - 1) + F(n - 2), &amp; \mbox{de otro modo}
 <span id="cb30-18"><a href="#cb30-18" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 4</span></span>
 <span id="cb30-19"><a href="#cb30-19" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 8</span></span>
 <span id="cb30-20"><a href="#cb30-20" aria-hidden="true" tabindex="-1"></a><span class="do">##    user  system elapsed </span></span>
-<span id="cb30-21"><a href="#cb30-21" aria-hidden="true" tabindex="-1"></a><span class="do">##   0.003   0.001   0.004</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb30-21"><a href="#cb30-21" aria-hidden="true" tabindex="-1"></a><span class="do">##   0.004   0.000   0.004</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="pista-bonus-1-simulando-pi" class="level3">
@@ -892,8 +897,8 @@ F(n - 1) + F(n - 2), &amp; \mbox{de otro modo}
 <div class="cell-output cell-output-stdout">
 <pre><code>Unit: milliseconds
      expr      min       lq     mean   median       uq      max neval
- parallel 283.7274 283.7274 283.7274 283.7274 283.7274 283.7274     1
-   serial 394.1194 394.1194 394.1194 394.1194 394.1194 394.1194     1</code></pre>
+ parallel 288.7032 288.7032 288.7032 288.7032 288.7032 288.7032     1
+   serial 388.2122 388.2122 388.2122 388.2122 388.2122 388.2122     1</code></pre>
 </div>
 </div>
 <hr>

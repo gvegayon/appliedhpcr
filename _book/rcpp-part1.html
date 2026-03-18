@@ -514,9 +514,9 @@ window.Quarto = {
 <span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>microbenchmark<span class="sc">::</span><span class="fu">microbenchmark</span>(<span class="fu">add1R</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">1000</span>), <span class="fu">add1Cpp</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">1000</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Unit: microseconds
-            expr    min      lq     mean  median     uq      max neval
-   add1R(1:1000) 58.059 59.9510 81.75653 60.5280 63.553 2053.789   100
- add1Cpp(1:1000)  2.875  3.1305 13.60388  3.4415  9.157  824.206   100</code></pre>
+            expr    min      lq     mean  median      uq      max neval
+   add1R(1:1000) 53.538 54.0845 73.86627 54.4650 56.7020 1852.690   100
+ add1Cpp(1:1000)  3.099  3.6205 12.63371  4.0955  7.2225  760.144   100</code></pre>
 </div>
 </div>
 </section>
@@ -661,9 +661,9 @@ F(n - 1) + F(n - 2), &amp; \mbox{otherwise}
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>microbenchmark<span class="sc">::</span><span class="fu">microbenchmark</span>(<span class="fu">fibR</span>(<span class="dv">20</span>), <span class="fu">fibCpp</span>(<span class="dv">20</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Unit: microseconds
-       expr      min        lq       mean    median       uq       max neval
-   fibR(20) 6006.139 6102.1675 6407.41585 6157.5710 6226.133 11053.098   100
- fibCpp(20)   15.750   16.0545   26.11323   16.7315   18.229   847.931   100</code></pre>
+       expr      min       lq       mean    median       uq      max neval
+   fibR(20) 5574.135 5621.247 5854.61080 5640.7665 5760.211 7629.978   100
+ fibCpp(20)   14.057   14.309   23.49719   14.8355   17.011  762.745   100</code></pre>
 </div>
 </div>
 </section>
@@ -769,16 +769,16 @@ F(n - 1) + F(n - 2), &amp; \mbox{otherwise}
 <span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Unit: milliseconds
-                   expr       min        lq      mean    median        uq
-                dist(x) 1167.5239 1167.5239 1167.5239 1167.5239 1167.5239
- dist_par(x, cores = 1)  841.2855  841.2855  841.2855  841.2855  841.2855
- dist_par(x, cores = 2)  635.8471  635.8471  635.8471  635.8471  635.8471
- dist_par(x, cores = 4)  506.2705  506.2705  506.2705  506.2705  506.2705
-       max neval
- 1167.5239     1
-  841.2855     1
-  635.8471     1
-  506.2705     1</code></pre>
+                   expr      min       lq     mean   median       uq      max
+                dist(x) 875.3918 875.3918 875.3918 875.3918 875.3918 875.3918
+ dist_par(x, cores = 1) 776.4571 776.4571 776.4571 776.4571 776.4571 776.4571
+ dist_par(x, cores = 2) 567.7773 567.7773 567.7773 567.7773 567.7773 567.7773
+ dist_par(x, cores = 4) 495.3618 495.3618 495.3618 495.3618 495.3618 495.3618
+ neval
+     1
+     1
+     1
+     1</code></pre>
 </div>
 </div>
 </section>
@@ -802,7 +802,7 @@ F(n - 1) + F(n - 2), &amp; \mbox{otherwise}
 <span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>  x2 <span class="sc">%&lt;-%</span> {<span class="fu">Sys.sleep</span>(<span class="dv">3</span>);a<span class="sc">^</span><span class="dv">3</span>}</span>
 <span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>})</span>
 <span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a><span class="do">##    user  system elapsed </span></span>
-<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a><span class="do">##   0.024   0.019   0.043</span></span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a><span class="do">##   0.024   0.014   0.038</span></span>
 <span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Let's just wait 5 seconds to make sure all the cores have returned</span></span>
 <span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a><span class="fu">Sys.sleep</span>(<span class="dv">3</span>)</span>
 <span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a><span class="fu">system.time</span>({</span>
@@ -812,7 +812,7 @@ F(n - 1) + F(n - 2), &amp; \mbox{otherwise}
 <span id="cb30-18"><a href="#cb30-18" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 4</span></span>
 <span id="cb30-19"><a href="#cb30-19" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 8</span></span>
 <span id="cb30-20"><a href="#cb30-20" aria-hidden="true" tabindex="-1"></a><span class="do">##    user  system elapsed </span></span>
-<span id="cb30-21"><a href="#cb30-21" aria-hidden="true" tabindex="-1"></a><span class="do">##   0.004   0.000   0.004</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb30-21"><a href="#cb30-21" aria-hidden="true" tabindex="-1"></a><span class="do">##   0.003   0.001   0.004</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="bonus-track-1-simulating-pi" class="level3">
@@ -864,8 +864,8 @@ F(n - 1) + F(n - 2), &amp; \mbox{otherwise}
 <div class="cell-output cell-output-stdout">
 <pre><code>Unit: milliseconds
      expr      min       lq     mean   median       uq      max neval
- parallel 281.8930 281.8930 281.8930 281.8930 281.8930 281.8930     1
-   serial 368.6936 368.6936 368.6936 368.6936 368.6936 368.6936     1</code></pre>
+ parallel 281.6204 281.6204 281.6204 281.6204 281.6204 281.6204     1
+   serial 376.4340 376.4340 376.4340 376.4340 376.4340 376.4340     1</code></pre>
 </div>
 </div>
 <hr>
