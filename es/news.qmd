@@ -7,6 +7,7 @@ date-modified: 2026-03-18
 
 ## Versión 2026.03.18
 
+- Se agregó un nuevo capítulo de apéndice, "Notas sobre alcance en C++", que cubre la gestión de alcance con RAII para punteros estáticos de modelo y advertencias sobre seguridad en hilos.
 - Se agregó un nuevo ejemplo en el capítulo del paquete `parallel` que muestra cómo reemplazar un for-loop con `parLapply()`, incluyendo una discusión sobre semillas por simulación como alternativa a `clusterSetRNGStream`.
 
 ## Versión 2025.09.03

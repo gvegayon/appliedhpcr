@@ -137,6 +137,8 @@ for (i in seq_len(nsims)) {
 head(result_serial, 2)
 ```
 
+El lector puede notar que pre-generamos un vector con semillas para cada simulación. Si bien esta no es una práctica común cuando en computación serial, como veremos, es una estrategia común para asegurar la reproducibilidad en computación paralela. 
+
 ### Versión paralela usando `parLapply`
 
 Podemos reemplazar el for-loop con `parLapply` siguiendo la plantilla que describimos anteriormente. Nótese la estrategia de semillas: en lugar de usar `clusterSetRNGStream`, estamos pre-generando un vector de semillas y estableciendo la semilla dentro de cada simulación. Esto hace que los resultados sean 100% reproducibles independientemente del número de núcleos/hilos utilizados.

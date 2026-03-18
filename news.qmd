@@ -7,6 +7,7 @@ date-modified: 2026-03-18
 
 ## Version 2026.03.18
 
+- Added a new appendix chapter, "Notes about scoping in C++", covering RAII-based scope management for static model pointers and thread-safety caveats.
 - Added a new example in the `parallel` package chapter showing how to replace a for-loop with `parLapply()`, including a discussion of per-simulation seeding as an alternative to `clusterSetRNGStream`.
 
 ## Version 2025.09.03

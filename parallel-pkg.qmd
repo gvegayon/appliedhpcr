@@ -131,6 +131,8 @@ for (i in seq_len(nsims)) {
 head(result_serial, 2)
 ```
 
+One thing to note here is that we are pre-generating a vector of seeds and setting the seed inside each simulation. While this is not a common practice for running things serially, as you will see, it is a common strategy for parallel computing that allows you to get the same results regardless of the number of cores/threads used.
+
 ### Parallel version using `parLapply`
 
 We can replace the for-loop with `parLapply` following the template we described earlier. Note the seeding strategy: instead of using `clusterSetRNGStream`, we are pre-generating a vector of seeds and setting the seed inside each simulation. This makes the results 100% reproducible regardless of the number of cores/threads used.
