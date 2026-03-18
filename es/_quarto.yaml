@@ -6,7 +6,7 @@ extensions:
 
 engine: knitr
 book:
-  version: 2025.09.03
+  version: 2026.03.18
   language: es
   google-analytics: "G-9D75EFV0TE"
   title: "HPC Aplicado con R"
@@ -48,6 +48,7 @@ book:
         - rcpp-part1.qmd
         - rcpp-debugging.qmd
   appendices:
+    - scoping-cpp.qmd
     - misc.qmd
     - references.qmd
     - news.qmd

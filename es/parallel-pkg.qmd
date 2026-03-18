@@ -110,6 +110,76 @@ Cuando llamas `parLapply` o `parSapply` (las versiones paralelas de `lapply` y `
 
 Lo que significa que la primera sesión de R obtendrá `r length(n_iterations[[1]])` trabajos, mientras que la segunda sesión de R obtendrá `r length(n_iterations[[2]])` trabajos. De esta manera, cada sesión de R generada (sesión hija) obtiene un número similar de iteraciones.
 
+## Ejemplo: Reemplazar un for-loop con `parLapply`
+
+Uno de los casos de uso más comunes de la computación paralela es reemplazar un for-loop con una versión paralela. En este ejemplo, llamaremos a `runif(10)` 1,000 veces, comparando un simple for-loop con `parLapply`.
+
+### Versión serial usando un for-loop
+
+La versión serial itera sobre las simulaciones usando un for-loop:
+
+```{r}
+#| label: forloop-serial
+nsims <- 1000
+
+# Primero, crear semillas para las ejecuciones individuales
+set.seed(1231)
+seeds <- sample.int(1e7, nsims)
+
+# Versión serial usando un for-loop
+result_serial <- vector("list", nsims)
+for (i in seq_len(nsims)) {
+  set.seed(seeds[i])
+  result_serial[[i]] <- runif(10)
+}
+
+# Viendo los primeros resultados
+head(result_serial, 2)
+```
+
+El lector puede notar que pre-generamos un vector con semillas para cada simulación. Si bien esta no es una práctica común en computación serial, como veremos, es una estrategia común para asegurar la reproducibilidad en computación paralela. 
+
+### Versión paralela usando `parLapply`
+
+Podemos reemplazar el for-loop con `parLapply` siguiendo la plantilla que describimos anteriormente. Nótese la estrategia de semillas: en lugar de usar `clusterSetRNGStream`, estamos pre-generando un vector de semillas y estableciendo la semilla dentro de cada simulación. Esto hace que los resultados sean 100% reproducibles independientemente del número de núcleos/hilos utilizados.
+
+```{r}
+#| label: forloop-parallel
+library(parallel)
+
+# 1. CREAR UN CLUSTER ----------------
+cl <- makePSOCKcluster(4L)
+
+# 2. PREPARAR EL CLUSTER -------------
+# Exportamos el vector de semillas a todos los workers
+clusterExport(cl, "seeds")
+
+# 3. HACER TU LLAMADA ----------------------
+result_parallel <- parLapply(cl, seq_len(nsims), \(i) {
+  # Esto lo hace 100% reproducible, independientemente del
+  # número de núcleos/hilos que estemos usando
+  set.seed(seeds[i])
+  runif(10)
+})
+
+# 4. DETENER EL CLUSTER
+stopCluster(cl)
+
+# Los resultados son idénticos
+all.equal(result_serial, result_parallel)
+```
+
+::: {.callout-note}
+## Semillas por simulación vs `clusterSetRNGStream`
+El enfoque utilizado aquí---generar semillas de antemano y llamar a `set.seed()` dentro de cada simulación---es una alternativa a `clusterSetRNGStream`. Las diferencias clave son:
+
+- **`clusterSetRNGStream`** inicializa el generador de números aleatorios L'Ecuyer-CMRG a través del cluster. Los flujos dependen del número de workers, por lo que los resultados pueden cambiar si cambias el número de núcleos.
+
+- **Semillas por simulación** (como se muestra aquí) asigna una semilla única a cada iteración. Dado que la semilla está ligada al índice de la simulación y no al worker, los resultados son idénticos sin importar cuántos núcleos se utilicen.
+
+Ambos enfoques son válidos. Las semillas por simulación son especialmente útiles cuando quieres resultados que sean invariantes al número de hilos, por ejemplo, al depurar o comparar ejecuciones entre diferentes máquinas. Nótese que combinar ambas estrategias es generalmente redundante: una vez que llamas a `set.seed()` dentro de cada iteración, el flujo RNG del worker inicializado por `clusterSetRNGStream` ya no afecta los números generados en esa iteración. Usar `clusterSetRNGStream` junto con semillas por simulación solo importaría si también dependes de RNG fuera de la llamada `set.seed()` por iteración, por ejemplo, en código de configuración ejecutado en los workers.
+:::
+
 ## Ejemplo: Ejecutar una regresión lineal a través de múltiples columnas
 
 En genómica, es común analizar datos genómicos a nivel de genes comparando niveles de expresión contra algún fenotipo/enfermedad. Un análisis simple consiste en ejecutar una regresión lineal a través de múltiples columnas (genes) de un data frame. El siguiente bloque de código genera algunos datos artificiales que podemos usar para este ejemplo:
