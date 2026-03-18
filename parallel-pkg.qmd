@@ -171,7 +171,7 @@ The approach used here---generating seeds beforehand and calling `set.seed()` in
 
 - **Per-simulation seeding** (as shown here) assigns a unique seed to each iteration. Because the seed is tied to the simulation index rather than the worker, the results are identical no matter how many cores are used.
 
-Both approaches are valid. Per-simulation seeding is especially useful when you want results that are invariant to the number of threads, for example, when debugging or comparing runs across different machines. The two strategies can also be used together: `clusterSetRNGStream` to initialize the workers and per-simulation seeding for strict reproducibility across different configurations.
+Both approaches are valid. Per-simulation seeding is especially useful when you want results that are invariant to the number of threads, for example, when debugging or comparing runs across different machines. Note that combining the two strategies is generally redundant: once you call `set.seed()` inside each iteration, the worker's RNG stream initialized by `clusterSetRNGStream` no longer affects the draws in that iteration. Using `clusterSetRNGStream` alongside per-simulation seeding would only matter if you also rely on RNG outside the per-iteration `set.seed()` call, for example, in setup code running on the workers.
 :::
 
 ## Example: Running a linear regression across multiple columns

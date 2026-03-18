@@ -137,7 +137,7 @@ for (i in seq_len(nsims)) {
 head(result_serial, 2)
 ```
 
-El lector puede notar que pre-generamos un vector con semillas para cada simulación. Si bien esta no es una práctica común cuando en computación serial, como veremos, es una estrategia común para asegurar la reproducibilidad en computación paralela. 
+El lector puede notar que pre-generamos un vector con semillas para cada simulación. Si bien esta no es una práctica común en computación serial, como veremos, es una estrategia común para asegurar la reproducibilidad en computación paralela. 
 
 ### Versión paralela usando `parLapply`
 
@@ -177,7 +177,7 @@ El enfoque utilizado aquí---generar semillas de antemano y llamar a `set.seed()
 
 - **Semillas por simulación** (como se muestra aquí) asigna una semilla única a cada iteración. Dado que la semilla está ligada al índice de la simulación y no al worker, los resultados son idénticos sin importar cuántos núcleos se utilicen.
 
-Ambos enfoques son válidos. Las semillas por simulación son especialmente útiles cuando quieres resultados que sean invariantes al número de hilos, por ejemplo, al depurar o comparar ejecuciones entre diferentes máquinas. Las dos estrategias también se pueden usar juntas: `clusterSetRNGStream` para inicializar los workers y semillas por simulación para reproducibilidad estricta entre diferentes configuraciones.
+Ambos enfoques son válidos. Las semillas por simulación son especialmente útiles cuando quieres resultados que sean invariantes al número de hilos, por ejemplo, al depurar o comparar ejecuciones entre diferentes máquinas. Nótese que combinar ambas estrategias es generalmente redundante: una vez que llamas a `set.seed()` dentro de cada iteración, el flujo RNG del worker inicializado por `clusterSetRNGStream` ya no afecta los números generados en esa iteración. Usar `clusterSetRNGStream` junto con semillas por simulación solo importaría si también dependes de RNG fuera de la llamada `set.seed()` por iteración, por ejemplo, en código de configuración ejecutado en los workers.
 :::
 
 ## Ejemplo: Ejecutar una regresión lineal a través de múltiples columnas
