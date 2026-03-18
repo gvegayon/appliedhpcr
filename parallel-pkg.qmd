@@ -104,6 +104,74 @@ When calling `parLapply` or `parSapply` (the parallel versions of `lapply` and `
 
 Which means that the first R session will get `r length(n_iterations[[1]])` jobs, wereas the second R session will get `r length(n_iterations[[2]])` jobs. This way, each spawned R session (child session) gets to do a similiar number of iterations.
 
+## Example: Replacing a for-loop with `parLapply`
+
+One of the most common use cases for parallel computing is replacing a for-loop with a parallel version. In this example, we will call `runif(10)` 1,000 times, comparing a simple for-loop with `parLapply`.
+
+### Serial version using a for-loop
+
+The serial version iterates over the simulations using a for-loop:
+
+```{r}
+#| label: forloop-serial
+nsims <- 1000
+
+# First, create seeds for individual runs
+set.seed(1231)
+seeds <- sample.int(1e7, nsims)
+
+# Serial version using a for-loop
+result_serial <- vector("list", nsims)
+for (i in seq_len(nsims)) {
+  set.seed(seeds[i])
+  result_serial[[i]] <- runif(10)
+}
+
+# Looking at the first few results
+head(result_serial, 2)
+```
+
+### Parallel version using `parLapply`
+
+We can replace the for-loop with `parLapply` following the template we described earlier. Note the seeding strategy: instead of using `clusterSetRNGStream`, we are pre-generating a vector of seeds and setting the seed inside each simulation. This makes the results 100% reproducible regardless of the number of cores/threads used.
+
+```{r}
+#| label: forloop-parallel
+library(parallel)
+
+# 1. CREATING A CLUSTER ----------------
+cl <- makePSOCKcluster(4L)
+
+# 2. PREPARING THE CLUSTER -------------
+# We export the seeds vector to all workers
+clusterExport(cl, "seeds")
+
+# 3. DO YOUR CALL ----------------------
+result_parallel <- parLapply(cl, seq_len(nsims), \(i) {
+  # This makes it 100% reproducible, regardless of the
+  # number of cores/threads we are using
+  set.seed(seeds[i])
+  runif(10)
+})
+
+# 4. STOP THE CLUSTER
+stopCluster(cl)
+
+# Results are identical
+all.equal(result_serial, result_parallel)
+```
+
+::: {.callout-note}
+## Per-simulation seeding vs `clusterSetRNGStream`
+The approach used here---generating seeds beforehand and calling `set.seed()` inside each simulation---is an alternative to `clusterSetRNGStream`. The key differences are:
+
+- **`clusterSetRNGStream`** initializes the L'Ecuyer-CMRG random number generator across the cluster. The streams depend on the number of workers, so results may change if you change the number of cores.
+
+- **Per-simulation seeding** (as shown here) assigns a unique seed to each iteration. Because the seed is tied to the simulation index rather than the worker, the results are identical no matter how many cores are used.
+
+Both approaches are valid. Per-simulation seeding is especially useful when you want results that are invariant to the number of threads, for example, when debugging or comparing runs across different machines. The two strategies can also be used together: `clusterSetRNGStream` to initialize the workers and per-simulation seeding for strict reproducibility across different configurations.
+:::
+
 ## Example: Running a linear regression across multiple columns
 
 In genomics, it is common to analyze genomic data at the gene level comparing expression levels against some phenotype/disease. A simple analysis consists of running a linear regression across multiple columns (genes) of a data frame. The following code-block generates some artificial data we can use for this example:
