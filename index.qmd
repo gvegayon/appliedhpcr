@@ -58,6 +58,7 @@ The cover image was created using ChatGPT/Dall-E version 5 using the prompt "I n
   "datePublished": "2023-04-09",
   "bookFormat": "https://schema.org/EBook",
   "isAccessibleForFree": true,
+  "license": "https://creativecommons.org/licenses/by/4.0/",
   "keywords": "R, high-performance computing, HPC, parallel computing, Slurm, Rcpp, C++, profiling, OpenMP",
   "codeRepository": "https://github.com/gvegayon/appliedhpcr",
   "workTranslation": {

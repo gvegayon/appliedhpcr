@@ -22,6 +22,11 @@ If you use this book, please cite it. GitHub's "Cite this repository" button (fr
 
 > Vega Yon, G. G. (2026). *Applied HPC with R: C++, Parallelism, and Performance*. https://book-hpc.ggvy.cl
 
+## License
+
+- The book's text and figures are licensed under [Creative Commons Attribution 4.0 International (CC BY 4.0)](LICENSE).
+- The code (R, C++, and Slurm scripts, and the code examples in the book) is licensed under the [MIT License](LICENSE-CODE).
+
 ## Building the Book
 
 To build the English version:

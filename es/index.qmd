@@ -60,6 +60,7 @@ La imagen de portada fue creada usando ChatGPT/Dall-E versión 5 usando el promp
   "datePublished": "2023-04-09",
   "bookFormat": "https://schema.org/EBook",
   "isAccessibleForFree": true,
+  "license": "https://creativecommons.org/licenses/by/4.0/",
   "keywords": "R, computación de alto rendimiento, HPC, computación paralela, Slurm, Rcpp, C++, perfilado, OpenMP",
   "codeRepository": "https://github.com/gvegayon/appliedhpcr",
   "translationOfWork": {

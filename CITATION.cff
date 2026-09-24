@@ -12,6 +12,7 @@ authors:
     given-names: George G.
 url: "https://book-hpc.ggvy.cl"
 repository-code: "https://github.com/gvegayon/appliedhpcr"
+license: CC-BY-4.0
 keywords:
   - R
   - high-performance computing

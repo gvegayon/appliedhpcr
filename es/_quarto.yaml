@@ -17,7 +17,7 @@ book:
   date: 2025-09-04
   cover-image: fig/cover.png
   cover-image-alt: 'Imagen de portada para HPC Aplicado con R'
-  page-footer: HPC Aplicado con R - [https://ggvy.cl](https://ggvy.cl){target="_blank"} - [English version](https://book-hpc.ggvy.cl/){hreflang="en"}
+  page-footer: HPC Aplicado con R - [https://ggvy.cl](https://ggvy.cl){target="_blank"} - [English version](https://book-hpc.ggvy.cl/){hreflang="en"} - Texto [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/deed.es){rel="license"}, código [MIT](https://github.com/gvegayon/appliedhpcr/blob/master/LICENSE-CODE)
   repo-url: https://github.com/gvegayon/appliedhpcr
   repo-branch: master
   repo-subdir: 'es'
