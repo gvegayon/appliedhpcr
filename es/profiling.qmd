@@ -2,6 +2,7 @@
 title: Perfilado de Código
 author: George G. Vega Yon, Ph.D.
 date: 2025-08-14
+description: "Cómo perfilar código R con profvis y Rprof para encontrar cuellos de botella y uso excesivo de memoria, con un flujo de optimización paso a paso y un ejercicio."
 ---
 
 ::: {.callout-warning}

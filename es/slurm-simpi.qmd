@@ -1,7 +1,8 @@
 ---
-title: SLURM con Simulación de π
+title: "Simulando π con Slurm"
 author: George G. Vega Yon, Ph.D.
 date: 2025-08-14
+description: "Cómo ejecutar R en un cluster con Slurm simulando pi: trabajos de un núcleo, multinúcleo, multinodo y arreglos de trabajos con sbatch y el paquete slurmR."
 ---
 
 ::: {.callout-warning}

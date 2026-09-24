@@ -1,4 +1,8 @@
-# Misc
+---
+description: "Practical tips for using R on HPC clusters: data management, Slurm options you should know, good practices, running R interactively, and common pitfalls."
+---
+
+# Tips for HPC clusters
 
 ```{r}
 #| label: setup

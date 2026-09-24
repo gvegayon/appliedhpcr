@@ -1,5 +1,6 @@
 ---
 title: "Referencias"
+description: "Bibliografía y obras citadas en HPC Aplicado con R."
 ---
 
 ::: {.callout-warning}

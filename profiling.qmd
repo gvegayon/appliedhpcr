@@ -1,7 +1,8 @@
 ---
-title: Profiling
+title: "Profiling R code"
 author: George G. Vega Yon, Ph.D.
 date: 2025-08-14
+description: "How to profile R code with profvis and Rprof to find bottlenecks and excessive memory use, with a step-by-step optimization workflow and an exercise."
 ---
 
 Code profiling is a fundamental tool for programmers. With profiling, it is possible to **identify potential bottle necks in your code**, as well as exessive memory usage. Some important things to consider when profiling your code:

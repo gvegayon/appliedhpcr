@@ -2,6 +2,7 @@
 title: Introducción a la Computación Paralela
 author: George G. Vega Yon, Ph.D.
 date: 2025-08-14
+description: "Una visión general de la computación de alto rendimiento (HPC) en R: big data, computación serial vs. paralela, CPUs vs. GPUs, vocabulario clave y cuándo conviene paralelizar."
 ---
 
 ::: {.callout-warning}

@@ -1,6 +1,7 @@
 ---
 date: 2025-09-03
 date-modified: 2026-03-18
+description: "Notas de versión y registro de cambios de HPC Aplicado con R, con lo que cambió en cada versión del libro."
 ---
 
 # Novedades

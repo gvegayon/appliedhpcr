@@ -2,6 +2,7 @@
 title: Escribiendo Código Eficiente
 author: George G. Vega Yon, Ph.D.
 date: 2025-08-14
+description: "Consejos para escribir código R eficiente: operaciones vectorizadas, caché de resultados (incluso en aplicaciones Shiny), evitar pasos innecesarios y reducir copias."
 ---
 
 ::: {.callout-warning}

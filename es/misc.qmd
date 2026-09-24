@@ -1,7 +1,8 @@
 ---
-title: Misceláneos
+title: "Consejos para clusters HPC"
 author: George G. Vega Yon, Ph.D.
 date: 2025-08-14
+description: "Consejos prácticos para usar R en clusters HPC: manejo de datos, opciones de Slurm que debes conocer, buenas prácticas, R interactivo y errores comunes."
 ---
 
 ::: {.callout-warning}

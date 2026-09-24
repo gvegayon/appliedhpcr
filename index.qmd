@@ -1,3 +1,12 @@
+---
+google-scholar: true
+citation:
+  type: book
+  title: "Applied HPC with R: C++, Parallelism, and Performance"
+  url: https://book-hpc.ggvy.cl
+description: "A free online book on speeding up R code: profiling, writing efficient R, parallel computing, running R on Slurm clusters, and C++ with Rcpp."
+---
+
 # Preface {.unnumbered}
 
 The R programming language [@R] can be fantastic for most daily tasks. But as soon as you start dealing with more complicated problems, you may face the for-loop bottle-neck. If you ever encounter such a problem, this book is for you. Applied HPC with R is a collection of talks and lectures I have given about speeding up your R code using parallel computing and other resources such as C++. The contents have been primarily developed during my time at USC and UofU.[^thanksto]
@@ -25,3 +34,37 @@ Starting in mid-2023, I have been using AI to help me write this book. Mainly, I
 ## About the cover
 
 The cover image was created using ChatGPT/Dall-E version 5 using the prompt "I need you to draw a picture representing high-performance computing using the R programming language (which is mostly used for statistics). The picture will go as the cover of the book "Applied HPC with R". It should feature components related to C++, parallel computing, and high-performance computing"
+
+```{=html}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Book",
+  "name": "Applied HPC with R",
+  "alternativeHeadline": "C++, Parallelism, and Performance",
+  "url": "https://book-hpc.ggvy.cl/",
+  "inLanguage": "en",
+  "description": "A free, open-source book on high-performance computing with R: profiling, writing efficient code, parallel computing with the parallel package, running R on Slurm clusters, and speeding up R with C++ and Rcpp.",
+  "author": {
+    "@type": "Person",
+    "name": "George G. Vega Yon",
+    "url": "https://ggvy.cl",
+    "sameAs": [
+      "https://github.com/gvegayon",
+      "https://x.com/gvegayon"
+    ]
+  },
+  "image": "https://book-hpc.ggvy.cl/fig/cover.png",
+  "datePublished": "2023-04-09",
+  "bookFormat": "https://schema.org/EBook",
+  "isAccessibleForFree": true,
+  "license": "https://creativecommons.org/licenses/by/4.0/",
+  "keywords": "R, high-performance computing, HPC, parallel computing, Slurm, Rcpp, C++, profiling, OpenMP",
+  "codeRepository": "https://github.com/gvegayon/appliedhpcr",
+  "workTranslation": {
+    "@type": "Book",
+    "url": "https://book-hpc.ggvy.cl/es/"
+  }
+}
+</script>
+```

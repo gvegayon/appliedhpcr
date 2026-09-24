@@ -1,3 +1,7 @@
+---
+description: "Bibliography and works cited in Applied HPC with R."
+---
+
 # References {.unnumbered}
 
 ::: {#refs}
