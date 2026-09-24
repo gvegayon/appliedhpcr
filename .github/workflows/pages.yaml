@@ -131,6 +131,12 @@ jobs:
 
     needs: [build-html, build-html-es, build-pdf, build-pdf-es]
 
+    # actions/pull-requests are needed to post the preview link on PRs
+    permissions:
+      contents: read
+      actions: read
+      pull-requests: write
+
     steps:
 
     - name: Download artifacts
@@ -169,6 +175,16 @@ jobs:
         name: github-pages
         path: |
           _book/*
+
+    # Post (or update) a comment on the PR linking to the rendered book.
+    # Skipped for PRs from forks, whose token cannot write comments.
+    - name: Post preview link to PR
+      if: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository }}
+      uses: CDCgov/cfa-actions/post-artifact@v1.7.0
+      with:
+        artifact-name: github-pages
+        gh-token: ${{ secrets.GITHUB_TOKEN }}
+        message: 'Thank you for your contribution @${{ github.actor }} :rocket:! The rendered book (HTML and PDF, English and Spanish) is ready for review :point_right: [Download here]({ artifact-url }) :point_left:'
 
   deploy:
     runs-on: ubuntu-latest
