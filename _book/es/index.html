@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
 
 <meta charset="utf-8">
 <meta name="generator" content="quarto-1.9.35">
@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="George G. Vega Yon">
-<meta name="dcterms.date" content="2025-09-04">
+<meta name="description" content="Un libro gratuito en línea para acelerar código R: perfilado, código eficiente, computación paralela, R en clusters con Slurm y C++ con Rcpp.">
 
 <title>HPC Aplicado con R</title>
 <style>
@@ -55,6 +55,7 @@ div.csl-indent {
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
 <link href="./profiling.html" rel="next">
+<link href="./fig/favicon.ico" rel="icon">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -64,7 +65,7 @@ div.csl-indent {
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-46f66b053e56abd73bb6e954d61a315b.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-b8db49fd727932e7c00c6ee89cd1476d.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-0b27fe24a26d8b41088cbf839d9dacb2.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -79,17 +80,17 @@ div.csl-indent {
   ],
   "show-item-context": false,
   "language": {
-    "search-no-results-text": "No results",
-    "search-matching-documents-text": "matching documents",
-    "search-copy-link-title": "Copy link to search",
-    "search-hide-matches-text": "Hide additional matches",
-    "search-more-match-text": "more match in this document",
-    "search-more-matches-text": "more matches in this document",
-    "search-clear-button-title": "Clear",
+    "search-no-results-text": "No se han encontrado resultados",
+    "search-matching-documents-text": "documentos encontrados",
+    "search-copy-link-title": "Copiar el enlace en la búsqueda",
+    "search-hide-matches-text": "Ocultar resultados adicionales",
+    "search-more-match-text": "resultado adicional en este documento",
+    "search-more-matches-text": "resultados adicionales en este documento",
+    "search-clear-button-title": "Borrar",
     "search-text-placeholder": "",
-    "search-detached-cancel-button-title": "Cancel",
-    "search-submit-button-title": "Submit",
-    "search-label": "Search"
+    "search-detached-cancel-button-title": "Cancelar",
+    "search-submit-button-title": "Enviar",
+    "search-label": "Buscar"
   }
 }</script>
 <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-9D75EFV0TE"></script>
@@ -103,14 +104,41 @@ gtag('config', 'G-9D75EFV0TE', { 'anonymize_ip': true});
 </script>
 
 
+<meta property="og:title" content="HPC Aplicado con R">
+<meta property="og:description" content="Un libro gratuito en línea para acelerar código R: perfilado, código eficiente, computación paralela, R en clusters con Slurm y C++ con Rcpp.">
+<meta property="og:image" content="https://book-hpc.ggvy.cl/es/fig/social-card.jpg">
+<meta property="og:site_name" content="HPC Aplicado con R">
+<meta property="og:image:alt" content="HPC Aplicado con R: C++, Paralelismo y Rendimiento">
 <meta name="twitter:title" content="HPC Aplicado con R">
-<meta name="twitter:description" content="Este libro es una colección de charlas y conferencias sobre cómo acelerar tu código R usando computación paralela y otros recursos como C++.">
-<meta name="twitter:image" content="https://book.ggvy.cl/../fig/cover.png">
+<meta name="twitter:description" content="Un libro gratuito en línea para acelerar código R: perfilado, código eficiente, computación paralela, R en clusters con Slurm y C++ con Rcpp.">
+<meta name="twitter:image" content="https://book-hpc.ggvy.cl/es/fig/social-card.jpg">
 <meta name="twitter:creator" content="@gvegayon">
-<meta name="twitter:image:alt" content="Imagen de portada para HPC Aplicado con R">
-<meta name="twitter:image-height" content="1536">
-<meta name="twitter:image-width" content="1024">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image:alt" content="HPC Aplicado con R: C++, Paralelismo y Rendimiento">
+<link rel="canonical" href="https://book-hpc.ggvy.cl/es/">
+<meta name="citation_title" content="HPC Aplicado con R: C++, Paralelismo y Rendimiento">
+<meta name="citation_author" content="George G. Vega Yon">
+<meta name="citation_publication_date" content="2025-09-04">
+<meta name="citation_cover_date" content="2025-09-04">
+<meta name="citation_year" content="2025">
+<meta name="citation_online_date" content="2025-09-04">
+<meta name="citation_fulltext_html_url" content="https://book-hpc.ggvy.cl/es">
+<meta name="citation_language" content="es">
+<meta name="citation_reference" content="citation_title=Literate programming;,citation_author=Donald E. Knuth;,citation_publication_date=1984-05;,citation_cover_date=1984-05;,citation_year=1984;,citation_fulltext_html_url=https://doi.org/10.1093/comjnl/27.2.97;,citation_issue=2;,citation_doi=10.1093/comjnl/27.2.97;,citation_issn=0010-4620;,citation_volume=27;,citation_journal_title=Comput. J.;,citation_publisher=Oxford University Press, Inc.;">
+<meta name="citation_reference" content="citation_title=R: A language and environment for statistical computing;,citation_author=R Core Team;,citation_publication_date=2023;,citation_cover_date=2023;,citation_year=2023;,citation_fulltext_html_url=https://www.R-project.org/;">
+<meta name="citation_reference" content="citation_title=slurmR: A lightweight wrapper for HPC with slurm;,citation_author=George Vega Yon;,citation_author=Paul Marjoram;,citation_publication_date=2019-07;,citation_cover_date=2019-07;,citation_year=2019;,citation_fulltext_html_url=https://doi.org/10.21105/joss.01493;,citation_issue=39;,citation_doi=10.21105/joss.01493;,citation_volume=4;,citation_journal_title=The Journal of Open Source Software;">
+<meta name="citation_reference" content="citation_title=slurmR: A Lightweight Wrapper for ’Slurm’;,citation_author=George Vega Yon;,citation_author=Paul Marjoram;,citation_publication_date=2022;,citation_cover_date=2022;,citation_year=2022;,citation_fulltext_html_url=https://github.com/USCbiostats/slurmR;">
+<meta name="citation_reference" content="citation_title=Parallel: A command for parallel computing;,citation_author=George G. Vega Vega Yon;,citation_author=Brian Quistorff;,citation_publication_date=2019-09;,citation_cover_date=2019-09;,citation_year=2019;,citation_issue=3;,citation_doi=10.1177/1536867X19874242;,citation_issn=1536-867X;,citation_volume=19;,citation_journal_title=The Stata Journal: Promoting communications on statistics and Stata;">
+<meta name="citation_reference" content="citation_title=Data.table: Extension of ‘data.frame‘;,citation_author=Matt Dowle;,citation_author=Arun Srinivasan;,citation_publication_date=2021;,citation_cover_date=2021;,citation_year=2021;,citation_fulltext_html_url=https://CRAN.R-project.org/package=data.table;">
+<meta name="citation_reference" content="citation_title=Documentation - distribution and binding;,citation_author=LUMI consortium;,citation_publication_date=2023;,citation_cover_date=2023;,citation_year=2023;,citation_fulltext_html_url=https://docs.lumi-supercomputer.eu/runjobs/scheduled-jobs/distribution-binding/;">
+<meta name="citation_reference" content="citation_title=SLURM: Simple linux utility for resource management;,citation_author=Andy B. Yoo;,citation_author=Morris A. Jette;,citation_author=Mark Grondona;,citation_editor=Dror Feitelson;,citation_editor=Larry Rudolph;,citation_editor=Uwe Schwiegelshohn;,citation_publication_date=2003;,citation_cover_date=2003;,citation_year=2003;,citation_fulltext_html_url=http://link.springer.com/10.1007/10968987_3;,citation_doi=10.1007/10968987_3;,citation_isbn=978-3-540-20405-3;,citation_volume=2862;,citation_inbook_title=Job scheduling strategies for parallel processing;,citation_series_title=Lecture notes in computer science;">
+<meta name="citation_reference" content="citation_title=Rcpp: Seamless R and C++ integration;,citation_author=Dirk Eddelbuettel;,citation_author=Romain François;,citation_publication_date=2011;,citation_cover_date=2011;,citation_year=2011;,citation_issue=8;,citation_doi=10.18637/jss.v040.i08;,citation_volume=40;,citation_journal_title=Journal of Statistical Software;">
+<meta name="citation_reference" content="citation_title=Seamless R and C++ integration with Rcpp;,citation_author=Dirk Eddelbuettel;,citation_publication_date=2013;,citation_cover_date=2013;,citation_year=2013;,citation_doi=10.1007/978-1-4614-6868-4;">
+<meta name="citation_reference" content="citation_title=Extending extitR with extitC++: A Brief Introduction to extitRcpp;,citation_author=Dirk Eddelbuettel;,citation_author=James Joseph Balamuta;,citation_publication_date=2018;,citation_cover_date=2018;,citation_year=2018;,citation_issue=1;,citation_doi=10.1080/00031305.2017.1375990;,citation_volume=72;,citation_journal_title=The American Statistician;">
+<meta name="citation_reference" content="citation_title=Welcome | Bioconductor Packages: Development, Maintenance, and Peer Review;,citation_abstract=This is a minimal example of using the bookdown package to write a book. The output format for this example is bookdown::gitbook.;,citation_author=Kevin Rue-Albrecht;,citation_author=Daniela Cassol;,citation_author=Johannes Rainer;,citation_author=Lori Shepherd;,citation_language=en-US;">
+<link rel="alternate" hreflang="en" href="https://book-hpc.ggvy.cl/">
+<link rel="alternate" hreflang="es" href="https://book-hpc.ggvy.cl/es/">
+<link rel="alternate" hreflang="x-default" href="https://book-hpc.ggvy.cl/">
 </head>
 
 <body class="nav-sidebar floating nav-fixed quarto-light">
@@ -125,10 +153,10 @@ gtag('config', 'G-9D75EFV0TE', { 'anonymize_ip': true});
     </a>
   </div>
         <div class="quarto-navbar-tools tools-wide tools-end">
-    <a href="https://github.com/gvegayon/appliedhpcr/tree/master/es/" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
-    <a href="./HPC-Aplicado-con-R.pdf" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
+    <a href="https://github.com/gvegayon/appliedhpcr/tree/master/es/" title="Ejecutar el código" class="quarto-navigation-tool px-1" aria-label="Ejecutar el código"><i class="bi bi-github"></i></a>
+    <a href="./HPC-Aplicado-con-R.pdf" title="Descargar PDF" class="quarto-navigation-tool px-1" aria-label="Descargar PDF"><i class="bi bi-file-pdf"></i></a>
     <div class="dropdown">
-      <a href="" title="Share" id="quarto-navigation-tool-dropdown-0" class="quarto-navigation-tool dropdown-toggle px-1" data-bs-toggle="dropdown" aria-expanded="false" role="link" aria-label="Share"><i class="bi bi-share"></i></a>
+      <a href="" title="Compartir" id="quarto-navigation-tool-dropdown-0" class="quarto-navigation-tool dropdown-toggle px-1" data-bs-toggle="dropdown" aria-expanded="false" role="link" aria-label="Compartir"><i class="bi bi-share"></i></a>
       <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="quarto-navigation-tool-dropdown-0">
           <li>
             <a class="dropdown-item quarto-navbar-tools-item" href="https://twitter.com/intent/tweet?url=|url|">
@@ -145,16 +173,16 @@ gtag('config', 'G-9D75EFV0TE', { 'anonymize_ip': true});
       </ul>
     </div>
 </div>
-          <div id="quarto-search" class="" title="Search"></div>
+          <div id="quarto-search" class="" title="Buscar"></div>
       </div> <!-- /container-fluid -->
     </nav>
   <nav class="quarto-secondary-nav">
     <div class="container-fluid d-flex">
-      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
         <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./index.html">Prefacio</a></li></ol></nav>
-        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
   </nav>
@@ -175,7 +203,7 @@ gtag('config', 'G-9D75EFV0TE', { 'anonymize_ip': true});
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
  <span class="menu-text">Fundamentos</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Alternar sección">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -196,7 +224,7 @@ gtag('config', 'G-9D75EFV0TE', { 'anonymize_ip': true});
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
  <span class="menu-text">Computación paralela</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Alternar sección">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -217,7 +245,7 @@ gtag('config', 'G-9D75EFV0TE', { 'anonymize_ip': true});
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
  <span class="menu-text">Trabajando con un Cluster</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Alternar sección">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -229,7 +257,7 @@ gtag('config', 'G-9D75EFV0TE', { 'anonymize_ip': true});
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./slurm-simpi.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">SLURM con Simulación de π</span></a>
+  <a href="./slurm-simpi.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Simulando π con Slurm</span></a>
   </div>
 </li>
       </ul>
@@ -238,14 +266,14 @@ gtag('config', 'G-9D75EFV0TE', { 'anonymize_ip': true});
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
  <span class="menu-text">Usando C++</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Alternar sección">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
       <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./rcpp-part1.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Rcpp</span></a>
+  <a href="./rcpp-part1.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Acelerando R con Rcpp</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -258,8 +286,8 @@ gtag('config', 'G-9D75EFV0TE', { 'anonymize_ip': true});
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
- <span class="menu-text">Appendices</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
+ <span class="menu-text">Apéndices</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Alternar sección">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -271,7 +299,7 @@ gtag('config', 'G-9D75EFV0TE', { 'anonymize_ip': true});
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./misc.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Misceláneos</span></a>
+  <a href="./misc.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Consejos para clusters HPC</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -293,7 +321,7 @@ gtag('config', 'G-9D75EFV0TE', { 'anonymize_ip': true});
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">Table of contents</h2>
+    <h2 id="toc-title">Tabla de contenidos</h2>
    
   <ul>
   <li><a href="#prefacio" id="toc-prefacio" class="nav-link active" data-scroll-target="#prefacio">Prefacio</a>
@@ -304,7 +332,7 @@ gtag('config', 'G-9D75EFV0TE', { 'anonymize_ip': true});
   <li><a href="#sobre-la-portada" id="toc-sobre-la-portada" class="nav-link" data-scroll-target="#sobre-la-portada">Sobre la portada</a></li>
   </ul></li>
   </ul>
-<div class="toc-actions"><ul><li><a href="https://github.com/gvegayon/appliedhpcr/edit/master/es/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/gvegayon/appliedhpcr/blob/master/es/index.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li><li><a href="https://github.com/gvegayon/appliedhpcr/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+<div class="toc-actions"><ul><li><a href="https://github.com/gvegayon/appliedhpcr/edit/master/es/index.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/gvegayon/appliedhpcr/blob/master/es/index.qmd" class="toc-action"><i class="bi empty"></i>Ver el código</a></li><li><a href="https://github.com/gvegayon/appliedhpcr/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -312,23 +340,29 @@ gtag('config', 'G-9D75EFV0TE', { 'anonymize_ip': true});
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
 <h1 class="title">HPC Aplicado con R</h1>
+<p class="subtitle lead">C++, Paralelismo y Rendimiento</p>
 </div>
 
+<div>
+  <div class="description">
+    Un libro gratuito en línea para acelerar código R: perfilado, código eficiente, computación paralela, R en clusters con Slurm y C++ con Rcpp.
+  </div>
+</div>
 
 
 <div class="quarto-title-meta">
 
     <div>
-    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-heading">Autor/a</div>
     <div class="quarto-title-meta-contents">
              <p>George G. Vega Yon </p>
           </div>
   </div>
     
     <div>
-    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-heading">Fecha de publicación</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">September 4, 2025</p>
+      <p class="date">4 de septiembre de 2025</p>
     </div>
   </div>
   
@@ -342,7 +376,7 @@ gtag('config', 'G-9D75EFV0TE', { 'anonymize_ip': true});
 
 
 <section id="prefacio" class="level1 unnumbered">
-<h1 class="unnumbered">Prefacio</h1><p><img src="../fig/cover.png" title="HPC Aplicado con R" class="quarto-cover-image nolightbox img-fluid" alt="Imagen de portada para HPC Aplicado con R"></p>
+<h1 class="unnumbered">Prefacio</h1><p><img src="fig/cover.png" title="HPC Aplicado con R" class="quarto-cover-image nolightbox img-fluid" alt="Imagen de portada para HPC Aplicado con R"></p>
 <p>El lenguaje de programación R <span class="citation" data-cites="R">(<a href="references.html#ref-R" role="doc-biblioref">R Core Team 2023</a>)</span> puede ser fantástico para la mayoría de las tareas diarias. Pero tan pronto como comienzas a lidiar con problemas más complicados, puedes enfrentarte al cuello de botella del bucle for. Si alguna vez te encuentras con tal problema, este libro es para ti. HPC Aplicado con R es una colección de charlas y conferencias que he dado sobre cómo acelerar tu código R usando computación paralela y otros recursos como C++. Los contenidos se han desarrollado principalmente durante mi tiempo en USC y UofU.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
 <p>El libro fue escrito usando <a href="https://quarto.org" target="_blank">quarto</a> y está alojado en <a href="https://github.com/gvegayon/appliedhpcr" target="_blank">GitHub</a>, donde puedes acceder a todo el código fuente.</p>
 <section id="sobre-el-autor" class="level2">
@@ -363,6 +397,37 @@ gtag('config', 'G-9D75EFV0TE', { 'anonymize_ip': true});
 <section id="sobre-la-portada" class="level2">
 <h2 class="anchored" data-anchor-id="sobre-la-portada">Sobre la portada</h2>
 <p>La imagen de portada fue creada usando ChatGPT/Dall-E versión 5 usando el prompt “Necesito que dibujes una imagen que represente computación de alto rendimiento usando el lenguaje de programación R (que se usa principalmente para estadística). La imagen irá como portada del libro”Applied HPC with R”. Debería incluir componentes relacionados con C++, computación paralela, y computación de alto rendimiento”</p>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Book",
+  "name": "HPC Aplicado con R",
+  "alternativeHeadline": "C++, Paralelismo y Rendimiento",
+  "url": "https://book-hpc.ggvy.cl/es/",
+  "inLanguage": "es",
+  "description": "Un libro gratuito y de código abierto sobre computación de alto rendimiento con R: perfilado, código eficiente, computación paralela con el paquete parallel, R en clusters con Slurm y cómo acelerar R con C++ y Rcpp.",
+  "author": {
+    "@type": "Person",
+    "name": "George G. Vega Yon",
+    "url": "https://ggvy.cl",
+    "sameAs": [
+      "https://github.com/gvegayon",
+      "https://x.com/gvegayon"
+    ]
+  },
+  "image": "https://book-hpc.ggvy.cl/es/fig/cover.png",
+  "datePublished": "2023-04-09",
+  "bookFormat": "https://schema.org/EBook",
+  "isAccessibleForFree": true,
+  "license": "https://creativecommons.org/licenses/by/4.0/",
+  "keywords": "R, computación de alto rendimiento, HPC, computación paralela, Slurm, Rcpp, C++, perfilado, OpenMP",
+  "codeRepository": "https://github.com/gvegayon/appliedhpcr",
+  "translationOfWork": {
+    "@type": "Book",
+    "url": "https://book-hpc.ggvy.cl/"
+  }
+}
+</script>
 
 
 <div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
@@ -405,12 +470,12 @@ R Core Team. 2023. <em>R: A Language and Environment for Statistical Computing</
       // flash "checked"
       button.classList.add('code-copy-button-checked');
       var currentTitle = button.getAttribute("title");
-      button.setAttribute("title", "Copied!");
+      button.setAttribute("title", "Copiado");
       let tooltip;
       if (window.bootstrap) {
         button.setAttribute("data-bs-toggle", "tooltip");
         button.setAttribute("data-bs-placement", "left");
-        button.setAttribute("data-bs-title", "Copied!");
+        button.setAttribute("data-bs-title", "Copiado");
         tooltip = new bootstrap.Tooltip(button, 
           { trigger: "manual", 
             customClass: "code-copy-button-tooltip",
@@ -453,7 +518,7 @@ R Core Team. 2023. <em>R: A Language and Environment for Statistical Computing</
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp("https:\/\/book\.ggvy\.cl");
+        var filterRegex = new RegExp("https:\/\/book-hpc\.ggvy\.cl\/es");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }
@@ -796,8 +861,8 @@ R Core Team. 2023. <em>R: A Language and Environment for Statistical Computing</
       &nbsp;
     </div>   
     <div class="nav-footer-center">
-<p>HPC Aplicado con R - <a href="https://ggvy.cl" target="_blank">https://ggvy.cl</a></p>
-<div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/gvegayon/appliedhpcr/edit/master/es/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/gvegayon/appliedhpcr/blob/master/es/index.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li><li><a href="https://github.com/gvegayon/appliedhpcr/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
+<p>HPC Aplicado con R - <a href="https://ggvy.cl" target="_blank">https://ggvy.cl</a> - <a href="https://book-hpc.ggvy.cl/" hreflang="en">English version</a> - Texto <a href="https://creativecommons.org/licenses/by/4.0/deed.es" rel="license">CC BY 4.0</a>, código <a href="https://github.com/gvegayon/appliedhpcr/blob/master/LICENSE-CODE">MIT</a></p>
+<div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/gvegayon/appliedhpcr/edit/master/es/index.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/gvegayon/appliedhpcr/blob/master/es/index.qmd" class="toc-action"><i class="bi empty"></i>Ver el código</a></li><li><a href="https://github.com/gvegayon/appliedhpcr/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div></div>
     <div class="nav-footer-right">
       &nbsp;
     </div>

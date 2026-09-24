@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
 
 <meta charset="utf-8">
 <meta name="generator" content="quarto-1.9.35">
@@ -7,9 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="George G. Vega Yon, Ph.D.">
-<meta name="dcterms.date" content="2025-08-14">
+<meta name="description" content="Cómo ejecutar R en un cluster con Slurm simulando pi: trabajos de un núcleo, multinúcleo, multinodo y arreglos de trabajos con sbatch y el paquete slurmR.">
 
-<title>SLURM con Simulación de π – HPC Aplicado con R</title>
+<title>Simulando π con Slurm – HPC Aplicado con R</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -91,6 +91,7 @@ div.csl-indent {
 <meta name="quarto:offset" content="./">
 <link href="./rcpp-part1.html" rel="next">
 <link href="./slurm-fundamentals.html" rel="prev">
+<link href="./fig/favicon.ico" rel="icon">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -100,7 +101,7 @@ div.csl-indent {
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-46f66b053e56abd73bb6e954d61a315b.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-b8db49fd727932e7c00c6ee89cd1476d.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-0b27fe24a26d8b41088cbf839d9dacb2.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -115,17 +116,17 @@ div.csl-indent {
   ],
   "show-item-context": false,
   "language": {
-    "search-no-results-text": "No results",
-    "search-matching-documents-text": "matching documents",
-    "search-copy-link-title": "Copy link to search",
-    "search-hide-matches-text": "Hide additional matches",
-    "search-more-match-text": "more match in this document",
-    "search-more-matches-text": "more matches in this document",
-    "search-clear-button-title": "Clear",
+    "search-no-results-text": "No se han encontrado resultados",
+    "search-matching-documents-text": "documentos encontrados",
+    "search-copy-link-title": "Copiar el enlace en la búsqueda",
+    "search-hide-matches-text": "Ocultar resultados adicionales",
+    "search-more-match-text": "resultado adicional en este documento",
+    "search-more-matches-text": "resultados adicionales en este documento",
+    "search-clear-button-title": "Borrar",
     "search-text-placeholder": "",
-    "search-detached-cancel-button-title": "Cancel",
-    "search-submit-button-title": "Submit",
-    "search-label": "Search"
+    "search-detached-cancel-button-title": "Cancelar",
+    "search-submit-button-title": "Enviar",
+    "search-label": "Buscar"
   }
 }</script>
 <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-9D75EFV0TE"></script>
@@ -182,13 +183,21 @@ window.Quarto = {
 };
 </script>
 
-<meta name="twitter:title" content="SLURM con Simulación de π – HPC Aplicado con R">
-<meta name="twitter:description" content="Este libro es una colección de charlas y conferencias sobre cómo acelerar tu código R usando computación paralela y otros recursos como C++.">
-<meta name="twitter:image" content="https://book.ggvy.cl/slurm-simpi_files/figure-html/simplot-1.png">
+<meta property="og:title" content="Simulando π con Slurm – HPC Aplicado con R">
+<meta property="og:description" content="Cómo ejecutar R en un cluster con Slurm simulando pi: trabajos de un núcleo, multinúcleo, multinodo y arreglos de trabajos con sbatch y el paquete slurmR.">
+<meta property="og:image" content="https://book-hpc.ggvy.cl/es/fig/social-card.jpg">
+<meta property="og:site_name" content="HPC Aplicado con R">
+<meta property="og:image:alt" content="HPC Aplicado con R: C++, Paralelismo y Rendimiento">
+<meta name="twitter:title" content="Simulando π con Slurm – HPC Aplicado con R">
+<meta name="twitter:description" content="Cómo ejecutar R en un cluster con Slurm simulando pi: trabajos de un núcleo, multinúcleo, multinodo y arreglos de trabajos con sbatch y el paquete slurmR.">
+<meta name="twitter:image" content="https://book-hpc.ggvy.cl/es/fig/social-card.jpg">
 <meta name="twitter:creator" content="@gvegayon">
-<meta name="twitter:image-height" content="1056">
-<meta name="twitter:image-width" content="960">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image:alt" content="HPC Aplicado con R: C++, Paralelismo y Rendimiento">
+<link rel="canonical" href="https://book-hpc.ggvy.cl/es/slurm-simpi.html">
+<link rel="alternate" hreflang="en" href="https://book-hpc.ggvy.cl/slurm-simpi.html">
+<link rel="alternate" hreflang="es" href="https://book-hpc.ggvy.cl/es/slurm-simpi.html">
+<link rel="alternate" hreflang="x-default" href="https://book-hpc.ggvy.cl/slurm-simpi.html">
 </head>
 
 <body class="nav-sidebar floating nav-fixed quarto-light">
@@ -203,10 +212,10 @@ window.Quarto = {
     </a>
   </div>
         <div class="quarto-navbar-tools tools-wide tools-end">
-    <a href="https://github.com/gvegayon/appliedhpcr/tree/master/es/" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
-    <a href="./HPC-Aplicado-con-R.pdf" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
+    <a href="https://github.com/gvegayon/appliedhpcr/tree/master/es/" title="Ejecutar el código" class="quarto-navigation-tool px-1" aria-label="Ejecutar el código"><i class="bi bi-github"></i></a>
+    <a href="./HPC-Aplicado-con-R.pdf" title="Descargar PDF" class="quarto-navigation-tool px-1" aria-label="Descargar PDF"><i class="bi bi-file-pdf"></i></a>
     <div class="dropdown">
-      <a href="" title="Share" id="quarto-navigation-tool-dropdown-0" class="quarto-navigation-tool dropdown-toggle px-1" data-bs-toggle="dropdown" aria-expanded="false" role="link" aria-label="Share"><i class="bi bi-share"></i></a>
+      <a href="" title="Compartir" id="quarto-navigation-tool-dropdown-0" class="quarto-navigation-tool dropdown-toggle px-1" data-bs-toggle="dropdown" aria-expanded="false" role="link" aria-label="Compartir"><i class="bi bi-share"></i></a>
       <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="quarto-navigation-tool-dropdown-0">
           <li>
             <a class="dropdown-item quarto-navbar-tools-item" href="https://twitter.com/intent/tweet?url=|url|">
@@ -223,16 +232,16 @@ window.Quarto = {
       </ul>
     </div>
 </div>
-          <div id="quarto-search" class="" title="Search"></div>
+          <div id="quarto-search" class="" title="Buscar"></div>
       </div> <!-- /container-fluid -->
     </nav>
   <nav class="quarto-secondary-nav">
     <div class="container-fluid d-flex">
-      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./slurm-fundamentals.html">Trabajando con un Cluster</a></li><li class="breadcrumb-item"><a href="./slurm-simpi.html"><span class="chapter-title">SLURM con Simulación de π</span></a></li></ol></nav>
-        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./slurm-fundamentals.html">Trabajando con un Cluster</a></li><li class="breadcrumb-item"><a href="./slurm-simpi.html"><span class="chapter-title">Simulando π con Slurm</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
   </nav>
@@ -253,7 +262,7 @@ window.Quarto = {
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
  <span class="menu-text">Fundamentos</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Alternar sección">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -274,7 +283,7 @@ window.Quarto = {
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
  <span class="menu-text">Computación paralela</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Alternar sección">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -295,7 +304,7 @@ window.Quarto = {
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
  <span class="menu-text">Trabajando con un Cluster</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Alternar sección">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -307,7 +316,7 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./slurm-simpi.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">SLURM con Simulación de π</span></a>
+  <a href="./slurm-simpi.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">Simulando π con Slurm</span></a>
   </div>
 </li>
       </ul>
@@ -316,14 +325,14 @@ window.Quarto = {
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
  <span class="menu-text">Usando C++</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Alternar sección">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
       <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./rcpp-part1.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Rcpp</span></a>
+  <a href="./rcpp-part1.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Acelerando R con Rcpp</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -336,8 +345,8 @@ window.Quarto = {
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
- <span class="menu-text">Appendices</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
+ <span class="menu-text">Apéndices</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Alternar sección">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -349,7 +358,7 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./misc.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Misceláneos</span></a>
+  <a href="./misc.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Consejos para clusters HPC</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -371,7 +380,7 @@ window.Quarto = {
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">Table of contents</h2>
+    <h2 id="toc-title">Tabla de contenidos</h2>
    
   <ul>
   <li><a href="#simulando-pi" id="toc-simulando-pi" class="nav-link active" data-scroll-target="#simulando-pi">Simulando <span class="math inline">pi</span></a>
@@ -389,14 +398,14 @@ window.Quarto = {
   </ul></li>
   </ul></li>
   </ul>
-<div class="toc-actions"><ul><li><a href="https://github.com/gvegayon/appliedhpcr/edit/master/es/slurm-simpi.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/gvegayon/appliedhpcr/blob/master/es/slurm-simpi.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li><li><a href="https://github.com/gvegayon/appliedhpcr/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+<div class="toc-actions"><ul><li><a href="https://github.com/gvegayon/appliedhpcr/edit/master/es/slurm-simpi.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/gvegayon/appliedhpcr/blob/master/es/slurm-simpi.qmd" class="toc-action"><i class="bi empty"></i>Ver el código</a></li><li><a href="https://github.com/gvegayon/appliedhpcr/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./slurm-fundamentals.html">Trabajando con un Cluster</a></li><li class="breadcrumb-item"><a href="./slurm-simpi.html"><span class="chapter-title">SLURM con Simulación de π</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./slurm-fundamentals.html">Trabajando con un Cluster</a></li><li class="breadcrumb-item"><a href="./slurm-simpi.html"><span class="chapter-title">Simulando π con Slurm</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-title">SLURM con Simulación de π</span></h1>
+<h1 class="title"><span class="chapter-title">Simulando π con Slurm</span></h1>
 </div>
 
 
@@ -404,16 +413,16 @@ window.Quarto = {
 <div class="quarto-title-meta">
 
     <div>
-    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-heading">Autor/a</div>
     <div class="quarto-title-meta-contents">
              <p>George G. Vega Yon, Ph.D. </p>
           </div>
   </div>
     
     <div>
-    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-heading">Fecha de publicación</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">August 14, 2025</p>
+      <p class="date">14 de agosto de 2025</p>
     </div>
   </div>
   
@@ -431,7 +440,7 @@ window.Quarto = {
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Warning</span>Nota de Traducción
+<span class="screen-reader-only">Advertencia</span>Nota de Traducción
 </div>
 </div>
 <div class="callout-body-container callout-body">
@@ -466,7 +475,7 @@ window.Quarto = {
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --time=00:10:00</span></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="ex">module</span> load R/4.2.2</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> <span class="at">--vanilla</span> 01-sapply.R</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> <span class="at">--vanilla</span> 01-sapply.R</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Este archivo tiene tres componentes:</p>
 <ul>
 <li><p><strong>Las banderas de Slurm <code>#SBATCH</code></strong>: Estas entradas parecidas a comentarios pasan opciones de Slurm al trabajo. En este ejemplo, solo especificamos las opciones <code>job-name</code> y <code>time</code>. Otras opciones comunes incluirían <code>account</code> y <code>partition</code>.</p></li>
@@ -474,7 +483,7 @@ window.Quarto = {
 <li><p><strong>Ejecutando el script R</strong>: Después de especificar opciones de Slurm y cargar lo que necesita ser cargado antes de ejecutar R, estamos usando <code>RScript</code> para ejecutar el programa que escribimos.</p></li>
 </ul>
 <p>El envío se hace entonces como sigue:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">sbatch</span> 01-sapply.slurm</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">sbatch</span> 01-sapply.slurm</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Los siguientes ejemplos tienen dos archivos, un script bash y un script R, para ser llamado por Slurm.</p>
 <section id="caso-1-trabajo-único-trabajo-de-un-solo-núcleo" class="level3">
 <h3 class="anchored" data-anchor-id="caso-1-trabajo-único-trabajo-de-un-solo-núcleo">Caso 1: Trabajo único, trabajo de un solo núcleo</h3>
@@ -498,14 +507,14 @@ window.Quarto = {
 <span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">"Pi: "</span>, <span class="fu">mean</span>(ans))</span>
 <span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(ans, <span class="st">"01-sapply.rds"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(ans, <span class="st">"01-sapply.rds"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Los contenidos del archivo bash (<a href="01-sapply.slurm" target="_blank">01-sapply.slurm</a>) son:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/sh</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --job-name=sapply</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --time=00:10:00</span></span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>module load R<span class="sc">/</span><span class="dv">4</span>.<span class="fl">2.2</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>Rscript <span class="sc">--</span>vanilla <span class="dv">01</span><span class="sc">-</span>sapply.R</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>Rscript <span class="sc">--</span>vanilla <span class="dv">01</span><span class="sc">-</span>sapply.R</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="caso-2-trabajo-único-trabajo-multinúcleo" class="level3">
 <h3 class="anchored" data-anchor-id="caso-2-trabajo-único-trabajo-multinúcleo">Caso 2: Trabajo único, trabajo multinúcleo</h3>
@@ -531,7 +540,7 @@ window.Quarto = {
 <span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">"Pi: "</span>, <span class="fu">mean</span>(ans))</span>
 <span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(ans, <span class="st">"02-mclpply.rds"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(ans, <span class="st">"02-mclpply.rds"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Archivo bash (<a href="02-mclapply.slurm" target="_blank">02-mclapply.slurm</a>):</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/sh</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --job-name=mclapply</span></span>
@@ -539,12 +548,12 @@ window.Quarto = {
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --cpus-per-task=4</span></span>
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="ex">module</span> load R/4.2.2</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> <span class="at">--vanilla</span> 02-mclapply.R</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> <span class="at">--vanilla</span> 02-mclapply.R</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 </section>
 <section id="trabajos-con-el-paquete-slurmr" class="level2">
 <h2 class="anchored" data-anchor-id="trabajos-con-el-paquete-slurmr">Trabajos con el paquete slurmR</h2>
-<p>El paquete R <code>slurmR</code> <span class="citation" data-cites="slurmRpaper slurmRpkg">(<a href="references.html#ref-slurmRpaper" role="doc-biblioref">Vega Yon and Marjoram 2019</a>, <a href="references.html#ref-slurmRpkg" role="doc-biblioref">2022</a>)</span> es un envoltorio ligero de Slurm. Las funciones principales del paquete son la familia <code>*apply</code>–principalmente a través de arrays de trabajos Slurm–y <code>makeSlurmCluster()</code>–que es un envoltorio de <code>makePSOCKcluster</code>.</p>
+<p>El paquete R <code>slurmR</code> <span class="citation" data-cites="slurmRpaper slurmRpkg">(<a href="references.html#ref-slurmRpaper" role="doc-biblioref">Vega Yon y Marjoram 2019</a>, <a href="references.html#ref-slurmRpkg" role="doc-biblioref">2022</a>)</span> es un envoltorio ligero de Slurm. Las funciones principales del paquete son la familia <code>*apply</code>–principalmente a través de arrays de trabajos Slurm–y <code>makeSlurmCluster()</code>–que es un envoltorio de <code>makePSOCKcluster</code>.</p>
 <p>Esta sección ilustrará cómo enviar trabajos usando la función <code>makeSlurmCluster()</code> y <code>Slurm_sapply</code>. Además, el último ejemplo demuestra cómo podemos omitir escribir scripts Slurm completamente usando la función <code>sourceSlurm()</code> incluida en el paquete.</p>
 <section id="caso-3-trabajo-único-trabajo-multinodo" class="level3">
 <h3 class="anchored" data-anchor-id="caso-3-trabajo-único-trabajo-multinodo">Caso 3: Trabajo único, trabajo multinodo</h3>
@@ -578,14 +587,14 @@ window.Quarto = {
 <span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">"Pi: "</span>, <span class="fu">mean</span>(ans))</span>
 <span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(ans, <span class="st">"03-parsapply-slurmr.rds"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(ans, <span class="st">"03-parsapply-slurmr.rds"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Archivo bash (<a href="03-parsapply-slurmr.slurm" target="_blank">03-parsapply-slurmr.slurm</a>):</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/sh</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --job-name=parsapply</span></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --time=00:10:00</span></span>
 <span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="ex">module</span> load R/4.2.2</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> <span class="at">--vanilla</span> 03-parsapply-slurmr.R</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> <span class="at">--vanilla</span> 03-parsapply-slurmr.R</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="caso-4-múltiples-trabajos-un-solomúltiples-núcleos" class="level3">
 <h3 class="anchored" data-anchor-id="caso-4-múltiples-trabajos-un-solomúltiples-núcleos">Caso 4: Múltiples trabajos, un solo/múltiples núcleos</h3>
@@ -596,7 +605,7 @@ window.Quarto = {
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  ...[haz esto]...</span>
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> <span class="cf">if</span> (ID <span class="sc">==</span> <span class="dv">2</span>) {</span>
 <span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  ...[haz eso]...</span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <p>El paquete R <code>slurmR</code> hace fácil enviar arrays de trabajos. Nuevamente, con la simulación de pi, podemos hacerlo de la siguiente manera:</p>
 <p>Script R (<a href="04-slurm_sapply.R" target="_blank">04-slurm_sapply.R</a>):</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Model parameters</span></span>
@@ -627,14 +636,14 @@ window.Quarto = {
 <span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">"Pi: "</span>, <span class="fu">mean</span>(ans))</span>
 <span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(ans, <span class="st">"04-slurm_sapply.rds"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(ans, <span class="st">"04-slurm_sapply.rds"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Archivo bash (<a href="04-slurm_sapply.slurm" target="_blank">04-slurm_sapply.slurm</a>):</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/sh</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --job-name=slurm_sapply</span></span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --time=00:10:00</span></span>
 <span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="ex">module</span> load R/4.2.2</span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> <span class="at">--vanilla</span> 04-slurm_sapply.R</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> <span class="at">--vanilla</span> 04-slurm_sapply.R</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Uno de los principales beneficios de usar este enfoque en lugar de la función <code>makeSlurmCluster</code> (y así, trabajar con un clúster SOCK) son:</p>
 <ul>
 <li><p>El número de trabajos no está limitado aquí (solo por el administrador, pero no por R).</p></li>
@@ -669,19 +678,19 @@ window.Quarto = {
 <span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">"Pi: "</span>, <span class="fu">mean</span>(ans))</span>
 <span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(ans, <span class="st">"05-sapply.rds"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(ans, <span class="st">"05-sapply.rds"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Desde la consola R (está bien si estás en el nodo cabeza)</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>slurmR<span class="sc">::</span><span class="fu">sourceSlurm</span>(<span class="st">"05-sapply.R"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>slurmR<span class="sc">::</span><span class="fu">sourceSlurm</span>(<span class="st">"05-sapply.R"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <p>¡Y voilá! Se generará un archivo bash temporal para enviar el script R a la cola. El siguiente video muestra una posible salida en el CHPC de la Universidad de Utah con slurmR versión 0.5-3:</p>
 <div class="quarto-video ratio ratio-16x9"><iframe data-external="1" src="https://www.youtube.com/embed/OasEla5EszI" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
 
 
 <div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
 <div id="ref-slurmRpaper" class="csl-entry" role="listitem">
-Vega Yon, George, and Paul Marjoram. 2019. <span>“slurmR: A Lightweight Wrapper for HPC with Slurm.”</span> <em>The Journal of Open Source Software</em> 4 (39). <a href="https://doi.org/10.21105/joss.01493">https://doi.org/10.21105/joss.01493</a>.
+Vega Yon, George, y Paul Marjoram. 2019. <span>«slurmR: A lightweight wrapper for HPC with Slurm»</span>. <em>The Journal of Open Source Software</em> 4 (39). <a href="https://doi.org/10.21105/joss.01493">https://doi.org/10.21105/joss.01493</a>.
 </div>
 <div id="ref-slurmRpkg" class="csl-entry" role="listitem">
-Vega Yon, George, and Paul Marjoram. 2022. <em><span class="nocase">slurmR: A Lightweight Wrapper for ’Slurm’</span></em>. <a href="https://github.com/USCbiostats/slurmR">https://github.com/USCbiostats/slurmR</a>.
+Vega Yon, George, y Paul Marjoram. 2022. <em><span>slurmR: A Lightweight Wrapper for ’Slurm’</span></em>. <a href="https://github.com/USCbiostats/slurmR">https://github.com/USCbiostats/slurmR</a>.
 </div>
 </div>
 </section>
@@ -722,12 +731,12 @@ Vega Yon, George, and Paul Marjoram. 2022. <em><span class="nocase">slurmR: A Li
       // flash "checked"
       button.classList.add('code-copy-button-checked');
       var currentTitle = button.getAttribute("title");
-      button.setAttribute("title", "Copied!");
+      button.setAttribute("title", "Copiado");
       let tooltip;
       if (window.bootstrap) {
         button.setAttribute("data-bs-toggle", "tooltip");
         button.setAttribute("data-bs-placement", "left");
-        button.setAttribute("data-bs-title", "Copied!");
+        button.setAttribute("data-bs-title", "Copiado");
         tooltip = new bootstrap.Tooltip(button, 
           { trigger: "manual", 
             customClass: "code-copy-button-tooltip",
@@ -770,7 +779,7 @@ Vega Yon, George, and Paul Marjoram. 2022. <em><span class="nocase">slurmR: A Li
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp("https:\/\/book\.ggvy\.cl");
+        var filterRegex = new RegExp("https:\/\/book-hpc\.ggvy\.cl\/es");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }
@@ -1104,8 +1113,8 @@ Vega Yon, George, and Paul Marjoram. 2022. <em><span class="nocase">slurmR: A Li
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./rcpp-part1.html" class="pagination-link" aria-label="Rcpp">
-        <span class="nav-page-text"><span class="chapter-title">Rcpp</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./rcpp-part1.html" class="pagination-link" aria-label="Acelerando R con Rcpp">
+        <span class="nav-page-text"><span class="chapter-title">Acelerando R con Rcpp</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
@@ -1116,8 +1125,8 @@ Vega Yon, George, and Paul Marjoram. 2022. <em><span class="nocase">slurmR: A Li
       &nbsp;
     </div>   
     <div class="nav-footer-center">
-<p>HPC Aplicado con R - <a href="https://ggvy.cl" target="_blank">https://ggvy.cl</a></p>
-<div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/gvegayon/appliedhpcr/edit/master/es/slurm-simpi.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/gvegayon/appliedhpcr/blob/master/es/slurm-simpi.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li><li><a href="https://github.com/gvegayon/appliedhpcr/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
+<p>HPC Aplicado con R - <a href="https://ggvy.cl" target="_blank">https://ggvy.cl</a> - <a href="https://book-hpc.ggvy.cl/" hreflang="en">English version</a> - Texto <a href="https://creativecommons.org/licenses/by/4.0/deed.es" rel="license">CC BY 4.0</a>, código <a href="https://github.com/gvegayon/appliedhpcr/blob/master/LICENSE-CODE">MIT</a></p>
+<div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/gvegayon/appliedhpcr/edit/master/es/slurm-simpi.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/gvegayon/appliedhpcr/blob/master/es/slurm-simpi.qmd" class="toc-action"><i class="bi empty"></i>Ver el código</a></li><li><a href="https://github.com/gvegayon/appliedhpcr/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div></div>
     <div class="nav-footer-right">
       &nbsp;
     </div>

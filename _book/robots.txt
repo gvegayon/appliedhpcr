@@ -1,1 +1,2 @@
+Sitemap: https://book-hpc.ggvy.cl/sitemap.xml
 Sitemap: https://book-hpc.ggvy.cl/es/sitemap.xml

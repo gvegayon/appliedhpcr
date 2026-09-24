@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
 
 <meta charset="utf-8">
 <meta name="generator" content="quarto-1.9.35">
@@ -7,9 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="George G. Vega Yon, Ph.D.">
-<meta name="dcterms.date" content="2025-08-14">
+<meta name="description" content="Consejos prácticos para usar R en clusters HPC: manejo de datos, opciones de Slurm que debes conocer, buenas prácticas, R interactivo y errores comunes.">
 
-<title>Appendix B — Misceláneos – HPC Aplicado con R</title>
+<title>Apéndice B — Consejos para clusters HPC – HPC Aplicado con R</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -72,6 +72,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <meta name="quarto:offset" content="./">
 <link href="./references.html" rel="next">
 <link href="./scoping-cpp.html" rel="prev">
+<link href="./fig/favicon.ico" rel="icon">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -81,7 +82,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-46f66b053e56abd73bb6e954d61a315b.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-b8db49fd727932e7c00c6ee89cd1476d.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-0b27fe24a26d8b41088cbf839d9dacb2.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -96,17 +97,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   ],
   "show-item-context": false,
   "language": {
-    "search-no-results-text": "No results",
-    "search-matching-documents-text": "matching documents",
-    "search-copy-link-title": "Copy link to search",
-    "search-hide-matches-text": "Hide additional matches",
-    "search-more-match-text": "more match in this document",
-    "search-more-matches-text": "more matches in this document",
-    "search-clear-button-title": "Clear",
+    "search-no-results-text": "No se han encontrado resultados",
+    "search-matching-documents-text": "documentos encontrados",
+    "search-copy-link-title": "Copiar el enlace en la búsqueda",
+    "search-hide-matches-text": "Ocultar resultados adicionales",
+    "search-more-match-text": "resultado adicional en este documento",
+    "search-more-matches-text": "resultados adicionales en este documento",
+    "search-clear-button-title": "Borrar",
     "search-text-placeholder": "",
-    "search-detached-cancel-button-title": "Cancel",
-    "search-submit-button-title": "Submit",
-    "search-label": "Search"
+    "search-detached-cancel-button-title": "Cancelar",
+    "search-submit-button-title": "Enviar",
+    "search-label": "Buscar"
   }
 }</script>
 <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-9D75EFV0TE"></script>
@@ -120,13 +121,21 @@ gtag('config', 'G-9D75EFV0TE', { 'anonymize_ip': true});
 </script>
 
 
-<meta name="twitter:title" content="Appendix B — Misceláneos – HPC Aplicado con R">
-<meta name="twitter:description" content="Este libro es una colección de charlas y conferencias sobre cómo acelerar tu código R usando computación paralela y otros recursos como C++.">
-<meta name="twitter:image" content="https://book.ggvy.cl/../fig/cover.png">
+<meta property="og:title" content="Apéndice B — Consejos para clusters HPC – HPC Aplicado con R">
+<meta property="og:description" content="Consejos prácticos para usar R en clusters HPC: manejo de datos, opciones de Slurm que debes conocer, buenas prácticas, R interactivo y errores comunes.">
+<meta property="og:image" content="https://book-hpc.ggvy.cl/es/fig/social-card.jpg">
+<meta property="og:site_name" content="HPC Aplicado con R">
+<meta property="og:image:alt" content="HPC Aplicado con R: C++, Paralelismo y Rendimiento">
+<meta name="twitter:title" content="Apéndice B — Consejos para clusters HPC – HPC Aplicado con R">
+<meta name="twitter:description" content="Consejos prácticos para usar R en clusters HPC: manejo de datos, opciones de Slurm que debes conocer, buenas prácticas, R interactivo y errores comunes.">
+<meta name="twitter:image" content="https://book-hpc.ggvy.cl/es/fig/social-card.jpg">
 <meta name="twitter:creator" content="@gvegayon">
-<meta name="twitter:image-height" content="1536">
-<meta name="twitter:image-width" content="1024">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image:alt" content="HPC Aplicado con R: C++, Paralelismo y Rendimiento">
+<link rel="canonical" href="https://book-hpc.ggvy.cl/es/misc.html">
+<link rel="alternate" hreflang="en" href="https://book-hpc.ggvy.cl/misc.html">
+<link rel="alternate" hreflang="es" href="https://book-hpc.ggvy.cl/es/misc.html">
+<link rel="alternate" hreflang="x-default" href="https://book-hpc.ggvy.cl/misc.html">
 </head>
 
 <body class="nav-sidebar floating nav-fixed quarto-light">
@@ -141,10 +150,10 @@ gtag('config', 'G-9D75EFV0TE', { 'anonymize_ip': true});
     </a>
   </div>
         <div class="quarto-navbar-tools tools-wide tools-end">
-    <a href="https://github.com/gvegayon/appliedhpcr/tree/master/es/" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
-    <a href="./HPC-Aplicado-con-R.pdf" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
+    <a href="https://github.com/gvegayon/appliedhpcr/tree/master/es/" title="Ejecutar el código" class="quarto-navigation-tool px-1" aria-label="Ejecutar el código"><i class="bi bi-github"></i></a>
+    <a href="./HPC-Aplicado-con-R.pdf" title="Descargar PDF" class="quarto-navigation-tool px-1" aria-label="Descargar PDF"><i class="bi bi-file-pdf"></i></a>
     <div class="dropdown">
-      <a href="" title="Share" id="quarto-navigation-tool-dropdown-0" class="quarto-navigation-tool dropdown-toggle px-1" data-bs-toggle="dropdown" aria-expanded="false" role="link" aria-label="Share"><i class="bi bi-share"></i></a>
+      <a href="" title="Compartir" id="quarto-navigation-tool-dropdown-0" class="quarto-navigation-tool dropdown-toggle px-1" data-bs-toggle="dropdown" aria-expanded="false" role="link" aria-label="Compartir"><i class="bi bi-share"></i></a>
       <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="quarto-navigation-tool-dropdown-0">
           <li>
             <a class="dropdown-item quarto-navbar-tools-item" href="https://twitter.com/intent/tweet?url=|url|">
@@ -161,16 +170,16 @@ gtag('config', 'G-9D75EFV0TE', { 'anonymize_ip': true});
       </ul>
     </div>
 </div>
-          <div id="quarto-search" class="" title="Search"></div>
+          <div id="quarto-search" class="" title="Buscar"></div>
       </div> <!-- /container-fluid -->
     </nav>
   <nav class="quarto-secondary-nav">
     <div class="container-fluid d-flex">
-      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./scoping-cpp.html">Appendices</a></li><li class="breadcrumb-item"><a href="./misc.html"><span class="chapter-title">Misceláneos</span></a></li></ol></nav>
-        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./scoping-cpp.html">Apéndices</a></li><li class="breadcrumb-item"><a href="./misc.html"><span class="chapter-title">Consejos para clusters HPC</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
   </nav>
@@ -191,7 +200,7 @@ gtag('config', 'G-9D75EFV0TE', { 'anonymize_ip': true});
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
  <span class="menu-text">Fundamentos</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Alternar sección">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -212,7 +221,7 @@ gtag('config', 'G-9D75EFV0TE', { 'anonymize_ip': true});
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
  <span class="menu-text">Computación paralela</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Alternar sección">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -233,7 +242,7 @@ gtag('config', 'G-9D75EFV0TE', { 'anonymize_ip': true});
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
  <span class="menu-text">Trabajando con un Cluster</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Alternar sección">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -245,7 +254,7 @@ gtag('config', 'G-9D75EFV0TE', { 'anonymize_ip': true});
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./slurm-simpi.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">SLURM con Simulación de π</span></a>
+  <a href="./slurm-simpi.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Simulando π con Slurm</span></a>
   </div>
 </li>
       </ul>
@@ -254,14 +263,14 @@ gtag('config', 'G-9D75EFV0TE', { 'anonymize_ip': true});
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
  <span class="menu-text">Usando C++</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Alternar sección">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
       <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./rcpp-part1.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Rcpp</span></a>
+  <a href="./rcpp-part1.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Acelerando R con Rcpp</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -274,8 +283,8 @@ gtag('config', 'G-9D75EFV0TE', { 'anonymize_ip': true});
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
- <span class="menu-text">Appendices</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
+ <span class="menu-text">Apéndices</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Alternar sección">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -287,7 +296,7 @@ gtag('config', 'G-9D75EFV0TE', { 'anonymize_ip': true});
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./misc.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">Misceláneos</span></a>
+  <a href="./misc.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">Consejos para clusters HPC</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -309,7 +318,7 @@ gtag('config', 'G-9D75EFV0TE', { 'anonymize_ip': true});
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">Table of contents</h2>
+    <h2 id="toc-title">Tabla de contenidos</h2>
    
   <ul>
   <li><a href="#recursos-generales" id="toc-recursos-generales" class="nav-link active" data-scroll-target="#recursos-generales">Recursos generales</a></li>
@@ -319,14 +328,14 @@ gtag('config', 'G-9D75EFV0TE', { 'anonymize_ip': true});
   <li><a href="#ejecutando-r-interactivamente" id="toc-ejecutando-r-interactivamente" class="nav-link" data-scroll-target="#ejecutando-r-interactivamente">Ejecutando R interactivamente</a></li>
   <li><a href="#nonos-cuando-uses-r" id="toc-nonos-cuando-uses-r" class="nav-link" data-scroll-target="#nonos-cuando-uses-r">NoNos cuando uses R</a></li>
   </ul>
-<div class="toc-actions"><ul><li><a href="https://github.com/gvegayon/appliedhpcr/edit/master/es/misc.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/gvegayon/appliedhpcr/blob/master/es/misc.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li><li><a href="https://github.com/gvegayon/appliedhpcr/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+<div class="toc-actions"><ul><li><a href="https://github.com/gvegayon/appliedhpcr/edit/master/es/misc.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/gvegayon/appliedhpcr/blob/master/es/misc.qmd" class="toc-action"><i class="bi empty"></i>Ver el código</a></li><li><a href="https://github.com/gvegayon/appliedhpcr/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./scoping-cpp.html">Appendices</a></li><li class="breadcrumb-item"><a href="./misc.html"><span class="chapter-title">Misceláneos</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./scoping-cpp.html">Apéndices</a></li><li class="breadcrumb-item"><a href="./misc.html"><span class="chapter-title">Consejos para clusters HPC</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title">Appendix B — Misceláneos</h1>
+<h1 class="title">Apéndice B — Consejos para clusters HPC</h1>
 </div>
 
 
@@ -334,16 +343,16 @@ gtag('config', 'G-9D75EFV0TE', { 'anonymize_ip': true});
 <div class="quarto-title-meta">
 
     <div>
-    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-heading">Autor/a</div>
     <div class="quarto-title-meta-contents">
              <p>George G. Vega Yon, Ph.D. </p>
           </div>
   </div>
     
     <div>
-    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-heading">Fecha de publicación</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">August 14, 2025</p>
+      <p class="date">14 de agosto de 2025</p>
     </div>
   </div>
   
@@ -361,7 +370,7 @@ gtag('config', 'G-9D75EFV0TE', { 'anonymize_ip': true});
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Warning</span>Nota de Traducción
+<span class="screen-reader-only">Advertencia</span>Nota de Traducción
 </div>
 </div>
 <div class="callout-body-container callout-body">
@@ -434,15 +443,15 @@ gtag('config', 'G-9D75EFV0TE', { 'anonymize_ip': true});
 <li><p>El HPC tiene varias piezas de software preinstaladas. R es una de esas.</p></li>
 <li><p>Para acceder al software preinstalado, usamos el <a href="https://lmod.readthedocs.io/en/latest/"><strong>sistema de módulos Lmod</strong></a> (más información <a href="https://carc.usc.edu/user-information/user-guides/software-and-programming/lmod"><strong>aquí</strong></a>)</p></li>
 <li><p>Tiene múltiples versiones de R instaladas. Usa tu favorita ejecutando</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">module</span> load R/4.2.2/[número de versión]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">module</span> load R/4.2.2/[número de versión]</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Donde <code>[número de versión]</code> puede ser 3.5.6 y hasta 4.0.3 (la última actualización). El módulo <code>usc</code> automáticamente carga gcc/8.3.0, openblas/0.3.8, openmpi/4.0.2, y pmix/3.1.3.</p></li>
 <li><p>Nunca es una buena idea usar tu directorio home para instalar paquetes R, por eso deberías tratar de usar un <a href="https://en.wikipedia.org/wiki/Symbolic_link"><strong>enlace simbólico en su lugar</strong></a>, así</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ~</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> <span class="at">-p</span> /ruta/a/un/proyecto/con/mucho/espacio/R</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ln</span> <span class="at">-s</span> /ruta/a/un/proyecto/con/mucho/espacio/R R</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ln</span> <span class="at">-s</span> /ruta/a/un/proyecto/con/mucho/espacio/R R</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <p>De esta manera, cada vez que instales tus paquetes R, R tendrá como predeterminado esa ubicación</p></li>
 <li><p>Puedes ejecutar sesiones interactivas en HPC, pero esto se recomienda hacerlo usando la función <code>salloc</code> en Slurm, en otras palabras, ¡NUNCA USES R (O CUALQUIER SOFTWARE) PARA HACER ANÁLISIS DE DATOS EN LOS NODOS CABEZA! Las opciones pasadas a salloc son las mismas opciones que pueden pasarse a <code>sbatch</code> (ver la siguiente sección). Por ejemplo, si necesito hacer algunos análisis en la partición <code>thomas</code> (que es privada y tengo acceso a ella), escribiría algo como</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">salloc</span> <span class="at">--account</span><span class="op">=</span>lc_pdt <span class="at">--partition</span><span class="op">=</span>thomas <span class="at">--time</span><span class="op">=</span>02:00:00 <span class="at">--mem-per-cpu</span><span class="op">=</span>2G</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">salloc</span> <span class="at">--account</span><span class="op">=</span>lc_pdt <span class="at">--partition</span><span class="op">=</span>thomas <span class="at">--time</span><span class="op">=</span>02:00:00 <span class="at">--mem-per-cpu</span><span class="op">=</span>2G</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Esto me pondría en un solo nodo asignando 2 gigs de memoria por un máximo de 2 horas.</p></li>
 </ol>
 </section>
@@ -484,12 +493,12 @@ gtag('config', 'G-9D75EFV0TE', { 'anonymize_ip': true});
       // flash "checked"
       button.classList.add('code-copy-button-checked');
       var currentTitle = button.getAttribute("title");
-      button.setAttribute("title", "Copied!");
+      button.setAttribute("title", "Copiado");
       let tooltip;
       if (window.bootstrap) {
         button.setAttribute("data-bs-toggle", "tooltip");
         button.setAttribute("data-bs-placement", "left");
-        button.setAttribute("data-bs-title", "Copied!");
+        button.setAttribute("data-bs-title", "Copiado");
         tooltip = new bootstrap.Tooltip(button, 
           { trigger: "manual", 
             customClass: "code-copy-button-tooltip",
@@ -532,7 +541,7 @@ gtag('config', 'G-9D75EFV0TE', { 'anonymize_ip': true});
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp("https:\/\/book\.ggvy\.cl");
+        var filterRegex = new RegExp("https:\/\/book-hpc\.ggvy\.cl\/es");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }
@@ -878,8 +887,8 @@ gtag('config', 'G-9D75EFV0TE', { 'anonymize_ip': true});
       &nbsp;
     </div>   
     <div class="nav-footer-center">
-<p>HPC Aplicado con R - <a href="https://ggvy.cl" target="_blank">https://ggvy.cl</a></p>
-<div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/gvegayon/appliedhpcr/edit/master/es/misc.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/gvegayon/appliedhpcr/blob/master/es/misc.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li><li><a href="https://github.com/gvegayon/appliedhpcr/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
+<p>HPC Aplicado con R - <a href="https://ggvy.cl" target="_blank">https://ggvy.cl</a> - <a href="https://book-hpc.ggvy.cl/" hreflang="en">English version</a> - Texto <a href="https://creativecommons.org/licenses/by/4.0/deed.es" rel="license">CC BY 4.0</a>, código <a href="https://github.com/gvegayon/appliedhpcr/blob/master/LICENSE-CODE">MIT</a></p>
+<div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/gvegayon/appliedhpcr/edit/master/es/misc.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/gvegayon/appliedhpcr/blob/master/es/misc.qmd" class="toc-action"><i class="bi empty"></i>Ver el código</a></li><li><a href="https://github.com/gvegayon/appliedhpcr/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div></div>
     <div class="nav-footer-right">
       &nbsp;
     </div>

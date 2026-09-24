@@ -1,55 +1,55 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://book.ggvy.cl/index.html</loc>
-    <lastmod>2026-03-18T21:41:58.919Z</lastmod>
+    <loc>https://book-hpc.ggvy.cl/es/index.html</loc>
+    <lastmod>2026-09-24T17:16:21.898Z</lastmod>
   </url>
   <url>
-    <loc>https://book.ggvy.cl/profiling.html</loc>
-    <lastmod>2026-03-18T21:41:58.920Z</lastmod>
+    <loc>https://book-hpc.ggvy.cl/es/profiling.html</loc>
+    <lastmod>2026-09-24T17:16:21.899Z</lastmod>
   </url>
   <url>
-    <loc>https://book.ggvy.cl/efficiency.html</loc>
-    <lastmod>2026-03-18T21:41:58.919Z</lastmod>
+    <loc>https://book-hpc.ggvy.cl/es/efficiency.html</loc>
+    <lastmod>2026-09-24T17:16:21.898Z</lastmod>
   </url>
   <url>
-    <loc>https://book.ggvy.cl/intro.html</loc>
-    <lastmod>2026-03-18T21:41:58.920Z</lastmod>
+    <loc>https://book-hpc.ggvy.cl/es/intro.html</loc>
+    <lastmod>2026-09-24T17:16:21.898Z</lastmod>
   </url>
   <url>
-    <loc>https://book.ggvy.cl/parallel-pkg.html</loc>
-    <lastmod>2026-03-18T21:41:58.920Z</lastmod>
+    <loc>https://book-hpc.ggvy.cl/es/parallel-pkg.html</loc>
+    <lastmod>2026-09-24T17:16:21.898Z</lastmod>
   </url>
   <url>
-    <loc>https://book.ggvy.cl/slurm-fundamentals.html</loc>
-    <lastmod>2026-03-18T21:41:58.920Z</lastmod>
+    <loc>https://book-hpc.ggvy.cl/es/slurm-fundamentals.html</loc>
+    <lastmod>2026-09-24T17:16:21.899Z</lastmod>
   </url>
   <url>
-    <loc>https://book.ggvy.cl/slurm-simpi.html</loc>
-    <lastmod>2026-03-18T21:41:58.920Z</lastmod>
+    <loc>https://book-hpc.ggvy.cl/es/slurm-simpi.html</loc>
+    <lastmod>2026-09-24T17:16:21.899Z</lastmod>
   </url>
   <url>
-    <loc>https://book.ggvy.cl/rcpp-part1.html</loc>
-    <lastmod>2026-03-18T21:41:58.920Z</lastmod>
+    <loc>https://book-hpc.ggvy.cl/es/rcpp-part1.html</loc>
+    <lastmod>2026-09-24T17:16:21.899Z</lastmod>
   </url>
   <url>
-    <loc>https://book.ggvy.cl/rcpp-debugging.html</loc>
-    <lastmod>2026-03-18T21:41:58.920Z</lastmod>
+    <loc>https://book-hpc.ggvy.cl/es/rcpp-debugging.html</loc>
+    <lastmod>2026-09-24T17:16:21.899Z</lastmod>
   </url>
   <url>
-    <loc>https://book.ggvy.cl/scoping-cpp.html</loc>
-    <lastmod>2026-03-18T21:41:58.920Z</lastmod>
+    <loc>https://book-hpc.ggvy.cl/es/scoping-cpp.html</loc>
+    <lastmod>2026-09-24T17:16:21.899Z</lastmod>
   </url>
   <url>
-    <loc>https://book.ggvy.cl/misc.html</loc>
-    <lastmod>2026-03-18T21:41:58.920Z</lastmod>
+    <loc>https://book-hpc.ggvy.cl/es/misc.html</loc>
+    <lastmod>2026-09-24T17:16:21.898Z</lastmod>
   </url>
   <url>
-    <loc>https://book.ggvy.cl/references.html</loc>
-    <lastmod>2026-03-18T21:41:58.920Z</lastmod>
+    <loc>https://book-hpc.ggvy.cl/es/references.html</loc>
+    <lastmod>2026-09-24T17:16:21.899Z</lastmod>
   </url>
   <url>
-    <loc>https://book.ggvy.cl/news.html</loc>
-    <lastmod>2026-03-18T21:41:58.920Z</lastmod>
+    <loc>https://book-hpc.ggvy.cl/es/news.html</loc>
+    <lastmod>2026-09-24T17:16:21.898Z</lastmod>
   </url>
 </urlset>

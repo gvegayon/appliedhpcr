@@ -1,13 +1,14 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
 
 <meta charset="utf-8">
 <meta name="generator" content="quarto-1.9.35">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="description" content="Acelera R con C++ usando Rcpp: tipos de C++, las partes de un programa Rcpp, ejemplos y ejercicios, y multihilo con RcppArmadillo y OpenMP.">
 
-<title>Rcpp – HPC Aplicado con R</title>
+<title>Acelerando R con Rcpp – HPC Aplicado con R</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -89,6 +90,7 @@ div.csl-indent {
 <meta name="quarto:offset" content="./">
 <link href="./rcpp-debugging.html" rel="next">
 <link href="./slurm-simpi.html" rel="prev">
+<link href="./fig/favicon.ico" rel="icon">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -98,7 +100,7 @@ div.csl-indent {
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-46f66b053e56abd73bb6e954d61a315b.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-b8db49fd727932e7c00c6ee89cd1476d.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-0b27fe24a26d8b41088cbf839d9dacb2.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -113,17 +115,17 @@ div.csl-indent {
   ],
   "show-item-context": false,
   "language": {
-    "search-no-results-text": "No results",
-    "search-matching-documents-text": "matching documents",
-    "search-copy-link-title": "Copy link to search",
-    "search-hide-matches-text": "Hide additional matches",
-    "search-more-match-text": "more match in this document",
-    "search-more-matches-text": "more matches in this document",
-    "search-clear-button-title": "Clear",
+    "search-no-results-text": "No se han encontrado resultados",
+    "search-matching-documents-text": "documentos encontrados",
+    "search-copy-link-title": "Copiar el enlace en la búsqueda",
+    "search-hide-matches-text": "Ocultar resultados adicionales",
+    "search-more-match-text": "resultado adicional en este documento",
+    "search-more-matches-text": "resultados adicionales en este documento",
+    "search-clear-button-title": "Borrar",
     "search-text-placeholder": "",
-    "search-detached-cancel-button-title": "Cancel",
-    "search-submit-button-title": "Submit",
-    "search-label": "Search"
+    "search-detached-cancel-button-title": "Cancelar",
+    "search-submit-button-title": "Enviar",
+    "search-label": "Buscar"
   }
 }</script>
 <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-9D75EFV0TE"></script>
@@ -180,14 +182,21 @@ window.Quarto = {
 };
 </script>
 
-<meta name="twitter:title" content="Rcpp – HPC Aplicado con R">
-<meta name="twitter:description" content="Este libro es una colección de charlas y conferencias sobre cómo acelerar tu código R usando computación paralela y otros recursos como C++.">
-<meta name="twitter:image" content="https://book.ggvy.cl/fig/640px-Fibonacci_Spiral.svg.png">
+<meta property="og:title" content="Acelerando R con Rcpp – HPC Aplicado con R">
+<meta property="og:description" content="Acelera R con C++ usando Rcpp: tipos de C++, las partes de un programa Rcpp, ejemplos y ejercicios, y multihilo con RcppArmadillo y OpenMP.">
+<meta property="og:image" content="https://book-hpc.ggvy.cl/es/fig/social-card.jpg">
+<meta property="og:site_name" content="HPC Aplicado con R">
+<meta property="og:image:alt" content="HPC Aplicado con R: C++, Paralelismo y Rendimiento">
+<meta name="twitter:title" content="Acelerando R con Rcpp – HPC Aplicado con R">
+<meta name="twitter:description" content="Acelera R con C++ usando Rcpp: tipos de C++, las partes de un programa Rcpp, ejemplos y ejercicios, y multihilo con RcppArmadillo y OpenMP.">
+<meta name="twitter:image" content="https://book-hpc.ggvy.cl/es/fig/social-card.jpg">
 <meta name="twitter:creator" content="@gvegayon">
-<meta name="twitter:image:alt" content="Espiral de Fibonacci">
-<meta name="twitter:image-height" content="397">
-<meta name="twitter:image-width" content="640">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image:alt" content="HPC Aplicado con R: C++, Paralelismo y Rendimiento">
+<link rel="canonical" href="https://book-hpc.ggvy.cl/es/rcpp-part1.html">
+<link rel="alternate" hreflang="en" href="https://book-hpc.ggvy.cl/rcpp-part1.html">
+<link rel="alternate" hreflang="es" href="https://book-hpc.ggvy.cl/es/rcpp-part1.html">
+<link rel="alternate" hreflang="x-default" href="https://book-hpc.ggvy.cl/rcpp-part1.html">
 </head>
 
 <body class="nav-sidebar floating nav-fixed quarto-light">
@@ -202,10 +211,10 @@ window.Quarto = {
     </a>
   </div>
         <div class="quarto-navbar-tools tools-wide tools-end">
-    <a href="https://github.com/gvegayon/appliedhpcr/tree/master/es/" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
-    <a href="./HPC-Aplicado-con-R.pdf" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
+    <a href="https://github.com/gvegayon/appliedhpcr/tree/master/es/" title="Ejecutar el código" class="quarto-navigation-tool px-1" aria-label="Ejecutar el código"><i class="bi bi-github"></i></a>
+    <a href="./HPC-Aplicado-con-R.pdf" title="Descargar PDF" class="quarto-navigation-tool px-1" aria-label="Descargar PDF"><i class="bi bi-file-pdf"></i></a>
     <div class="dropdown">
-      <a href="" title="Share" id="quarto-navigation-tool-dropdown-0" class="quarto-navigation-tool dropdown-toggle px-1" data-bs-toggle="dropdown" aria-expanded="false" role="link" aria-label="Share"><i class="bi bi-share"></i></a>
+      <a href="" title="Compartir" id="quarto-navigation-tool-dropdown-0" class="quarto-navigation-tool dropdown-toggle px-1" data-bs-toggle="dropdown" aria-expanded="false" role="link" aria-label="Compartir"><i class="bi bi-share"></i></a>
       <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="quarto-navigation-tool-dropdown-0">
           <li>
             <a class="dropdown-item quarto-navbar-tools-item" href="https://twitter.com/intent/tweet?url=|url|">
@@ -222,16 +231,16 @@ window.Quarto = {
       </ul>
     </div>
 </div>
-          <div id="quarto-search" class="" title="Search"></div>
+          <div id="quarto-search" class="" title="Buscar"></div>
       </div> <!-- /container-fluid -->
     </nav>
   <nav class="quarto-secondary-nav">
     <div class="container-fluid d-flex">
-      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./rcpp-part1.html">Usando C++</a></li><li class="breadcrumb-item"><a href="./rcpp-part1.html"><span class="chapter-title">Rcpp</span></a></li></ol></nav>
-        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./rcpp-part1.html">Usando C++</a></li><li class="breadcrumb-item"><a href="./rcpp-part1.html"><span class="chapter-title">Acelerando R con Rcpp</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
   </nav>
@@ -252,7 +261,7 @@ window.Quarto = {
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
  <span class="menu-text">Fundamentos</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Alternar sección">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -273,7 +282,7 @@ window.Quarto = {
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
  <span class="menu-text">Computación paralela</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Alternar sección">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -294,7 +303,7 @@ window.Quarto = {
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
  <span class="menu-text">Trabajando con un Cluster</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Alternar sección">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -306,7 +315,7 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./slurm-simpi.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">SLURM con Simulación de π</span></a>
+  <a href="./slurm-simpi.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Simulando π con Slurm</span></a>
   </div>
 </li>
       </ul>
@@ -315,14 +324,14 @@ window.Quarto = {
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
  <span class="menu-text">Usando C++</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Alternar sección">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
       <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./rcpp-part1.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">Rcpp</span></a>
+  <a href="./rcpp-part1.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">Acelerando R con Rcpp</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -335,8 +344,8 @@ window.Quarto = {
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
- <span class="menu-text">Appendices</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
+ <span class="menu-text">Apéndices</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Alternar sección">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -348,7 +357,7 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./misc.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Misceláneos</span></a>
+  <a href="./misc.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Consejos para clusters HPC</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -370,7 +379,7 @@ window.Quarto = {
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">Table of contents</h2>
+    <h2 id="toc-title">Tabla de contenidos</h2>
    
   <ul>
   <li><a href="#antes-de-empezar" id="toc-antes-de-empezar" class="nav-link active" data-scroll-target="#antes-de-empezar">Antes de empezar</a></li>
@@ -398,14 +407,14 @@ window.Quarto = {
   </ul></li>
   <li><a href="#ver-también" id="toc-ver-también" class="nav-link" data-scroll-target="#ver-también">Ver también</a></li>
   </ul>
-<div class="toc-actions"><ul><li><a href="https://github.com/gvegayon/appliedhpcr/edit/master/es/rcpp-part1.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/gvegayon/appliedhpcr/blob/master/es/rcpp-part1.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li><li><a href="https://github.com/gvegayon/appliedhpcr/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+<div class="toc-actions"><ul><li><a href="https://github.com/gvegayon/appliedhpcr/edit/master/es/rcpp-part1.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/gvegayon/appliedhpcr/blob/master/es/rcpp-part1.qmd" class="toc-action"><i class="bi empty"></i>Ver el código</a></li><li><a href="https://github.com/gvegayon/appliedhpcr/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./rcpp-part1.html">Usando C++</a></li><li class="breadcrumb-item"><a href="./rcpp-part1.html"><span class="chapter-title">Rcpp</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./rcpp-part1.html">Usando C++</a></li><li class="breadcrumb-item"><a href="./rcpp-part1.html"><span class="chapter-title">Acelerando R con Rcpp</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-title">Rcpp</span></h1>
+<h1 class="title"><span class="chapter-title">Acelerando R con Rcpp</span></h1>
 </div>
 
 
@@ -428,14 +437,14 @@ window.Quarto = {
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Warning</span>Nota de Traducción
+<span class="screen-reader-only">Advertencia</span>Nota de Traducción
 </div>
 </div>
 <div class="callout-body-container callout-body">
 <p>Esta versión del capítulo fue traducida de manera automática utilizando IA. El capítulo aún no ha sido revisado por un humano.</p>
 </div>
 </div>
-<p>Cuando la computación paralela no es suficiente, puedes acelerar tu código R usando un lenguaje de programación de más bajo nivel<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> como C++, C, o Fortran. Con R mismo escrito en C, proporciona puntos de acceso (APIs) para conectar funciones de C++/C/Fortran a R. Aunque no es imposible, usar lenguajes de bajo nivel para mejorar R puede ser engorroso; Rcpp <span class="citation" data-cites="Eddelbuettel2011 RcppBook Rcpp">(<a href="references.html#ref-Eddelbuettel2011" role="doc-biblioref">Eddelbuettel and François 2011</a>; <a href="references.html#ref-RcppBook" role="doc-biblioref">Eddelbuettel 2013</a>; <a href="references.html#ref-Rcpp" role="doc-biblioref">Eddelbuettel and Balamuta 2018</a>)</span> puede hacer las cosas <strong>muy</strong> fáciles. Este capítulo te muestra cómo usar Rcpp–la forma más popular de conectar C++ con R–para acelerar tu código R.</p>
+<p>Cuando la computación paralela no es suficiente, puedes acelerar tu código R usando un lenguaje de programación de más bajo nivel<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> como C++, C, o Fortran. Con R mismo escrito en C, proporciona puntos de acceso (APIs) para conectar funciones de C++/C/Fortran a R. Aunque no es imposible, usar lenguajes de bajo nivel para mejorar R puede ser engorroso; Rcpp <span class="citation" data-cites="Eddelbuettel2011 RcppBook Rcpp">(<a href="references.html#ref-Eddelbuettel2011" role="doc-biblioref">Eddelbuettel y François 2011</a>; <a href="references.html#ref-RcppBook" role="doc-biblioref">Eddelbuettel 2013</a>; <a href="references.html#ref-Rcpp" role="doc-biblioref">Eddelbuettel y Balamuta 2018</a>)</span> puede hacer las cosas <strong>muy</strong> fáciles. Este capítulo te muestra cómo usar Rcpp–la forma más popular de conectar C++ con R–para acelerar tu código R.</p>
 <section id="antes-de-empezar" class="level2">
 <h2 class="anchored" data-anchor-id="antes-de-empezar">Antes de empezar</h2>
 <div style="text-align: center; margin: auto;">
@@ -443,7 +452,7 @@ window.Quarto = {
 </div>
 <ol type="1">
 <li><p>Necesitas tener Rcpp instalado en tu sistema:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"Rcpp"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div></li>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"Rcpp"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div></li>
 <li><p>Necesitas tener un compilador</p>
 <ul>
 <li><p>Windows: Puedes descargar Rtools <a href="https://cran.r-project.org/bin/windows/Rtools/">desde aquí</a>.</p></li>
@@ -493,11 +502,11 @@ window.Quarto = {
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>SET_TAG<span class="op">(</span>CDDR<span class="op">(</span>call<span class="op">),</span>install<span class="op">(</span><span class="st">"sd"</span><span class="op">));</span></span>
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>SEXP res <span class="op">=</span> PROTECT<span class="op">(</span>eval<span class="op">(</span>call<span class="op">,</span> R_GlobalEnv<span class="op">));</span></span>
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>UNPROTECT<span class="op">(</span><span class="dv">4</span><span class="op">);</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="cf">return</span> res<span class="op">;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div></li>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="cf">return</span> res<span class="op">;</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div></li>
 <li><p>Usando Rcpp:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>Environment stats<span class="op">(</span><span class="st">"package:stats"</span><span class="op">);</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>Function rnorm <span class="op">=</span> stats<span class="op">[</span><span class="st">"rnorm"</span><span class="op">];</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="cf">return</span> rnorm<span class="op">(</span><span class="dv">10</span><span class="op">,</span> Named<span class="op">(</span><span class="st">"sd"</span><span class="op">,</span> <span class="fl">100.0</span><span class="op">));</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div></li>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="cf">return</span> rnorm<span class="op">(</span><span class="dv">10</span><span class="op">,</span> Named<span class="op">(</span><span class="st">"sd"</span><span class="op">,</span> <span class="fl">100.0</span><span class="op">));</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div></li>
 </ul>
 </section>
 <section id="ejemplo-1-iterando-sobre-un-vector" class="level2">
@@ -511,10 +520,10 @@ window.Quarto = {
 <span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> x<span class="op">.</span>size<span class="op">();</span> <span class="op">++</span>i<span class="op">)</span></span>
 <span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    ans<span class="op">[</span>i<span class="op">]</span> <span class="op">=</span> x<span class="op">[</span>i<span class="op">]</span> <span class="op">+</span> <span class="dv">1</span><span class="op">;</span></span>
 <span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> ans<span class="op">;</span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">add1</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">add1</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> [1]  2  3  4  5  6  7  8  9 10 11</code></pre>
 </div>
@@ -526,10 +535,10 @@ window.Quarto = {
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co">// [[Rcpp::export]]</span></span>
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>NumericVector add1Cpp<span class="op">(</span>NumericVector x<span class="op">)</span> <span class="op">{</span></span>
 <span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> x <span class="op">+</span> <span class="dv">1</span><span class="op">;</span></span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">add1Cpp</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">add1Cpp</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> [1]  2  3  4  5  6  7  8  9 10 11</code></pre>
 </div>
@@ -544,12 +553,12 @@ window.Quarto = {
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    x[i] <span class="ot">&lt;-</span> x[i] <span class="sc">+</span> <span class="dv">1</span></span>
 <span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  x</span>
 <span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>microbenchmark<span class="sc">::</span><span class="fu">microbenchmark</span>(<span class="fu">add1R</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">1000</span>), <span class="fu">add1Cpp</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">1000</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>microbenchmark<span class="sc">::</span><span class="fu">microbenchmark</span>(<span class="fu">add1R</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">1000</span>), <span class="fu">add1Cpp</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">1000</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Unit: microseconds
             expr    min      lq     mean  median      uq      max neval
-   add1R(1:1000) 51.793 53.1340 76.87384 53.4380 55.8030 2228.526   100
- add1Cpp(1:1000)  3.076  3.7715 12.28685  4.6125  7.4795  682.811   100</code></pre>
+   add1R(1:1000) 57.457 58.0430 86.45557 59.1905 62.6965 2554.744   100
+ add1Cpp(1:1000)  2.825  3.2765 13.42125  3.7670 10.9000  726.495   100</code></pre>
 </div>
 </div>
 </section>
@@ -581,7 +590,7 @@ window.Quarto = {
 <span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> x<span class="op">.</span>size<span class="op">();</span> <span class="op">++</span>i<span class="op">)</span></span>
 <span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    ans<span class="op">[</span>i<span class="op">]</span> <span class="op">=</span> x<span class="op">[</span>i<span class="op">]</span> <span class="op">+</span> <span class="dv">1</span><span class="op">;</span></span>
 <span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> ans<span class="op">;</span></span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Línea por línea, vemos lo siguiente:</p>
 <ol type="1">
 <li><p>El <text style="color:white;font-family:monospace;background-color: darkgray;">#include&lt;Rcpp.h&gt;</text> es similar a <code>library(...)</code> en R, trae todo lo que necesitamos para escribir código C++ para Rcpp.</p></li>
@@ -616,7 +625,7 @@ window.Quarto = {
 <span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  </span>
 <span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> sqrt<span class="op">(</span>sum<span class="op">(</span>pow<span class="op">(</span>x<span class="op">,</span> <span class="fl">2.0</span><span class="op">)));</span></span>
 <span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Podemos compilar y obtener esta función usando esta línea <code>Rcpp::sourceCpp("norm.cpp")</code>. Una vez compilada, una función llamada <code>normRcpp</code> estará disponible en la sesión actual de R.</p>
 </section>
 <section id="tu-turno" class="level2">
@@ -634,12 +643,12 @@ window.Quarto = {
 <span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  <span class="op">...</span> magia <span class="op">...</span></span>
 <span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>  </span>
 <span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> <span class="op">[</span>algo<span class="op">];</span></span>
-<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <ol start="2" type="1">
 <li>Ahora, tenemos que verificar las longitudes. Usa la función <code>stop</code> para asegurarte de que las longitudes coincidan. Agrega las siguientes líneas en tu código</li>
 </ol>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="op">([</span>alguna condición<span class="op">])</span></span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  stop<span class="op">(</span><span class="st">"un mensaje de error arbitrario :)"</span><span class="op">);</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  stop<span class="op">(</span><span class="st">"un mensaje de error arbitrario :)"</span><span class="op">);</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="problema-2-serie-de-fibonacci" class="level3 smaller">
 <h3 class="smaller anchored" data-anchor-id="problema-2-serie-de-fibonacci">Problema 2: Serie de Fibonacci</h3>
@@ -667,7 +676,7 @@ F(n - 1) + F(n - 2), &amp; \mbox{de otro modo}
 <span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fibR</span>(<span class="dv">0</span>), <span class="fu">fibR</span>(<span class="dv">1</span>), <span class="fu">fibR</span>(<span class="dv">2</span>),</span>
 <span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fibR</span>(<span class="dv">3</span>), <span class="fu">fibR</span>(<span class="dv">4</span>), <span class="fu">fibR</span>(<span class="dv">5</span>),</span>
 <span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fibR</span>(<span class="dv">6</span>)</span>
-<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0 1 1 2 3 5 8</code></pre>
 </div>
@@ -678,7 +687,7 @@ F(n - 1) + F(n - 2), &amp; \mbox{de otro modo}
 <h3 class="anchored" data-anchor-id="problema-2-serie-de-fibonacci-solución">Problema 2: Serie de Fibonacci (solución)</h3>
 <div class="cell">
 <details class="code-fold">
-<summary>Code</summary>
+<summary>Código</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;Rcpp.h&gt;</span></span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="co">// [[Rcpp::export]]</span></span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> fibCpp<span class="op">(</span><span class="dt">int</span> n<span class="op">)</span> <span class="op">{</span></span>
@@ -687,16 +696,16 @@ F(n - 1) + F(n - 2), &amp; \mbox{de otro modo}
 <span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>  </span>
 <span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> fibCpp<span class="op">(</span>n <span class="op">-</span> <span class="dv">1</span><span class="op">)</span> <span class="op">+</span> fibCpp<span class="op">(</span>n <span class="op">-</span> <span class="dv">2</span><span class="op">);</span></span>
 <span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>microbenchmark<span class="sc">::</span><span class="fu">microbenchmark</span>(<span class="fu">fibR</span>(<span class="dv">20</span>), <span class="fu">fibCpp</span>(<span class="dv">20</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>microbenchmark<span class="sc">::</span><span class="fu">microbenchmark</span>(<span class="fu">fibR</span>(<span class="dv">20</span>), <span class="fu">fibCpp</span>(<span class="dv">20</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Unit: microseconds
-       expr      min       lq      mean   median        uq      max neval
-   fibR(20) 5609.450 5662.147 5987.1950 5688.247 5893.8660 8474.925   100
- fibCpp(20)   14.133   14.378   27.7668   19.084   21.6515  931.549   100</code></pre>
+       expr      min        lq       mean    median       uq      max neval
+   fibR(20) 6091.059 6126.2605 6429.29496 6164.4010 6309.517 8644.211   100
+ fibCpp(20)   15.809   16.0595   30.43373   18.3545   22.702 1075.947   100</code></pre>
 </div>
 </div>
 </section>
@@ -717,15 +726,15 @@ F(n - 1) + F(n - 2), &amp; \mbox{de otro modo}
 <ol type="1">
 <li><p>Dile a Rcpp que necesitas incluir eso en el compilador:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;omp.h&gt;</span></span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="co">// [[Rcpp::plugins(openmp)]]</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div></li>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="co">// [[Rcpp::plugins(openmp)]]</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div></li>
 <li><p>Dentro de tu función, establece el número de núcleos, ej.</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Estableciendo los núcleos</span></span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>omp_set_num_threads<span class="op">(</span>cores<span class="op">);</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div></li>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>omp_set_num_threads<span class="op">(</span>cores<span class="op">);</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div></li>
 <li><p>Dile al compilador que ejecutarás un bloque en paralelo con OpenMP</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#pragma omp [directivas] [opciones]</span></span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="op">...</span>tu código paralelo elegante<span class="op">...</span></span>
-<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Necesitarás especificar cómo OMP debe manejar los datos:</p>
 <ul>
 <li><code>shared</code>: Por defecto, todos los hilos acceden a la misma copia.</li>
@@ -774,7 +783,7 @@ F(n - 1) + F(n - 2), &amp; \mbox{de otro modo}
 <span id="cb25-31"><a href="#cb25-31" aria-hidden="true" tabindex="-1"></a>  </span>
 <span id="cb25-32"><a href="#cb25-32" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Mi bonita matriz de distancia</span></span>
 <span id="cb25-33"><a href="#cb25-33" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> D<span class="op">;</span></span>
-<span id="cb25-34"><a href="#cb25-34" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb25-34"><a href="#cb25-34" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulando datos</span></span>
@@ -783,7 +792,7 @@ F(n - 1) + F(n - 2), &amp; \mbox{de otro modo}
 <span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">500</span></span>
 <span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">rnorm</span>(n<span class="sc">*</span>K), <span class="at">ncol=</span>K)</span>
 <span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a><span class="co"># ¿Estamos obteniendo lo mismo?</span></span>
-<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(<span class="fu">as.matrix</span>(<span class="fu">dist</span>(x)) <span class="sc">-</span> <span class="fu">dist_par</span>(x, <span class="dv">4</span>)) <span class="co"># Solo ceros</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(<span class="fu">as.matrix</span>(<span class="fu">dist</span>(x)) <span class="sc">-</span> <span class="fu">dist_par</span>(x, <span class="dv">4</span>)) <span class="co"># Solo ceros</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
      0 
@@ -799,19 +808,19 @@ F(n - 1) + F(n - 2), &amp; \mbox{de otro modo}
 <span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">dist_par</span>(x, <span class="at">cores =</span> <span class="dv">4</span>), <span class="co"># 4 núcleos</span></span>
 <span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">times =</span> <span class="dv">1</span>, </span>
 <span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">unit =</span> <span class="st">"ms"</span></span>
-<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Unit: milliseconds
-                   expr       min        lq      mean    median        uq
-                dist(x) 1286.3352 1286.3352 1286.3352 1286.3352 1286.3352
- dist_par(x, cores = 1) 1037.6427 1037.6427 1037.6427 1037.6427 1037.6427
- dist_par(x, cores = 2)  783.6094  783.6094  783.6094  783.6094  783.6094
- dist_par(x, cores = 4)  659.4235  659.4235  659.4235  659.4235  659.4235
-       max neval
- 1286.3352     1
- 1037.6427     1
-  783.6094     1
-  659.4235     1</code></pre>
+                   expr      min       lq     mean   median       uq      max
+                dist(x) 2156.976 2156.976 2156.976 2156.976 2156.976 2156.976
+ dist_par(x, cores = 1) 1825.088 1825.088 1825.088 1825.088 1825.088 1825.088
+ dist_par(x, cores = 2) 1351.224 1351.224 1351.224 1351.224 1351.224 1351.224
+ dist_par(x, cores = 4) 1032.911 1032.911 1032.911 1032.911 1032.911 1032.911
+ neval
+     1
+     1
+     1
+     1</code></pre>
 </div>
 </div>
 </section>
@@ -835,7 +844,7 @@ F(n - 1) + F(n - 2), &amp; \mbox{de otro modo}
 <span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>  x2 <span class="sc">%&lt;-%</span> {<span class="fu">Sys.sleep</span>(<span class="dv">3</span>);a<span class="sc">^</span><span class="dv">3</span>}</span>
 <span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>})</span>
 <span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a><span class="do">##    user  system elapsed </span></span>
-<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a><span class="do">##   0.024   0.014   0.038</span></span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a><span class="do">##   0.025   0.021   0.046</span></span>
 <span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Esperemos solo 5 segundos para asegurarnos de que todos los núcleos hayan regresado</span></span>
 <span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a><span class="fu">Sys.sleep</span>(<span class="dv">3</span>)</span>
 <span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a><span class="fu">system.time</span>({</span>
@@ -845,7 +854,7 @@ F(n - 1) + F(n - 2), &amp; \mbox{de otro modo}
 <span id="cb30-18"><a href="#cb30-18" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 4</span></span>
 <span id="cb30-19"><a href="#cb30-19" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 8</span></span>
 <span id="cb30-20"><a href="#cb30-20" aria-hidden="true" tabindex="-1"></a><span class="do">##    user  system elapsed </span></span>
-<span id="cb30-21"><a href="#cb30-21" aria-hidden="true" tabindex="-1"></a><span class="do">##   0.004   0.000   0.004</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb30-21"><a href="#cb30-21" aria-hidden="true" tabindex="-1"></a><span class="do">##   0.004   0.000   0.004</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="pista-bonus-1-simulando-pi" class="level3">
@@ -874,7 +883,7 @@ F(n - 1) + F(n - 2), &amp; \mbox{de otro modo}
 <span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>  </span>
 <span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Pi estimado</span></span>
 <span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>  (<span class="fu">sum</span>(ans <span class="sc">&lt;=</span> <span class="dv">1</span>)<span class="sc">*</span><span class="dv">4</span>)<span class="sc">/</span>nsim</span>
-<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(parallel)</span>
@@ -893,19 +902,19 @@ F(n - 1) + F(n - 2), &amp; \mbox{de otro modo}
 <span id="cb32-14"><a href="#cb32-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">parallel =</span> <span class="fu">parSapply</span>(cl, <span class="dv">1</span><span class="sc">:</span><span class="dv">100</span>, pisim, <span class="at">nsim=</span>nsim),</span>
 <span id="cb32-15"><a href="#cb32-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">serial   =</span> <span class="fu">sapply</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">100</span>, pisim, <span class="at">nsim=</span>nsim),</span>
 <span id="cb32-16"><a href="#cb32-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">times    =</span> <span class="dv">1</span></span>
-<span id="cb32-17"><a href="#cb32-17" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb32-17"><a href="#cb32-17" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Unit: milliseconds
      expr      min       lq     mean   median       uq      max neval
- parallel 288.7032 288.7032 288.7032 288.7032 288.7032 288.7032     1
-   serial 388.2122 388.2122 388.2122 388.2122 388.2122 388.2122     1</code></pre>
+ parallel 296.8983 296.8983 296.8983 296.8983 296.8983 296.8983     1
+   serial 391.8090 391.8090 391.8090 391.8090 391.8090 391.8090     1</code></pre>
 </div>
 </div>
 <hr>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>ans_par <span class="ot">&lt;-</span> <span class="fu">parSapply</span>(cl, <span class="dv">1</span><span class="sc">:</span><span class="dv">100</span>, pisim, <span class="at">nsim=</span>nsim)</span>
 <span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>ans_ser <span class="ot">&lt;-</span> <span class="fu">sapply</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">100</span>, pisim, <span class="at">nsim=</span>nsim)</span>
-<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a><span class="fu">stopCluster</span>(cl)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a><span class="fu">stopCluster</span>(cl)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
@@ -934,10 +943,10 @@ F(n - 1) + F(n - 2), &amp; \mbox{de otro modo}
 Eddelbuettel, Dirk. 2013. <em>Seamless <span>R</span> and <span>C++</span> Integration with <span>Rcpp</span></em>. Springer. <a href="https://doi.org/10.1007/978-1-4614-6868-4">https://doi.org/10.1007/978-1-4614-6868-4</a>.
 </div>
 <div id="ref-Rcpp" class="csl-entry" role="listitem">
-Eddelbuettel, Dirk, and James Joseph Balamuta. 2018. <span>“<span class="nocase">Extending extit<span>R</span> with extit<span>C++</span>: A Brief Introduction to extit<span>Rcpp</span></span>.”</span> <em>The American Statistician</em> 72 (1): 28–36. <a href="https://doi.org/10.1080/00031305.2017.1375990">https://doi.org/10.1080/00031305.2017.1375990</a>.
+Eddelbuettel, Dirk, y James Joseph Balamuta. 2018. <span>«<span>Extending extit<span>R</span> with extit<span>C++</span>: A Brief Introduction to extit<span>Rcpp</span></span>»</span>. <em>The American Statistician</em> 72 (1): 28-36. <a href="https://doi.org/10.1080/00031305.2017.1375990">https://doi.org/10.1080/00031305.2017.1375990</a>.
 </div>
 <div id="ref-Eddelbuettel2011" class="csl-entry" role="listitem">
-Eddelbuettel, Dirk, and Romain François. 2011. <span>“<span>Rcpp</span>: Seamless <span>R</span> and <span>C++</span> Integration.”</span> <em>Journal of Statistical Software</em> 40 (8): 1–18. <a href="https://doi.org/10.18637/jss.v040.i08">https://doi.org/10.18637/jss.v040.i08</a>.
+Eddelbuettel, Dirk, y Romain François. 2011. <span>«<span>Rcpp</span>: Seamless <span>R</span> and <span>C++</span> Integration»</span>. <em>Journal of Statistical Software</em> 40 (8): 1-18. <a href="https://doi.org/10.18637/jss.v040.i08">https://doi.org/10.18637/jss.v040.i08</a>.
 </div>
 </div>
 </section>
@@ -974,12 +983,12 @@ Eddelbuettel, Dirk, and Romain François. 2011. <span>“<span>Rcpp</span>: Seam
       // flash "checked"
       button.classList.add('code-copy-button-checked');
       var currentTitle = button.getAttribute("title");
-      button.setAttribute("title", "Copied!");
+      button.setAttribute("title", "Copiado");
       let tooltip;
       if (window.bootstrap) {
         button.setAttribute("data-bs-toggle", "tooltip");
         button.setAttribute("data-bs-placement", "left");
-        button.setAttribute("data-bs-title", "Copied!");
+        button.setAttribute("data-bs-title", "Copiado");
         tooltip = new bootstrap.Tooltip(button, 
           { trigger: "manual", 
             customClass: "code-copy-button-tooltip",
@@ -1022,7 +1031,7 @@ Eddelbuettel, Dirk, and Romain François. 2011. <span>“<span>Rcpp</span>: Seam
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp("https:\/\/book\.ggvy\.cl");
+        var filterRegex = new RegExp("https:\/\/book-hpc\.ggvy\.cl\/es");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }
@@ -1351,8 +1360,8 @@ Eddelbuettel, Dirk, and Romain François. 2011. <span>“<span>Rcpp</span>: Seam
   </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./slurm-simpi.html" class="pagination-link" aria-label="SLURM con Simulación de π">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">SLURM con Simulación de π</span></span>
+      <a href="./slurm-simpi.html" class="pagination-link" aria-label="Simulando π con Slurm">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">Simulando π con Slurm</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
@@ -1368,8 +1377,8 @@ Eddelbuettel, Dirk, and Romain François. 2011. <span>“<span>Rcpp</span>: Seam
       &nbsp;
     </div>   
     <div class="nav-footer-center">
-<p>HPC Aplicado con R - <a href="https://ggvy.cl" target="_blank">https://ggvy.cl</a></p>
-<div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/gvegayon/appliedhpcr/edit/master/es/rcpp-part1.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/gvegayon/appliedhpcr/blob/master/es/rcpp-part1.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li><li><a href="https://github.com/gvegayon/appliedhpcr/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
+<p>HPC Aplicado con R - <a href="https://ggvy.cl" target="_blank">https://ggvy.cl</a> - <a href="https://book-hpc.ggvy.cl/" hreflang="en">English version</a> - Texto <a href="https://creativecommons.org/licenses/by/4.0/deed.es" rel="license">CC BY 4.0</a>, código <a href="https://github.com/gvegayon/appliedhpcr/blob/master/LICENSE-CODE">MIT</a></p>
+<div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/gvegayon/appliedhpcr/edit/master/es/rcpp-part1.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/gvegayon/appliedhpcr/blob/master/es/rcpp-part1.qmd" class="toc-action"><i class="bi empty"></i>Ver el código</a></li><li><a href="https://github.com/gvegayon/appliedhpcr/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div></div>
     <div class="nav-footer-right">
       &nbsp;
     </div>

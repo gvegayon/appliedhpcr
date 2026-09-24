@@ -8,7 +8,7 @@
 
 <meta name="author" content="George G. Vega Yon">
 <meta name="dcterms.date" content="2025-09-04">
-<meta name="description" content="This book is a collection of talks and lectures on how to speed up your R code using parallel computing and other resources like C++.">
+<meta name="description" content="A free online book on speeding up R code: profiling, writing efficient R, parallel computing, running R on Slurm clusters, and C++ with Rcpp.">
 
 <title>Applied HPC with R</title>
 <style>
@@ -56,6 +56,7 @@ div.csl-indent {
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
 <link href="./profiling.html" rel="next">
+<link href="./fig/favicon.ico" rel="icon">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -65,7 +66,7 @@ div.csl-indent {
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-46f66b053e56abd73bb6e954d61a315b.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-b8db49fd727932e7c00c6ee89cd1476d.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-0b27fe24a26d8b41088cbf839d9dacb2.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -147,6 +148,41 @@ window.Quarto = {
 };
 </script>
 
+<meta property="og:title" content="Applied HPC with R">
+<meta property="og:description" content="A free online book on speeding up R code: profiling, writing efficient R, parallel computing, running R on Slurm clusters, and C++ with Rcpp.">
+<meta property="og:image" content="https://book-hpc.ggvy.cl/fig/social-card.jpg">
+<meta property="og:site_name" content="Applied HPC with R">
+<meta property="og:image:alt" content="Applied HPC with R: C++, Parallelism, and Performance">
+<meta name="twitter:title" content="Applied HPC with R">
+<meta name="twitter:description" content="A free online book on speeding up R code: profiling, writing efficient R, parallel computing, running R on Slurm clusters, and C++ with Rcpp.">
+<meta name="twitter:image" content="https://book-hpc.ggvy.cl/fig/social-card.jpg">
+<meta name="twitter:creator" content="@gvegayon">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image:alt" content="Applied HPC with R: C++, Parallelism, and Performance">
+<link rel="canonical" href="https://book-hpc.ggvy.cl/">
+<meta name="citation_title" content="Applied HPC with R: C++, Parallelism, and Performance">
+<meta name="citation_author" content="George G. Vega Yon">
+<meta name="citation_publication_date" content="2025-09-04">
+<meta name="citation_cover_date" content="2025-09-04">
+<meta name="citation_year" content="2025">
+<meta name="citation_online_date" content="2025-09-04">
+<meta name="citation_fulltext_html_url" content="https://book-hpc.ggvy.cl">
+<meta name="citation_language" content="en">
+<meta name="citation_reference" content="citation_title=Literate programming;,citation_author=Donald E. Knuth;,citation_publication_date=1984-05;,citation_cover_date=1984-05;,citation_year=1984;,citation_fulltext_html_url=https://doi.org/10.1093/comjnl/27.2.97;,citation_issue=2;,citation_doi=10.1093/comjnl/27.2.97;,citation_issn=0010-4620;,citation_volume=27;,citation_journal_title=Comput. J.;,citation_publisher=Oxford University Press, Inc.;">
+<meta name="citation_reference" content="citation_title=R: A language and environment for statistical computing;,citation_author=R Core Team;,citation_publication_date=2023;,citation_cover_date=2023;,citation_year=2023;,citation_fulltext_html_url=https://www.R-project.org/;">
+<meta name="citation_reference" content="citation_title=slurmR: A lightweight wrapper for HPC with slurm;,citation_author=George Vega Yon;,citation_author=Paul Marjoram;,citation_publication_date=2019-07;,citation_cover_date=2019-07;,citation_year=2019;,citation_fulltext_html_url=https://doi.org/10.21105/joss.01493;,citation_issue=39;,citation_doi=10.21105/joss.01493;,citation_volume=4;,citation_journal_title=The Journal of Open Source Software;">
+<meta name="citation_reference" content="citation_title=slurmR: A Lightweight Wrapper for ’Slurm’;,citation_author=George Vega Yon;,citation_author=Paul Marjoram;,citation_publication_date=2022;,citation_cover_date=2022;,citation_year=2022;,citation_fulltext_html_url=https://github.com/USCbiostats/slurmR;">
+<meta name="citation_reference" content="citation_title=Parallel: A command for parallel computing;,citation_author=George G. Vega Vega Yon;,citation_author=Brian Quistorff;,citation_publication_date=2019-09;,citation_cover_date=2019-09;,citation_year=2019;,citation_issue=3;,citation_doi=10.1177/1536867X19874242;,citation_issn=1536-867X;,citation_volume=19;,citation_journal_title=The Stata Journal: Promoting communications on statistics and Stata;">
+<meta name="citation_reference" content="citation_title=Data.table: Extension of ‘data.frame‘;,citation_author=Matt Dowle;,citation_author=Arun Srinivasan;,citation_publication_date=2021;,citation_cover_date=2021;,citation_year=2021;,citation_fulltext_html_url=https://CRAN.R-project.org/package=data.table;">
+<meta name="citation_reference" content="citation_title=Documentation - distribution and binding;,citation_author=LUMI consortium;,citation_publication_date=2023;,citation_cover_date=2023;,citation_year=2023;,citation_fulltext_html_url=https://docs.lumi-supercomputer.eu/runjobs/scheduled-jobs/distribution-binding/;">
+<meta name="citation_reference" content="citation_title=SLURM: Simple linux utility for resource management;,citation_author=Andy B. Yoo;,citation_author=Morris A. Jette;,citation_author=Mark Grondona;,citation_editor=Dror Feitelson;,citation_editor=Larry Rudolph;,citation_editor=Uwe Schwiegelshohn;,citation_publication_date=2003;,citation_cover_date=2003;,citation_year=2003;,citation_fulltext_html_url=http://link.springer.com/10.1007/10968987_3;,citation_doi=10.1007/10968987_3;,citation_isbn=978-3-540-20405-3;,citation_volume=2862;,citation_inbook_title=Job scheduling strategies for parallel processing;,citation_series_title=Lecture notes in computer science;">
+<meta name="citation_reference" content="citation_title=Rcpp: Seamless R and C++ integration;,citation_author=Dirk Eddelbuettel;,citation_author=Romain François;,citation_publication_date=2011;,citation_cover_date=2011;,citation_year=2011;,citation_issue=8;,citation_doi=10.18637/jss.v040.i08;,citation_volume=40;,citation_journal_title=Journal of Statistical Software;">
+<meta name="citation_reference" content="citation_title=Seamless R and C++ integration with Rcpp;,citation_author=Dirk Eddelbuettel;,citation_publication_date=2013;,citation_cover_date=2013;,citation_year=2013;,citation_doi=10.1007/978-1-4614-6868-4;">
+<meta name="citation_reference" content="citation_title=Extending extitR with extitC++: A Brief Introduction to extitRcpp;,citation_author=Dirk Eddelbuettel;,citation_author=James Joseph Balamuta;,citation_publication_date=2018;,citation_cover_date=2018;,citation_year=2018;,citation_issue=1;,citation_doi=10.1080/00031305.2017.1375990;,citation_volume=72;,citation_journal_title=The American Statistician;">
+<meta name="citation_reference" content="citation_title=Welcome | Bioconductor Packages: Development, Maintenance, and Peer Review;,citation_abstract=This is a minimal example of using the bookdown package to write a book. The output format for this example is bookdown::gitbook.;,citation_author=Kevin Rue-Albrecht;,citation_author=Daniela Cassol;,citation_author=Johannes Rainer;,citation_author=Lori Shepherd;,citation_language=en-US;">
+<link rel="alternate" hreflang="en" href="https://book-hpc.ggvy.cl/">
+<link rel="alternate" hreflang="es" href="https://book-hpc.ggvy.cl/es/">
+<link rel="alternate" hreflang="x-default" href="https://book-hpc.ggvy.cl/">
 </head>
 
 <body class="nav-sidebar floating quarto-light">
@@ -174,9 +210,26 @@ window.Quarto = {
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
       <a href="./">Applied HPC with R</a> 
-        <div class="sidebar-tools-main">
+        <div class="sidebar-tools-main tools-wide">
     <a href="https://github.com/gvegayon/appliedhpcr" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
     <a href="./Applied-HPC-with-R.pdf" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
+    <div class="dropdown">
+      <a href="" title="Share" id="quarto-navigation-tool-dropdown-0" class="quarto-navigation-tool dropdown-toggle px-1" data-bs-toggle="dropdown" aria-expanded="false" role="link" aria-label="Share"><i class="bi bi-share"></i></a>
+      <ul class="dropdown-menu" aria-labelledby="quarto-navigation-tool-dropdown-0">
+          <li>
+            <a class="dropdown-item sidebar-tools-main-item" href="https://twitter.com/intent/tweet?url=|url|">
+              <i class="bi bi-twitter pe-1"></i>
+            Twitter
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item sidebar-tools-main-item" href="https://www.linkedin.com/sharing/share-offsite/?url=|url|">
+              <i class="bi bi-linkedin pe-1"></i>
+            LinkedIn
+            </a>
+          </li>
+      </ul>
+    </div>
 </div>
     </div>
       </div>
@@ -204,12 +257,12 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./profiling.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Profiling</span></a>
+  <a href="./profiling.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Profiling R code</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./efficiency.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Writing efficient code</span></a>
+  <a href="./efficiency.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Writing efficient R code</span></a>
   </div>
 </li>
       </ul>
@@ -225,12 +278,12 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./intro.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Introduction</span></a>
+  <a href="./intro.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Introduction to parallel computing</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./parallel-pkg.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Parallel workflow</span></a>
+  <a href="./parallel-pkg.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">The parallel package</span></a>
   </div>
 </li>
       </ul>
@@ -246,12 +299,12 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./slurm-fundamentals.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">What is Slurm</span></a>
+  <a href="./slurm-fundamentals.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Slurm fundamentals</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./slurm-simpi.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Simulating <span class="math inline">pi</span></span></a>
+  <a href="./slurm-simpi.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Simulating <span class="math inline">\pi</span> with Slurm</span></a>
   </div>
 </li>
       </ul>
@@ -267,12 +320,12 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./rcpp-part1.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Rcpp</span></a>
+  <a href="./rcpp-part1.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Speeding up R with Rcpp</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./rcpp-debugging.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Debugging R w C++/C code</span></a>
+  <a href="./rcpp-debugging.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Debugging R with C++/C code</span></a>
   </div>
 </li>
       </ul>
@@ -293,7 +346,7 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./misc.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Misc</span></a>
+  <a href="./misc.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Tips for HPC clusters</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -335,11 +388,12 @@ window.Quarto = {
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
 <h1 class="title">Applied HPC with R</h1>
+<p class="subtitle lead">C++, Parallelism, and Performance</p>
 </div>
 
 <div>
   <div class="description">
-    This book is a collection of talks and lectures on how to speed up your R code using parallel computing and other resources like C++.
+    A free online book on speeding up R code: profiling, writing efficient R, parallel computing, running R on Slurm clusters, and C++ with Rcpp.
   </div>
 </div>
 
@@ -390,6 +444,37 @@ window.Quarto = {
 <section id="about-the-cover" class="level2">
 <h2 class="anchored" data-anchor-id="about-the-cover">About the cover</h2>
 <p>The cover image was created using ChatGPT/Dall-E version 5 using the prompt “I need you to draw a picture representing high-performance computing using the R programming language (which is mostly used for statistics). The picture will go as the cover of the book”Applied HPC with R”. It should feature components related to C++, parallel computing, and high-performance computing”</p>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Book",
+  "name": "Applied HPC with R",
+  "alternativeHeadline": "C++, Parallelism, and Performance",
+  "url": "https://book-hpc.ggvy.cl/",
+  "inLanguage": "en",
+  "description": "A free, open-source book on high-performance computing with R: profiling, writing efficient code, parallel computing with the parallel package, running R on Slurm clusters, and speeding up R with C++ and Rcpp.",
+  "author": {
+    "@type": "Person",
+    "name": "George G. Vega Yon",
+    "url": "https://ggvy.cl",
+    "sameAs": [
+      "https://github.com/gvegayon",
+      "https://x.com/gvegayon"
+    ]
+  },
+  "image": "https://book-hpc.ggvy.cl/fig/cover.png",
+  "datePublished": "2023-04-09",
+  "bookFormat": "https://schema.org/EBook",
+  "isAccessibleForFree": true,
+  "license": "https://creativecommons.org/licenses/by/4.0/",
+  "keywords": "R, high-performance computing, HPC, parallel computing, Slurm, Rcpp, C++, profiling, OpenMP",
+  "codeRepository": "https://github.com/gvegayon/appliedhpcr",
+  "workTranslation": {
+    "@type": "Book",
+    "url": "https://book-hpc.ggvy.cl/es/"
+  }
+}
+</script>
 
 
 <div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
@@ -480,7 +565,7 @@ R Core Team. 2023. <em>R: A Language and Environment for Statistical Computing</
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp('/' + window.location.host + '/');
+        var filterRegex = new RegExp("https:\/\/book-hpc\.ggvy\.cl");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }
@@ -811,14 +896,27 @@ R Core Team. 2023. <em>R: A Language and Environment for Statistical Computing</
   <div class="nav-page nav-page-previous">
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./profiling.html" class="pagination-link" aria-label="Profiling">
-        <span class="nav-page-text"><span class="chapter-title">Profiling</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./profiling.html" class="pagination-link" aria-label="Profiling R code">
+        <span class="nav-page-text"><span class="chapter-title">Profiling R code</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
 </div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+<p>Applied HPC with R - <a href="https://ggvy.cl" target="_blank">https://ggvy.cl</a> - <a href="https://book-hpc.ggvy.cl/es/" hreflang="es">Versión en español</a> - Text <a href="https://creativecommons.org/licenses/by/4.0/" rel="license">CC BY 4.0</a>, code <a href="https://github.com/gvegayon/appliedhpcr/blob/master/LICENSE-CODE">MIT</a></p>
+<div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/gvegayon/appliedhpcr/edit/master/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/gvegayon/appliedhpcr/blob/master/index.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li><li><a href="https://github.com/gvegayon/appliedhpcr/issues" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
 
 
 
 
-<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/gvegayon/appliedhpcr/edit/master/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/gvegayon/appliedhpcr/blob/master/index.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li><li><a href="https://github.com/gvegayon/appliedhpcr/issues" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>
+</body></html>

@@ -6,9 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="description" content="This book is a collection of talks and lectures on how to speed up your R code using parallel computing and other resources like C++.">
+<meta name="description" content="Parallel computing in R with the parallel package: PSOCK and fork clusters, parLapply, mclapply, and reproducible parallel random numbers, with examples.">
 
-<title>Parallel workflow – Applied HPC with R</title>
+<title>The parallel package – Applied HPC with R</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -71,6 +71,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <meta name="quarto:offset" content="./">
 <link href="./slurm-fundamentals.html" rel="next">
 <link href="./intro.html" rel="prev">
+<link href="./fig/favicon.ico" rel="icon">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -80,7 +81,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-46f66b053e56abd73bb6e954d61a315b.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-b8db49fd727932e7c00c6ee89cd1476d.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-0b27fe24a26d8b41088cbf839d9dacb2.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -162,6 +163,21 @@ window.Quarto = {
 };
 </script>
 
+<meta property="og:title" content="The parallel package – Applied HPC with R">
+<meta property="og:description" content="Parallel computing in R with the parallel package: PSOCK and fork clusters, parLapply, mclapply, and reproducible parallel random numbers, with examples.">
+<meta property="og:image" content="https://book-hpc.ggvy.cl/fig/social-card.jpg">
+<meta property="og:site_name" content="Applied HPC with R">
+<meta property="og:image:alt" content="Applied HPC with R: C++, Parallelism, and Performance">
+<meta name="twitter:title" content="The parallel package – Applied HPC with R">
+<meta name="twitter:description" content="Parallel computing in R with the parallel package: PSOCK and fork clusters, parLapply, mclapply, and reproducible parallel random numbers, with examples.">
+<meta name="twitter:image" content="https://book-hpc.ggvy.cl/fig/social-card.jpg">
+<meta name="twitter:creator" content="@gvegayon">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image:alt" content="Applied HPC with R: C++, Parallelism, and Performance">
+<link rel="canonical" href="https://book-hpc.ggvy.cl/parallel-pkg.html">
+<link rel="alternate" hreflang="en" href="https://book-hpc.ggvy.cl/parallel-pkg.html">
+<link rel="alternate" hreflang="es" href="https://book-hpc.ggvy.cl/es/parallel-pkg.html">
+<link rel="alternate" hreflang="x-default" href="https://book-hpc.ggvy.cl/parallel-pkg.html">
 </head>
 
 <body class="nav-sidebar floating quarto-light">
@@ -173,7 +189,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./intro.html">Parallel computing</a></li><li class="breadcrumb-item"><a href="./parallel-pkg.html"><span class="chapter-title">Parallel workflow</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./intro.html">Parallel computing</a></li><li class="breadcrumb-item"><a href="./parallel-pkg.html"><span class="chapter-title">The parallel package</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -189,9 +205,26 @@ window.Quarto = {
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
       <a href="./">Applied HPC with R</a> 
-        <div class="sidebar-tools-main">
+        <div class="sidebar-tools-main tools-wide">
     <a href="https://github.com/gvegayon/appliedhpcr" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
     <a href="./Applied-HPC-with-R.pdf" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
+    <div class="dropdown">
+      <a href="" title="Share" id="quarto-navigation-tool-dropdown-0" class="quarto-navigation-tool dropdown-toggle px-1" data-bs-toggle="dropdown" aria-expanded="false" role="link" aria-label="Share"><i class="bi bi-share"></i></a>
+      <ul class="dropdown-menu" aria-labelledby="quarto-navigation-tool-dropdown-0">
+          <li>
+            <a class="dropdown-item sidebar-tools-main-item" href="https://twitter.com/intent/tweet?url=|url|">
+              <i class="bi bi-twitter pe-1"></i>
+            Twitter
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item sidebar-tools-main-item" href="https://www.linkedin.com/sharing/share-offsite/?url=|url|">
+              <i class="bi bi-linkedin pe-1"></i>
+            LinkedIn
+            </a>
+          </li>
+      </ul>
+    </div>
 </div>
     </div>
       </div>
@@ -219,12 +252,12 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./profiling.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Profiling</span></a>
+  <a href="./profiling.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Profiling R code</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./efficiency.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Writing efficient code</span></a>
+  <a href="./efficiency.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Writing efficient R code</span></a>
   </div>
 </li>
       </ul>
@@ -240,12 +273,12 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./intro.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Introduction</span></a>
+  <a href="./intro.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Introduction to parallel computing</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./parallel-pkg.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">Parallel workflow</span></a>
+  <a href="./parallel-pkg.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">The parallel package</span></a>
   </div>
 </li>
       </ul>
@@ -261,12 +294,12 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./slurm-fundamentals.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">What is Slurm</span></a>
+  <a href="./slurm-fundamentals.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Slurm fundamentals</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./slurm-simpi.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Simulating <span class="math inline">pi</span></span></a>
+  <a href="./slurm-simpi.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Simulating <span class="math inline">\pi</span> with Slurm</span></a>
   </div>
 </li>
       </ul>
@@ -282,12 +315,12 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./rcpp-part1.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Rcpp</span></a>
+  <a href="./rcpp-part1.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Speeding up R with Rcpp</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./rcpp-debugging.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Debugging R w C++/C code</span></a>
+  <a href="./rcpp-debugging.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Debugging R with C++/C code</span></a>
   </div>
 </li>
       </ul>
@@ -308,7 +341,7 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./misc.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Misc</span></a>
+  <a href="./misc.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Tips for HPC clusters</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -334,7 +367,8 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#types-of-clusters-psock" id="toc-types-of-clusters-psock" class="nav-link active" data-scroll-target="#types-of-clusters-psock">Types of clusters: PSOCK</a></li>
+  <li><a href="#parallel-workflow" id="toc-parallel-workflow" class="nav-link active" data-scroll-target="#parallel-workflow">Parallel workflow</a></li>
+  <li><a href="#types-of-clusters-psock" id="toc-types-of-clusters-psock" class="nav-link" data-scroll-target="#types-of-clusters-psock">Types of clusters: PSOCK</a></li>
   <li><a href="#types-of-clusters-fork" id="toc-types-of-clusters-fork" class="nav-link" data-scroll-target="#types-of-clusters-fork">Types of clusters: Fork</a></li>
   <li><a href="#a-template-program" id="toc-a-template-program" class="nav-link" data-scroll-target="#a-template-program">A template program</a></li>
   <li><a href="#example-replacing-a-for-loop-with-parlapply" id="toc-example-replacing-a-for-loop-with-parlapply" class="nav-link" data-scroll-target="#example-replacing-a-for-loop-with-parlapply">Example: Replacing a for-loop with <code>parLapply</code></a>
@@ -356,9 +390,9 @@ window.Quarto = {
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./intro.html">Parallel computing</a></li><li class="breadcrumb-item"><a href="./parallel-pkg.html"><span class="chapter-title">Parallel workflow</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./intro.html">Parallel computing</a></li><li class="breadcrumb-item"><a href="./parallel-pkg.html"><span class="chapter-title">The parallel package</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-title">Parallel workflow</span></h1>
+<h1 class="title"><span class="chapter-title">The parallel package</span></h1>
 </div>
 
 
@@ -382,6 +416,8 @@ window.Quarto = {
 
 
 <p>Although R was not built for parallel computing, multiple ways of parallelizing your R code exist. One of these is the <code>parallel</code> package. This R package, shipped with base R, provides various functions to parallelize R code using <a href="https://en.wikipedia.org/w/index.php?title=Embarrassingly_parallel&amp;oldid=1136401514" target="_blank">embarrassingly parallel computing</a>, i.e., a divide-and-conquer-type strategy. The basic idea is to start multiple R sessions (usually called child processes), connect the main session with those, and send them instructions. This section goes over a common workflow to work with R’s parallel.</p>
+<section id="parallel-workflow" class="level2">
+<h2 class="anchored" data-anchor-id="parallel-workflow">Parallel workflow</h2>
 <p>(Usually) We do the following:</p>
 <ol type="1">
 <li><p>Create a <code>PSOCK/FORK</code> (or other) cluster using <code>makePSOCKCluster</code>/<code>makeForkCluster</code> (or <code>makeCluster</code>). How many child processes will depend on how many threads your computer has. A rule of thumb is to use <code>parallel::detectCores() - 1</code> cores (so you leave one free for the rest of your computer).</p></li>
@@ -395,6 +431,7 @@ window.Quarto = {
 <li><p>Stop the cluster with <code>clusterStop</code></p></li>
 </ol>
 <p>As we mention later, step 2 will depend on the type of cluster you are using. If you are using a Socket connection (<code>PSOCK</code> cluster), then the spawned R sessions will be completely, fresh (no data or R packages pre-loaded); whereas using a Fork connection (<code>FORK</code> cluster) will copy the current R session, including all objects and loaded packages.</p>
+</section>
 <section id="types-of-clusters-psock" class="level2">
 <h2 class="anchored" data-anchor-id="types-of-clusters-psock">Types of clusters: PSOCK</h2>
 <ul>
@@ -659,9 +696,9 @@ Tip
 <span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Unit: milliseconds
-     expr       min        lq      mean    median        uq       max neval
-   serial  519.2093  552.1693  569.9415  558.6899  589.4468  627.9736    10
- parallel 1564.4879 1580.7686 1590.2075 1588.8404 1595.1303 1619.1314    10</code></pre>
+     expr      min        lq      mean    median        uq       max neval
+   serial  633.908  655.9548  704.2344  671.0843  736.3194  846.8432    10
+ parallel 2503.709 2531.3631 2552.7844 2549.4836 2574.4491 2603.0798    10</code></pre>
 </div>
 </div>
 <p>From the comparison, we can see that the parallel version is significantly slower than the serial version. Two things to note here are (a) the task we are running is already fast (about 0.3 seconds on average for the serial run) and (b) there is an overhead cost associated with creating, preparing, and stopping the cluster. As we mentioned earlier, parallel optimizations only make sense if your code is already talking a significant amount of time, making the overhead cost associated with the setup relatively small. The following implementation of the function should make it significantly faster:</p>
@@ -721,8 +758,8 @@ Tip
 <div class="cell-output cell-output-stdout">
 <pre><code>Unit: milliseconds
      expr      min       lq     mean   median       uq      max neval
-   serial 511.1641 548.7258 590.9152 601.2102 631.7348 662.0828    10
- parallel 262.7689 298.0365 304.5750 305.7001 313.1371 333.2642    10</code></pre>
+   serial 595.3310 660.0583 705.4074 669.9378 796.1051 806.6657    10
+ parallel 270.9709 309.5445 312.7010 311.6164 323.4214 351.9781    10</code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># We need to stop the cluster</span></span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="fu">stopCluster</span>(cl)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -839,11 +876,11 @@ Caution
 <span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a>ans <span class="ot">&lt;-</span> <span class="fu">do.call</span>(cbind, <span class="fu">mclapply</span>(<span class="dv">1</span><span class="sc">:</span>nnodes, <span class="cf">function</span>(x) <span class="fu">runif</span>(nsims)))</span>
 <span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a>(ans0 <span class="ot">&lt;-</span> <span class="fu">var</span>(ans))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>             [,1]          [,2]         [,3]          [,4]
-[1,]  0.081587352  0.0027962930 0.0012058707 -0.0027354419
-[2,]  0.002796293  0.0829630153 0.0007118409 -0.0044971132
-[3,]  0.001205871  0.0007118409 0.0849666969  0.0008054688
-[4,] -0.002735442 -0.0044971132 0.0008054688  0.0806283872</code></pre>
+<pre><code>             [,1]         [,2]         [,3]         [,4]
+[1,] 0.0817975731  0.005437932 0.0004132101  0.003212398
+[2,] 0.0054379319  0.085919283 0.0024722448 -0.000519318
+[3,] 0.0004132101  0.002472245 0.0825451071  0.002718430
+[4,] 0.0032123975 -0.000519318 0.0027184298  0.083024150</code></pre>
 </div>
 </div>
 <p>Once more, we want to make sure this is reproducible</p>
@@ -853,11 +890,11 @@ Caution
 <span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>ans1 <span class="ot">&lt;-</span> <span class="fu">var</span>(<span class="fu">do.call</span>(cbind, <span class="fu">mclapply</span>(<span class="dv">1</span><span class="sc">:</span>nnodes, <span class="cf">function</span>(x) <span class="fu">runif</span>(nsims))))</span>
 <span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>ans0 <span class="sc">-</span> ans1 <span class="co"># A matrix of zeros</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>             [,1]         [,2]          [,3]          [,4]
-[1,] -0.001307995  0.004960780  2.052525e-03 -2.899592e-03
-[2,]  0.004960780  0.004398023  3.457033e-03 -2.643487e-03
-[3,]  0.002052525  0.003457033  1.643077e-03 -2.205658e-05
-[4,] -0.002899592 -0.002643487 -2.205658e-05 -1.873006e-03</code></pre>
+<pre><code>            [,1]          [,2]          [,3]          [,4]
+[1,] 0.001339099  0.0073861464  0.0040621308  0.0027520650
+[2,] 0.007386146  0.0023788894  0.0032582730 -0.0003370327
+[3,] 0.004062131  0.0032582730  0.0004883606 -0.0010330772
+[4,] 0.002752065 -0.0003370327 -0.0010330772  0.0028357305</code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. STOP THE CLUSTER</span></span>
 <span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a><span class="co"># stopCluster(cl) no need of doing this anymore</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -988,7 +1025,7 @@ Caution
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp('/' + window.location.host + '/');
+        var filterRegex = new RegExp("https:\/\/book-hpc\.ggvy\.cl");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }
@@ -1317,19 +1354,32 @@ Caution
   </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./intro.html" class="pagination-link" aria-label="Introduction">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">Introduction</span></span>
+      <a href="./intro.html" class="pagination-link" aria-label="Introduction to parallel computing">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">Introduction to parallel computing</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./slurm-fundamentals.html" class="pagination-link" aria-label="What is Slurm">
-        <span class="nav-page-text"><span class="chapter-title">What is Slurm</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./slurm-fundamentals.html" class="pagination-link" aria-label="Slurm fundamentals">
+        <span class="nav-page-text"><span class="chapter-title">Slurm fundamentals</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
 </div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+<p>Applied HPC with R - <a href="https://ggvy.cl" target="_blank">https://ggvy.cl</a> - <a href="https://book-hpc.ggvy.cl/es/" hreflang="es">Versión en español</a> - Text <a href="https://creativecommons.org/licenses/by/4.0/" rel="license">CC BY 4.0</a>, code <a href="https://github.com/gvegayon/appliedhpcr/blob/master/LICENSE-CODE">MIT</a></p>
+<div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/gvegayon/appliedhpcr/edit/master/parallel-pkg.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/gvegayon/appliedhpcr/blob/master/parallel-pkg.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li><li><a href="https://github.com/gvegayon/appliedhpcr/issues" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
 
 
 
 
-<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/gvegayon/appliedhpcr/edit/master/parallel-pkg.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/gvegayon/appliedhpcr/blob/master/parallel-pkg.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li><li><a href="https://github.com/gvegayon/appliedhpcr/issues" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>
+</body></html>
