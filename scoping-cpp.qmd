@@ -1,3 +1,7 @@
+---
+description: "RAII and scoping in C++ for R users: using object lifetimes to manage resources in Rcpp code, including multi-threaded code and multiple compiled libraries."
+---
+
 # Notes about scoping in C++
 
 This chapter will present a more advanced but important topic in C++: RAII and scoping. RAII stands for Resource Acquisition Is Initialization, and it is a programming idiom that ensures that resources are properly released when they are no longer needed. From the perspective of an R user, this provides a nice opportunity for scoping in C++. Let's take a look with an example:

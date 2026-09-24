@@ -1,3 +1,7 @@
+---
+description: "RAII y alcance en C++ para usuarios de R: usar el ciclo de vida de los objetos para manejar recursos en código Rcpp, incluyendo código multihilo y varias bibliotecas compiladas."
+---
+
 # Notas sobre alcance en C++
 
 Este capítulo presenta un tema más avanzado pero importante en C++: RAII y alcance (scoping). RAII significa Resource Acquisition Is Initialization, y es un patrón de programación que asegura que los recursos se liberen correctamente cuando ya no se necesitan. Desde la perspectiva de una persona usuaria de R, esto ofrece una buena oportunidad para trabajar con alcance en C++. Veámoslo con un ejemplo:

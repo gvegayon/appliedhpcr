@@ -1,3 +1,8 @@
+---
+title: "Slurm fundamentals"
+description: "Slurm fundamentals for R users: key HPC cluster terms, and how to copy a Slurm script to the cluster, log in, and submit a job with sbatch."
+---
+
 ```{r}
 #| label: setup
 #| include: false

@@ -1,31 +1,37 @@
 project:
   type: book
+  post-render: ../_hreflang.R
 
 extensions:
   - quarto-ext/orange-book
 
 engine: knitr
+lang: es
 book:
   version: 2026.03.18
-  language: es
   google-analytics: "G-9D75EFV0TE"
   title: "HPC Aplicado con R"
+  subtitle: "C++, Paralelismo y Rendimiento"
   author: "George G. Vega Yon"
   original-date: 2023-04-09
   date: 2025-09-04
-  cover-image: ../fig/cover.png
+  cover-image: fig/cover.png
   cover-image-alt: 'Imagen de portada para HPC Aplicado con R'
-  page-footer: HPC Aplicado con R - [https://ggvy.cl](https://ggvy.cl){target="_blank"}
+  page-footer: HPC Aplicado con R - [https://ggvy.cl](https://ggvy.cl){target="_blank"} - [English version](https://book-hpc.ggvy.cl/){hreflang="en"}
   repo-url: https://github.com/gvegayon/appliedhpcr
   repo-branch: master
   repo-subdir: 'es'
   repo-actions: [edit, source, issue]
-  image: ../fig/cover.png
+  image: fig/social-card.jpg
+  image-alt: 'HPC Aplicado con R: C++, Paralelismo y Rendimiento'
+  favicon: fig/favicon.ico
+  open-graph: true
   twitter-card:
-    description: 'Este libro es una colección de charlas y conferencias sobre cómo acelerar tu código R usando computación paralela y otros recursos como C++.'
+    card-style: summary_large_image
     creator: "@gvegayon"
-  site-url: https://book.ggvy.cl
+  site-url: https://book-hpc.ggvy.cl/es
   sharing: [twitter, linkedin]
+  page-navigation: true
   navbar:
     search: true
 
@@ -57,6 +63,10 @@ book:
 
 bibliography: references.bib
 
+# Social-media preview for every page
+image: fig/social-card.jpg
+image-alt: 'HPC Aplicado con R: C++, Paralelismo y Rendimiento'
+
 biblio-style: apalike
 
 format:
@@ -65,4 +75,5 @@ format:
     toc: true
     number-sections: false
     theme: cosmo
+    canonical-url: true
   orange-book-typst: default

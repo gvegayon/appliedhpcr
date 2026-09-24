@@ -1,4 +1,8 @@
-# Rcpp
+---
+description: "Acelera R con C++ usando Rcpp: tipos de C++, las partes de un programa Rcpp, ejemplos y ejercicios, y multihilo con RcppArmadillo y OpenMP."
+---
+
+# Acelerando R con Rcpp
 
 ::: {.callout-warning}
 ## Nota de Traducción

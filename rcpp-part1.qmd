@@ -1,4 +1,8 @@
-# Rcpp
+---
+description: "Speed up R with C++ using Rcpp: C++ types, the parts of an Rcpp program, worked examples and exercises, and multithreading with RcppArmadillo and OpenMP."
+---
+
+# Speeding up R with Rcpp
 
 When parallel computing is not enough, you can boost your R code using a lower-level programming language[^lowwhat] like C++, C, or Fortran. With R itself written in C, it provides access points (APIs) to connect C++/C/Fortran functions to R. Although not impossible, using lower-level languages to enhance R can be cumbersome; Rcpp [@Eddelbuettel2011; @RcppBook; @Rcpp] can make things **very** easy. This chapter shows you how to use Rcpp--the most popular way to connect C++ with R--to accelerate your R code.
 

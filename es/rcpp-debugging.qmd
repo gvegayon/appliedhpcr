@@ -2,6 +2,7 @@
 title: Depuración de R con código C++/C
 author: George G. Vega Yon, Ph.D.
 date: 2025-08-14
+description: "Cómo depurar código R que llama a código compilado en C++/C, usando Valgrind para encontrar errores de memoria y GDB para rastrear fallos."
 ---
 
 ::: {.callout-warning}

@@ -1,4 +1,8 @@
-# Debugging R w C++/C code
+---
+description: "How to debug R code that calls compiled C++/C code, using Valgrind to find memory errors and GDB to track down crashes."
+---
+
+# Debugging R with C++/C code
 
 Although debugging R code is easy, the same doesn't apply to compiled code in R[^debug-vscode]. This chapter shows a few ways to debug your R + C++ code. You will need the [GNU Debugger (GDB)](https://en.wikipedia.org/w/index.php?title=GNU_Debugger&oldid=1146565095){target="_blank"} and [Valgrind](https://en.wikipedia.org/w/index.php?title=Valgrind&oldid=1135729346){target="_blank"}.
 

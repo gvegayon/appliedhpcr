@@ -1,6 +1,7 @@
 ---
 date-modified: 2025-08-21
 title: El Paquete parallel
+description: "Computación paralela en R con el paquete parallel: clusters PSOCK y fork, parLapply, mclapply y números aleatorios reproducibles en paralelo, con ejemplos."
 ---
 
 ::: {.callout-warning}

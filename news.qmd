@@ -1,6 +1,7 @@
 ---
 date: 2025-09-03
 date-modified: 2026-03-18
+description: "Release notes and change log for Applied HPC with R, listing what changed in each version of the book."
 ---
 
 # News

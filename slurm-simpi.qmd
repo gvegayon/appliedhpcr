@@ -1,4 +1,8 @@
-# Simulating $pi$
+---
+description: "Running R on a Slurm cluster by simulating pi: single-core, multicore, multinode, and job-array submissions with sbatch and the slurmR package."
+---
+
+# Simulating $\pi$ with Slurm
 
 ```{r}
 #| label: setup

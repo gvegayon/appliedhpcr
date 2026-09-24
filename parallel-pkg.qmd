@@ -1,5 +1,7 @@
 ---
+title: "The parallel package"
 date-modified: 2025-08-21
+description: "Parallel computing in R with the parallel package: PSOCK and fork clusters, parLapply, mclapply, and reproducible parallel random numbers, with examples."
 ---
 
 Although R was not built for parallel computing, multiple ways of parallelizing your R code exist. One of these is the `parallel` package. This R package, shipped with base R, provides various functions to parallelize R code using [embarrassingly parallel computing](https://en.wikipedia.org/w/index.php?title=Embarrassingly_parallel&oldid=1136401514){target="_blank"}, i.e., a divide-and-conquer-type strategy. The basic idea is to start multiple R sessions (usually called child processes), connect the main session with those, and send them instructions. This section goes over a common workflow to work with R's parallel.

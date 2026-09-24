@@ -2,6 +2,7 @@
 title: Fundamentos de SLURM
 author: George G. Vega Yon, Ph.D.
 date: 2025-08-14
+description: "Fundamentos de Slurm para usuarios de R: conceptos clave de clusters HPC y cómo copiar un script de Slurm al cluster, conectarse y enviar un trabajo con sbatch."
 ---
 
 ::: {.callout-warning}

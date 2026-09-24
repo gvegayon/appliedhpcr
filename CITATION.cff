@@ -1,0 +1,33 @@
+cff-version: 1.2.0
+message: "If you use this book, please cite it as below."
+type: software
+title: "Applied HPC with R: C++, Parallelism, and Performance"
+abstract: >-
+  A free, open-source book on high-performance computing with R: profiling,
+  writing efficient code, parallel computing with the parallel package, running
+  R on Slurm clusters, and speeding up R with C++ and Rcpp. Available in
+  English and Spanish.
+authors:
+  - family-names: Vega Yon
+    given-names: George G.
+url: "https://book-hpc.ggvy.cl"
+repository-code: "https://github.com/gvegayon/appliedhpcr"
+keywords:
+  - R
+  - high-performance computing
+  - HPC
+  - parallel computing
+  - Slurm
+  - Rcpp
+  - C++
+  - profiling
+version: "2026.03.18"
+date-released: "2026-03-18"
+preferred-citation:
+  type: book
+  title: "Applied HPC with R: C++, Parallelism, and Performance"
+  authors:
+    - family-names: Vega Yon
+      given-names: George G.
+  url: "https://book-hpc.ggvy.cl"
+  year: 2026

@@ -1,7 +1,8 @@
 ---
-title: Writing efficient code
+title: "Writing efficient R code"
 author: George G. Vega Yon, Ph.D.
 date: 2025-08-14
+description: "Tips for writing efficient R code: vectorized operations, caching results (including in Shiny apps), avoiding unnecessary steps, and reducing copies."
 ---
 
 - R code can be very efficient for typical tasks, but, as the code starts to increase in complexity, it is easy for it to become inefficient.

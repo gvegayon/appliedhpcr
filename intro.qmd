@@ -1,3 +1,8 @@
+---
+title: "Introduction to parallel computing"
+description: "An overview of high-performance computing (HPC) in R: big data, serial vs. parallel computing, CPUs vs. GPUs, key vocabulary, and when parallelizing pays off."
+---
+
 # Introduction
 
 While most people see R as a slow programming language, it has powerful features that dramatically accelerate your code [^exampledatatable]. Although R wasn't necessarily built for speed, there are some tools and ways in which we can accelerate R. This chapter introduces what we will understand as High-performance computing in R.
