@@ -100,7 +100,7 @@ div.csl-indent {
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-46f66b053e56abd73bb6e954d61a315b.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-0b27fe24a26d8b41088cbf839d9dacb2.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-f91232bac02fa236e30921f67296bd9e.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -187,12 +187,6 @@ window.Quarto = {
 <meta property="og:image" content="https://book-hpc.ggvy.cl/fig/social-card.jpg">
 <meta property="og:site_name" content="Applied HPC with R">
 <meta property="og:image:alt" content="Applied HPC with R: C++, Parallelism, and Performance">
-<meta name="twitter:title" content="Speeding up R with Rcpp – Applied HPC with R">
-<meta name="twitter:description" content="Speed up R with C++ using Rcpp: C++ types, the parts of an Rcpp program, worked examples and exercises, and multithreading with RcppArmadillo and OpenMP.">
-<meta name="twitter:image" content="https://book-hpc.ggvy.cl/fig/social-card.jpg">
-<meta name="twitter:creator" content="@gvegayon">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image:alt" content="Applied HPC with R: C++, Parallelism, and Performance">
 <link rel="canonical" href="https://book-hpc.ggvy.cl/rcpp-part1.html">
 <link rel="alternate" hreflang="en" href="https://book-hpc.ggvy.cl/rcpp-part1.html">
 <link rel="alternate" hreflang="es" href="https://book-hpc.ggvy.cl/es/rcpp-part1.html">
@@ -227,23 +221,7 @@ window.Quarto = {
         <div class="sidebar-tools-main tools-wide">
     <a href="https://github.com/gvegayon/appliedhpcr" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
     <a href="./Applied-HPC-with-R.pdf" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
-    <div class="dropdown">
-      <a href="" title="Share" id="quarto-navigation-tool-dropdown-0" class="quarto-navigation-tool dropdown-toggle px-1" data-bs-toggle="dropdown" aria-expanded="false" role="link" aria-label="Share"><i class="bi bi-share"></i></a>
-      <ul class="dropdown-menu" aria-labelledby="quarto-navigation-tool-dropdown-0">
-          <li>
-            <a class="dropdown-item sidebar-tools-main-item" href="https://twitter.com/intent/tweet?url=|url|">
-              <i class="bi bi-twitter pe-1"></i>
-            Twitter
-            </a>
-          </li>
-          <li>
-            <a class="dropdown-item sidebar-tools-main-item" href="https://www.linkedin.com/sharing/share-offsite/?url=|url|">
-              <i class="bi bi-linkedin pe-1"></i>
-            LinkedIn
-            </a>
-          </li>
-      </ul>
-    </div>
+    <a href="https://www.linkedin.com/sharing/share-offsite/?url=|url|" title="LinkedIn" class="quarto-navigation-tool px-1" aria-label="LinkedIn"><i class="bi bi-linkedin"></i></a>
 </div>
     </div>
       </div>
@@ -314,6 +292,11 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./slurm-fundamentals.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Slurm fundamentals</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./slurm-under-the-hood.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Under the hood: Slurm and slurmR</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -547,9 +530,9 @@ window.Quarto = {
 <span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>microbenchmark<span class="sc">::</span><span class="fu">microbenchmark</span>(<span class="fu">add1R</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">1000</span>), <span class="fu">add1Cpp</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">1000</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Unit: microseconds
-            expr    min      lq     mean  median     uq      max neval
-   add1R(1:1000) 68.862 70.5795 93.00194 71.6360 75.883 1994.610   100
- add1Cpp(1:1000)  3.235  3.9310 16.94795  4.5565 13.030  977.742   100</code></pre>
+            expr    min      lq     mean median     uq      max neval
+   add1R(1:1000) 29.848 30.6135 49.56125 31.793 33.062 1776.537   100
+ add1Cpp(1:1000)  2.677  3.0280  9.21713  3.322  5.665  487.438   100</code></pre>
 </div>
 </div>
 </section>
@@ -694,9 +677,9 @@ F(n - 1) + F(n - 2), &amp; \mbox{otherwise}
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>microbenchmark<span class="sc">::</span><span class="fu">microbenchmark</span>(<span class="fu">fibR</span>(<span class="dv">20</span>), <span class="fu">fibCpp</span>(<span class="dv">20</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Unit: microseconds
-       expr      min       lq       mean   median        uq      max neval
-   fibR(20) 5193.458 5341.142 5618.57340 5383.315 5527.7340 8060.173   100
- fibCpp(20)   15.714   16.074   28.57048   18.247   19.6145 1007.536   100</code></pre>
+       expr      min        lq       mean   median        uq      max neval
+   fibR(20) 3410.652 3797.9630 4154.83175 3947.663 4342.7565 6939.220   100
+ fibCpp(20)    9.701   11.5055   19.90896   14.771   15.7335  561.722   100</code></pre>
 </div>
 </div>
 </section>
@@ -803,10 +786,10 @@ F(n - 1) + F(n - 2), &amp; \mbox{otherwise}
 <div class="cell-output cell-output-stdout">
 <pre><code>Unit: milliseconds
                    expr      min       lq     mean   median       uq      max
-                dist(x) 1857.818 1857.818 1857.818 1857.818 1857.818 1857.818
- dist_par(x, cores = 1) 1664.685 1664.685 1664.685 1664.685 1664.685 1664.685
- dist_par(x, cores = 2) 1241.765 1241.765 1241.765 1241.765 1241.765 1241.765
- dist_par(x, cores = 4) 1024.438 1024.438 1024.438 1024.438 1024.438 1024.438
+                dist(x) 1914.200 1914.200 1914.200 1914.200 1914.200 1914.200
+ dist_par(x, cores = 1) 3312.199 3312.199 3312.199 3312.199 3312.199 3312.199
+ dist_par(x, cores = 2) 2378.283 2378.283 2378.283 2378.283 2378.283 2378.283
+ dist_par(x, cores = 4) 1852.041 1852.041 1852.041 1852.041 1852.041 1852.041
  neval
      1
      1
@@ -835,7 +818,7 @@ F(n - 1) + F(n - 2), &amp; \mbox{otherwise}
 <span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>  x2 <span class="sc">%&lt;-%</span> {<span class="fu">Sys.sleep</span>(<span class="dv">3</span>);a<span class="sc">^</span><span class="dv">3</span>}</span>
 <span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>})</span>
 <span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a><span class="do">##    user  system elapsed </span></span>
-<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a><span class="do">##   0.030   0.016   0.046</span></span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a><span class="do">##   0.018   0.020   0.039</span></span>
 <span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Let's just wait 5 seconds to make sure all the cores have returned</span></span>
 <span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a><span class="fu">Sys.sleep</span>(<span class="dv">3</span>)</span>
 <span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a><span class="fu">system.time</span>({</span>
@@ -845,7 +828,7 @@ F(n - 1) + F(n - 2), &amp; \mbox{otherwise}
 <span id="cb30-18"><a href="#cb30-18" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 4</span></span>
 <span id="cb30-19"><a href="#cb30-19" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 8</span></span>
 <span id="cb30-20"><a href="#cb30-20" aria-hidden="true" tabindex="-1"></a><span class="do">##    user  system elapsed </span></span>
-<span id="cb30-21"><a href="#cb30-21" aria-hidden="true" tabindex="-1"></a><span class="do">##   0.005   0.000   0.005</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb30-21"><a href="#cb30-21" aria-hidden="true" tabindex="-1"></a><span class="do">##   0.003   0.000   0.003</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="bonus-track-1-simulating-pi" class="level3">
@@ -897,8 +880,8 @@ F(n - 1) + F(n - 2), &amp; \mbox{otherwise}
 <div class="cell-output cell-output-stdout">
 <pre><code>Unit: milliseconds
      expr      min       lq     mean   median       uq      max neval
- parallel 318.6346 318.6346 318.6346 318.6346 318.6346 318.6346     1
-   serial 403.1450 403.1450 403.1450 403.1450 403.1450 403.1450     1</code></pre>
+ parallel 216.9835 216.9835 216.9835 216.9835 216.9835 216.9835     1
+   serial 279.3202 279.3202 279.3202 279.3202 279.3202 279.3202     1</code></pre>
 </div>
 </div>
 <hr>

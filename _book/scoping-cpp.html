@@ -81,7 +81,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-46f66b053e56abd73bb6e954d61a315b.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-0b27fe24a26d8b41088cbf839d9dacb2.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-f91232bac02fa236e30921f67296bd9e.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -168,12 +168,6 @@ window.Quarto = {
 <meta property="og:image" content="https://book-hpc.ggvy.cl/fig/social-card.jpg">
 <meta property="og:site_name" content="Applied HPC with R">
 <meta property="og:image:alt" content="Applied HPC with R: C++, Parallelism, and Performance">
-<meta name="twitter:title" content="Appendix A — Notes about scoping in C++ – Applied HPC with R">
-<meta name="twitter:description" content="RAII and scoping in C++ for R users: using object lifetimes to manage resources in Rcpp code, including multi-threaded code and multiple compiled libraries.">
-<meta name="twitter:image" content="https://book-hpc.ggvy.cl/fig/social-card.jpg">
-<meta name="twitter:creator" content="@gvegayon">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image:alt" content="Applied HPC with R: C++, Parallelism, and Performance">
 <link rel="canonical" href="https://book-hpc.ggvy.cl/scoping-cpp.html">
 <link rel="alternate" hreflang="en" href="https://book-hpc.ggvy.cl/scoping-cpp.html">
 <link rel="alternate" hreflang="es" href="https://book-hpc.ggvy.cl/es/scoping-cpp.html">
@@ -208,23 +202,7 @@ window.Quarto = {
         <div class="sidebar-tools-main tools-wide">
     <a href="https://github.com/gvegayon/appliedhpcr" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
     <a href="./Applied-HPC-with-R.pdf" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
-    <div class="dropdown">
-      <a href="" title="Share" id="quarto-navigation-tool-dropdown-0" class="quarto-navigation-tool dropdown-toggle px-1" data-bs-toggle="dropdown" aria-expanded="false" role="link" aria-label="Share"><i class="bi bi-share"></i></a>
-      <ul class="dropdown-menu" aria-labelledby="quarto-navigation-tool-dropdown-0">
-          <li>
-            <a class="dropdown-item sidebar-tools-main-item" href="https://twitter.com/intent/tweet?url=|url|">
-              <i class="bi bi-twitter pe-1"></i>
-            Twitter
-            </a>
-          </li>
-          <li>
-            <a class="dropdown-item sidebar-tools-main-item" href="https://www.linkedin.com/sharing/share-offsite/?url=|url|">
-              <i class="bi bi-linkedin pe-1"></i>
-            LinkedIn
-            </a>
-          </li>
-      </ul>
-    </div>
+    <a href="https://www.linkedin.com/sharing/share-offsite/?url=|url|" title="LinkedIn" class="quarto-navigation-tool px-1" aria-label="LinkedIn"><i class="bi bi-linkedin"></i></a>
 </div>
     </div>
       </div>
@@ -295,6 +273,11 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./slurm-fundamentals.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Slurm fundamentals</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./slurm-under-the-hood.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Under the hood: Slurm and slurmR</span></a>
   </div>
 </li>
           <li class="sidebar-item">

@@ -46,7 +46,7 @@ ul.task-list li input[type="checkbox"] {
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-46f66b053e56abd73bb6e954d61a315b.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-0b27fe24a26d8b41088cbf839d9dacb2.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-f91232bac02fa236e30921f67296bd9e.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -133,12 +133,6 @@ window.Quarto = {
 <meta property="og:image" content="https://book-hpc.ggvy.cl/fig/social-card.jpg">
 <meta property="og:site_name" content="Applied HPC with R">
 <meta property="og:image:alt" content="Applied HPC with R: C++, Parallelism, and Performance">
-<meta name="twitter:title" content="Appendix C — News – Applied HPC with R">
-<meta name="twitter:description" content="Release notes and change log for Applied HPC with R, listing what changed in each version of the book.">
-<meta name="twitter:image" content="https://book-hpc.ggvy.cl/fig/social-card.jpg">
-<meta name="twitter:creator" content="@gvegayon">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image:alt" content="Applied HPC with R: C++, Parallelism, and Performance">
 <link rel="canonical" href="https://book-hpc.ggvy.cl/news.html">
 <link rel="alternate" hreflang="en" href="https://book-hpc.ggvy.cl/news.html">
 <link rel="alternate" hreflang="es" href="https://book-hpc.ggvy.cl/es/news.html">
@@ -173,23 +167,7 @@ window.Quarto = {
         <div class="sidebar-tools-main tools-wide">
     <a href="https://github.com/gvegayon/appliedhpcr" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
     <a href="./Applied-HPC-with-R.pdf" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
-    <div class="dropdown">
-      <a href="" title="Share" id="quarto-navigation-tool-dropdown-0" class="quarto-navigation-tool dropdown-toggle px-1" data-bs-toggle="dropdown" aria-expanded="false" role="link" aria-label="Share"><i class="bi bi-share"></i></a>
-      <ul class="dropdown-menu" aria-labelledby="quarto-navigation-tool-dropdown-0">
-          <li>
-            <a class="dropdown-item sidebar-tools-main-item" href="https://twitter.com/intent/tweet?url=|url|">
-              <i class="bi bi-twitter pe-1"></i>
-            Twitter
-            </a>
-          </li>
-          <li>
-            <a class="dropdown-item sidebar-tools-main-item" href="https://www.linkedin.com/sharing/share-offsite/?url=|url|">
-              <i class="bi bi-linkedin pe-1"></i>
-            LinkedIn
-            </a>
-          </li>
-      </ul>
-    </div>
+    <a href="https://www.linkedin.com/sharing/share-offsite/?url=|url|" title="LinkedIn" class="quarto-navigation-tool px-1" aria-label="LinkedIn"><i class="bi bi-linkedin"></i></a>
 </div>
     </div>
       </div>
@@ -264,6 +242,11 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="./slurm-under-the-hood.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Under the hood: Slurm and slurmR</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="./slurm-simpi.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Simulating <span class="math inline">\pi</span> with Slurm</span></a>
   </div>
 </li>
@@ -332,7 +315,8 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#version-2026.03.18" id="toc-version-2026.03.18" class="nav-link active" data-scroll-target="#version-2026.03.18">Version 2026.03.18</a></li>
+  <li><a href="#version-2026.11.18" id="toc-version-2026.11.18" class="nav-link active" data-scroll-target="#version-2026.11.18">Version 2026.11.18</a></li>
+  <li><a href="#version-2026.03.18" id="toc-version-2026.03.18" class="nav-link" data-scroll-target="#version-2026.03.18">Version 2026.03.18</a></li>
   <li><a href="#version-2025.09.03" id="toc-version-2025.09.03" class="nav-link" data-scroll-target="#version-2025.09.03">Version 2025.09.03</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/gvegayon/appliedhpcr/edit/master/news.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/gvegayon/appliedhpcr/blob/master/news.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li><li><a href="https://github.com/gvegayon/appliedhpcr/issues" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
@@ -360,7 +344,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Modified</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">March 18, 2026</p>
+      <p class="date-modified">November 18, 2026</p>
     </div>
   </div>
     
@@ -371,6 +355,13 @@ window.Quarto = {
 </header>
 
 
+<section id="version-2026.11.18" class="level2">
+<h2 class="anchored" data-anchor-id="version-2026.11.18">Version 2026.11.18</h2>
+<ul>
+<li>New chapter, <a href="./slurm-under-the-hood.html">Under the hood: Slurm and slurmR</a>, between the Slurm fundamentals and the Slurm simulation chapters. It explains how Slurm works (its daemons, the life of a job, job states, and job arrays) and how <code>slurmR</code> turns <code>Slurm_lapply()</code> into a job array, including every file it writes, the logs, and how results are collected. A chapter appendix covers how the Slurm scheduler decides which job runs next (priority and backfill) and shows a timeline of a <code>Slurm_lapply()</code> call. The chapter is also available in Spanish.</li>
+<li>Removed the Twitter card and the Twitter sharing button from the website.</li>
+</ul>
+</section>
 <section id="version-2026.03.18" class="level2">
 <h2 class="anchored" data-anchor-id="version-2026.03.18">Version 2026.03.18</h2>
 <ul>

@@ -88,7 +88,7 @@ div.csl-indent {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./slurm-simpi.html" rel="next">
+<link href="./slurm-under-the-hood.html" rel="next">
 <link href="./parallel-pkg.html" rel="prev">
 <link href="./fig/favicon.ico" rel="icon">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
@@ -100,7 +100,7 @@ div.csl-indent {
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-46f66b053e56abd73bb6e954d61a315b.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-0b27fe24a26d8b41088cbf839d9dacb2.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-f91232bac02fa236e30921f67296bd9e.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -187,12 +187,6 @@ window.Quarto = {
 <meta property="og:image" content="https://book-hpc.ggvy.cl/fig/social-card.jpg">
 <meta property="og:site_name" content="Applied HPC with R">
 <meta property="og:image:alt" content="Applied HPC with R: C++, Parallelism, and Performance">
-<meta name="twitter:title" content="Slurm fundamentals – Applied HPC with R">
-<meta name="twitter:description" content="Slurm fundamentals for R users: key HPC cluster terms, and how to copy a Slurm script to the cluster, log in, and submit a job with sbatch.">
-<meta name="twitter:image" content="https://book-hpc.ggvy.cl/fig/social-card.jpg">
-<meta name="twitter:creator" content="@gvegayon">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image:alt" content="Applied HPC with R: C++, Parallelism, and Performance">
 <link rel="canonical" href="https://book-hpc.ggvy.cl/slurm-fundamentals.html">
 <link rel="alternate" hreflang="en" href="https://book-hpc.ggvy.cl/slurm-fundamentals.html">
 <link rel="alternate" hreflang="es" href="https://book-hpc.ggvy.cl/es/slurm-fundamentals.html">
@@ -227,23 +221,7 @@ window.Quarto = {
         <div class="sidebar-tools-main tools-wide">
     <a href="https://github.com/gvegayon/appliedhpcr" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
     <a href="./Applied-HPC-with-R.pdf" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
-    <div class="dropdown">
-      <a href="" title="Share" id="quarto-navigation-tool-dropdown-0" class="quarto-navigation-tool dropdown-toggle px-1" data-bs-toggle="dropdown" aria-expanded="false" role="link" aria-label="Share"><i class="bi bi-share"></i></a>
-      <ul class="dropdown-menu" aria-labelledby="quarto-navigation-tool-dropdown-0">
-          <li>
-            <a class="dropdown-item sidebar-tools-main-item" href="https://twitter.com/intent/tweet?url=|url|">
-              <i class="bi bi-twitter pe-1"></i>
-            Twitter
-            </a>
-          </li>
-          <li>
-            <a class="dropdown-item sidebar-tools-main-item" href="https://www.linkedin.com/sharing/share-offsite/?url=|url|">
-              <i class="bi bi-linkedin pe-1"></i>
-            LinkedIn
-            </a>
-          </li>
-      </ul>
-    </div>
+    <a href="https://www.linkedin.com/sharing/share-offsite/?url=|url|" title="LinkedIn" class="quarto-navigation-tool px-1" aria-label="LinkedIn"><i class="bi bi-linkedin"></i></a>
 </div>
     </div>
       </div>
@@ -314,6 +292,11 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./slurm-fundamentals.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">Slurm fundamentals</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./slurm-under-the-hood.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Under the hood: Slurm and slurmR</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -924,8 +907,8 @@ Yoo, Andy B., Morris A. Jette, and Mark Grondona. 2003. <span>“SLURM: Simple L
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./slurm-simpi.html" class="pagination-link" aria-label="Simulating $\pi$ with Slurm">
-        <span class="nav-page-text"><span class="chapter-title">Simulating <span class="math inline">\pi</span> with Slurm</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./slurm-under-the-hood.html" class="pagination-link" aria-label="Under the hood: Slurm and slurmR">
+        <span class="nav-page-text"><span class="chapter-title">Under the hood: Slurm and slurmR</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

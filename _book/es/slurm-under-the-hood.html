@@ -1,0 +1,1849 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.35">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="Cómo Slurm planifica y ejecuta trabajos (demonios, ciclo de vida de un trabajo, planificación, arreglos de trabajos) y cómo el paquete de R slurmR convierte Slurm_lapply() en un arreglo de trabajos: los archivos que escribe, los registros y cómo se recolectan los resultados.">
+
+<title>Bajo el capó: Slurm y slurmR – HPC Aplicado con R</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./slurm-simpi.html" rel="next">
+<link href="./slurm-fundamentals.html" rel="prev">
+<link href="./fig/favicon.ico" rel="icon">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-46f66b053e56abd73bb6e954d61a315b.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-f91232bac02fa236e30921f67296bd9e.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No se han encontrado resultados",
+    "search-matching-documents-text": "documentos encontrados",
+    "search-copy-link-title": "Copiar el enlace en la búsqueda",
+    "search-hide-matches-text": "Ocultar resultados adicionales",
+    "search-more-match-text": "resultado adicional en este documento",
+    "search-more-matches-text": "resultados adicionales en este documento",
+    "search-clear-button-title": "Borrar",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancelar",
+    "search-submit-button-title": "Enviar",
+    "search-label": "Buscar"
+  }
+}</script>
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-9D75EFV0TE"></script>
+
+<script type="text/javascript">
+
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-9D75EFV0TE', { 'anonymize_ip': true});
+</script>
+
+
+<meta property="og:title" content="Bajo el capó: Slurm y slurmR – HPC Aplicado con R">
+<meta property="og:description" content="Cómo Slurm planifica y ejecuta trabajos (demonios, ciclo de vida de un trabajo, planificación, arreglos de trabajos) y cómo el paquete de R slurmR convierte Slurm_lapply() en un arreglo de trabajos: los archivos que escribe, los registros y cómo se recolectan los resultados.">
+<meta property="og:image" content="https://book-hpc.ggvy.cl/es/fig/social-card.jpg">
+<meta property="og:site_name" content="HPC Aplicado con R">
+<meta property="og:image:alt" content="HPC Aplicado con R: C++, Paralelismo y Rendimiento">
+<link rel="canonical" href="https://book-hpc.ggvy.cl/es/slurm-under-the-hood.html">
+<link rel="alternate" hreflang="en" href="https://book-hpc.ggvy.cl/slurm-under-the-hood.html">
+<link rel="alternate" hreflang="es" href="https://book-hpc.ggvy.cl/es/slurm-under-the-hood.html">
+<link rel="alternate" hreflang="x-default" href="https://book-hpc.ggvy.cl/slurm-under-the-hood.html">
+</head>
+
+<body class="nav-sidebar floating nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">HPC Aplicado con R</span>
+    </a>
+  </div>
+        <div class="quarto-navbar-tools tools-wide tools-end">
+    <a href="https://github.com/gvegayon/appliedhpcr/tree/master/es/" title="Ejecutar el código" class="quarto-navigation-tool px-1" aria-label="Ejecutar el código"><i class="bi bi-github"></i></a>
+    <a href="./HPC-Aplicado-con-R.pdf" title="Descargar PDF" class="quarto-navigation-tool px-1" aria-label="Descargar PDF"><i class="bi bi-file-pdf"></i></a>
+    <a href="https://www.linkedin.com/sharing/share-offsite/?url=|url|" title="LinkedIn" class="quarto-navigation-tool px-1" aria-label="LinkedIn"><i class="bi bi-linkedin"></i></a>
+</div>
+          <div id="quarto-search" class="" title="Buscar"></div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./slurm-fundamentals.html">Trabajando con un Cluster</a></li><li class="breadcrumb-item"><a href="./slurm-under-the-hood.html"><span class="chapter-title">Bajo el capó: Slurm y slurmR</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Prefacio</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Fundamentos</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./profiling.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Perfilado de Código</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./efficiency.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Escribiendo Código Eficiente</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Computación paralela</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./intro.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Introducción a la Computación Paralela</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./parallel-pkg.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">El Paquete parallel</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Trabajando con un Cluster</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./slurm-fundamentals.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Fundamentos de SLURM</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./slurm-under-the-hood.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">Bajo el capó: Slurm y slurmR</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./slurm-simpi.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Simulando π con Slurm</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">Usando C++</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./rcpp-part1.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Acelerando R con Rcpp</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./rcpp-debugging.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Depuración de R con código C++/C</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
+ <span class="menu-text">Apéndices</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./scoping-cpp.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Notas sobre alcance en C++</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./misc.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Consejos para clusters HPC</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./references.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Referencias</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./news.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Novedades</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Tabla de contenidos</h2>
+   
+  <ul>
+  <li><a href="#cómo-funciona-slurm" id="toc-cómo-funciona-slurm" class="nav-link active" data-scroll-target="#cómo-funciona-slurm">Cómo funciona Slurm</a>
+  <ul class="collapse">
+  <li><a href="#los-personajes" id="toc-los-personajes" class="nav-link" data-scroll-target="#los-personajes">Los personajes</a></li>
+  <li><a href="#nodos-particiones-trabajos-y-pasos-de-trabajo" id="toc-nodos-particiones-trabajos-y-pasos-de-trabajo" class="nav-link" data-scroll-target="#nodos-particiones-trabajos-y-pasos-de-trabajo">Nodos, particiones, trabajos y pasos de trabajo</a></li>
+  <li><a href="#la-vida-de-un-trabajo" id="toc-la-vida-de-un-trabajo" class="nav-link" data-scroll-target="#la-vida-de-un-trabajo">La vida de un trabajo</a></li>
+  <li><a href="#arreglos-de-trabajos" id="toc-arreglos-de-trabajos" class="nav-link" data-scroll-target="#arreglos-de-trabajos">Arreglos de trabajos</a></li>
+  </ul></li>
+  <li><a href="#cómo-funciona-slurmr" id="toc-cómo-funciona-slurmr" class="nav-link" data-scroll-target="#cómo-funciona-slurmr">Cómo funciona slurmR</a>
+  <ul class="collapse">
+  <li><a href="#la-idea" id="toc-la-idea" class="nav-link" data-scroll-target="#la-idea">La idea</a></li>
+  <li><a href="#el-recorrido-de-un-trabajo" id="toc-el-recorrido-de-un-trabajo" class="nav-link" data-scroll-target="#el-recorrido-de-un-trabajo">El recorrido de un trabajo</a></li>
+  <li><a href="#mirando-bajo-el-capó" id="toc-mirando-bajo-el-capó" class="nav-link" data-scroll-target="#mirando-bajo-el-capó">Mirando bajo el capó</a></li>
+  <li><a href="#dónde-vive-todo-la-carpeta-del-trabajo" id="toc-dónde-vive-todo-la-carpeta-del-trabajo" class="nav-link" data-scroll-target="#dónde-vive-todo-la-carpeta-del-trabajo">Dónde vive todo: la carpeta del trabajo</a></li>
+  <li><a href="#el-script-de-bash" id="toc-el-script-de-bash" class="nav-link" data-scroll-target="#el-script-de-bash">El script de bash</a></li>
+  <li><a href="#el-script-de-r" id="toc-el-script-de-r" class="nav-link" data-scroll-target="#el-script-de-r">El script de R</a></li>
+  <li><a href="#envío-monitoreo-y-registros" id="toc-envío-monitoreo-y-registros" class="nav-link" data-scroll-target="#envío-monitoreo-y-registros">Envío, monitoreo y registros</a></li>
+  <li><a href="#recolectar-los-resultados-y-limpiar" id="toc-recolectar-los-resultados-y-limpiar" class="nav-link" data-scroll-target="#recolectar-los-resultados-y-limpiar">Recolectar los resultados y limpiar</a></li>
+  <li><a href="#otras-funciones-del-paquete" id="toc-otras-funciones-del-paquete" class="nav-link" data-scroll-target="#otras-funciones-del-paquete">Otras funciones del paquete</a></li>
+  </ul></li>
+  <li><a href="#sec-slurm-scheduling" id="toc-sec-slurm-scheduling" class="nav-link" data-scroll-target="#sec-slurm-scheduling">Cómo decide Slurm quién se ejecuta y dónde</a></li>
+  <li><a href="#sec-slurmr-timeline" id="toc-sec-slurmr-timeline" class="nav-link" data-scroll-target="#sec-slurmr-timeline">En resumen: la línea de tiempo de <code>Slurm_lapply()</code></a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/gvegayon/appliedhpcr/edit/master/es/slurm-under-the-hood.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/gvegayon/appliedhpcr/blob/master/es/slurm-under-the-hood.qmd" class="toc-action"><i class="bi empty"></i>Ver el código</a></li><li><a href="https://github.com/gvegayon/appliedhpcr/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./slurm-fundamentals.html">Trabajando con un Cluster</a></li><li class="breadcrumb-item"><a href="./slurm-under-the-hood.html"><span class="chapter-title">Bajo el capó: Slurm y slurmR</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-title">Bajo el capó: Slurm y slurmR</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Advertencia</span>Nota de Traducción
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Esta versión del capítulo fue traducida de manera automática utilizando IA. El capítulo aún no ha sido revisado por un humano.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-important callout-titled" title="Uso de IA">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Importante</span>Uso de IA
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Este capítulo fue escrito casi en su totalidad por Claude Code. El autor le pidió crear una versión más detallada de cómo funcionan Slurm y slurmR. El contenido fue revisado y editado por el autor, pero el borrador original fue generado por IA. Además, la IA utilizó la documentación del paquete slurmR (escrito por el autor) para explicar cómo funciona el paquete.</p>
+</div>
+</div>
+<p>En el <a href="./slurm-fundamentals.html">capítulo anterior</a> aprendimos el vocabulario (nodos, particiones, tareas, CPUs) y enviamos un “Hola mundo” con <code>sbatch</code>. Antes de comenzar a ejecutar análisis reales en el <a href="./slurm-simpi.html">siguiente capítulo</a>, vale la pena dedicar unos minutos a entender qué ocurre <em>después</em> de presionar enter. Cuando algo sale mal en un cluster (un trabajo que nunca comienza, un trabajo que muere sin dejar mensaje, resultados que nunca aparecen), la respuesta casi siempre está en alguna de las piezas que describimos aquí.</p>
+<p>Este capítulo tiene dos partes:</p>
+<ol type="1">
+<li><p><strong>Cómo funciona Slurm:</strong> los procesos que componen un cluster con Slurm, la vida de un trabajo desde que se envía hasta que termina, cómo el planificador decide qué se ejecuta y dónde, y qué es un <strong>arreglo de trabajos</strong> (<em>job array</em>).</p></li>
+<li><p><strong>Cómo funciona slurmR:</strong> cómo el paquete <code>slurmR</code> usa arreglos de trabajos para ofrecer funciones similares a las del paquete <code>parallel</code> (<code>Slurm_lapply()</code>, <code>Slurm_sapply()</code>, …) que se ejecutan en un cluster, incluyendo cada archivo que crea en el camino.</p></li>
+</ol>
+<p>No es necesario ejecutar código para seguir este capítulo. La única salida de R que verás proviene del “modo detallado” (<em>verbose mode</em>) del paquete, que muestra lo que <code>slurmR</code> haría sin enviar nada.</p>
+<section id="cómo-funciona-slurm" class="level2">
+<h2 class="anchored" data-anchor-id="cómo-funciona-slurm">Cómo funciona Slurm</h2>
+<section id="los-personajes" class="level3">
+<h3 class="anchored" data-anchor-id="los-personajes">Los personajes</h3>
+<p>Slurm es una colección de programas que se comunican entre sí a través de la red. Algunos de ellos se ejecutan todo el tiempo (llamados <strong>demonios</strong> o <em>daemons</em>, la <code>d</code> al final de <code>slurmctld</code>, <code>slurmd</code> y <code>slurmdbd</code>), y otros son los comandos que tú escribes. La <a href="#fig-slurm-components" class="quarto-xref">Figura&nbsp;<span>6.1</span></a> muestra cómo se relacionan entre sí, y la <a href="#tbl-slurm-daemons" class="quarto-xref">Tabla&nbsp;<span>6.1</span></a> describe cada pieza.</p>
+<div id="fig-slurm-components" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-slurm-components-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="fig/slurm-under-the-hood/es/fig-slurm-components.png" class="img-fluid figure-img" style="width:100.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-slurm-components-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;6.1: Los componentes principales de un cluster con Slurm. Las flechas indican qué componente se comunica con cuál.
+</figcaption>
+</figure>
+</div>
+<div id="tbl-slurm-daemons" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-slurm-daemons-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Tabla&nbsp;6.1: Componentes de Slurm.
+</figcaption>
+<div aria-describedby="tbl-slurm-daemons-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 51%">
+<col style="width: 28%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Pieza</th>
+<th style="text-align: left;">Dónde se ejecuta</th>
+<th style="text-align: left;">Qué hace</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><code>slurmctld</code></td>
+<td style="text-align: left;">Nodo de administración</td>
+<td style="text-align: left;">El “cerebro.” Mantiene la lista de todos los nodos y su estado, guarda la cola de trabajos, decide qué trabajo se ejecuta dónde y cuándo, y les dice a los nodos qué hacer. Puede haber un controlador de respaldo en caso de que este falle.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>slurmd</code></td>
+<td style="text-align: left;">Cada nodo de cómputo</td>
+<td style="text-align: left;">El “trabajador.” Espera en un nodo instrucciones de <code>slurmctld</code>, inicia el trabajo, lo monitorea, informa cuando termina y espera más. Suele compararse con una terminal remota.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>slurmdbd</code></td>
+<td style="text-align: left;">Nodo de administración (opcional)</td>
+<td style="text-align: left;">Registra información de contabilidad (quién ejecutó qué, por cuánto tiempo, usando cuánta memoria) en una base de datos. De aquí obtiene <code>sacct</code> su información.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Comandos de cliente</td>
+<td style="text-align: left;">Nodo de acceso (y nodos de cómputo)</td>
+<td style="text-align: left;"><code>sbatch</code> (enviar un script), <code>srun</code> (ejecutar un comando dentro de una asignación), <code>salloc</code> (obtener una asignación interactiva), <code>squeue</code> (listar trabajos), <code>sinfo</code> (listar nodos y particiones), <code>scontrol</code> (inspeccionar y modificar), <code>scancel</code> (cancelar), <code>sacct</code> (trabajos pasados).</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<p>Una consecuencia importante de este diseño es que <strong>el nodo de acceso (<em>login node</em>) es solo una puerta de entrada</strong>. Cuando escribes <code>sbatch</code>, el comando no ejecuta tu script: envía una solicitud a <code>slurmctld</code> y termina. Tu script se ejecutará más tarde, en uno o más nodos de cómputo, bajo la supervisión de <code>slurmd</code>.</p>
+</section>
+<section id="nodos-particiones-trabajos-y-pasos-de-trabajo" class="level3">
+<h3 class="anchored" data-anchor-id="nodos-particiones-trabajos-y-pasos-de-trabajo">Nodos, particiones, trabajos y pasos de trabajo</h3>
+<p>En el capítulo anterior definimos nodos y particiones. Slurm agrega dos conceptos más sobre ellos: el <strong>trabajo</strong> (<em>job</em>) y el <strong>paso de trabajo</strong> (<em>job step</em>).</p>
+<ul>
+<li><p>Un <strong>trabajo</strong> es una asignación de recursos: “dame estos nodos/CPUs/memoria por este tiempo.” Cada trabajo recibe un identificador único (el número que <code>sbatch</code> imprime después de <code>Submitted batch job</code>).</p></li>
+<li><p>Un <strong>paso de trabajo</strong> es un conjunto de tareas lanzadas <em>dentro</em> de un trabajo, típicamente con <code>srun</code>. Un trabajo puede tener uno o muchos pasos, ejecutándose al mismo tiempo o uno después de otro.</p></li>
+</ul>
+<p>Por ejemplo, a un trabajo se le pueden asignar seis nodos de una partición y ejecutar un solo paso que los usa todos, mientras que otro trabajo divide sus cuatro nodos en dos pasos de dos nodos cada uno. Los nodos que no pertenecen a ningún trabajo están libres para que otros trabajos los usen.</p>
+<p>Para usuarios de R, la situación más común es simple: un script de lote (el trabajo) que llama a <code>Rscript</code> una vez (por lo que, en la práctica, hay un solo paso). Cualquier paralelismo que quieras <em>dentro</em> de ese trabajo (múltiples núcleos con <code>mclapply()</code>, un cluster de sockets, etc.) depende de tu código en R. <strong>Slurm reserva los recursos, no paraleliza tu programa.</strong></p>
+</section>
+<section id="la-vida-de-un-trabajo" class="level3">
+<h3 class="anchored" data-anchor-id="la-vida-de-un-trabajo">La vida de un trabajo</h3>
+<p>La <a href="#fig-job-sequence" class="quarto-xref">Figura&nbsp;<span>6.2</span></a> sigue a un trabajo de lote desde el momento en que lo envías hasta que queda registrado en la base de datos de contabilidad.</p>
+<div id="fig-job-sequence" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-job-sequence-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="fig/slurm-under-the-hood/es/fig-job-sequence.png" class="img-fluid figure-img" style="width:100.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-job-sequence-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;6.2: Qué ocurre cuando ejecutas <code>sbatch my-job.slurm</code>.
+</figcaption>
+</figure>
+</div>
+<p>En palabras:</p>
+<ol type="1">
+<li><p><strong>Envío.</strong> <code>sbatch</code> lee tu script, recoge las opciones <code>#SBATCH</code> al inicio (para bash son solo comentarios, pero <code>sbatch</code> las interpreta) y envía todo a <code>slurmctld</code>. El controlador verifica que la solicitud tenga sentido (¿existe la partición? ¿puedes usar esa cuenta? ¿está permitido ese límite de tiempo?), asigna un ID al trabajo y lo pone en la cola. Por eso <code>sbatch</code> termina inmediatamente.</p></li>
+<li><p><strong>Espera.</strong> El trabajo permanece en estado <code>PENDING</code> hasta que el planificador le encuentra un lugar (ver <a href="#sec-slurm-scheduling">Cómo decide Slurm quién se ejecuta y dónde</a> en el apéndice de este capítulo). La versión corta: pide lo que necesitas, no mucho más (para que el trabajo quepa en los huecos y comience antes) ni menos (o Slurm lo detendrá).</p></li>
+<li><p><strong>Asignación e inicio.</strong> Cuando los recursos están disponibles, <code>slurmctld</code> los marca como tuyos y le pide al <code>slurmd</code> del <strong>primer nodo de la asignación</strong> que ejecute tu script de lote. Antes de hacerlo, Slurm define varias variables de entorno (<code>SLURM_JOB_ID</code>, <code>SLURM_CPUS_PER_TASK</code>, <code>SLURMD_NODENAME</code>, <code>SLURM_ARRAY_TASK_ID</code>, …), y todo lo que el script imprime en la salida estándar o en el error estándar va al archivo indicado en <code>--output</code> (por defecto <code>slurm-&lt;jobid&gt;.out</code> en el directorio desde donde ejecutaste <code>sbatch</code>).</p></li>
+<li><p><strong>Ejecución.</strong> El script es un script de bash normal: ejecuta comandos uno después de otro en ese primer nodo. Si llama a <code>srun</code>, Slurm lanza pasos de trabajo en los recursos asignados; si solo llama a <code>Rscript</code>, se inicia un único proceso de R en ese nodo.</p></li>
+<li><p><strong>Término.</strong> Cuando el script termina, o cuando algo lo obliga a detenerse, <code>slurmd</code> lo informa, los recursos se liberan y se registran el estado final del trabajo y los recursos que usó.</p></li>
+</ol>
+<p>Un trabajo siempre está en uno de unos pocos estados, que puedes ver en la columna <code>ST</code> de <code>squeue</code> y en la columna <code>State</code> de <code>sacct</code>. La <a href="#fig-job-states" class="quarto-xref">Figura&nbsp;<span>6.3</span></a> muestra los más comunes, y la <a href="#tbl-job-states" class="quarto-xref">Tabla&nbsp;<span>6.2</span></a> lista sus códigos.</p>
+<div id="fig-job-states" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-job-states-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="fig/slurm-under-the-hood/es/fig-job-states.png" class="img-fluid figure-img" style="width:100.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-job-states-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;6.3: Estados más comunes de un trabajo en Slurm.
+</figcaption>
+</figure>
+</div>
+<div id="tbl-job-states" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-job-states-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Tabla&nbsp;6.2: Estados comunes de un trabajo.
+</figcaption>
+<div aria-describedby="tbl-job-states-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 19%">
+<col style="width: 48%">
+<col style="width: 31%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Estado</th>
+<th style="text-align: left;">Código en <code>squeue</code></th>
+<th style="text-align: left;">Significado</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><code>PENDING</code></td>
+<td style="text-align: left;"><code>PD</code></td>
+<td style="text-align: left;">Esperando recursos (o que un trabajo de mayor prioridad pase primero).</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>RUNNING</code></td>
+<td style="text-align: left;"><code>R</code></td>
+<td style="text-align: left;">El trabajo tiene una asignación y el script se está ejecutando.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>COMPLETING</code></td>
+<td style="text-align: left;"><code>CG</code></td>
+<td style="text-align: left;">El script terminó y Slurm está limpiando (algunos procesos pueden seguir activos).</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>COMPLETED</code></td>
+<td style="text-align: left;"><code>CD</code></td>
+<td style="text-align: left;">El script terminó con código de salida 0.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>FAILED</code></td>
+<td style="text-align: left;"><code>F</code></td>
+<td style="text-align: left;">El script terminó con un código de salida distinto de cero.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>CANCELLED</code></td>
+<td style="text-align: left;"><code>CA</code></td>
+<td style="text-align: left;">Alguien (tú o un administrador) canceló el trabajo con <code>scancel</code>.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>TIMEOUT</code></td>
+<td style="text-align: left;"><code>TO</code></td>
+<td style="text-align: left;">El trabajo alcanzó el límite de tiempo (<code>--time</code>) y fue detenido.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>OUT_OF_MEMORY</code></td>
+<td style="text-align: left;"><code>OOM</code></td>
+<td style="text-align: left;">El trabajo intentó usar más memoria de la solicitada.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<p>Nota que Slurm decide si un trabajo tuvo éxito basándose <strong>solo en el código de salida del script de lote</strong>. Slurm no sabe nada sobre si tu código de R hizo lo que querías; si R termina normalmente, el trabajo queda <code>COMPLETED</code>. Veremos por qué esto importa cuando hablemos del manejo de errores en <code>slurmR</code>.</p>
+</section>
+<section id="arreglos-de-trabajos" class="level3">
+<h3 class="anchored" data-anchor-id="arreglos-de-trabajos">Arreglos de trabajos</h3>
+<p>Muchos problemas en estadística y ciencia de datos se ven así: <em>ejecutar el mismo programa muchas veces, cambiando solo un pequeño detalle entre ejecuciones.</em> Simular un modelo 1.000 veces con distintas semillas, ajustar el mismo modelo a 200 bases de datos, evaluar una grilla de parámetros de ajuste o calcular 5.000 réplicas bootstrap son todos ejemplos. Cada ejecución es independiente de las demás, así que todas pueden ejecutarse al mismo tiempo. Estos se conocen como problemas <em>vergonzosamente paralelos</em> (<em>embarrassingly parallel</em>).</p>
+<p>Una forma de abordarlos es escribir un loop en R que recorra todos los casos y pedir muchos núcleos (lo que hicimos con <code>mclapply()</code> en el <a href="./parallel-pkg.html">capítulo de parallel</a>). Esto funciona, pero todos los núcleos deben venir de un <em>único nodo</em>, así que estás limitado al tamaño del nodo más grande, y Slurm tiene que encontrar un hueco en el cluster lo suficientemente grande para todo el trabajo. La otra alternativa es enviar muchos trabajos pequeños, pero escribir <code>sbatch</code> mil veces es engorroso, satura la cola y hace que los trabajos sean más difíciles de seguir.</p>
+<p>Un <strong>arreglo de trabajos</strong> es la respuesta de Slurm: envías <strong>un</strong> script con <strong>un</strong> comando <code>sbatch</code> y le pides a Slurm que cree <em>N copias</em> de él. Slurm trata cada copia, llamada <strong>tarea del arreglo</strong> (<em>array task</em>), como un trabajo independiente: tiene su propio ID, se planifica de forma independiente (una tarea puede comenzar de inmediato en el nodo 1, otra unos minutos después en el nodo 7 y una tercera puede esperar hasta la tarde), tiene su propia asignación (los recursos que solicitaste aplican <em>por tarea</em>, no al arreglo completo) y escribe su propio archivo de salida. La única diferencia entre las copias es un número, el <strong>índice del arreglo</strong>, que Slurm pone a disposición de cada copia en la variable de entorno <code>SLURM_ARRAY_TASK_ID</code>. Depende de tu script usar ese número para decidir qué hacer: qué semilla usar, qué fila de una tabla de parámetros evaluar, qué parte de los datos procesar o qué archivo leer.</p>
+<p>La <a href="#fig-job-array" class="quarto-xref">Figura&nbsp;<span>6.4</span></a> muestra un arreglo de trabajos con cuatro tareas.</p>
+<div id="fig-job-array" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-job-array-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="fig/slurm-under-the-hood/es/fig-job-array.png" class="img-fluid figure-img" style="width:100.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-job-array-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;6.4: Un arreglo de trabajos con cuatro tareas. Un solo envío crea cuatro trabajos independientes que ejecutan el mismo script. Pueden comenzar en distintos momentos, en distintos nodos, y terminar en cualquier orden.
+</figcaption>
+</figure>
+</div>
+<p>El tamaño y los índices del arreglo se especifican con la opción <code>--array</code> (o <code>-a</code>) de <code>sbatch</code>:</p>
+<div id="tbl-array-options" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-array-options-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Tabla&nbsp;6.3: Ejemplos de la opción <code>--array</code>.
+</figcaption>
+<div aria-describedby="tbl-array-options-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 66%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Opción</th>
+<th style="text-align: left;">Tareas creadas</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><code>--array=1-100</code></td>
+<td style="text-align: left;">1, 2, …, 100</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>--array=1,3,5,7</code></td>
+<td style="text-align: left;">1, 3, 5 y 7</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>--array=1-7:2</code></td>
+<td style="text-align: left;">1, 3, 5 y 7 (un rango con paso 2)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>--array=1-100%10</code></td>
+<td style="text-align: left;">1, …, 100, pero no más de 10 ejecutándose al mismo tiempo</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<p>La última es útil cuando cada tarea lee un archivo grande o usa un recurso compartido (como una base de datos) y no quieres que 100 de ellas lo hagan al mismo tiempo.</p>
+<p>Además de <code>SLURM_ARRAY_TASK_ID</code>, Slurm define otras variables en cada tarea y ofrece patrones para nombres de archivo que evitan que las salidas se sobrescriban:</p>
+<div id="tbl-array-vars" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-array-vars-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Tabla&nbsp;6.4: Variables de entorno y patrones de nombres de archivo en arreglos de trabajos.
+</figcaption>
+<div aria-describedby="tbl-array-vars-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 6%">
+<col style="width: 13%">
+<col style="width: 27%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Qué</th>
+<th style="text-align: left;">Variable</th>
+<th style="text-align: left;">En <code>--output</code> usar</th>
+<th style="text-align: left;">Ejemplo en la tarea 2 del trabajo 36</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">ID del arreglo completo</td>
+<td style="text-align: left;"><code>SLURM_ARRAY_JOB_ID</code></td>
+<td style="text-align: left;"><code>%A</code></td>
+<td style="text-align: left;"><code>36</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Índice de esta tarea</td>
+<td style="text-align: left;"><code>SLURM_ARRAY_TASK_ID</code></td>
+<td style="text-align: left;"><code>%a</code></td>
+<td style="text-align: left;"><code>2</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ID de esta tarea como trabajo normal</td>
+<td style="text-align: left;"><code>SLURM_JOB_ID</code></td>
+<td style="text-align: left;"><code>%j</code></td>
+<td style="text-align: left;"><code>37</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Número de tareas en el arreglo</td>
+<td style="text-align: left;"><code>SLURM_ARRAY_TASK_COUNT</code></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><code>4</code></td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<p>Slurm también permite referirse a una sola tarea como <code>&lt;id del arreglo&gt;_&lt;índice de la tarea&gt;</code> (p.&nbsp;ej., <code>36_2</code>), lo que puedes usar con <code>squeue</code>, <code>sacct</code>, <code>scontrol</code> y <code>scancel</code>. Cancelar <code>36_2</code> detiene solo esa tarea; cancelar <code>36</code> las detiene todas.</p>
+<p>Desde R, usar el índice se ve así. Supongamos que queremos evaluar un modelo sobre una grilla de seis combinaciones de parámetros, una por tarea. El script de R (<code>array-example.R</code>) lee su propio índice y elige su fila:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Each array task gets a different value of SLURM_ARRAY_TASK_ID</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>id <span class="ot">&lt;-</span> <span class="fu">as.integer</span>(<span class="fu">Sys.getenv</span>(<span class="st">"SLURM_ARRAY_TASK_ID"</span>))</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># All tasks build the same grid, but each takes a different row</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>grid <span class="ot">&lt;-</span> <span class="fu">expand.grid</span>(</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">n   =</span> <span class="fu">c</span>(<span class="dv">100</span>, <span class="dv">1000</span>),</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">rho =</span> <span class="fu">c</span>(<span class="fl">0.1</span>, <span class="fl">0.5</span>, <span class="fl">0.9</span>)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>params <span class="ot">&lt;-</span> grid[id, ]</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(id) <span class="co"># A different seed per task</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>res <span class="ot">&lt;-</span> <span class="fu">my_simulation</span>(<span class="at">n =</span> params<span class="sc">$</span>n, <span class="at">rho =</span> params<span class="sc">$</span>rho)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Each task saves its own file</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(res, <span class="fu">sprintf</span>(<span class="st">"result-%03d.rds"</span>, id))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<p>y el script de bash que lo envía (seis tareas, un núcleo cada una) es</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/sh</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --job-name=array-example</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --output=array-example-%A-%a.out</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --array=1-6</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --cpus-per-task=1</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --time=00:30:00</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="ex">module</span> load R/4.2.2</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> array-example.R</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Un solo <code>sbatch array-example.slurm</code> crea seis trabajos, cada uno de los cuales produce su propio <code>result-00X.rds</code> y su propio registro <code>array-example-&lt;jobid&gt;-&lt;X&gt;.out</code>.</p>
+<p>Los arreglos de trabajos tienen además algunas ventajas que los convierten en la herramienta preferida para este tipo de trabajo:</p>
+<ul>
+<li><p><strong>Escala.</strong> Las tareas pueden repartirse en muchos nodos, así que el límite es el tamaño del cluster (y los límites de los administradores), no el tamaño de un nodo.</p></li>
+<li><p><strong>Planificación más rápida.</strong> Los trabajos pequeños caben más fácilmente en los huecos del planificador (ver <a href="#sec-slurm-scheduling">backfill</a>), y Slurm maneja un arreglo completo como un solo envío en lugar de miles.</p></li>
+<li><p><strong>Las fallas quedan contenidas.</strong> Si la tarea 17 se queda sin memoria, las otras 99 no se ven afectadas, y puedes volver a ejecutar solo la tarea que falló con, p.&nbsp;ej., <code>sbatch --array=17 analysis.slurm</code>.</p></li>
+<li><p><strong>Fácil seguimiento.</strong> Un solo ID identifica a todo el grupo, y la salida de cada tarea está en su propio archivo.</p></li>
+</ul>
+<p>La <a href="#tbl-parallel-flavors" class="quarto-xref">Tabla&nbsp;<span>6.5</span></a> compara los arreglos de trabajos con las otras formas de obtener más de una CPU que hemos visto hasta ahora.</p>
+<div id="tbl-parallel-flavors" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-parallel-flavors-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Tabla&nbsp;6.5: Tres formas de usar más de una CPU.
+</figcaption>
+<div aria-describedby="tbl-parallel-flavors-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 19%">
+<col style="width: 32%">
+<col style="width: 47%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Estrategia</th>
+<th style="text-align: left;">¿Dónde se ejecuta?</th>
+<th style="text-align: left;">¿Quién crea el paralelismo?</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong>Trabajo multinúcleo</strong> (<code>--cpus-per-task=8</code>)</td>
+<td style="text-align: left;">Un trabajo, en un nodo, con 8 núcleos</td>
+<td style="text-align: left;">Tu código de R (<code>mclapply()</code>, <code>parLapply()</code>)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Trabajo con varias tareas</strong> (<code>--ntasks=8</code>)</td>
+<td style="text-align: left;">Un trabajo, posiblemente en varios nodos</td>
+<td style="text-align: left;">Tu código de R (p.&nbsp;ej., un cluster de sockets o MPI)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Arreglo de trabajos</strong> (<code>--array=1-8</code>)</td>
+<td style="text-align: left;">8 trabajos independientes, en cualquier parte del cluster</td>
+<td style="text-align: left;">Slurm; tu script solo usa el índice</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<p>El paquete <code>slurmR</code> construye su familia de funciones <code>Slurm_lapply()</code> sobre arreglos de trabajos, como veremos en la siguiente parte. Para más detalles sobre arreglos de trabajos, consulta la <a href="https://slurm.schedmd.com/job_array.html" target="_blank">documentación oficial</a>.</p>
+</section>
+</section>
+<section id="cómo-funciona-slurmr" class="level2">
+<h2 class="anchored" data-anchor-id="cómo-funciona-slurmr">Cómo funciona slurmR</h2>
+<section id="la-idea" class="level3">
+<h3 class="anchored" data-anchor-id="la-idea">La idea</h3>
+<p>El paquete <code>slurmR</code> <span class="citation" data-cites="slurmRpaper slurmRpkg">(<a href="references.html#ref-slurmRpaper" role="doc-biblioref">Vega Yon y Marjoram 2019</a>, <a href="references.html#ref-slurmRpkg" role="doc-biblioref">2022</a>)</span> es un envoltorio liviano de Slurm. Su objetivo de diseño es permitirte pasar del paquete <code>parallel</code> a un cluster sin tener que aprender a escribir scripts de Slurm: así como <code>parallel</code> ofrece <code>parLapply()</code>, <code>parSapply()</code> y <code>clusterMap()</code>, <code>slurmR</code> ofrece <code>Slurm_lapply()</code>, <code>Slurm_sapply()</code> y <code>Slurm_Map()</code>. También está <code>Slurm_EvalQ()</code>, que evalúa una expresión en cada trabajo (como <code>clusterEvalQ()</code>), y <code>makeSlurmCluster()</code>, que crea un cluster de sockets a partir de una asignación de Slurm (la usamos en el <a href="./slurm-simpi.html">siguiente capítulo</a>).</p>
+<p>Las funciones <code>Slurm_*apply</code> funcionan así: entregas una lista <code>X</code> y una función <code>FUN</code>; <code>slurmR</code> divide la lista en <code>njobs</code> partes, crea un arreglo de trabajos con <code>njobs</code> tareas, y cada tarea aplica <code>FUN</code> a su parte (usando <code>mclapply()</code>, de modo que cada tarea también puede usar varios núcleos). Cuando todas las tareas terminan, junta las piezas. El resultado es el mismo que habría devuelto <code>lapply(X, FUN)</code>, pero el cálculo se hizo en tantos trabajos distintos como quisiste.</p>
+<p>Todo se hace escribiendo archivos. <strong>Cada llamada a <code>Slurm_lapply()</code> crea, al menos, dos scripts: un script de R con el trabajo que debe hacer cada tarea del arreglo, y un script de bash con las opciones de <code>sbatch</code> que lo envía.</strong> Los datos y la función se guardan en disco (como archivos <code>.rds</code>) para que las tareas, que se ejecutan en otros computadores, puedan leerlos. Por esta razón, la carpeta donde escribe <code>slurmR</code> debe ser visible desde los nodos de cómputo: un sistema de archivos compartido.</p>
+</section>
+<section id="el-recorrido-de-un-trabajo" class="level3">
+<h3 class="anchored" data-anchor-id="el-recorrido-de-un-trabajo">El recorrido de un trabajo</h3>
+<p>En resumen, una llamada como <code>Slurm_lapply(X, FUN, njobs = 2)</code> pasa por los siguientes pasos. En tu sesión de R, <code>slurmR</code> divide <code>X</code> en <code>njobs</code> partes, guarda las partes, la función y las opciones en la carpeta del trabajo, escribe los dos scripts (<code>00-rscript.r</code> y <code>01-bash.sh</code>) y ejecuta <code>sbatch 01-bash.sh</code>. Luego Slurm pone en cola un arreglo de trabajos (<code>--array=1-njobs</code>), y cada tarea del arreglo ejecuta <code>Rscript 00-rscript.r</code>: lee su propia parte, calcula y guarda su respuesta en <code>03-answer-&lt;id&gt;.rds</code>. Mientras tanto, tu sesión de R le consulta a Slurm hasta que todas las tareas han terminado, <code>Slurm_collect()</code> lee y combina las respuestas y, cuando ya no las necesitas, <code>Slurm_clean()</code> borra la carpeta del trabajo.</p>
+<p>Las siguientes secciones recorren cada uno de estos pasos, usando el modo detallado del paquete para ver exactamente qué se crea. En el apéndice de este capítulo se incluye una <a href="#sec-slurmr-timeline">línea de tiempo de todo el proceso</a>.</p>
+</section>
+<section id="mirando-bajo-el-capó" class="level3">
+<h3 class="anchored" data-anchor-id="mirando-bajo-el-capó">Mirando bajo el capó</h3>
+<p>El siguiente ejemplo viene del README del paquete (<span class="citation" data-cites="slurmRpkg">Vega Yon y Marjoram (<a href="references.html#ref-slurmRpkg" role="doc-biblioref">2022</a>)</span>). Creamos 100 vectores de 50 números aleatorios cada uno y queremos calcular la media de cada uno usando <code>Slurm_lapply()</code>:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(slurmR)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co">#  Loading required package: parallel</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co">#  slurmR default option for `tmp_path` (used to store auxiliar files) set to:</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co">#    /home/user/project</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co">#  You can change this and checkout other slurmR options using: ?opts_slurmR, or you could just type "opts_slurmR" on the terminal.</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Suppose that we have 100 vectors of length 50 ~ Unif(0,1)</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">881</span>)</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">replicate</span>(<span class="dv">100</span>, <span class="fu">runif</span>(<span class="dv">50</span>), <span class="at">simplify =</span> <span class="cn">FALSE</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<p>El argumento <code>plan = "none"</code> le indica a <code>Slurm_lapply()</code> que <em>cree</em> el trabajo pero que no lo envíe, así que podemos ver lo que produce sin necesitar un cluster. Al activar el modo detallado, <code>slurmR</code> imprime el contenido de los dos scripts que escribe:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>opts_slurmR<span class="sc">$</span><span class="fu">verbose_on</span>()</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>ans <span class="ot">&lt;-</span> <span class="fu">Slurm_lapply</span>(x, mean, <span class="at">plan =</span> <span class="st">"none"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Salida detallada completa (haz clic para expandir)
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>La salida se reproduce tal como aparece en el README del paquete, salvo que el directorio personal del autor se reemplazó por <code>/home/user</code>. También omitimos una advertencia inofensiva de <code>normalizePath</code> que <code>slurmR</code> imprime porque la carpeta del trabajo aún no existe en el momento en que revisa la ruta.</p>
+<pre><code>--------------------------------------------------------------------------------
+[VERBOSE MODE ON] The R script that will be used is located at: /home/user/project/slurmr-job-113bd5bca5b18/00-rscript.r and has the following contents:
+--------------------------------------------------------------------------------
+.libPaths(c("/home/user/R/x86_64-pc-linux-gnu-library/4.2", "/usr/local/lib/R/site-library", "/usr/lib/R/site-library", "/usr/lib/R/library"))
+message("[slurmR info] Loading variables and functions... ", appendLF = FALSE)
+Slurm_env &lt;- function (x = "SLURM_ARRAY_TASK_ID")
+{
+    y &lt;- Sys.getenv(x)
+    if ((x == "SLURM_ARRAY_TASK_ID") &amp;&amp; y == "") {
+        return(1)
+    }
+    y
+}
+ARRAY_ID  &lt;- as.integer(Slurm_env("SLURM_ARRAY_TASK_ID"))
+
+# The -snames- function creates the write names for I/O of files as a
+# function of the ARRAY_ID
+snames    &lt;- function (type, array_id = NULL, tmp_path = NULL, job_name = NULL)
+{
+    if (length(array_id) &amp;&amp; length(array_id) &gt; 1)
+        return(sapply(array_id, snames, type = type, tmp_path = tmp_path,
+            job_name = job_name))
+    type &lt;- switch(type, r = "00-rscript.r", sh = "01-bash.sh",
+        out = "02-output-%A-%a.out", rds = if (missing(array_id)) "03-answer-%03i.rds" else sprintf("03-answer-%03i.rds",
+            array_id), job = "job.rds", stop("Invalid type, the only valid types are `r`, `sh`, `out`, and `rds`.",
+            call. = FALSE))
+    sprintf("%s/%s/%s", tmp_path, job_name, type)
+}
+TMP_PATH  &lt;- "/home/user/project"
+JOB_NAME  &lt;- "slurmr-job-113bd5bca5b18"
+
+# The -tcq- function is a wrapper of tryCatch that on error tries to recover
+# the message and saves the outcome so that slurmR can return OK.
+tcq &lt;- function (...)
+{
+    ans &lt;- tryCatch(..., error = function(e) e)
+    if (inherits(ans, "error")) {
+        ARRAY_ID. &lt;- get("ARRAY_ID", envir = .GlobalEnv)
+        msg &lt;- paste0("[slurmR info] An error has ocurred while evualting the expression:\n[slurmR info]   ",
+            paste(deparse(match.call()[[2]]), collapse = "\n[slurmR info]   "),
+            "\n[slurmR info] in ", "ARRAY_ID # ", ARRAY_ID.,
+            "\n[slurmR info] The error will be saved and quit R.\n")
+        message(msg, immediate. = TRUE, call. = FALSE)
+        ans &lt;- list(res = ans, array_id = ARRAY_ID., job_name = get("JOB_NAME",
+            envir = .GlobalEnv), slurmr_msg = structure(msg,
+            class = "slurm_info"))
+        saveRDS(list(ans), snames("rds", tmp_path = get("TMP_PATH",
+            envir = .GlobalEnv), job_name = get("JOB_NAME", envir = .GlobalEnv),
+            array_id = ARRAY_ID.))
+        message("[slurmR info] job-status: failed.\n")
+        q(save = "no")
+    }
+    invisible(ans)
+}
+message("done loading variables and functions.")
+tcq({
+  INDICES &lt;- readRDS("/home/user/project/slurmr-job-113bd5bca5b18/INDICES.rds")
+})
+tcq({
+  X &lt;- readRDS(sprintf("/home/user/project/slurmr-job-113bd5bca5b18/X_%04d.rds", ARRAY_ID))
+})
+tcq({
+  FUN &lt;- readRDS("/home/user/project/slurmr-job-113bd5bca5b18/FUN.rds")
+})
+tcq({
+  mc.cores &lt;- readRDS("/home/user/project/slurmr-job-113bd5bca5b18/mc.cores.rds")
+})
+tcq({
+  seeds &lt;- readRDS("/home/user/project/slurmr-job-113bd5bca5b18/seeds.rds")
+})
+set.seed(seeds[ARRAY_ID], kind = NULL, normal.kind = NULL)
+tcq({
+  ans &lt;- parallel::mclapply(
+    X                = X,
+    FUN              = FUN,
+    mc.cores         = mc.cores
+)
+})
+saveRDS(ans, sprintf("/home/user/project/slurmr-job-113bd5bca5b18/03-answer-%03i.rds", ARRAY_ID), compress = TRUE)
+message("[slurmR info] job-status: OK.\n")
+--------------------------------------------------------------------------------
+The bash file that will be used is located at: /home/user/project/slurmr-job-113bd5bca5b18/01-bash.sh and has the following contents:
+--------------------------------------------------------------------------------
+#!/bin/sh
+#SBATCH --job-name=slurmr-job-113bd5bca5b18
+#SBATCH --output=/home/user/project/slurmr-job-113bd5bca5b18/02-output-%A-%a.out
+#SBATCH --array=1-2
+#SBATCH --job-name=slurmr-job-113bd5bca5b18
+#SBATCH --cpus-per-task=1
+#SBATCH --ntasks=1
+/usr/lib/R/bin/Rscript  /home/user/project/slurmr-job-113bd5bca5b18/00-rscript.r
+--------------------------------------------------------------------------------
+EOF
+--------------------------------------------------------------------------------
+Warning: [submit = FALSE] The job hasn't been submitted yet. Use sbatch() to submit the job, or you can submit it via command line using the following:
+sbatch --job-name=slurmr-job-113bd5bca5b18 /home/user/project/slurmr-job-113bd5bca5b18/01-bash.sh</code></pre>
+</div>
+</div>
+</div>
+<p>La salida tiene tres partes: el script de R (<code>00-rscript.r</code>), el script de bash (<code>01-bash.sh</code>) y una advertencia final que nos recuerda que el trabajo no ha sido enviado y nos da el comando para enviarlo manualmente. Las siguientes secciones explican cada una.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>La llamada anterior no envió nada, pero <strong>sí</strong> escribió archivos en disco, así que puedes inspeccionarlos. Cuando termines de revisarlos, <code>Slurm_clean(ans)</code> los elimina.</p>
+</div>
+</div>
+</section>
+<section id="dónde-vive-todo-la-carpeta-del-trabajo" class="level3">
+<h3 class="anchored" data-anchor-id="dónde-vive-todo-la-carpeta-del-trabajo">Dónde vive todo: la carpeta del trabajo</h3>
+<p>Cada llamada crea su propia carpeta, que <code>slurmR</code> llama la <strong>ruta temporal</strong> (<em>temporary path</em>) del trabajo. El nombre de la carpeta se controla con dos opciones:</p>
+<ul>
+<li><p><code>tmp_path</code>: el directorio donde se crean las carpetas de los trabajos. Por defecto es el <strong>directorio de trabajo actual</strong> de tu sesión de R (el mensaje que aparece al cargar el paquete te indica el valor actual). Puedes cambiarlo para una sola llamada con el argumento <code>tmp_path</code>, o para toda la sesión con <code>opts_slurmR$set_tmp_path()</code>.</p></li>
+<li><p><code>job_name</code>: el nombre de la carpeta (y del trabajo en Slurm). Por defecto es un nombre aleatorio como <code>slurmr-job-113bd5bca5b18</code>, de modo que dos llamadas nunca chocan.</p></li>
+</ul>
+<p>Los archivos de un trabajo terminan en <code>&lt;tmp_path&gt;/&lt;job_name&gt;/</code>. Para el ejemplo anterior, usando dos trabajos, la carpeta se ve así una vez que el trabajo se ha ejecutado:</p>
+<pre><code>slurmr-job-113bd5bca5b18/
+├── 00-rscript.r          # el script de R que ejecuta cada tarea
+├── 01-bash.sh            # el script de bash enviado con sbatch
+├── 02-output-&lt;jobid&gt;-1.out   # registro de la tarea 1  (creado por Slurm)
+├── 02-output-&lt;jobid&gt;-2.out   # registro de la tarea 2  (creado por Slurm)
+├── 03-answer-001.rds     # resultado de la tarea 1  (creado por las tareas)
+├── 03-answer-002.rds     # resultado de la tarea 2  (creado por las tareas)
+├── FUN.rds               # la función, compartida por todas las tareas
+├── INDICES.rds           # qué elementos de X fueron a cada tarea
+├── job.rds               # el objeto slurm_job (ID del trabajo, opciones, ...)
+├── mc.cores.rds          # número de núcleos por tarea
+├── seeds.rds             # una semilla aleatoria por tarea
+├── X_0001.rds            # parte de X para la tarea 1
+└── X_0002.rds            # parte de X para la tarea 2</code></pre>
+<p>Los archivos creados <em>antes</em> del envío (<code>00</code>, <code>01</code>, <code>FUN</code>, <code>INDICES</code>, <code>job</code>, <code>mc.cores</code>, <code>seeds</code> y las partes <code>X_*</code>) los escribe tu sesión de R. Los archivos <code>02-output-*</code> y <code>03-answer-*</code> aparecen solo después de que las tareas se ejecutan. La <a href="#tbl-slurmr-files" class="quarto-xref">Tabla&nbsp;<span>6.6</span></a> describe cada uno.</p>
+<div id="tbl-slurmr-files" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-slurmr-files-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Tabla&nbsp;6.6: Archivos en la carpeta del trabajo.
+</figcaption>
+<div aria-describedby="tbl-slurmr-files-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 26%">
+<col style="width: 35%">
+<col style="width: 38%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Archivo</th>
+<th style="text-align: left;">Creado por</th>
+<th style="text-align: left;">Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><code>00-rscript.r</code></td>
+<td style="text-align: left;">Tu sesión de R</td>
+<td style="text-align: left;">El script de R que ejecuta cada tarea del arreglo. Todas las tareas usan el mismo script; se diferencian por el valor de <code>SLURM_ARRAY_TASK_ID</code>.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>01-bash.sh</code></td>
+<td style="text-align: left;">Tu sesión de R</td>
+<td style="text-align: left;">El script de bash que se pasa a <code>sbatch</code>, con las opciones <code>#SBATCH</code>. Llama a <code>Rscript 00-rscript.r</code>.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>X_0001.rds</code>, <code>X_0002.rds</code>, …</td>
+<td style="text-align: left;">Tu sesión de R</td>
+<td style="text-align: left;">La lista <code>X</code> dividida en <code>njobs</code> partes, un archivo por tarea (por defecto <code>parallel::splitIndices()</code> crea partes consecutivas y de igual tamaño). Cada tarea lee solo su propia parte.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>INDICES.rds</code></td>
+<td style="text-align: left;">Tu sesión de R</td>
+<td style="text-align: left;">Una lista que registra qué elementos de <code>X</code> fueron a cada tarea, lo que permite poner los resultados en el orden correcto.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>FUN.rds</code></td>
+<td style="text-align: left;">Tu sesión de R</td>
+<td style="text-align: left;">La función a aplicar. Cualquier otro argumento pasado a través de <code>...</code> o <code>export</code> también se guarda aquí (como archivos <code>.rds</code>) y es compartido por todas las tareas.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>mc.cores.rds</code></td>
+<td style="text-align: left;">Tu sesión de R</td>
+<td style="text-align: left;">El número de núcleos que usa cada tarea con <code>mclapply()</code>.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>seeds.rds</code></td>
+<td style="text-align: left;">Tu sesión de R</td>
+<td style="text-align: left;">Un vector de semillas aleatorias, una por tarea, para que las tareas no generen los mismos números aleatorios (puedes entregar las tuyas con el argumento <code>seeds</code>).</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>job.rds</code></td>
+<td style="text-align: left;">Tu sesión de R</td>
+<td style="text-align: left;">El objeto <code>slurm_job</code>: la llamada, las opciones, las rutas y (después del envío) el ID del trabajo. Se guarda cuando se crea el trabajo y nuevamente después de enviarlo.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>02-output-&lt;jobid&gt;-&lt;taskid&gt;.out</code></td>
+<td style="text-align: left;">Slurm</td>
+<td style="text-align: left;">El <strong>registro</strong> (<em>log</em>): todo lo que la tarea imprimió en la salida estándar y el error estándar, incluyendo los mensajes de <code>slurmR</code> (<code>[slurmR info] ...</code>) y cualquier error de R. Un archivo por tarea.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>03-answer-001.rds</code>, <code>03-answer-002.rds</code>, …</td>
+<td style="text-align: left;">Las tareas del arreglo</td>
+<td style="text-align: left;">Los <strong>resultados</strong>: el valor devuelto por <code>mclapply(X, FUN)</code> para la parte correspondiente, un archivo por tarea.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<p>La <a href="#fig-slurmr-files" class="quarto-xref">Figura&nbsp;<span>6.5</span></a> muestra quién escribe y quién lee cada archivo.</p>
+<div id="fig-slurmr-files" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-slurmr-files-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="fig/slurm-under-the-hood/es/fig-slurmr-files.png" class="img-fluid figure-img" style="width:55.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-slurmr-files-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;6.5: Quién escribe y quién lee cada archivo de la carpeta del trabajo. Azul: tu sesión de R. Naranja: el cluster.
+</figcaption>
+</figure>
+</div>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Importante</span>La carpeta del trabajo debe ser visible desde los nodos de cómputo
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>El nodo de acceso y los nodos de cómputo deben ver los mismos archivos en la misma ruta. Los directorios personales y los espacios de proyecto o <em>scratch</em> normalmente cumplen con esto, pero los discos locales (como <code>/tmp</code> o un <em>scratch</em> local del nodo) no: un archivo escrito en <code>/tmp</code> en el nodo de acceso no existe en el nodo donde se ejecuta la tarea, y la tarea fallará al leer su entrada. Si tienes dudas, pregunta a los administradores del sistema qué sistema de archivos usar, y define <code>tmp_path</code> en consecuencia.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Advertencia</span>Reutilizar un nombre de trabajo borra el trabajo anterior
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Por defecto <code>overwrite = TRUE</code>, lo que significa que si <code>&lt;tmp_path&gt;/&lt;job_name&gt;</code> ya existe, <strong><code>slurmR</code> lo borra y comienza desde cero</strong>. Esto no es un problema con los nombres aleatorios por defecto, pero si defines <code>job_name</code> tú mismo, ejecutar la misma llamada dos veces destruye los resultados de la primera. Usa <code>overwrite = FALSE</code> si prefieres que <code>slurmR</code> se detenga.</p>
+</div>
+</div>
+</section>
+<section id="el-script-de-bash" class="level3">
+<h3 class="anchored" data-anchor-id="el-script-de-bash">El script de bash</h3>
+<p>Este es el script de bash generado en el ejemplo (<code>01-bash.sh</code>):</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/sh</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --job-name=slurmr-job-113bd5bca5b18</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --output=/home/user/project/slurmr-job-113bd5bca5b18/02-output-%A-%a.out</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --array=1-2</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --job-name=slurmr-job-113bd5bca5b18</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --cpus-per-task=1</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --ntasks=1</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="ex">/usr/lib/R/bin/Rscript</span>  /home/user/project/slurmr-job-113bd5bca5b18/00-rscript.r</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Es un script de Slurm normal, como los de los capítulos anteriores:</p>
+<ul>
+<li><p><code>--job-name</code> es el nombre del trabajo, <code>slurmr-job-</code> seguido de caracteres aleatorios (aparece dos veces porque lo agregan tanto la función como las opciones; la repetición es inofensiva).</p></li>
+<li><p><code>--output</code> envía el registro a la carpeta del trabajo, usando los patrones que vimos en la <a href="#tbl-array-vars" class="quarto-xref">Tabla&nbsp;<span>6.4</span></a>: <code>%A</code> se convierte en el ID del arreglo y <code>%a</code> en el índice de la tarea. Así es como los archivos <code>02-output-&lt;jobid&gt;-&lt;taskid&gt;.out</code> obtienen sus nombres.</p></li>
+<li><p><code>--array=1-2</code> crea un arreglo de trabajos con <code>njobs</code> tareas (por defecto <code>njobs = 2</code>).</p></li>
+<li><p><code>--cpus-per-task</code> se toma del argumento <code>mc.cores</code>, y <code>--ntasks=1</code> porque cada tarea del arreglo es un único proceso de R.</p></li>
+<li><p>La última línea llama a <code>Rscript</code> (de la misma instalación de R que tu sesión actual) sobre el script de R.</p></li>
+</ul>
+<p>Puedes agregar cualquier otra cosa que el script necesite usando los argumentos de <code>Slurm_lapply()</code>:</p>
+<ul>
+<li><p><code>sbatch_opt</code>: una lista con nombres de opciones; cada una se convierte en una línea <code>#SBATCH --nombre=valor</code>.</p></li>
+<li><p><code>preamble</code>: comandos a ejecutar antes de <code>Rscript</code>, como <code>module load</code>. El preámbulo puede definirse para toda la sesión con <code>opts_slurmR$set_preamble()</code>.</p></li>
+<li><p><code>rscript_opt</code>: opciones que se pasan a <code>Rscript</code>.</p></li>
+</ul>
+<p>Por ejemplo, la llamada</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>job <span class="ot">&lt;-</span> <span class="fu">Slurm_lapply</span>(</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  x, mean,</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">njobs      =</span> <span class="dv">4</span>,</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">mc.cores   =</span> <span class="dv">2</span>,</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">plan       =</span> <span class="st">"none"</span>,</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">job_name   =</span> <span class="st">"my-means"</span>,</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">sbatch_opt =</span> <span class="fu">list</span>(</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">account       =</span> <span class="st">"my-account"</span>,</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">partition     =</span> <span class="st">"my-partition"</span>,</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">time          =</span> <span class="st">"01:00:00"</span>,</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">mem-per-cpu</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"2G"</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">preamble   =</span> <span class="st">"module load gcc/12.2.0"</span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<p>genera el siguiente script de bash:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/sh</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --job-name=my-means</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --output=/home/user/project/my-means/02-output-%A-%a.out</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --array=1-4</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --account=my-account</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --partition=my-partition</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --time=01:00:00</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --mem-per-cpu=2G</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --job-name=my-means</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --cpus-per-task=2</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --ntasks=1</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="ex">module</span> load gcc/12.2.0</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a><span class="ex">/usr/lib/R/bin/Rscript</span>  /home/user/project/my-means/00-rscript.r</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Recuerda que, como vimos con los arreglos de trabajos, <strong>estos recursos son por tarea</strong>: el ejemplo anterior pide cuatro tareas con dos CPUs cada una, una hora y 2 GB de memoria por CPU <em>cada una</em>.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>No uses el preámbulo para cargar R
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><code>slurmR</code> llama a <code>Rscript</code> usando la ruta completa de la instalación de R de tu sesión <em>actual</em> (ver la última línea del script), y además copia tus rutas de bibliotecas (más sobre eso abajo). Por lo tanto, cargar otra versión de R con <code>module load R/...</code> en el preámbulo no tiene efecto sobre qué R ejecuta las tareas. Usa el preámbulo para todo lo <em>demás</em> que las tareas necesiten, como un compilador o una biblioteca del sistema (en el ejemplo, <code>gcc</code>); si necesitas otra versión de R, inicia tu sesión de R con esa versión.</p>
+</div>
+</div>
+</section>
+<section id="el-script-de-r" class="level3">
+<h3 class="anchored" data-anchor-id="el-script-de-r">El script de R</h3>
+<p>El segundo archivo es el script de R que ejecuta cada tarea del arreglo. Es largo porque <code>slurmR</code> lo escribe de forma autocontenida (ni siquiera carga <code>slurmR</code>: todas las funciones auxiliares que necesita están definidas en el mismo script). Puede leerse como cinco bloques:</p>
+<p><strong>1. Preparación.</strong> El script define las rutas de bibliotecas iguales a las de tu sesión, para que las tareas encuentren los mismos paquetes, y averigua qué tarea es leyendo <code>SLURM_ARRAY_TASK_ID</code>:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">.libPaths</span>(<span class="fu">c</span>(<span class="st">"/home/user/R/x86_64-pc-linux-gnu-library/4.2"</span>, <span class="st">"/usr/local/lib/R/site-library"</span>, <span class="st">"/usr/lib/R/site-library"</span>, <span class="st">"/usr/lib/R/library"</span>))</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">"[slurmR info] Loading variables and functions... "</span>, <span class="at">appendLF =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>Slurm_env <span class="ot">&lt;-</span> <span class="cf">function</span> (<span class="at">x =</span> <span class="st">"SLURM_ARRAY_TASK_ID"</span>)</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    y <span class="ot">&lt;-</span> <span class="fu">Sys.getenv</span>(x)</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> ((x <span class="sc">==</span> <span class="st">"SLURM_ARRAY_TASK_ID"</span>) <span class="sc">&amp;&amp;</span> y <span class="sc">==</span> <span class="st">""</span>) {</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>        <span class="fu">return</span>(<span class="dv">1</span>)</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>    y</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>ARRAY_ID  <span class="ot">&lt;-</span> <span class="fu">as.integer</span>(<span class="fu">Slurm_env</span>(<span class="st">"SLURM_ARRAY_TASK_ID"</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Si el script se ejecuta fuera de Slurm (donde la variable está vacía), el ID toma el valor 1, lo que permite probar el script a mano. También define <code>snames()</code>, una función auxiliar que construye los nombres de archivo (<code>00-rscript.r</code>, <code>03-answer-%03i.rds</code>, etc.) a partir del ID de la tarea, y guarda la ruta y el nombre del trabajo en <code>TMP_PATH</code> y <code>JOB_NAME</code>.</p>
+<p><strong>2. Manejo de errores.</strong> Cada paso que podría fallar está envuelto en <code>tcq()</code> (abreviación de “tryCatch quietly”, es decir, “tryCatch en silencio”). Esta es la función que maneja los errores:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>tcq <span class="ot">&lt;-</span> <span class="cf">function</span> (...)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    ans <span class="ot">&lt;-</span> <span class="fu">tryCatch</span>(..., <span class="at">error =</span> <span class="cf">function</span>(e) e)</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">inherits</span>(ans, <span class="st">"error"</span>)) {</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>        ARRAY_ID. <span class="ot">&lt;-</span> <span class="fu">get</span>(<span class="st">"ARRAY_ID"</span>, <span class="at">envir =</span> .GlobalEnv)</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>        msg <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"[slurmR info] An error has ocurred while evualting the expression:</span><span class="sc">\n</span><span class="st">[slurmR info]   "</span>,</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>            <span class="fu">paste</span>(<span class="fu">deparse</span>(<span class="fu">match.call</span>()[[<span class="dv">2</span>]]), <span class="at">collapse =</span> <span class="st">"</span><span class="sc">\n</span><span class="st">[slurmR info]   "</span>),</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>            <span class="st">"</span><span class="sc">\n</span><span class="st">[slurmR info] in "</span>, <span class="st">"ARRAY_ID # "</span>, ARRAY_ID.,</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>            <span class="st">"</span><span class="sc">\n</span><span class="st">[slurmR info] The error will be saved and quit R.</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>        <span class="fu">message</span>(msg, <span class="at">immediate. =</span> <span class="cn">TRUE</span>, <span class="at">call. =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>        ans <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">res =</span> ans, <span class="at">array_id =</span> ARRAY_ID., <span class="at">job_name =</span> <span class="fu">get</span>(<span class="st">"JOB_NAME"</span>,</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>            <span class="at">envir =</span> .GlobalEnv), <span class="at">slurmr_msg =</span> <span class="fu">structure</span>(msg, <span class="at">class =</span> <span class="st">"slurm_info"</span>))</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>        <span class="fu">saveRDS</span>(<span class="fu">list</span>(ans), <span class="fu">snames</span>(<span class="st">"rds"</span>, <span class="at">tmp_path =</span> <span class="fu">get</span>(<span class="st">"TMP_PATH"</span>, <span class="at">envir =</span> .GlobalEnv),</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>            <span class="at">job_name =</span> <span class="fu">get</span>(<span class="st">"JOB_NAME"</span>, <span class="at">envir =</span> .GlobalEnv), <span class="at">array_id =</span> ARRAY_ID.))</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>        <span class="fu">message</span>(<span class="st">"[slurmR info] job-status: failed.</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>        <span class="fu">q</span>(<span class="at">save =</span> <span class="st">"no"</span>)</span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>    <span class="fu">invisible</span>(ans)</span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Si ocurre un error, <code>tcq()</code> imprime un mensaje en el registro, <strong>guarda el error en el archivo de respuesta de la tarea</strong> (<code>03-answer-&lt;id&gt;.rds</code>) en lugar de los resultados, y cierra R. Como <code>q()</code> termina con estado 0, Slurm considerará la tarea como <code>COMPLETED</code> aunque tu función haya fallado. El lugar donde buscar el problema es el registro (<code>[slurmR info] job-status: failed.</code>).</p>
+<p><strong>3. Lectura de las entradas.</strong> Cada tarea carga los objetos que necesita; nota que <code>X_%04d.rds</code> se formatea con <code>ARRAY_ID</code>, de modo que <strong>cada tarea lee solo su propia parte</strong>:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tcq</span>({</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  INDICES <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"/home/user/project/slurmr-job-113bd5bca5b18/INDICES.rds"</span>)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="fu">tcq</span>({</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  X <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">sprintf</span>(<span class="st">"/home/user/project/slurmr-job-113bd5bca5b18/X_%04d.rds"</span>, ARRAY_ID))</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="fu">tcq</span>({</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>  FUN <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"/home/user/project/slurmr-job-113bd5bca5b18/FUN.rds"</span>)</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a><span class="fu">tcq</span>({</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>  mc.cores <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"/home/user/project/slurmr-job-113bd5bca5b18/mc.cores.rds"</span>)</span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a><span class="fu">tcq</span>({</span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>  seeds <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"/home/user/project/slurmr-job-113bd5bca5b18/seeds.rds"</span>)</span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<p><strong>4. El cálculo.</strong> La tarea fija su semilla (<code>seeds[ARRAY_ID]</code>) y aplica la función a su parte con <code>parallel::mclapply()</code>:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(seeds[ARRAY_ID], <span class="at">kind =</span> <span class="cn">NULL</span>, <span class="at">normal.kind =</span> <span class="cn">NULL</span>)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">tcq</span>({</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  ans <span class="ot">&lt;-</span> parallel<span class="sc">::</span><span class="fu">mclapply</span>(</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">X                =</span> X,</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">FUN              =</span> FUN,</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">mc.cores         =</span> mc.cores</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<p><strong>5. Guardar la respuesta.</strong> El resultado se guarda en <code>03-answer-&lt;id&gt;.rds</code> y se imprime un mensaje final en el registro:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(ans, <span class="fu">sprintf</span>(<span class="st">"/home/user/project/slurmr-job-113bd5bca5b18/03-answer-%03i.rds"</span>, ARRAY_ID), <span class="at">compress =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">"[slurmR info] job-status: OK.</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<p>La <a href="#fig-slurmr-task" class="quarto-xref">Figura&nbsp;<span>6.6</span></a> resume lo que hace cada tarea del arreglo.</p>
+<div id="fig-slurmr-task" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-slurmr-task-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="fig/slurm-under-the-hood/es/fig-slurmr-task.png" class="img-fluid figure-img" style="width:70.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-slurmr-task-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;6.6: Qué hace cada tarea del arreglo cuando Slurm ejecuta <code>00-rscript.r</code>.
+</figcaption>
+</figure>
+</div>
+</section>
+<section id="envío-monitoreo-y-registros" class="level3">
+<h3 class="anchored" data-anchor-id="envío-monitoreo-y-registros">Envío, monitoreo y registros</h3>
+<p>Con el valor por defecto <code>plan = "collect"</code>, <code>Slurm_lapply()</code> escribe los archivos, envía el trabajo, lo espera y recolecta las respuestas en una sola llamada. <code>slurmR</code> envía el trabajo ejecutando <code>sbatch</code> y leyendo el ID que Slurm imprime (<code>Submitted batch job 4242</code>), y luego lo guarda en el objeto <code>slurm_job</code> (y en <code>job.rds</code>). Después de eso <em>espera</em>: le pregunta repetidamente a Slurm por el estado de las tareas (usando <code>sacct</code>) hasta que todas han terminado, ya sea con éxito o con una falla. Cuánto de esto ocurre en una sola llamada se controla con el argumento <code>plan</code>:</p>
+<div id="tbl-plans" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-plans-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Tabla&nbsp;6.7: El argumento <code>plan</code> de <code>Slurm_lapply()</code> y similares.
+</figcaption>
+<div aria-describedby="tbl-plans-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 17%">
+<col style="width: 60%">
+<col style="width: 22%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;"><code>plan</code></th>
+<th style="text-align: left;">Qué hace <code>Slurm_lapply()</code></th>
+<th style="text-align: left;">Devuelve</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><code>"none"</code></td>
+<td style="text-align: left;">Solo escribe los archivos. No se envía nada.</td>
+<td style="text-align: left;">El objeto <code>slurm_job</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>"submit"</code></td>
+<td style="text-align: left;">Escribe los archivos y envía el trabajo, y retorna de inmediato.</td>
+<td style="text-align: left;">El objeto <code>slurm_job</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>"wait"</code></td>
+<td style="text-align: left;">Escribe, envía y espera hasta que todas las tareas terminen.</td>
+<td style="text-align: left;">El objeto <code>slurm_job</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>"collect"</code> (por defecto)</td>
+<td style="text-align: left;">Escribe, envía, espera y recolecta las respuestas.</td>
+<td style="text-align: left;">Los resultados (una lista)</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Nota
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Con <code>plan = "collect"</code> o <code>"wait"</code> tu sesión de R queda ocupada hasta que termina todo el trabajo, así que si la sesión se cierra (o pierdes la conexión con el cluster), pierdes la conexión con el trabajo. El trabajo en sí, sin embargo, sigue ejecutándose. Para trabajos largos, usa <code>plan = "submit"</code> y vuelve más tarde: <code>read_slurm_job("&lt;tmp_path&gt;/&lt;job_name&gt;")</code> lee el archivo <code>job.rds</code> y te devuelve el objeto <code>slurm_job</code> en una nueva sesión de R, y <code>last_job()</code> devuelve el último trabajo enviado en la sesión actual.</p>
+</div>
+</div>
+<p>Una vez que tienes un objeto <code>slurm_job</code> (llamémoslo <code>job</code>), puedes interactuar con él usando las siguientes funciones, que son envoltorios delgados de los comandos de Slurm correspondientes:</p>
+<div id="tbl-slurmr-monitor" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-slurmr-monitor-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Tabla&nbsp;6.8: Funciones para trabajar con un trabajo.
+</figcaption>
+<div aria-describedby="tbl-slurmr-monitor-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 26%">
+<col style="width: 44%">
+<col style="width: 29%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Función</th>
+<th style="text-align: left;">Equivalente a</th>
+<th style="text-align: left;">Qué hace</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><code>status(job)</code></td>
+<td style="text-align: left;"><code>sacct</code></td>
+<td style="text-align: left;">Un resumen del estado de las tareas: <code>0</code> todas terminadas, <code>1</code> todas pendientes, <code>2</code> todas ejecutándose, <code>3</code> algunas ejecutándose, <code>99</code> algunas fallaron, <code>-1</code> trabajo no encontrado (todavía).</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>squeue(job)</code></td>
+<td style="text-align: left;"><code>squeue</code></td>
+<td style="text-align: left;">Tareas pendientes y en ejecución.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>sacct(job)</code></td>
+<td style="text-align: left;"><code>sacct</code></td>
+<td style="text-align: left;">Información sobre tareas terminadas (y no terminadas).</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>Slurm_log(job, 1)</code></td>
+<td style="text-align: left;"><code>less 02-output-&lt;jobid&gt;-1.out</code></td>
+<td style="text-align: left;">Muestra el registro de la tarea 1.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>scancel(job)</code></td>
+<td style="text-align: left;"><code>scancel</code></td>
+<td style="text-align: left;">Cancela el trabajo.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>sbatch(job)</code></td>
+<td style="text-align: left;"><code>sbatch</code></td>
+<td style="text-align: left;">(Re)envía el trabajo.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<p>Los registros (<code>02-output-*.out</code>) son el primer lugar donde mirar cuando algo no funciona. (<code>Slurm_log()</code> los muestra.) Contienen todo lo que tu función imprimió con <code>print()</code> o <code>message()</code>, los mensajes <code>[slurmR info]</code>, las advertencias y errores de R, y los errores del propio Slurm (como exceder la memoria). Una tarea sana termina con:</p>
+<pre><code>[slurmR info] Loading variables and functions... done loading variables and functions.
+[slurmR info] job-status: OK.</code></pre>
+</section>
+<section id="recolectar-los-resultados-y-limpiar" class="level3">
+<h3 class="anchored" data-anchor-id="recolectar-los-resultados-y-limpiar">Recolectar los resultados y limpiar</h3>
+<p>Cuando todas las tareas han terminado, <code>Slurm_collect(job)</code> lee los archivos <code>03-answer-001.rds</code>, …, <code>03-answer-&lt;njobs&gt;.rds</code>, en orden, y los concatena en una sola lista. Como <code>X</code> se dividió en partes consecutivas, la concatenación deja los resultados en el mismo orden que los elementos de <code>X</code>, así que <code>Slurm_lapply(x, mean)</code> devuelve lo mismo que <code>lapply(x, mean)</code>. <code>Slurm_sapply()</code> además simplifica la lista recolectada (con <code>simplify2array()</code>, como lo hace <code>sapply()</code>).</p>
+<p><code>Slurm_collect()</code> es exigente: si alguna tarea sigue pendiente o en ejecución, o si alguna falló, se detiene con el error <code>Nothing to retrieve</code>. Usar <code>any. = TRUE</code> hace que lea los archivos de respuesta que sí existen, lo que es útil para revisar resultados parciales.</p>
+<p>Aquí es también donde el diseño basado en arreglos de trabajos rinde frutos. Supongamos que las tareas 1, 2 y 15 a 20 de un trabajo de 20 tareas fallaron (digamos, excedieron el límite de tiempo). No necesitas ejecutar todo de nuevo, solo esas tareas:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Submitting a simple job</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>job <span class="ot">&lt;-</span> <span class="fu">Slurm_EvalQ</span>(slurmR<span class="sc">::</span><span class="fu">WhoAmI</span>(), <span class="at">njobs =</span> <span class="dv">20</span>, <span class="at">plan =</span> <span class="st">"submit"</span>)</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Checking the status of the job (we can simply print)</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>job</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="fu">status</span>(job)</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a><span class="fu">sacct</span>(job)</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Suppose some of the tasks are taking too long to complete (1, 2, and 15 through 20)</span></span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a><span class="co"># we can stop them and resubmit only those as follows:</span></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a><span class="fu">scancel</span>(job)</span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a><span class="fu">sbatch</span>(job, <span class="at">array =</span> <span class="st">"1,2,15-20"</span>) <span class="co"># A new job ID will be assigned</span></span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Once it's done, we can collect all the results at once</span></span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>res <span class="ot">&lt;-</span> <span class="fu">Slurm_collect</span>(job)</span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a><span class="co"># And clean up if we don't need to use it again</span></span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a><span class="fu">Slurm_clean</span>(job)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<p>(Este ejemplo fue adaptado del manual del paquete.) Como las entradas (<code>X_*.rds</code>, <code>FUN.rds</code>, …) siguen en la carpeta del trabajo, <code>sbatch(job, array = ...)</code> simplemente vuelve a enviar el mismo script de bash, restringido a las tareas seleccionadas.</p>
+<p>La carpeta del trabajo <strong>no</strong> se elimina automáticamente después de recolectar, así que puedes volver a recolectar más tarde o revisar los registros. Cuando ya no la necesites, <code>Slurm_clean(job)</code> borra la carpeta completa (se niega a hacerlo si hay tareas pendientes o en ejecución).</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Si usaste <code>plan = "collect"</code>, la función devolvió los resultados, no el objeto del trabajo. Puedes recuperar el trabajo con <code>last_job()</code>, p.&nbsp;ej., <code>Slurm_clean(last_job())</code>.</p>
+</div>
+</div>
+</section>
+<section id="otras-funciones-del-paquete" class="level3">
+<h3 class="anchored" data-anchor-id="otras-funciones-del-paquete">Otras funciones del paquete</h3>
+<p>Otras dos funciones del paquete funcionan de manera distinta, y las veremos en el siguiente capítulo:</p>
+<ul>
+<li><p><code>makeSlurmCluster()</code> envía un <em>único</em> trabajo que solicita varias tareas, inicia procesos de R trabajadores en ellas y se conecta a ellos desde tu sesión mediante sockets, como <code>parallel::makePSOCKcluster()</code>. Esto no es un arreglo de trabajos.</p></li>
+<li><p><code>sourceSlurm()</code> te permite saltarte la escritura del script de bash: pones las opciones <code>#SBATCH</code> al inicio de un script de R, y <code>slurmR</code> crea el archivo de bash y lo envía.</p></li>
+</ul>
+<p>Con este panorama en mente, estamos listos para ejecutar código en el cluster.</p>
+</section>
+</section>
+<section id="sec-slurm-scheduling" class="level2 appendix">
+<h2 class="appendix anchored" data-anchor-id="sec-slurm-scheduling">Cómo decide Slurm quién se ejecuta y dónde</h2>
+<p>Un cluster tiene muchos usuarios y recursos limitados, así que los trabajos normalmente tienen que esperar. El <strong>planificador</strong> (parte de <code>slurmctld</code>) revisa continuamente la cola y decide qué iniciar a continuación. Los detalles los configura cada institución, pero la idea general tiene dos ingredientes:</p>
+<ul>
+<li><p><strong>Prioridad.</strong> Cada trabajo pendiente recibe un número de prioridad calculado a partir de varios factores: cuánto tiempo lleva esperando (antigüedad), cuánto del cluster han usado recientemente tú y tu grupo (<em>fair share</em>: quienes usan mucho pasan al final de la fila por un tiempo), el tamaño del trabajo, la partición y la calidad de servicio (QOS) con la que fue enviado. Los trabajos de mayor prioridad se consideran primero.</p></li>
+<li><p><strong>Backfill.</strong> Si el trabajo de mayor prioridad necesita recursos que aún no están libres (digamos, dos nodos completos), el planificador no deja los recursos libres sin usar. Busca trabajos de menor prioridad que puedan ejecutarse mientras tanto <strong>sin retrasar el inicio del trabajo de mayor prioridad</strong>. Para ello, se basa en el límite de tiempo que cada trabajo declaró con <code>--time</code>.</p></li>
+</ul>
+<p>La <a href="#fig-backfill" class="quarto-xref">Figura&nbsp;<span>6.7</span></a> ilustra el backfill en un cluster de dos nodos. El trabajo A se está ejecutando en el nodo 1 por cuatro horas. El trabajo B tiene la mayor prioridad en la cola, pero necesita ambos nodos, así que debe esperar a que A termine. Mientras tanto, el nodo 2 está libre, y el trabajo C (de baja prioridad, necesita un nodo por tres horas) cabe en el hueco y termina antes de que B deba comenzar, así que se inicia de inmediato.</p>
+<div id="fig-backfill" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-backfill-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="fig/slurm-under-the-hood/es/fig-backfill.png" class="img-fluid figure-img" style="width:100.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-backfill-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;6.7: Backfill en un cluster de dos nodos. El trabajo C tiene menor prioridad que el trabajo B, pero se inicia primero porque no lo retrasa.
+</figcaption>
+</figure>
+</div>
+<p>Esto tiene dos implicaciones prácticas para ti:</p>
+<ol type="1">
+<li><p><strong>Pide lo que necesitas, no mucho más.</strong> Las solicitudes con límites de tiempo más cortos, menos CPUs o menos memoria caben más fácilmente en los huecos, así que tienden a comenzar antes.</p></li>
+<li><p><strong>…pero tampoco menos.</strong> Si pides una hora y tu trabajo necesita dos, Slurm lo detiene al cumplirse la hora (<code>TIMEOUT</code>). Lo mismo ocurre con la memoria (<code>OUT_OF_MEMORY</code>). Estima lo que necesitas ejecutando primero una versión pequeña del trabajo (ver el <a href="./profiling.html">capítulo de perfilado</a>), y revisa el reporte de los trabajos terminados con <code>sacct</code>.</p></li>
+</ol>
+</section>
+<section id="sec-slurmr-timeline" class="level2 appendix">
+<h2 class="appendix anchored" data-anchor-id="sec-slurmr-timeline">En resumen: la línea de tiempo de <code>Slurm_lapply()</code></h2>
+<p>La <a href="#fig-slurmr-timeline" class="quarto-xref">Figura&nbsp;<span>6.8</span></a> reúne toda la historia en una sola línea de tiempo.</p>
+<div id="fig-slurmr-timeline" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-slurmr-timeline-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="fig/slurm-under-the-hood/es/fig-slurmr-timeline.png" class="img-fluid figure-img" style="width:100.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-slurmr-timeline-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;6.8: Línea de tiempo de una llamada a <code>Slurm_lapply(x, FUN, njobs = 2)</code> con <code>plan = "collect"</code>.
+</figcaption>
+</figure>
+</div>
+
+
+<div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
+<div id="ref-slurmRpaper" class="csl-entry" role="listitem">
+Vega Yon, George, y Paul Marjoram. 2019. <span>«slurmR: A lightweight wrapper for HPC with Slurm»</span>. <em>The Journal of Open Source Software</em> 4 (39). <a href="https://doi.org/10.21105/joss.01493">https://doi.org/10.21105/joss.01493</a>.
+</div>
+<div id="ref-slurmRpkg" class="csl-entry" role="listitem">
+Vega Yon, George, y Paul Marjoram. 2022. <em><span>slurmR: A Lightweight Wrapper for ’Slurm’</span></em>. <a href="https://github.com/USCbiostats/slurmR">https://github.com/USCbiostats/slurmR</a>.
+</div>
+</div>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copiado");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copiado");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/book-hpc\.ggvy\.cl\/es");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./slurm-fundamentals.html" class="pagination-link" aria-label="Fundamentos de SLURM">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">Fundamentos de SLURM</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./slurm-simpi.html" class="pagination-link" aria-label="Simulando π con Slurm">
+        <span class="nav-page-text"><span class="chapter-title">Simulando π con Slurm</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+<p>HPC Aplicado con R - <a href="https://ggvy.cl" target="_blank">https://ggvy.cl</a> - <a href="https://book-hpc.ggvy.cl/" hreflang="en">English version</a> - Texto <a href="https://creativecommons.org/licenses/by/4.0/deed.es" rel="license">CC BY 4.0</a>, código <a href="https://github.com/gvegayon/appliedhpcr/blob/master/LICENSE-CODE">MIT</a></p>
+<div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/gvegayon/appliedhpcr/edit/master/es/slurm-under-the-hood.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li><li><a href="https://github.com/gvegayon/appliedhpcr/blob/master/es/slurm-under-the-hood.qmd" class="toc-action"><i class="bi empty"></i>Ver el código</a></li><li><a href="https://github.com/gvegayon/appliedhpcr/issues/new" class="toc-action"><i class="bi empty"></i>Informar sobre problema</a></li></ul></div></div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+
+
+
+
+</body></html>
