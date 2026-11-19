@@ -8,7 +8,7 @@ extensions:
 engine: knitr
 lang: es
 book:
-  version: 2026.03.18
+  version: 2026.11.18
   google-analytics: "G-9D75EFV0TE"
   title: "HPC Aplicado con R"
   subtitle: "C++, Paralelismo y Rendimiento"
@@ -26,11 +26,8 @@ book:
   image-alt: 'HPC Aplicado con R: C++, Paralelismo y Rendimiento'
   favicon: fig/favicon.ico
   open-graph: true
-  twitter-card:
-    card-style: summary_large_image
-    creator: "@gvegayon"
   site-url: https://book-hpc.ggvy.cl/es
-  sharing: [twitter, linkedin]
+  sharing: [linkedin]
   page-navigation: true
   navbar:
     search: true
@@ -48,6 +45,7 @@ book:
     - part: "Trabajando con un Cluster"
       chapters:
         - slurm-fundamentals.qmd
+        - slurm-under-the-hood.qmd
         - slurm-simpi.qmd
     - part: "Usando C++"
       chapters:
