@@ -60,6 +60,12 @@ jobs:
     container:
       image: ghcr.io/gvegayon/appliedhpcr:latest
 
+    # GitHub Actions sets HOME=/github/home inside the container, so Quarto
+    # can't find the chrome-headless-shell the image installed under /root.
+    # Chrome is needed to turn mermaid diagrams into images for the PDF.
+    env:
+      QUARTO_CHROMIUM: /root/.local/share/quarto/chrome-headless-shell/chrome-headless-shell-linux64/chrome-headless-shell
+
     steps:
     - uses: actions/checkout@v6
 
@@ -95,6 +101,12 @@ jobs:
 
     container:
       image: ghcr.io/gvegayon/appliedhpcr:latest
+
+    # GitHub Actions sets HOME=/github/home inside the container, so Quarto
+    # can't find the chrome-headless-shell the image installed under /root.
+    # Chrome is needed to turn mermaid diagrams into images for the PDF.
+    env:
+      QUARTO_CHROMIUM: /root/.local/share/quarto/chrome-headless-shell/chrome-headless-shell-linux64/chrome-headless-shell
 
     steps:
     - uses: actions/checkout@v6
