@@ -1,0 +1,27 @@
+%%{init: {"theme": "neutral", "flowchart": {"wrappingWidth": 400}}}%%
+sequenceDiagram
+  autonumber
+  participant R as R session
+  participant F as Job folder
+  participant S as Slurm
+  participant T as Array tasks
+
+  R->>F: write inputs and scripts
+  R->>S: sbatch 01-bash.sh
+  S-->>R: job ID (4242)
+  R->>F: save job.rds
+  par Slurm runs the array
+    S->>T: start tasks 1 and 2
+    T->>F: read own chunk, FUN, ...
+    T->>T: mclapply(X, FUN)
+    T->>F: write 03-answer-N.rds
+    S->>F: write 02-output-4242-N.out
+  and R waits
+    loop until all tasks have ended
+      R->>S: status?
+      S-->>R: PENDING, RUNNING, ...
+    end
+  end
+  R->>F: Slurm_collect(): read answers
+  R->>R: combine into one list
+  R->>F: Slurm_clean(): delete folder

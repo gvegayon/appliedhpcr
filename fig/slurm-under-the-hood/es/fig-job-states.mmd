@@ -1,0 +1,11 @@
+%%{init: {"theme": "neutral", "flowchart": {"wrappingWidth": 400}}}%%
+stateDiagram-v2
+  direction LR
+  [*] --> PENDING: sbatch
+  PENDING --> RUNNING: recursos asignados
+  PENDING --> CANCELLED: scancel
+  RUNNING --> COMPLETED: código de salida 0
+  RUNNING --> FAILED: código de salida distinto de 0
+  RUNNING --> TIMEOUT: límite de tiempo alcanzado
+  RUNNING --> OUT_OF_MEMORY: memoria excedida
+  RUNNING --> CANCELLED: scancel

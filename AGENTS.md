@@ -48,7 +48,7 @@ Then replace `ghcr.io/gvegayon/appliedhpcr:latest` with `gvegayon/appliedhpcr:la
 Notes:
 
 - On macOS, `podman` needs a running VM (`podman machine start`).
-- Mermaid diagrams render in the browser for HTML, but the PDF build converts them to images with headless Chromium. The Chromium installed in the `arm64` image may not run on every host, so PDF builds are best left to CI.
+- Don't use ```` ```{mermaid} ```` chunks: the PDF build would need a headless browser to convert them. Write the diagram as a `.mmd` file under `fig/`, run `make diagrams` (renders PNGs through mermaid.ink; needs `curl` and internet), and include the PNG as a regular image. Commit both files.
 - Rendering rewrites files under `_book/` (and `es/_docs/`), which are tracked or semi-tracked. Do not commit render output unless asked to.
 - Only run the container when rendering is actually needed to verify a change (e.g., diagrams, cross-references, or code chunks that execute); for plain text edits it is not necessary.
 

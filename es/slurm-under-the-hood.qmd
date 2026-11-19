@@ -1,7 +1,5 @@
 ---
 description: "Cómo Slurm planifica y ejecuta trabajos (demonios, ciclo de vida de un trabajo, planificación, arreglos de trabajos) y cómo el paquete de R slurmR convierte Slurm_lapply() en un arreglo de trabajos: los archivos que escribe, los registros y cómo se recolectan los resultados."
-mermaid:
-  theme: neutral
 ---
 
 # Bajo el capó: Slurm y slurmR
@@ -36,28 +34,7 @@ Slurm es una colección de programas que se comunican entre sí a través de la 
 Algunos de ellos se ejecutan todo el tiempo (llamados **demonios** o *daemons*, la `d` al final de `slurmctld`, `slurmd` y `slurmdbd`), y otros son los comandos que tú escribes.
 La @fig-slurm-components muestra cómo se relacionan entre sí, y la @tbl-slurm-daemons describe cada pieza.
 
-```{mermaid}
-%%| label: fig-slurm-components
-%%| fig-cap: "Los componentes principales de un cluster con Slurm. Las flechas indican qué componente se comunica con cuál."
-flowchart TB
-  user(["Tú, en el nodo de acceso"])
-  cmds["<b>Comandos de cliente</b><br/>sbatch, srun, salloc, squeue,<br/>sinfo, scontrol, scancel, sacct"]
-  ctld["<b>slurmctld</b><br/>controlador: cola de trabajos,<br/>planificador, estado de cada nodo"]
-  dbd["<b>slurmdbd</b><br/>contabilidad (opcional)"]
-  db[("Base de datos")]
-  n1["<b>slurmd</b><br/>nodo de cómputo 1"]
-  n2["<b>slurmd</b><br/>nodo de cómputo 2"]
-  n3["<b>slurmd</b><br/>nodo de cómputo N"]
-
-  user --> cmds
-  cmds <-->|"sbatch, squeue,<br/>scontrol, scancel"| ctld
-  cmds <-->|"sacct"| dbd
-  ctld <--> dbd
-  dbd <--> db
-  ctld <--> n1
-  ctld <--> n2
-  ctld <--> n3
-```
+![Los componentes principales de un cluster con Slurm. Las flechas indican qué componente se comunica con cuál.](fig/slurm-under-the-hood/es/fig-slurm-components.png){#fig-slurm-components width=100%}
 
 | Pieza | Dónde se ejecuta | Qué hace |
 |:------|:-----------------|:---------|
@@ -81,13 +58,8 @@ Slurm agrega dos conceptos más sobre ellos: el **trabajo** (*job*) y el **paso 
 -   Un **paso de trabajo** es un conjunto de tareas lanzadas *dentro* de un trabajo, típicamente con `srun`.
     Un trabajo puede tener uno o muchos pasos, ejecutándose al mismo tiempo o uno después de otro.
 
-La @fig-slurm-entities ilustra esto.
-Dos particiones tienen varios nodos cada una (las cajas azules `slurmd`).
-Al trabajo 1001 se le asignaron seis nodos de la Partición 1 y tiene un solo paso que los usa todos.
-Al trabajo 1002 se le asignaron cuatro nodos de la Partición 2 y los dividió en dos pasos.
+Por ejemplo, a un trabajo se le pueden asignar seis nodos de una partición y ejecutar un solo paso que los usa todos, mientras que otro trabajo divide sus cuatro nodos en dos pasos de dos nodos cada uno.
 Los nodos que no pertenecen a ningún trabajo están libres para que otros trabajos los usen.
-
-![Entidades administradas por Slurm. Fuente: [Slurm Workload Manager: Overview](https://slurm.schedmd.com/overview.html){target="_blank"}, © SchedMD.](https://slurm.schedmd.com/entities.gif){#fig-slurm-entities fig-alt="Dos particiones dibujadas como rectángulos grandes, cada una con cajas slurmd que representan nodos. El trabajo 1001 abarca seis nodos de la Partición 1 con un paso de trabajo. El trabajo 1002 abarca cuatro nodos de la Partición 2 con dos pasos de dos nodos cada uno. Los nodos restantes no están asignados." width=60%}
 
 Para usuarios de R, la situación más común es simple: un script de lote (el trabajo) que llama a `Rscript` una vez (por lo que, en la práctica, hay un solo paso).
 Cualquier paralelismo que quieras *dentro* de ese trabajo (múltiples núcleos con `mclapply()`, un cluster de sockets, etc.) depende de tu código en R.
@@ -97,30 +69,7 @@ Cualquier paralelismo que quieras *dentro* de ese trabajo (múltiples núcleos c
 
 La @fig-job-sequence sigue a un trabajo de lote desde el momento en que lo envías hasta que queda registrado en la base de datos de contabilidad.
 
-```{mermaid}
-%%| label: fig-job-sequence
-%%| fig-cap: "Qué ocurre cuando ejecutas `sbatch my-job.slurm`."
-sequenceDiagram
-  autonumber
-  actor U as Tú
-  participant S as sbatch
-  participant C as slurmctld
-  participant N as slurmd<br/>(1er nodo)
-  participant D as slurmdbd
-
-  U->>S: sbatch my-job.slurm
-  S->>C: script + opciones SBATCH
-  C-->>S: aceptado, ID del trabajo = 36
-  S-->>U: Submitted batch job 36
-  Note over C: PENDING<br/>espera en la cola
-  C->>C: elige nodos
-  C->>N: inicia el script
-  Note over N: RUNNING<br/>Rscript my-script.R
-  N-->>C: el script terminó (código de salida)
-  C->>D: registra el trabajo
-  U->>C: squeue (en cola o ejecutándose)
-  U->>D: sacct (terminados)
-```
+![Qué ocurre cuando ejecutas `sbatch my-job.slurm`.](fig/slurm-under-the-hood/es/fig-job-sequence.png){#fig-job-sequence width=100%}
 
 En palabras:
 
@@ -142,20 +91,7 @@ En palabras:
 Un trabajo siempre está en uno de unos pocos estados, que puedes ver en la columna `ST` de `squeue` y en la columna `State` de `sacct`.
 La @fig-job-states muestra los más comunes, y la @tbl-job-states lista sus códigos.
 
-```{mermaid}
-%%| label: fig-job-states
-%%| fig-cap: "Estados más comunes de un trabajo en Slurm."
-stateDiagram-v2
-  direction LR
-  [*] --> PENDING: sbatch
-  PENDING --> RUNNING: recursos asignados
-  PENDING --> CANCELLED: scancel
-  RUNNING --> COMPLETED: código de salida 0
-  RUNNING --> FAILED: código de salida distinto de 0
-  RUNNING --> TIMEOUT: límite de tiempo alcanzado
-  RUNNING --> OUT_OF_MEMORY: memoria excedida
-  RUNNING --> CANCELLED: scancel
-```
+![Estados más comunes de un trabajo en Slurm.](fig/slurm-under-the-hood/es/fig-job-states.png){#fig-job-states width=100%}
 
 | Estado | Código en `squeue` | Significado |
 |:-------|:-------------------|:------------|
@@ -192,27 +128,7 @@ Depende de tu script usar ese número para decidir qué hacer: qué semilla usar
 
 La @fig-job-array muestra un arreglo de trabajos con cuatro tareas.
 
-```{mermaid}
-%%| label: fig-job-array
-%%| fig-cap: "Un arreglo de trabajos con cuatro tareas. Un solo envío crea cuatro trabajos independientes que ejecutan el mismo script. Pueden comenzar en distintos momentos, en distintos nodos, y terminar en cualquier orden."
-flowchart LR
-  sub["<code>sbatch --array=1-4 analysis.slurm</code><br/>(un solo envío)"] --> arr["<b>Arreglo de trabajos 36</b><br/>mismo script,<br/>mismos recursos por tarea"]
-
-  arr --> t1["Tarea 36_1<br/>TASK_ID = 1"]
-  arr --> t2["Tarea 36_2<br/>TASK_ID = 2"]
-  arr --> t3["Tarea 36_3<br/>TASK_ID = 3"]
-  arr --> t4["Tarea 36_4<br/>TASK_ID = 4"]
-
-  t1 --> r1["node01, comienza ahora"]
-  t2 --> r2["node02, comienza ahora"]
-  t3 --> r3["node01, cuando 36_1 termina"]
-  t4 --> r4["node07, comienza después"]
-
-  r1 --> o1["result-1.rds"]
-  r2 --> o2["result-2.rds"]
-  r3 --> o3["result-3.rds"]
-  r4 --> o4["result-4.rds"]
-```
+![Un arreglo de trabajos con cuatro tareas. Un solo envío crea cuatro trabajos independientes que ejecutan el mismo script. Pueden comenzar en distintos momentos, en distintos nodos, y terminar en cualquier orden.](fig/slurm-under-the-hood/es/fig-job-array.png){#fig-job-array width=100%}
 
 El tamaño y los índices del arreglo se especifican con la opción `--array` (o `-a`) de `sbatch`:
 
@@ -520,30 +436,7 @@ La @tbl-slurmr-files describe cada uno.
 
 La @fig-slurmr-files muestra quién escribe y quién lee cada archivo.
 
-```{mermaid}
-%%| label: fig-slurmr-files
-%%| fig-cap: "Quién escribe y quién lee cada archivo de la carpeta del trabajo. Azul: tu sesión de R. Naranja: el cluster."
-flowchart TB
-  A["<b>Tu sesión de R</b><br/>Slurm_lapply()"]:::r
-  IN["<b>Entradas</b><br/>X_0001.rds, X_0002.rds, ...<br/>FUN.rds, INDICES.rds<br/>mc.cores.rds, seeds.rds"]:::f
-  SC["<b>Scripts</b><br/>00-rscript.r, 01-bash.sh<br/>job.rds"]:::f
-  T["<b>Tareas del arreglo</b><br/>Rscript 00-rscript.r"]:::c
-  OUT["<b>Respuestas</b><br/>03-answer-001.rds<br/>03-answer-002.rds, ..."]:::f
-  LOG["<b>Registros</b><br/>02-output-jobid-taskid.out"]:::f
-  C["<b>Tu sesión de R</b><br/>Slurm_collect()"]:::r
-
-  A -->|escribe| IN
-  A -->|escribe| SC
-  SC -->|"sbatch ejecuta 01-bash.sh"| T
-  IN -->|"cada tarea lee<br/>su propia parte"| T
-  T -->|escribe| OUT
-  T -.->|"stdout y stderr<br/>(escritos por Slurm)"| LOG
-  OUT -->|lee| C
-
-  classDef r fill:#e3eefa,stroke:#4a78a8,color:#111
-  classDef c fill:#fdeedd,stroke:#c98a3d,color:#111
-  classDef f fill:#f5f5f5,stroke:#888,color:#111
-```
+![Quién escribe y quién lee cada archivo de la carpeta del trabajo. Azul: tu sesión de R. Naranja: el cluster.](fig/slurm-under-the-hood/es/fig-slurmr-files.png){#fig-slurmr-files width=55%}
 
 ::: {.callout-important}
 ## La carpeta del trabajo debe ser visible desde los nodos de cómputo
@@ -743,19 +636,7 @@ message("[slurmR info] job-status: OK.\n")
 
 La @fig-slurmr-task resume lo que hace cada tarea del arreglo.
 
-```{mermaid}
-%%| label: fig-slurmr-task
-%%| fig-cap: "Qué hace cada tarea del arreglo cuando Slurm ejecuta `00-rscript.r`."
-flowchart TB
-  a["Lee SLURM_ARRAY_TASK_ID<br/>(este es ARRAY_ID)"] --> b["Lee INDICES, FUN, mc.cores, seeds,<br/>y X_ARRAY_ID.rds (su propia parte)"]
-  b --> ok1{"¿Éxito?"}
-  ok1 -- "no" --> err["Guarda el error en<br/>03-answer-ID.rds,<br/>registra 'job-status: failed', cierra R"]
-  ok1 -- "sí" --> c["set.seed(seeds[ARRAY_ID])"]
-  c --> d["ans <- mclapply(X, FUN, mc.cores)"]
-  d --> ok2{"¿Éxito?"}
-  ok2 -- "no" --> err
-  ok2 -- "sí" --> e["saveRDS(ans, 03-answer-ID.rds)<br/>registra 'job-status: OK'"]
-```
+![Qué hace cada tarea del arreglo cuando Slurm ejecuta `00-rscript.r`.](fig/slurm-under-the-hood/es/fig-slurmr-task.png){#fig-slurmr-task width=70%}
 
 ### Envío, monitoreo y registros
 
@@ -875,20 +756,7 @@ El trabajo A se está ejecutando en el nodo 1 por cuatro horas.
 El trabajo B tiene la mayor prioridad en la cola, pero necesita ambos nodos, así que debe esperar a que A termine.
 Mientras tanto, el nodo 2 está libre, y el trabajo C (de baja prioridad, necesita un nodo por tres horas) cabe en el hueco y termina antes de que B deba comenzar, así que se inicia de inmediato.
 
-```{mermaid}
-%%| label: fig-backfill
-%%| fig-cap: "Backfill en un cluster de dos nodos. El trabajo C tiene menor prioridad que el trabajo B, pero se inicia primero porque no lo retrasa."
-gantt
-  dateFormat HH:mm
-  axisFormat %H:%M
-  section Nodo 1
-  Trabajo A (ejecutándose)  :active, a, 00:00, 4h
-  Trabajo B (necesita 2 nodos) :crit, b1, 04:00, 2h
-  section Nodo 2
-  Trabajo C (backfill)      :active, c, 00:00, 3h
-  Libre                     :done, idle, 03:00, 1h
-  Trabajo B (necesita 2 nodos) :crit, b2, 04:00, 2h
-```
+![Backfill en un cluster de dos nodos. El trabajo C tiene menor prioridad que el trabajo B, pero se inicia primero porque no lo retrasa.](fig/slurm-under-the-hood/es/fig-backfill.png){#fig-backfill width=100%}
 
 Esto tiene dos implicaciones prácticas para ti:
 
@@ -904,33 +772,4 @@ Esto tiene dos implicaciones prácticas para ti:
 
 La @fig-slurmr-timeline reúne toda la historia en una sola línea de tiempo.
 
-```{mermaid}
-%%| label: fig-slurmr-timeline
-%%| fig-cap: 'Línea de tiempo de una llamada a `Slurm_lapply(x, FUN, njobs = 2)` con `plan = "collect"`.'
-sequenceDiagram
-  autonumber
-  participant R as Sesión de R
-  participant F as Carpeta del trabajo
-  participant S as Slurm
-  participant T as Tareas del arreglo
-
-  R->>F: escribe entradas y scripts
-  R->>S: sbatch 01-bash.sh
-  S-->>R: ID del trabajo (4242)
-  R->>F: guarda job.rds
-  par Slurm ejecuta el arreglo
-    S->>T: inicia las tareas 1 y 2
-    T->>F: lee su parte, FUN, ...
-    T->>T: mclapply(X, FUN)
-    T->>F: escribe 03-answer-N.rds
-    S->>F: escribe 02-output-4242-N.out
-  and R espera
-    loop hasta que todas las tareas terminen
-      R->>S: ¿estado?
-      S-->>R: PENDING, RUNNING, ...
-    end
-  end
-  R->>F: Slurm_collect(): lee las respuestas
-  R->>R: combina en una sola lista
-  R->>F: Slurm_clean(): borra la carpeta
-```
+![Línea de tiempo de una llamada a `Slurm_lapply(x, FUN, njobs = 2)` con `plan = "collect"`.](fig/slurm-under-the-hood/es/fig-slurmr-timeline.png){#fig-slurmr-timeline width=100%}

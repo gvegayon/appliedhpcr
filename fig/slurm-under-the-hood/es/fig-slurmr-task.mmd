@@ -1,0 +1,10 @@
+%%{init: {"theme": "neutral", "flowchart": {"wrappingWidth": 400}}}%%
+flowchart TB
+  a["Lee SLURM_ARRAY_TASK_ID<br/>(este es ARRAY_ID)"] --> b["Lee INDICES, FUN, mc.cores, seeds,<br/>y X_ARRAY_ID.rds (su propia parte)"]
+  b --> ok1{"¿Éxito?"}
+  ok1 -- "no" --> err["Guarda el error en<br/>03-answer-ID.rds,<br/>registra 'job-status: failed', cierra R"]
+  ok1 -- "sí" --> c["set.seed(seeds[ARRAY_ID])"]
+  c --> d["ans <- mclapply(X, FUN, mc.cores)"]
+  d --> ok2{"¿Éxito?"}
+  ok2 -- "no" --> err
+  ok2 -- "sí" --> e["saveRDS(ans, 03-answer-ID.rds)<br/>registra 'job-status: OK'"]

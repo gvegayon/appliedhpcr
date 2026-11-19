@@ -1,7 +1,5 @@
 ---
 description: "How Slurm schedules and runs jobs (daemons, job life cycle, scheduling, job arrays) and how the slurmR R package turns Slurm_lapply() into a job array: the files it writes, the logs, and how results are collected."
-mermaid:
-  theme: neutral
 ---
 
 # Under the hood: Slurm and slurmR
@@ -31,28 +29,7 @@ Slurm is a collection of programs that talk to each other over the network.
 Some of them run all the time (called **daemons**, the `d` at the end of `slurmctld`, `slurmd`, and `slurmdbd`), and others are the commands you type.
 @fig-slurm-components shows how they relate to each other, and @tbl-slurm-daemons describes each piece.
 
-```{mermaid}
-%%| label: fig-slurm-components
-%%| fig-cap: "The main components of a Slurm cluster. Arrows indicate which component talks to which."
-flowchart TB
-  user(["You, on the login node"])
-  cmds["<b>Client commands</b><br/>sbatch, srun, salloc, squeue,<br/>sinfo, scontrol, scancel, sacct"]
-  ctld["<b>slurmctld</b><br/>controller: job queue,<br/>scheduler, state of every node"]
-  dbd["<b>slurmdbd</b><br/>accounting (optional)"]
-  db[("Database")]
-  n1["<b>slurmd</b><br/>compute node 1"]
-  n2["<b>slurmd</b><br/>compute node 2"]
-  n3["<b>slurmd</b><br/>compute node N"]
-
-  user --> cmds
-  cmds <-->|"sbatch, squeue,<br/>scontrol, scancel"| ctld
-  cmds <-->|"sacct"| dbd
-  ctld <--> dbd
-  dbd <--> db
-  ctld <--> n1
-  ctld <--> n2
-  ctld <--> n3
-```
+![The main components of a Slurm cluster. Arrows indicate which component talks to which.](fig/slurm-under-the-hood/en/fig-slurm-components.png){#fig-slurm-components width=90%}
 
 | Piece | Where it runs | What it does |
 |:------|:--------------|:-------------|
@@ -77,13 +54,8 @@ Slurm adds two more concepts on top of them: the **job** and the **job step**.
 -   A **job step** is a set of tasks launched *inside* a job, typically with `srun`.
     A job may have one step or many, running at the same time or one after another.
 
-@fig-slurm-entities illustrates this.
-Two partitions have a number of nodes each (the blue `slurmd` boxes).
-Job 1001 was allocated six nodes of Partition 1 and has a single job step that uses all of them.
-Job 1002 was allocated four nodes of Partition 2 and has split them in two job steps.
+For example, one job may be allocated six nodes of a partition and run a single step that uses all of them, while another job splits its four nodes into two steps of two nodes each.
 Nodes that don't belong to any job are free for other jobs to use.
-
-![Entities managed by Slurm. Source: [Slurm Workload Manager: Overview](https://slurm.schedmd.com/overview.html){target="_blank"}, © SchedMD.](https://slurm.schedmd.com/entities.gif){#fig-slurm-entities fig-alt="Two partitions drawn as large rectangles, each containing slurmd boxes that represent nodes. Job 1001 spans six nodes of Partition 1 with one job step. Job 1002 spans four nodes of Partition 2 with two job steps of two nodes each. The remaining nodes are unallocated." width=60%}
 
 For R users, the most common situation is simple: one batch script (the job) that calls `Rscript` once (so there is effectively one step).
 Whatever parallelism you want *inside* that job (multiple cores with `mclapply()`, a socket cluster, etc.) is up to your R code.
@@ -93,30 +65,7 @@ Whatever parallelism you want *inside* that job (multiple cores with `mclapply()
 
 @fig-job-sequence follows a batch job from the moment you submit it to the moment it is recorded in the accounting database.
 
-```{mermaid}
-%%| label: fig-job-sequence
-%%| fig-cap: "What happens when you run `sbatch my-job.slurm`."
-sequenceDiagram
-  autonumber
-  actor U as You
-  participant S as sbatch
-  participant C as slurmctld
-  participant N as slurmd<br/>(1st node)
-  participant D as slurmdbd
-
-  U->>S: sbatch my-job.slurm
-  S->>C: script + SBATCH options
-  C-->>S: accepted, job ID = 36
-  S-->>U: Submitted batch job 36
-  Note over C: PENDING<br/>waits in the queue
-  C->>C: pick nodes
-  C->>N: start the script
-  Note over N: RUNNING<br/>Rscript my-script.R
-  N-->>C: script ended (exit code)
-  C->>D: record the job
-  U->>C: squeue (queued or running)
-  U->>D: sacct (finished)
-```
+![What happens when you run `sbatch my-job.slurm`.](fig/slurm-under-the-hood/en/fig-job-sequence.png){#fig-job-sequence width=100%}
 
 In words:
 
@@ -138,20 +87,7 @@ In words:
 A job is always in one of a handful of states, which you see in the `ST` column of `squeue` and the `State` column of `sacct`.
 @fig-job-states shows the most common ones, and @tbl-job-states lists their codes.
 
-```{mermaid}
-%%| label: fig-job-states
-%%| fig-cap: "Most common states of a Slurm job."
-stateDiagram-v2
-  direction LR
-  [*] --> PENDING: sbatch
-  PENDING --> RUNNING: resources allocated
-  PENDING --> CANCELLED: scancel
-  RUNNING --> COMPLETED: exit code 0
-  RUNNING --> FAILED: exit code not 0
-  RUNNING --> TIMEOUT: time limit reached
-  RUNNING --> OUT_OF_MEMORY: memory exceeded
-  RUNNING --> CANCELLED: scancel
-```
+![Most common states of a Slurm job.](fig/slurm-under-the-hood/en/fig-job-states.png){#fig-job-states width=100%}
 
 | State | `squeue` code | Meaning |
 |:------|:--------------|:--------|
@@ -188,27 +124,7 @@ It is up to your script to use that number to decide what to do: which seed to u
 
 @fig-job-array shows a job array with four tasks.
 
-```{mermaid}
-%%| label: fig-job-array
-%%| fig-cap: "A job array with four tasks. One submission creates four independent jobs that run the same script. They may start at different times, on different nodes, and finish in any order."
-flowchart LR
-  sub["<code>sbatch --array=1-4 analysis.slurm</code><br/>(one submission)"] --> arr["<b>Array job 36</b><br/>same script,<br/>same resources per task"]
-
-  arr --> t1["Task 36_1<br/>TASK_ID = 1"]
-  arr --> t2["Task 36_2<br/>TASK_ID = 2"]
-  arr --> t3["Task 36_3<br/>TASK_ID = 3"]
-  arr --> t4["Task 36_4<br/>TASK_ID = 4"]
-
-  t1 --> r1["node01, starts now"]
-  t2 --> r2["node02, starts now"]
-  t3 --> r3["node01, after 36_1 ends"]
-  t4 --> r4["node07, starts later"]
-
-  r1 --> o1["result-1.rds"]
-  r2 --> o2["result-2.rds"]
-  r3 --> o3["result-3.rds"]
-  r4 --> o4["result-4.rds"]
-```
+![A job array with four tasks. One submission creates four independent jobs that run the same script. They may start at different times, on different nodes, and finish in any order.](fig/slurm-under-the-hood/en/fig-job-array.png){#fig-job-array width=100%}
 
 The size and the indices of the array are specified with the `--array` (or `-a`) option of `sbatch`:
 
@@ -516,30 +432,7 @@ The `02-output-*` and `03-answer-*` files appear only after the tasks run.
 
 @fig-slurmr-files shows who writes and who reads each file.
 
-```{mermaid}
-%%| label: fig-slurmr-files
-%%| fig-cap: "Who writes and who reads each file in the job folder. Blue: your R session. Orange: the cluster."
-flowchart TB
-  A["<b>Your R session</b><br/>Slurm_lapply()"]:::r
-  IN["<b>Inputs</b><br/>X_0001.rds, X_0002.rds, ...<br/>FUN.rds, INDICES.rds<br/>mc.cores.rds, seeds.rds"]:::f
-  SC["<b>Scripts</b><br/>00-rscript.r, 01-bash.sh<br/>job.rds"]:::f
-  T["<b>Array tasks</b><br/>Rscript 00-rscript.r"]:::c
-  OUT["<b>Answers</b><br/>03-answer-001.rds<br/>03-answer-002.rds, ..."]:::f
-  LOG["<b>Logs</b><br/>02-output-jobid-taskid.out"]:::f
-  C["<b>Your R session</b><br/>Slurm_collect()"]:::r
-
-  A -->|writes| IN
-  A -->|writes| SC
-  SC -->|"sbatch runs 01-bash.sh"| T
-  IN -->|"each task reads<br/>its own chunk"| T
-  T -->|writes| OUT
-  T -.->|"stdout and stderr<br/>(written by Slurm)"| LOG
-  OUT -->|read| C
-
-  classDef r fill:#e3eefa,stroke:#4a78a8,color:#111
-  classDef c fill:#fdeedd,stroke:#c98a3d,color:#111
-  classDef f fill:#f5f5f5,stroke:#888,color:#111
-```
+![Who writes and who reads each file in the job folder. Blue: your R session. Orange: the cluster.](fig/slurm-under-the-hood/en/fig-slurmr-files.png){#fig-slurmr-files width=55%}
 
 ::: {.callout-important}
 ## The job folder must be visible from the compute nodes
@@ -739,19 +632,7 @@ message("[slurmR info] job-status: OK.\n")
 
 @fig-slurmr-task summarizes what each array task does.
 
-```{mermaid}
-%%| label: fig-slurmr-task
-%%| fig-cap: "What each array task does when Slurm runs `00-rscript.r`."
-flowchart TB
-  a["Read SLURM_ARRAY_TASK_ID<br/>(this is ARRAY_ID)"] --> b["Read INDICES, FUN, mc.cores, seeds,<br/>and X_ARRAY_ID.rds (own chunk)"]
-  b --> ok1{"Success?"}
-  ok1 -- "no" --> err["Save the error in<br/>03-answer-ID.rds,<br/>log 'job-status: failed', quit R"]
-  ok1 -- "yes" --> c["set.seed(seeds[ARRAY_ID])"]
-  c --> d["ans <- mclapply(X, FUN, mc.cores)"]
-  d --> ok2{"Success?"}
-  ok2 -- "no" --> err
-  ok2 -- "yes" --> e["saveRDS(ans, 03-answer-ID.rds)<br/>log 'job-status: OK'"]
-```
+![What each array task does when Slurm runs `00-rscript.r`.](fig/slurm-under-the-hood/en/fig-slurmr-task.png){#fig-slurmr-task width=65%}
 
 ### Submitting, monitoring, and logs
 
@@ -871,20 +752,7 @@ Job A is running on node 1 for four hours.
 Job B has the highest priority in the queue, but needs both nodes, so it must wait for A to finish.
 Node 2 is idle in the meantime, and job C (low priority, needs one node for three hours) fits in the gap and finishes before B is scheduled to begin, so it is started right away.
 
-```{mermaid}
-%%| label: fig-backfill
-%%| fig-cap: "Backfill scheduling in a two-node cluster. Job C has lower priority than job B but is started first because it does not delay it."
-gantt
-  dateFormat HH:mm
-  axisFormat %H:%M
-  section Node 1
-  Job A (running)           :active, a, 00:00, 4h
-  Job B (needs 2 nodes)     :crit, b1, 04:00, 2h
-  section Node 2
-  Job C (backfilled)        :active, c, 00:00, 3h
-  Idle                      :done, idle, 03:00, 1h
-  Job B (needs 2 nodes)     :crit, b2, 04:00, 2h
-```
+![Backfill scheduling in a two-node cluster. Job C has lower priority than job B but is started first because it does not delay it.](fig/slurm-under-the-hood/en/fig-backfill.png){#fig-backfill width=100%}
 
 This has two practical implications for you:
 
@@ -900,36 +768,7 @@ This has two practical implications for you:
 
 @fig-slurmr-timeline puts the whole story in a single timeline.
 
-```{mermaid}
-%%| label: fig-slurmr-timeline
-%%| fig-cap: 'Timeline of a call to `Slurm_lapply(x, FUN, njobs = 2)` with `plan = "collect"`.'
-sequenceDiagram
-  autonumber
-  participant R as R session
-  participant F as Job folder
-  participant S as Slurm
-  participant T as Array tasks
-
-  R->>F: write inputs and scripts
-  R->>S: sbatch 01-bash.sh
-  S-->>R: job ID (4242)
-  R->>F: save job.rds
-  par Slurm runs the array
-    S->>T: start tasks 1 and 2
-    T->>F: read own chunk, FUN, ...
-    T->>T: mclapply(X, FUN)
-    T->>F: write 03-answer-N.rds
-    S->>F: write 02-output-4242-N.out
-  and R waits
-    loop until all tasks have ended
-      R->>S: status?
-      S-->>R: PENDING, RUNNING, ...
-    end
-  end
-  R->>F: Slurm_collect(): read answers
-  R->>R: combine into one list
-  R->>F: Slurm_clean(): delete folder
-```
+![Timeline of a call to `Slurm_lapply(x, FUN, njobs = 2)` with `plan = "collect"`.](fig/slurm-under-the-hood/en/fig-slurmr-timeline.png){#fig-slurmr-timeline width=100%}
 
 <!--
 TODO / polish notes (left as-is on purpose, to continue later):
@@ -943,11 +782,10 @@ TODO / polish notes (left as-is on purpose, to continue later):
 - fig-slurm-components layout is OK but a bit awkward (curvy edges).
 - Mermaid theme is set to `neutral` in the front matter; the default theme
   made subgraph backgrounds dark grey with unreadable text.
-- PDF (orange-book-typst) build NOT tested: needs mermaid -> image conversion
-  (Chromium; the one in the arm64 image is x86 and does not run locally) and
-  the two remote Slurm GIFs (arch.gif, entities.gif) hotlinked from
-  slurm.schedmd.com (not copied into the repo because of copyright). If the
-  PDF fails, wrap them in `.content-visible when-format="html"`.
+- Diagrams are mermaid sources in fig/slurm-under-the-hood/{en,es}/*.mmd,
+  rendered to PNG with `make diagrams` (mermaid.ink) and included as images,
+  so the PDF build doesn't need a headless browser. Edit the .mmd, then run
+  `make diagrams` and commit both files.
 - Spanish version (es/slurm-under-the-hood.qmd) was machine-translated and
   has not been reviewed yet.
 - slurmR README Example 2 calls `Slurm_clean(res)` on the collected list, which

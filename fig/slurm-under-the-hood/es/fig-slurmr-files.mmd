@@ -1,0 +1,21 @@
+%%{init: {"theme": "neutral", "flowchart": {"wrappingWidth": 400}}}%%
+flowchart TB
+  A["<b>Tu sesión de R</b><br/>Slurm_lapply()"]:::r
+  IN["<b>Entradas</b><br/>X_0001.rds, X_0002.rds, ...<br/>FUN.rds, INDICES.rds<br/>mc.cores.rds, seeds.rds"]:::f
+  SC["<b>Scripts</b><br/>00-rscript.r, 01-bash.sh<br/>job.rds"]:::f
+  T["<b>Tareas del arreglo</b><br/>Rscript 00-rscript.r"]:::c
+  OUT["<b>Respuestas</b><br/>03-answer-001.rds<br/>03-answer-002.rds, ..."]:::f
+  LOG["<b>Registros</b><br/>02-output-jobid-taskid.out"]:::f
+  C["<b>Tu sesión de R</b><br/>Slurm_collect()"]:::r
+
+  A -->|escribe| IN
+  A -->|escribe| SC
+  SC -->|"sbatch ejecuta 01-bash.sh"| T
+  IN -->|"cada tarea lee<br/>su propia parte"| T
+  T -->|escribe| OUT
+  T -.->|"stdout y stderr<br/>(escritos por Slurm)"| LOG
+  OUT -->|lee| C
+
+  classDef r fill:#e3eefa,stroke:#4a78a8,color:#111
+  classDef c fill:#fdeedd,stroke:#c98a3d,color:#111
+  classDef f fill:#f5f5f5,stroke:#888,color:#111
