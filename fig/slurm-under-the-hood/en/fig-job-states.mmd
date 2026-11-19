@@ -1,0 +1,11 @@
+%%{init: {"theme": "neutral", "flowchart": {"wrappingWidth": 400}}}%%
+stateDiagram-v2
+  direction LR
+  [*] --> PENDING: sbatch
+  PENDING --> RUNNING: resources allocated
+  PENDING --> CANCELLED: scancel
+  RUNNING --> COMPLETED: exit code 0
+  RUNNING --> FAILED: exit code not 0
+  RUNNING --> TIMEOUT: time limit reached
+  RUNNING --> OUT_OF_MEMORY: memory exceeded
+  RUNNING --> CANCELLED: scancel

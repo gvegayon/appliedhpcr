@@ -7,12 +7,7 @@ ARG TARGETARCH
 RUN wget https://github.com/quarto-dev/quarto-cli/releases/download/v1.9.35/quarto-1.9.35-linux-${TARGETARCH}.deb && \
     dpkg -i quarto-1.9.35-linux-${TARGETARCH}.deb && \
     rm quarto-1.9.35-linux-${TARGETARCH}.deb && \
-    quarto add --no-prompt quarto-ext/orange-book && \
-    if [ "${TARGETARCH}" = "arm64" ]; then \
-        quarto install chromium; \
-    else \
-        quarto install chrome-headless-shell; \
-    fi
+    quarto add --no-prompt quarto-ext/orange-book
 
 
 
@@ -20,8 +15,10 @@ RUN wget https://github.com/quarto-dev/quarto-cli/releases/download/v1.9.35/quar
 RUN install2.r --error microbenchmark slurmR future Rcpp RcppArmadillo \
     quarto lobstr
 
+# vim and valgrind for the C++ chapters.
 RUN apt-get update && \
-    apt-get install vim valgrind -y --no-install-recommends
+    apt-get install -y --no-install-recommends vim valgrind && \
+    rm -rf /var/lib/apt/lists/*
 
 # Installing jupyter
 RUN python3 -m pip install jupyter --break-system-packages

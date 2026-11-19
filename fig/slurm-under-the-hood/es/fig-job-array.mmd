@@ -1,0 +1,18 @@
+%%{init: {"theme": "neutral", "flowchart": {"wrappingWidth": 400}}}%%
+flowchart LR
+  sub["<code>sbatch --array=1-4 analysis.slurm</code><br/>(un solo envío)"] --> arr["<b>Arreglo de trabajos 36</b><br/>mismo script,<br/>mismos recursos por tarea"]
+
+  arr --> t1["Tarea 36_1<br/>TASK_ID = 1"]
+  arr --> t2["Tarea 36_2<br/>TASK_ID = 2"]
+  arr --> t3["Tarea 36_3<br/>TASK_ID = 3"]
+  arr --> t4["Tarea 36_4<br/>TASK_ID = 4"]
+
+  t1 --> r1["node01, comienza ahora"]
+  t2 --> r2["node02, comienza ahora"]
+  t3 --> r3["node01, cuando 36_1 termina"]
+  t4 --> r4["node07, comienza después"]
+
+  r1 --> o1["result-1.rds"]
+  r2 --> o2["result-2.rds"]
+  r3 --> o3["result-3.rds"]
+  r4 --> o4["result-4.rds"]

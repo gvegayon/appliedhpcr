@@ -1,10 +1,15 @@
 ---
 date: 2025-09-03
-date-modified: 2026-03-18
+date-modified: 2026-11-18
 description: "Release notes and change log for Applied HPC with R, listing what changed in each version of the book."
 ---
 
 # News
+
+## Version 2026.11.18
+
+- New chapter, [Under the hood: Slurm and slurmR](slurm-under-the-hood.qmd), between the Slurm fundamentals and the Slurm simulation chapters. It explains how Slurm works (its daemons, the life of a job, job states, and job arrays) and how `slurmR` turns `Slurm_lapply()` into a job array, including every file it writes, the logs, and how results are collected. A chapter appendix covers how the Slurm scheduler decides which job runs next (priority and backfill) and shows a timeline of a `Slurm_lapply()` call. The chapter is also available in Spanish.
+- Removed the Twitter card and the Twitter sharing button from the website.
 
 ## Version 2026.03.18
 

@@ -1,0 +1,21 @@
+%%{init: {"theme": "neutral", "flowchart": {"wrappingWidth": 400}}}%%
+sequenceDiagram
+  autonumber
+  actor U as Tú
+  participant S as sbatch
+  participant C as slurmctld
+  participant N as slurmd<br/>(1er nodo)
+  participant D as slurmdbd
+
+  U->>S: sbatch my-job.slurm
+  S->>C: script + opciones SBATCH
+  C-->>S: aceptado, ID del trabajo = 36
+  S-->>U: Submitted batch job 36
+  Note over C: PENDING<br/>espera en la cola
+  C->>C: elige nodos
+  C->>N: inicia el script
+  Note over N: RUNNING<br/>Rscript my-script.R
+  N-->>C: el script terminó (código de salida)
+  C->>D: registra el trabajo
+  U->>C: squeue (en cola o ejecutándose)
+  U->>D: sacct (terminados)

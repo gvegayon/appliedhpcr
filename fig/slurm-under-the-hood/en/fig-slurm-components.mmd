@@ -1,0 +1,19 @@
+%%{init: {"theme": "neutral", "flowchart": {"wrappingWidth": 400}}}%%
+flowchart TB
+  user(["You, on the login node"])
+  cmds["<b>Client commands</b><br/>sbatch, srun, salloc, squeue,<br/>sinfo, scontrol, scancel, sacct"]
+  ctld["<b>slurmctld</b><br/>controller: job queue,<br/>scheduler, state of every node"]
+  dbd["<b>slurmdbd</b><br/>accounting (optional)"]
+  db[("Database")]
+  n1["<b>slurmd</b><br/>compute node 1"]
+  n2["<b>slurmd</b><br/>compute node 2"]
+  n3["<b>slurmd</b><br/>compute node N"]
+
+  user --> cmds
+  cmds <-->|"sbatch, squeue,<br/>scontrol, scancel"| ctld
+  cmds <-->|"sacct"| dbd
+  ctld <--> dbd
+  dbd <--> db
+  ctld <--> n1
+  ctld <--> n2
+  ctld <--> n3

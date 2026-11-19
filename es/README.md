@@ -27,6 +27,7 @@ es/
 ├── intro.qmd             # Introducción a Computación Paralela
 ├── parallel-pkg.qmd      # El Paquete parallel
 ├── slurm-fundamentals.qmd # Fundamentos de SLURM
+├── slurm-under-the-hood.qmd # Bajo el capó: Slurm y slurmR
 ├── slurm-simpi.qmd       # SLURM con Simulación
 ├── rcpp-part1.qmd        # Rcpp Parte 1
 ├── rcpp-debugging.qmd    # Depuración de Rcpp

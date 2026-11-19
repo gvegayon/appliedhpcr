@@ -1,10 +1,15 @@
 ---
 date: 2025-09-03
-date-modified: 2026-03-18
+date-modified: 2026-11-18
 description: "Notas de versión y registro de cambios de HPC Aplicado con R, con lo que cambió en cada versión del libro."
 ---
 
 # Novedades
+
+## Versión 2026.11.18
+
+- Nuevo capítulo, [Bajo el capó: Slurm y slurmR](slurm-under-the-hood.qmd), entre los capítulos de fundamentos de Slurm y de simulación con Slurm. Explica cómo funciona Slurm (sus demonios, la vida de un trabajo, los estados de un trabajo y los arreglos de trabajos) y cómo `slurmR` convierte `Slurm_lapply()` en un arreglo de trabajos, incluyendo cada archivo que escribe, los registros y cómo se recolectan los resultados. Un apéndice del capítulo explica cómo el planificador de Slurm decide qué trabajo se ejecuta a continuación (prioridad y *backfill*) y muestra una línea de tiempo de una llamada a `Slurm_lapply()`. La versión en español fue traducida automáticamente con IA y aún no ha sido revisada.
+- Se eliminaron la tarjeta de Twitter y el botón para compartir en Twitter del sitio web.
 
 ## Versión 2026.03.18
 

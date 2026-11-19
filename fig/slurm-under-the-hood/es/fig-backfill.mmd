@@ -1,0 +1,12 @@
+%%{init: {"theme": "neutral", "gantt": {"useWidth": 900, "barHeight": 28, "fontSize": 14, "sectionFontSize": 15, "leftPadding": 70}}}%%
+gantt
+  todayMarker off
+  dateFormat HH:mm
+  axisFormat %H:%M
+  section Nodo 1
+  Trabajo A (ejecutándose)  :active, a, 00:00, 4h
+  Trabajo B (necesita 2 nodos) :crit, b1, 04:00, 2h
+  section Nodo 2
+  Trabajo C (backfill)      :active, c, 00:00, 3h
+  Libre                     :done, idle, 03:00, 1h
+  Trabajo B (necesita 2 nodos) :crit, b2, 04:00, 2h

@@ -1,0 +1,27 @@
+%%{init: {"theme": "neutral", "flowchart": {"wrappingWidth": 400}}}%%
+sequenceDiagram
+  autonumber
+  participant R as Sesión de R
+  participant F as Carpeta del trabajo
+  participant S as Slurm
+  participant T as Tareas del arreglo
+
+  R->>F: escribe entradas y scripts
+  R->>S: sbatch 01-bash.sh
+  S-->>R: ID del trabajo (4242)
+  R->>F: guarda job.rds
+  par Slurm ejecuta el arreglo
+    S->>T: inicia las tareas 1 y 2
+    T->>F: lee su parte, FUN, ...
+    T->>T: mclapply(X, FUN)
+    T->>F: escribe 03-answer-N.rds
+    S->>F: escribe 02-output-4242-N.out
+  and R espera
+    loop hasta que todas las tareas terminen
+      R->>S: ¿estado?
+      S-->>R: PENDING, RUNNING, ...
+    end
+  end
+  R->>F: Slurm_collect(): lee las respuestas
+  R->>R: combina en una sola lista
+  R->>F: Slurm_clean(): borra la carpeta
